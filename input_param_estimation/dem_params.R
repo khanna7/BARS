@@ -45,5 +45,13 @@
              ## 8 Some other race alone
              ## 9 Two or more major race groups
 
-     ## Another source: http://quickfacts.census.gov/qfd/states/17/17031.html
-             ## includes growth rate information
+     ## Other sources:
+        ## 1.http://quickfacts.census.gov/qfd/states/17/17031.html
+             ## includes pop size estimates in 2010, 2013 and 2014. Can be used to estimate growth rate
+
+        ## 2. http://www.cookcountypublichealth.org/files/pdf/data-and-reports/community-profiles-06-08/cook-county-department-of-public-healths-jurisdiction-0608r.pdf
+             ## See page 2 for detailed information, includes Cook county fertility rates
+
+        ## 3. Detailed data (maps and numerical summaries) for total population change:
+             ## http://www.cookcountypublichealth.org/files/data-and-reports/population-demographics/TOT_FINAL%20rv%2010-11-12.pdf
+ 
