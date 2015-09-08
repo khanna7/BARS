@@ -3,9 +3,6 @@
 ## Packages and libraries
 library(EpiModel)
 
-## Packages and libraries
-library(EpiModel)# 3 Sep 2013
-
    rm(list=ls())
    ## Example 1
    ## n=5000
@@ -24,4 +21,3 @@ library(EpiModel)# 3 Sep 2013
    
    dx <- netdx(est_nw, nsteps = 100, nsims = 1)
    dx
-   
