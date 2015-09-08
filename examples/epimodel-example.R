@@ -4,10 +4,7 @@
 library(EpiModel)
 
 ## Packages and libraries
-library(network)# 3 Sep 2013
-library(ergm)#3 Sep 2013
-library(tergm)
-library(networkDynamic)
+library(EpiModel)# 3 Sep 2013
 
    rm(list=ls())
    ## Example 1
