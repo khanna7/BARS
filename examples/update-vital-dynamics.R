@@ -2,7 +2,7 @@ update.vital.dynamics <-
   function(nw, verbose=TRUE,
            max.survival,
            daily.death.prob,
-           daily.n.births,
+           daily.birth.rate,
            ...
   ){
     
@@ -44,11 +44,12 @@ update.vital.dynamics <-
     
      ## grim reaper deaths
         nw.new.popsize <- network.size(nw)
-        dying.of.grim.reaper <- rbinom(nw.new.popsize, 1, daily.death.prob)
+        dying.of.grim.reaper.index <- which(rbinom(popsize.temp, 1, daily.death.prob) == 1)
+        dying.of.grim.reaper <- active.nodes[dying.of.grim.reaper.index]
     
-        if (verbose) cat("Grim reaper deaths", length(dying.of.aids), "\n")
+        if (verbose) cat("Grim reaper deaths", length(dying.of.grim.reaper), "\n")
     
-        if(length(dying.of.aids)>0) {
+        if(length(dying.of.grim.reaper)>0) {
         nw <- set.vertex.attribute(nw, "time.of.death",
                                    time, v=dying.of.grim.reaper)
       
@@ -83,7 +84,7 @@ update.vital.dynamics <-
     
     if(popsize.temp==0) break
     
-    nintros <- rpois(1, daily.n.births)
+    nintros <- rpois(1, daily.birth.rate*popsize.temp)
     
     if (verbose){ 
       cat("Number of Intros is ", nintros, "\n")                         
@@ -94,8 +95,9 @@ update.vital.dynamics <-
     #       for (zzz in 1:nintros) nw <- add.vertices(nw, 1, last.mode=FALSE)
     #     } # This loop approach is temp to get around bug in network
     #     
-       nw <- add.vertices(nw, nintros)
-
+    if(nintros > 0){  
+     nw <- add.vertices(nw, nintros)
+    }
     
     ########################################################################
     ## ASK: Lines below commented out because we don't
@@ -123,7 +125,7 @@ update.vital.dynamics <-
       nw <- set.vertex.attribute(nw, "time.of.birth", time, nodes.to.activate)
       nw <- set.vertex.attribute(nw, "age", 0, nodes.to.activate)
       nw <- set.vertex.attribute(nw, "young", 1, nodes.to.activate)
-      
+      }
     ########################################################################
     ## Compile results 
       node.active <- is.active(nw, v=1:network.size(nw), at=time)

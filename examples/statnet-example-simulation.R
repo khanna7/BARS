@@ -1,4 +1,14 @@
 ## example using statnet: dynamic simulation code
+rm(list=ls())
+
+library(ergm)
+library(tergm)
+library(network)
+library(networkDynamic)
+
+source(file="update-vital-dynamics.R")
+load(file="example-estimation.RData")
+
 
 nw <- fit$network
 formation <- fit$formula
@@ -15,10 +25,7 @@ nw <- activate.edges(nw,onset=1,terminus=Inf)
 for (time in 2:timesteps) {
   
   set.seed(Sys.time())
-  # sam has no problem getting stochastically different results 
-  # without this line
   
-  ## Relational Change
   cat("Completing time step", time,
       "of", timesteps, "\n")
   
@@ -36,6 +43,11 @@ for (time in 2:timesteps) {
                  #control = control.simulate.network(MCMC.burnin=10000)
   )
   
+  nw <- update.vital.dynamics(nw,
+                              max.survival=30,
+                              daily.death.prob=0.1/100,
+                              daily.birth.rate=0.1/100
+                              )
   cat("Total number of edges is ",
       network.edgecount(nw), "\n")
   cat("Number of alive edges is ",
