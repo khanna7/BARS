@@ -6,15 +6,17 @@ update.vital.dynamics <-
            ...
   ){
     
-  
-    
     ## Update temporal attributes
        ## age
        nw%v%"age" <- nw%v%"age"+1
-
+       # "young"
+       not.young <- which(nw%v%"age" > 15)
+       set.vertex.attribute(nw, "young", 0, not.young)
     ##########################################################################   
     ## mortality
        ## by age
+       #browser()
+       age <- nw%v%"age"
        dying.of.age <- which(floor(age) == max.survival &
                               is.active(nw, v=1:network.size(nw), at=time))#26Aug13:VERYIMP
  

@@ -16,7 +16,7 @@
 rm(list=ls())
 
 N <- 5000
-duration <- 10
+duration <- 25
 theta.diss <- log(duration-1)
 n.edges <- 3000
 
@@ -31,7 +31,7 @@ set.vertex.attribute(n0, "young", 1, age.less.than.15)
 formation <- ~edges+nodemix("young", base=1)
 formation.n0 <- update.formula(formation, n0~.)
 dissolution <- ~offset(edges)
-target.stats <- c(n.edges, c(1/4*n.edges, 1/2*n.edges)) 
+target.stats <- c(n.edges, c(1/5*n.edges, 1/2*n.edges)) 
                 #50% of partnerships will be btwn "young" individuals 
 
 constraints <- ~.
