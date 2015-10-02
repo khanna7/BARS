@@ -13,6 +13,7 @@
    ## mean partnership duration = 10 timesteps
    ## simulation over 100 timesteps
 
+library(ergm)
 rm(list=ls())
 
 N <- 5000
@@ -27,6 +28,8 @@ age.less.than.15 <- which(age <= 15)
 n0%v%"young" <- rep(0, length=N)
 set.vertex.attribute(n0, "young", 1, age.less.than.15)
 
+inf.status <- rbinom(N, 1, 0.1)
+n0%v%"inf.status" <- inf.status
 
 formation <- ~edges+nodemix("young", base=1)
 formation.n0 <- update.formula(formation, n0~.)
