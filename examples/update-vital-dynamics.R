@@ -127,6 +127,7 @@ update.vital.dynamics <-
       nw <- set.vertex.attribute(nw, "time.of.birth", time, nodes.to.activate)
       nw <- set.vertex.attribute(nw, "age", 0, nodes.to.activate)
       nw <- set.vertex.attribute(nw, "young", 1, nodes.to.activate)
+      nw <- set.vertex.attribute(nw, "inf.status", 0, nodes.to.activate)
       }
     ########################################################################
     ## Compile results 
