@@ -34,7 +34,7 @@
                stop("serodiscordant partnership matrix doesn't make sense")
            }
 
-           ## compute infectivity in above partnerships
+           ## simulate transmission in above partnerships
            for (i in 1:length(transmittable.1)){
             
                if (young[transmittable.1[i]]  == young[infectible.2[i]]){
@@ -64,7 +64,7 @@
                stop("serodiscordant partnership matrix doesn't make sense")
            }
                 
-           ## compute infectivity in above partnerships
+           ## simulate transmission in above partnerships
            for (i in 1:length(transmittable.2)){
             
                if (young[transmittable.2[i]]  == young[infectible.1[i]]){
