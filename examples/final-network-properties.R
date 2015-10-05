@@ -1,4 +1,4 @@
-## test properties of network at last time step
+## test properties of networkDynamic object and the cross-sectional network at last time step
 
    nw #networkDynamic object
    last.time <- 25
