@@ -24,51 +24,62 @@
        ## discordant partnerships with "left" partner of
         ## status matrix above infected
            ## list    
-           discordant.lpos <- intersect(which(status.el[, 1] == 1),
+           discordant.1pos <- intersect(which(status.el[, 1] == 1),
                                        which(status.el[, 2] == 0))
         
-           transmittable.l <- nw.el[discordant.lpos, 1]
-           infectible.r <- nw.el[discordant.lpos, 2]
+           transmittable.1 <- nw.el[discordant.1pos, 1]
+           infectible.2 <- nw.el[discordant.1pos, 2]
 
-           if (length(transmittable.l) != length(infectible.r)){
+           if (length(transmittable.1) != length(infectible.2)){
                stop("serodiscordant partnership matrix doesn't make sense")
            }
 
            ## compute infectivity in above partnerships
-           for (i in 1:length(transmittable.l)){
+           for (i in 1:length(transmittable.1)){
             
-               if (young[transmittable.l[i]]  == young[infectible.r[i]]){
-                   transmission <- rbinom(1, 1, like.age.prob)    
+               if (young[transmittable.1[i]]  == young[infectible.2[i]]){
+                   transmission.ok <- rbinom(1, 1, like.age.prob)    
                } else {
-                   transmission <- rbinom(1, 1, unlike.age.prob)
+                   transmission.ok <- rbinom(1, 1, unlike.age.prob)
                }
 
-               if (transmission == 1){
-                   inf.status[infectible.r[i]] <- 1
-                   nw <- set.vertex.attribute(nw, "inf.status", 1, v=infectible.r[i])
-                   nw <- set.vertex.attribute(nw, "inf.time", time, v=infectible.r[i])
+               if (transmission.ok == 1){
+                   inf.status[infectible.2[i]] <- 1
+                   nw <- set.vertex.attribute(nw, "inf.status", 1, v=infectible.2[i])
+                   nw <- set.vertex.attribute(nw, "inf.time", time, v=infectible.2[i])
+                   nw <- set.vertex.attribute(nw, "infector", transmittable.1[i], v=infectible.2[i])
                }
            }
-                                    
+
        ## discordant partnerships with "right" partner of
         ## status matrix above infected
            ## list            
-           discordant.rpos <- intersect(which(status.el[, 2] == 1),
+           discordant.2pos <- intersect(which(status.el[, 2] == 1),
                                         which(status.el[, 1] == 0)
                                         )
-           transmittable.r <- nw.el[discordant.rpos, 2]
-           infectible.l    <- nw.el[discordant.rpos, 1]
+           transmittable.2 <- nw.el[discordant.2pos, 2]
+           infectible.1    <- nw.el[discordant.2pos, 1]
                 
-           if (length(transmittable.r) != length(infectible.l)){
+           if (length(transmittable.2) != length(infectible.1)){
                stop("serodiscordant partnership matrix doesn't make sense")
            }
                 
            ## compute infectivity in above partnerships
+           for (i in 1:length(transmittable.2)){
+            
+               if (young[transmittable.2[i]]  == young[infectible.1[i]]){
+                   transmission.ok <- rbinom(1, 1, like.age.prob)    
+               } else {
+                   transmission.ok <- rbinom(1, 1, unlike.age.prob)
+               }
 
-
-
-
-     
+               if (transmission.ok == 1){
+                   inf.status[infectible.1[i]] <- 1
+                   nw <- set.vertex.attribute(nw, "inf.status", 1, v=infectible.1[i])
+                   nw <- set.vertex.attribute(nw, "inf.time", time, v=infectible.1[i])
+                   nw <- set.vertex.attribute(nw, "infector", transmittable.2[i], v=infectible.1[i])
+               }
+           }
 
       return(nw);
       }
