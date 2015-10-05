@@ -7,6 +7,7 @@ library(network)
 library(networkDynamic)
 
 source(file="update-vital-dynamics.R")
+source(file="model-transmission.R")
 load(file="example-estimation.RData")
 
 
@@ -52,6 +53,18 @@ for (time in 2:timesteps) {
       network.edgecount(nw), "\n")
   cat("Number of alive edges is ",
       network.edgecount(network.extract(nw, at=time)),
-      "\n\n") 
+      "\n") 
+
+  nw <- transmission(nw, verbose=TRUE,
+                     like.age.prob=10/100,
+                     unlike.age.prob=20/100,
+                     )
+
+  xn.nw <- network.collapse(nw, at=time)
+  infected <- which(nw%v%"inf.status" == 1)
+  xn.infected <- which(xn.nw%v%"inf.status" == 1)
+  
+  cat("Number of infected individuals, dead or alive, is ", length(infected), "\n")
+  cat("Number of infected individuals, ALIVE, is ", length(xn.infected), "\n", "\n")
   
 }
