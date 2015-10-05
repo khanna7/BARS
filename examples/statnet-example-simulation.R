@@ -7,6 +7,7 @@ library(network)
 library(networkDynamic)
 
 source(file="update-vital-dynamics.R")
+source(file="model-transmission.R")
 load(file="example-estimation.RData")
 
 
@@ -43,26 +44,6 @@ for (time in 2:timesteps) {
                  #control = control.simulate.network(MCMC.burnin=10000)
   )
   
-  #############################################################
-  nw #networkDynamic object
-  
-  ## Nodal attributes and edgelist on cross-sectional network
-  xn.net <- network.collapse(nw, at=time) 
-             #obtain cross-sectional network slice
-  xn.net #info on cross-sectional network slice
-  xn.vertex.att.list <- list.vertex.attributes(xn.net) 
-           #vertex attributes list
-  xn.att <- lapply(xn.vertex.att.list, function (x) xn.net%v%x) 
-           # values of each vertex attribute
-  xn.el <- as.edgelist(xn.net)
-           #edgelist of cross-sectional network
-  
-  ## Nodal attributes and edgelist on full network
-  nw.el <- as.edgelist(nw) 
-  nw.vertex.att.list <- list.vertex.attributes(nw)
-  nw.att <- lapply(nw.vertex.att.list, function (x) nw%v%x)
-  #############################################################
-  
   nw <- update.vital.dynamics(nw,
                               max.survival=50,
                               daily.death.prob=0.01/100,
@@ -72,6 +53,18 @@ for (time in 2:timesteps) {
       network.edgecount(nw), "\n")
   cat("Number of alive edges is ",
       network.edgecount(network.extract(nw, at=time)),
-      "\n\n") 
+      "\n") 
+
+  nw <- transmission(nw, verbose=TRUE,
+                     like.age.prob=10/100,
+                     unlike.age.prob=20/100,
+                     )
+
+  xn.nw <- network.collapse(nw, at=time)
+  infected <- which(nw%v%"inf.status" == 1)
+  xn.infected <- which(xn.nw%v%"inf.status" == 1)
+  
+  cat("Number of infected individuals, dead or alive, is ", length(infected), "\n")
+  cat("Number of infected individuals, ALIVE, is ", length(xn.infected), "\n", "\n")
   
 }
