@@ -1,0 +1,85 @@
+c_source :=
+cpp_source :=
+
+CXX = clang++
+CXXLD = clang++
+CC = clang
+
+CXX_RELEASE_FLAGS = -Wall -O3 -g0 -std=c++11
+CXX_DEBUG_FLAGS = -O0 -g3 -std=c++11
+
+C_RELEASE_FLAGS = -Wall -O3 -g0 
+C_DEBUG_FLAGS = -Wall -O0 -g3
+
+CXX_FLAGS = $(CXX_RELEASE_FLAGS)
+C_FLAGS = $(C_RELEASE_FLAGS)
+
+INCLUDES :=
+LIBS :=
+RPATHS :=
+
+R_HOME = /Library/Frameworks/R.framework/Versions/3.2/Resources
+#R_USER_LIBS = ~/Library/R/3.2/library
+R_USER_LIBS = /Library/Frameworks/R.framework/Versions/3.2/Resources/library
+
+INCLUDES += -I $(R_HOME)/include
+INCLUDES += -I $(R_USER_LIBS)/RInside/include
+INCLUDES += -I $(R_USER_LIBS)/Rcpp/include
+INCLUDES += -I ../src
+
+LIBS += -L $(R_USER_LIBS)/RInside/lib -l RInside
+LIBS += -L $(R_HOME)/lib -l R
+
+RPATHS += -Wl,-rpath -Wl,$(R_USER_LIBS)/RInside/lib
+RPATHS += -Wl,-rpath -Wl,$(R_HOME)/lib/R/lib
+
+SRC_DIR=../src
+BUILD_DIR = ./build
+
+include ../src/module.mk
+
+#SRC = $(addprefix ../src/, $(sources))
+OBJECTS :=
+OBJECTS += $(subst .cpp,.o, $(addprefix $(BUILD_DIR)/, $(cpp_source)))
+OBJECTS += $(subst .c,.o, $(addprefix $(BUILD_DIR)/, $(c_source)))
+DEPS = $(subst .o,.d,$(OBJECTS))
+
+VPATH = ../src
+
+VERSION = 0.0
+NAME = transmission_model-$(VERSION)
+
+SED := sed
+MV := mv -f
+
+.PHONY: all transmission_model
+
+all: transmission_model
+
+transmission_model : $(DEPS) $(OBJECTS)
+	echo $(OBJECTS)
+	$(CXXLD) $(filter-out %.d, $^) $(OBJS) $(LIBS) $(RPATHS) -o $(NAME)
+	
+$(BUILD_DIR)/%.o : %.cpp
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -c $< -o $@
+	
+$(BUILD_DIR)/%.o : %.c
+	$(CC) $(C_FLAGS) $(INCLUDES) -c $< -o $@
+
+$(BUILD_DIR)/%.d : %.cpp
+	@-mkdir -p $(dir $@)
+	@echo Calculating dependencies for $<
+	@$(CXX) $(CPPFLAGS) $(INCLUDES) -M $< | \
+	$(SED) 's,\($(notdir $*)\.o\) *:,$(dir $@)\1 $@: ,' > $@.tmp
+	@$(MV) $@.tmp $@
+	
+$(BUILD_DIR)/%.d : %.c
+	@-mkdir -p $(dir $@)
+	@echo Calculating dependencies for $<
+	@$(CC) $(C_FLAGS) $(INCLUDES) -M $< | \
+	$(SED) 's,\($(notdir $*)\.o\) *:,$(dir $@)\1 $@: ,' > $@.tmp
+	@$(MV) $@.tmp $@
+
+clean:
+	rm -fv $(NAME)
+	rm -rf $(BUILD_DIR)

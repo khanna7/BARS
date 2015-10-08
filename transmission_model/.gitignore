@@ -1,0 +1,6 @@
+/.cproject
+/.project
+/Release/
+/.settings/
+*.o
+Debug
