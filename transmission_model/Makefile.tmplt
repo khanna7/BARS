@@ -1,8 +1,8 @@
 c_source :=
 cpp_source :=
 
-CXX = clang++
-CXXLD = clang++
+CXX = /usr/local/bin/mpicxx
+CXXLD = /usr/local/bin/mpicxx
 CC = clang
 
 CXX_RELEASE_FLAGS = -Wall -O3 -g0 -std=c++11
@@ -22,13 +22,25 @@ R_HOME = /Library/Frameworks/R.framework/Versions/3.2/Resources
 #R_USER_LIBS = ~/Library/R/3.2/library
 R_USER_LIBS = /Library/Frameworks/R.framework/Versions/3.2/Resources/library
 
+REPAST_LIB_DIR = /Users/nick/bin/repast_hpc/lib
+REPAST_LIB = repast_hpc-2.1
+REPAST_INCLUDE = /Users/nick/bin/repast_hpc/include
+
+BOOST_INCLUDE = /usr/local/include
+BOOST_LIB_DIR = /usr/local/lib
+BOOST_LIBS = -lboost_mpi-mt -lboost_system-mt -lboost_filesystem-mt
+
 INCLUDES += -I $(R_HOME)/include
 INCLUDES += -I $(R_USER_LIBS)/RInside/include
 INCLUDES += -I $(R_USER_LIBS)/Rcpp/include
+INCLUDES += -I $(REPAST_INCLUDE)
+INCLUDES += -I $(BOOST_INCLUDE)
 INCLUDES += -I ../src
 
 LIBS += -L $(R_USER_LIBS)/RInside/lib -l RInside
 LIBS += -L $(R_HOME)/lib -l R
+LIBS += -L $(REPAST_LIB_DIR) -l$(REPAST_LIB)
+LIBS += -L $(BOOST_LIB_DIR) $(BOOST_LIBS)
 
 RPATHS += -Wl,-rpath -Wl,$(R_USER_LIBS)/RInside/lib
 RPATHS += -Wl,-rpath -Wl,$(R_HOME)/lib/R/lib
@@ -56,8 +68,9 @@ MV := mv -f
 
 all: transmission_model
 
+-include $(DEPS)
+
 transmission_model : $(DEPS) $(OBJECTS)
-	echo $(OBJECTS)
 	$(CXXLD) $(filter-out %.d, $^) $(OBJS) $(LIBS) $(RPATHS) -o $(NAME)
 	
 $(BUILD_DIR)/%.o : %.cpp

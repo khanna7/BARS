@@ -1,0 +1,6 @@
+random.seed = 1
+
+r.file = ../r/transmission_model.R
+
+like.age.prob = 0.1
+unlike.age.prob = 0.2
