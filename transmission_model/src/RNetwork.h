@@ -8,9 +8,12 @@
 #ifndef SRC_RNETWORK_H_
 #define SRC_RNETWORK_H_
 
+#include <memory>
+
 #include "boost/iterator/filter_iterator.hpp"
 #include "boost/iterator/transform_iterator.hpp"
-#include "Rcpp.h"
+
+#include "RInside.h"
 
 namespace TransModel {
 
@@ -38,10 +41,13 @@ typedef boost::transform_iterator<MELToEdgePair, std::pair<int, int> > EdgeItera
 class RNetwork {
 
 private:
+	std::shared_ptr<RInside> r_ptr_;
+	std::string net_name_;
 	Rcpp::List net;
+	Rcpp::Function simulate_;
 
 public:
-	RNetwork(Rcpp::List network);
+	RNetwork(std::shared_ptr<RInside>& r_ptr, const std::string& net_name);
 
 	virtual ~RNetwork();
 
@@ -56,9 +62,11 @@ public:
 
 	int getVertexCount() const;
 
+	void simulate();
+
 	Rcpp::List edgeList();
 
-	void updateRNetwork(SEXP network);
+	void updateRNetwork();
 };
 
 template <typename T>

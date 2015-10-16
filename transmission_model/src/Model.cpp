@@ -24,8 +24,8 @@ const std::string UNLIKE_AGE_BINOMIAL = "unlike.age.binomial";
 
 typedef boost::variate_generator<boost::mt19937&, boost::binomial_distribution<>> BinomialGen;
 
-Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) : R(ri), persons(), net(), net_var_(net_var) {
-	net = make_shared<RNetwork>(as<List>((*R)[net_var]));
+Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) : R(ri), persons(), net() {
+	net = make_shared<RNetwork>(ri, net_var);
 
 	for (int i = 0; i < net->getVertexCount(); ++i) {
 		PersonPtr p = make_shared<Person>(i, net);
@@ -55,14 +55,13 @@ void infection_draw(PersonPtr infectee, PersonPtr infector, double like_age_prob
 }
 
 void Model::run() {
-	Function simulate = (*R)["nw_simulate"];
 	double like_age_prob = Parameters::instance()->getDoubleParameter(LIKE_AGE_PROB);
 	double unlike_age_prob = Parameters::instance()->getDoubleParameter(UNLIKE_AGE_PROB);
 	for (int t = 2; t < 20; ++t) {
 		std::cout << "t: " << t << " simulating" << std::endl;
 		(*R)["time"] = t;
-	    simulate();
-	    net->updateRNetwork((*R)[net_var_]);
+	    net->simulate();
+	    net->updateRNetwork();
 	    std::cout << "t: " << t << " transmitting" << std::endl;
 	    runTransmission(t, like_age_prob, unlike_age_prob);
 	}

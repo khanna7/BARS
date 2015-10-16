@@ -8,11 +8,12 @@
 #include "RNetwork.h"
 
 using namespace Rcpp;
+using namespace std;
 
 namespace TransModel {
 
-RNetwork::RNetwork(List network) : net(network) {
-
+RNetwork::RNetwork(shared_ptr<RInside>& r_ptr, const string& net_name) : r_ptr_(r_ptr), net_name_(net_name),
+		net(as<List>((*r_ptr)[net_name])), simulate_((*r_ptr)["nw_simulate"]) {
 }
 
 RNetwork::~RNetwork() {
@@ -26,8 +27,12 @@ List RNetwork::edgeList() {
 	return as<List>(net["mel"]);
 }
 
-void RNetwork::updateRNetwork(SEXP network) {
-		net = as<List>(network);
-	}
+void RNetwork::updateRNetwork() {
+	net = as<List>((*r_ptr_)[net_name_]);
+}
+
+void RNetwork::simulate() {
+	simulate_();
+}
 
 } /* namespace TransModel */

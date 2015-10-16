@@ -26,7 +26,6 @@ private:
 	std::shared_ptr<RInside> R;
 	std::vector<PersonPtr> persons;
 	std::shared_ptr<RNetwork> net;
-	std::string net_var_;
 
 	void runTransmission(double timestamp, double like_age_prob, double unlike_age_prob);
 
