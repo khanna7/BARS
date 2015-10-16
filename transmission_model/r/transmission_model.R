@@ -5,6 +5,8 @@ suppressMessages(library(tergm))
 suppressMessages(library(network))
 suppressMessages(library(networkDynamic))
 
+set.seed(1)
+
 N <- 5000
 duration <- 25
 theta.diss <- log(duration-1)
@@ -45,10 +47,27 @@ popsize <- network.size(nw)
 nw <- activate.vertices(nw,onset=1,terminus=Inf)
 nw <- activate.edges(nw,onset=1,terminus=Inf)
 
+nw.active <- network.extract(nw,
+                at = 1,
+                retain.all.vertices = T)
+
+# holds any code that I want to call from 
+# C++ to make sure changes there are being
+# reflected here.
+nw_debug <- function() {
+  #print(nw.active$val[[1]]$age)
+  print(nw$val[[1]]$age)
+  #nw.active <<- network.extract(nw,at = 2, retain.all.vertices = T)
+  age <- nw$val[[1]]$age
+  nw <<- set.vertex.attribute(nw, "age", age + 1, v=c(1))
+  #print(nw.active$val[[1]]$age)
+  print(nw$val[[1]]$age)
+} 
+
 nw_simulate <-
   function() {
     #print("sim start")
-    nw <- simulate(nw,
+    nw <<- simulate(nw,
                    formation = formation, 
                    dissolution = dissolution,
                    coef.form = theta.form, 
