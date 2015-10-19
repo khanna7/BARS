@@ -10,33 +10,36 @@
 
 #include <memory>
 
-#include "boost/iterator/filter_iterator.hpp"
-#include "boost/iterator/transform_iterator.hpp"
-
 #include "RInside.h"
 
 namespace TransModel {
 
 
-struct MELToEdgePair : public std::unary_function<std::pair<int, int>, SEXP> {
-	std::pair<int, int> operator()(SEXP exp) {
-		Rcpp::List mel_item = Rcpp::as<Rcpp::List>(exp);
-		return std::make_pair((Rcpp::as<Rcpp::IntegerVector>(mel_item["outl"]))[0],
-				(Rcpp::as<Rcpp::IntegerVector>(mel_item["inl"]))[0]);
-	}
-};
-
-struct IsActiveEdge {
-	bool operator()(SEXP exp) {
-		Rcpp::List mel_item = Rcpp::as<Rcpp::List>(exp);
-		Rcpp::List atl = Rcpp::as<Rcpp::List>(mel_item["atl"]);
-		return !(Rcpp::as<Rcpp::LogicalVector>(atl["na"]))[0];
-	}
-};
+//struct MELToEdgePair : public std::unary_function<std::pair<int, int>, SEXP> {
+//	std::pair<int, int> operator()(SEXP exp) {
+//		Rcpp::List mel_item = Rcpp::as<Rcpp::List>(exp);
+//		return std::make_pair((Rcpp::as<Rcpp::IntegerVector>(mel_item["outl"]))[0],
+//				(Rcpp::as<Rcpp::IntegerVector>(mel_item["inl"]))[0]);
+//	}
+//};
 
 
-typedef boost::filter_iterator<IsActiveEdge, Rcpp::List::iterator> EdgeFilterIter;
-typedef boost::transform_iterator<MELToEdgePair, std::pair<int, int> > EdgeIterator;
+/**
+ * Gets whether or not the edge is active at the specified time. Returns
+ * true if 'at' is within _any_ of the edges activity spells. If the edges
+ * activity spell matrix is null, then 'default_active' is returned.
+ *
+ * @param edge the edge
+ * @param at the time to check if the edge is active at
+ * @param default_active the value to return if the edge's
+ * activity matrix is null.
+ */
+bool is_edge_active(SEXP edge, double at, bool default_active);
+
+
+
+//typedef boost::filter_iterator<IsActiveEdge, Rcpp::List::iterator> EdgeFilterIter;
+//typedef boost::transform_iterator<MELToEdgePair, std::pair<int, int> > EdgeIterator;
 
 class RNetwork {
 

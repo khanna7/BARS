@@ -69,11 +69,10 @@ void Model::run() {
 
 void Model::runTransmission(double ts, double like_age_prob, double unlike_age_prob) {
 	vector<int> infected_idxs;
-	IsActiveEdge isActive;
+
 	List edgeList = net->edgeList();
 	for (auto& item : edgeList) {
-
-		if (isActive(item)) {
+		if (is_edge_active(item, ts, false)) {
 			Rcpp::List mel_item = Rcpp::as<Rcpp::List>(item);
 			// -1 because R list start at 1
 			int out_idx = (Rcpp::as<Rcpp::IntegerVector>(mel_item["outl"]))[0] - 1;
