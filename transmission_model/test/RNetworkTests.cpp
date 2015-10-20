@@ -14,6 +14,9 @@ using namespace std;
 
 namespace TransModel {
 
+// R has to be global within this unit as it
+// doesn't cleanup propertly when initialized within
+// a method / function.
 shared_ptr<RInside> r = make_shared<RInside>();
 
 TEST(NetworkTests, TestNetworkAttributes) {
