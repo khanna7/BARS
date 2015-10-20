@@ -36,6 +36,16 @@ namespace TransModel {
  */
 bool is_edge_active(SEXP edge, double at, bool default_active);
 
+/**
+ * Gets the R-style (starts with 1) index of incoming vertex of the edge.
+ */
+int  edge_in_idx(SEXP edge);
+
+/**
+ * Gets the R-style (starts with 1) index of outgoing vertex of the edge.
+ */
+int  edge_out_idx(SEXP edge);
+
 
 
 //typedef boost::filter_iterator<IsActiveEdge, Rcpp::List::iterator> EdgeFilterIter;

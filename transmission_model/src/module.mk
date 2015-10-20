@@ -1,8 +1,8 @@
 C_SOURCE = access.c \
 	utils.c
 
-CPP_SOURCE = main.cpp \
-	Person.cpp \
+# do not include main here
+CPP_SOURCE = Person.cpp \
 	RNetwork.cpp \
 	Model.cpp \
 	Parameters.cpp

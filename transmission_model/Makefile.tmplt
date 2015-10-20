@@ -1,6 +1,8 @@
 c_source :=
 cpp_source :=
 
+test_src :=
+
 CXX = /usr/local/bin/mpicxx
 CXXLD = /usr/local/bin/mpicxx
 CC = clang
@@ -37,6 +39,10 @@ INCLUDES += -I $(REPAST_INCLUDE)
 INCLUDES += -I $(BOOST_INCLUDE)
 INCLUDES += -I ../src
 
+GTEST_HOME = /Users/nick/bin/googletest
+GTEST_LIB = $(GTEST_HOME)/libgtest.a
+TEST_INCLUDES = $(INCLUDES) -I $(GTEST_HOME)/include
+
 LIBS += -L $(R_USER_LIBS)/RInside/lib -l RInside
 LIBS += -L $(R_HOME)/lib -l R
 LIBS += -L $(REPAST_LIB_DIR) -l$(REPAST_LIB)
@@ -49,32 +55,47 @@ SRC_DIR=../src
 BUILD_DIR = ./build
 
 include ../src/module.mk
+include ../test/module.mk
 
-#SRC = $(addprefix ../src/, $(sources))
+# objects used by both executable and tests
 OBJECTS :=
 OBJECTS += $(subst .cpp,.o, $(addprefix $(BUILD_DIR)/, $(cpp_source)))
 OBJECTS += $(subst .c,.o, $(addprefix $(BUILD_DIR)/, $(c_source)))
-DEPS = $(subst .o,.d,$(OBJECTS))
 
-VPATH = ../src
+# objects and deps for executable
+EXEC_OBJECTS := $(OBJECTS)
+EXEC_OBJECTS += $(BUILD_DIR)/main.o
+EXEC_DEPS = $(subst .o,.d,$(EXEC_OBJECTS))
+
+TEST_OBJECTS := $(OBJECTS)
+TEST_OBJECTS += $(subst .cpp,.o, $(addprefix $(BUILD_DIR)/, $(test_src)))
+TEST_OBJECTS += $(BUILD_DIR)/test_main.o
+TEST_DEPS = $(subst .o,.d,$(TEST_OBJECTS))
+
+VPATH = ../src ../test
 
 VERSION = 0.0
 NAME = transmission_model-$(VERSION)
+TEST_NAME = unit_tests
 
 SED := sed
 MV := mv -f
 
-.PHONY: all transmission_model
+-include $(EXEC_DEPS)
+-include $(TEST_DEPS)
 
-all: transmission_model
+.PHONY: all transmission_model tests
 
--include $(DEPS)
+all: transmission_model tests
 
-transmission_model : $(DEPS) $(OBJECTS)
-	$(CXXLD) $(filter-out %.d, $^) $(OBJS) $(LIBS) $(RPATHS) -o $(NAME)
+transmission_model : $(EXEC_DEPS) $(EXEC_OBJECTS)
+	$(CXXLD) $(filter-out %.d, $^)  $(LIBS) $(RPATHS) -o $(NAME)
+	
+tests : $(TEST_DEPS) $(TEST_OBJECTS)
+	$(CXXLD) $(filter-out %.d, $^) $(LIBS) $(RPATHS) $(GTEST_LIB) -o $(TEST_NAME)
 	
 $(BUILD_DIR)/%.o : %.cpp
-	$(CXX) $(CXX_FLAGS) $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) $(TEST_INCLUDES) -c $< -o $@
 	
 $(BUILD_DIR)/%.o : %.c
 	$(CC) $(C_FLAGS) $(INCLUDES) -c $< -o $@
@@ -82,7 +103,7 @@ $(BUILD_DIR)/%.o : %.c
 $(BUILD_DIR)/%.d : %.cpp
 	@-mkdir -p $(dir $@)
 	@echo Calculating dependencies for $<
-	@$(CXX) $(CPPFLAGS) $(INCLUDES) -M $< | \
+	@$(CXX) $(CPPFLAGS) $(INCLUDES) $(TEST_INCLUDES) -M $< | \
 	$(SED) 's,\($(notdir $*)\.o\) *:,$(dir $@)\1 $@: ,' > $@.tmp
 	@$(MV) $@.tmp $@
 	
@@ -94,5 +115,5 @@ $(BUILD_DIR)/%.d : %.c
 	@$(MV) $@.tmp $@
 
 clean:
-	rm -fv $(NAME)
+	rm -fv $(NAME) $(TEST_NAME)
 	rm -rf $(BUILD_DIR)

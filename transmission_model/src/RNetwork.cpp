@@ -46,6 +46,13 @@ bool is_edge_active(SEXP exp, double at, bool default_active) {
 	return false;
 }
 
+int edge_in_idx(SEXP edge) {
+	return (as<IntegerVector>(as<List>(edge)["inl"]))[0];
+}
+int edge_out_idx(SEXP edge) {
+	return (as<IntegerVector>(as<List>(edge)["outl"]))[0];
+}
+
 RNetwork::RNetwork(shared_ptr<RInside>& r_ptr, const string& net_name) :
 		r_ptr_(r_ptr), net_name_(net_name), net(as<List>((*r_ptr)[net_name])), simulate_((*r_ptr)["nw_simulate"]) {
 }
