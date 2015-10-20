@@ -14,3 +14,8 @@ activate.edges(triangle,at=1)
 # edge(1,2) from 2 up to 3
 activate.edges(triangle, onset=2, terminus=3, 
                 e=get.edgeIDs(triangle, v=1, alter=2))
+
+activate.edges(triangle, onset=2, terminus=3, 
+               e=get.edgeIDs(triangle, v=1, alter=2))
+
+activate.vertices(triangle, onset=1, terminus=5, v=1)

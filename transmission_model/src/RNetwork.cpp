@@ -16,17 +16,16 @@ const int ONSET = 0;
 const int TERMINUS = 1;
 
 // based on networkDynamic is.active.c implementation
-bool is_edge_active(SEXP exp, double at, bool default_active) {
-	Rcpp::List mel_item = Rcpp::as<Rcpp::List>(exp);
-	Rcpp::List atl = Rcpp::as<Rcpp::List>(mel_item["atl"]);
-	// return false if edge is "na"
+bool is_active(List atl, double at, bool default_active) {
+	// return false if atl is "na"
 	if (Rcpp::as<Rcpp::LogicalVector>(atl["na"])[0])
 		return false;
 
-	SEXP spell_list = atl["active"];
-	if (Rf_isNull(spell_list))
+	if (!atl.containsElementNamed("active")) {
 		return default_active;
+	}
 
+	SEXP spell_list = atl["active"];
 	NumericMatrix spell_matrix = as<NumericMatrix>(spell_list);
 	if (spell_matrix(0, ONSET) == R_NegInf && spell_matrix(0, TERMINUS) == R_PosInf)
 		return true;
@@ -44,6 +43,17 @@ bool is_edge_active(SEXP exp, double at, bool default_active) {
 		}
 	}
 	return false;
+}
+
+bool is_edge_active(SEXP edge, double at, bool default_active) {
+	Rcpp::List mel_item = Rcpp::as<Rcpp::List>(edge);
+	Rcpp::List atl = Rcpp::as<Rcpp::List>(mel_item["atl"]);
+	return is_active(atl, at, default_active);
+}
+
+bool is_vertex_active(SEXP vertex, double at, bool default_active) {
+	Rcpp::List atl = Rcpp::as<Rcpp::List>(vertex);
+	return is_active(atl, at, default_active);
 }
 
 int edge_in_idx(SEXP edge) {
@@ -66,6 +76,10 @@ int RNetwork::getVertexCount() const {
 
 List RNetwork::edgeList() {
 	return as<List>(net["mel"]);
+}
+
+List RNetwork::vertexList() {
+	return as<List>(net["val"]);
 }
 
 void RNetwork::updateRNetwork() {

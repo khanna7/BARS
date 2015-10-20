@@ -25,16 +25,30 @@ namespace TransModel {
 
 
 /**
- * Gets whether or not the edge is active at the specified time. Returns
- * true if 'at' is within _any_ of the edges activity spells. If the edges
- * activity spell matrix is null, then 'default_active' is returned.
+ * Gets whether or not the edge is active at the
+ * specified time. Returns true if 'at' is within _any_ of the edges activity
+ * spells. If the edges activity spell matrix is null, then 'default_active' is
+ * returned.
  *
  * @param edge the edge
  * @param at the time to check if the edge is active at
  * @param default_active the value to return if the edge's
  * activity matrix is null.
  */
-bool is_edge_active(SEXP edge, double at, bool default_active);
+bool is_edge_active(SEXP attribute_list, double at, bool default_active);
+
+/**
+ * Gets whether or not the vertex is active at the
+ * specified time. Returns true if 'at' is within _any_ of the vertex's activity
+ * spells. If the vertex's activity spell matrix is null, then 'default_active' is
+ * returned.
+ *
+ * @param vertex the vertex
+ * @param at the time to check if the edge is active at
+ * @param default_active the value to return if the vertex
+ * activity matrix is null.
+ */
+bool is_vertex_active(SEXP vertex, double at, bool default_active);
 
 /**
  * Gets the R-style (starts with 1) index of incoming vertex of the edge.
@@ -78,6 +92,8 @@ public:
 	void simulate();
 
 	Rcpp::List edgeList();
+
+	Rcpp::List vertexList();
 
 	void updateRNetwork();
 };

@@ -30,6 +30,33 @@ TEST(NetworkTests, TestNetworkAttributes) {
 	ASSERT_EQ(18, r_net.getVertexAttribute<int>(2, "age"));
 }
 
+TEST(NetworkTests, VertexActivity) {
+	std::string cmd = "source(file=\"../test_data/is_active_test.R\")";
+	r->parseEvalQ(cmd);
+
+	RNetwork r_net(r, "triangle");
+
+	SEXP v1(r_net.vertexList()[0]);
+	SEXP v2(r_net.vertexList()[1]);
+	SEXP v3(r_net.vertexList()[2]);
+
+	for (int i = 1; i < 5; ++i) {
+		ASSERT_TRUE(is_vertex_active(v1, i, false));
+		// v2 and v3 have no spell list so should be inactive
+		ASSERT_FALSE(is_vertex_active(v2, i, false));
+		ASSERT_FALSE(is_vertex_active(v3, i, false));
+	}
+
+	// spell from (1 to 5)
+	ASSERT_FALSE(is_vertex_active(v1, 5, false));
+	// v2 and v3 have no spell list so should be inactive
+	ASSERT_FALSE(is_vertex_active(v2, 5, false));
+	ASSERT_FALSE(is_vertex_active(v3, 5, false));
+	// should be true because no spell list but default_activity
+	// is now true
+	ASSERT_TRUE(is_vertex_active(v3, 5, true));
+}
+
 TEST(NetworkTests, TestEdges) {
 	std::string cmd = "source(file=\"../test_data/is_active_test.R\")";
 	r->parseEvalQ(cmd);
