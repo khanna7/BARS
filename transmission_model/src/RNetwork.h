@@ -50,6 +50,15 @@ bool is_edge_active(SEXP attribute_list, double at, bool default_active);
  */
 bool is_vertex_active(SEXP vertex, double at, bool default_active);
 
+void activate_vertex(SEXP vertex, double onset, double terminus);
+
+void deactivate_vertex(SEXP vertex, double onset, double terminus);
+
+void activate_edge(SEXP edge, double onset, double terminus);
+
+void deactivate_edge(SEXP edge, double onset, double terminus);
+
+
 /**
  * Gets the R-style (starts with 1) index of incoming vertex of the edge.
  */

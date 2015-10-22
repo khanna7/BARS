@@ -5,15 +5,19 @@
  *      Author: nick
  */
 
+#include <exception>
+
 #include "RNetwork.h"
+#include "spell_functions.h"
+
+//extern "C" {
+#include "nd_spell_functions.h"
+//}
 
 using namespace Rcpp;
 using namespace std;
 
 namespace TransModel {
-
-const int ONSET = 0;
-const int TERMINUS = 1;
 
 // based on networkDynamic is.active.c implementation
 bool is_active(List atl, double at, bool default_active) {
@@ -27,33 +31,114 @@ bool is_active(List atl, double at, bool default_active) {
 
 	SEXP spell_list = atl["active"];
 	NumericMatrix spell_matrix = as<NumericMatrix>(spell_list);
-	if (spell_matrix(0, ONSET) == R_NegInf && spell_matrix(0, TERMINUS) == R_PosInf)
-		return true;
-
-	for (int i = spell_matrix.rows() - 1; i >= 0; --i) {
-		if (spell_matrix(i, ONSET) == R_PosInf)
-			continue;
-		if (spell_matrix(i, ONSET) == spell_matrix(i, TERMINUS)) {
-			if (at == spell_matrix(i, ONSET))
-				return true;
-		} else if (spell_matrix(i, TERMINUS) == R_PosInf && spell_matrix(i, ONSET) == R_PosInf) {
-			return true;
-		} else if (spell_matrix(i, ONSET) <= at && at < spell_matrix(i, TERMINUS)) {
-			return true;
-		}
-	}
-	return false;
+	return any_spell_active(spell_matrix, at);
 }
 
 bool is_edge_active(SEXP edge, double at, bool default_active) {
-	Rcpp::List mel_item = Rcpp::as<Rcpp::List>(edge);
-	Rcpp::List atl = Rcpp::as<Rcpp::List>(mel_item["atl"]);
+	Rcpp::List edge_as_list = Rcpp::as<Rcpp::List>(edge);
+	Rcpp::List atl = Rcpp::as<Rcpp::List>(edge_as_list["atl"]);
 	return is_active(atl, at, default_active);
 }
 
 bool is_vertex_active(SEXP vertex, double at, bool default_active) {
 	Rcpp::List atl = Rcpp::as<Rcpp::List>(vertex);
 	return is_active(atl, at, default_active);
+}
+
+bool is_infinite(double val) {
+	return val == R_PosInf || val == R_NegInf;
+}
+
+void activate_vertex(SEXP vertex, double onset, double terminus) {
+	if (onset == R_PosInf || terminus == R_NegInf)
+		return;
+
+	if (onset > terminus) {
+		throw invalid_argument("onset must be less than or equal to terminus when deactivating a spell.");
+	}
+
+	Rcpp::List atl = Rcpp::as<Rcpp::List>(vertex);
+	// don't activate if "na"
+	if (Rcpp::as<Rcpp::LogicalVector>(atl["na"])[0]) {
+		return;
+	}
+
+	SEXP old_active(R_NilValue);
+	if (atl.containsElementNamed("active")) {
+		old_active = atl["active"];
+		// if vertex is already infinitely active then return
+		if (old_active(0, ONSET) == R_NegInf && old_active(0, TERMINUS) == R_PosInf) {
+			return;
+		}
+	}
+
+	SEXP new_active = InsertSpell(old_active, onset, terminus, Rboolean(false));
+	atl["active"] = new_active;
+}
+
+void deactivate(List atl, List parent, double onset, double terminus) {
+	if (Rcpp::as<Rcpp::LogicalVector>(atl["na"])[0]) {
+		return;
+	}
+
+	if (onset > terminus) {
+		throw invalid_argument("onset must be less than or equal to terminus when deactivating a spell.");
+	}
+
+	if (is_infinite(onset) && is_infinite(terminus)) {
+		atl["active"] = create_matrix(1, 2, { R_PosInf, R_PosInf });
+	} else if (!atl.containsElementNamed("active")) {
+		if (is_infinite(onset)) {
+			atl["active"] = create_matrix(1, 2, { terminus, R_PosInf });
+		} else if (is_infinite(terminus)) {
+			atl["active"] = create_matrix(1, 2, { R_NegInf, onset });
+		} else {
+			atl["active"] = create_matrix(2, 2, { R_NegInf, terminus, onset, R_PosInf });
+		}
+		// adding the "active" element creates a new atl for some reason
+		// so the new atl has to be attached back to the parent
+		parent["atl"] = atl;
+	} else {
+		NumericMatrix spell_matrix(as<NumericMatrix>(atl["active"]));
+		atl["active"] = delete_spell(spell_matrix, onset, terminus);
+		parent["atl"] = atl;
+	}
+}
+
+void activate_edge(SEXP edge, double onset, double terminus) {
+	if (onset == R_PosInf || terminus == R_NegInf)
+		return;
+	if (onset > terminus) {
+		throw invalid_argument("onset must be less than or equal to terminus when deactivating a spell.");
+	}
+
+	Rcpp::List edge_as_list = Rcpp::as<Rcpp::List>(edge);
+	Rcpp::List atl = Rcpp::as<Rcpp::List>(edge_as_list["atl"]);
+
+	// don't activate if "na"
+	if (Rcpp::as<Rcpp::LogicalVector>(atl["na"])[0]) {
+		return;
+	}
+
+	SEXP old_active(R_NilValue);
+	if (atl.containsElementNamed("active")) {
+		old_active = atl["active"];
+	}
+	SEXP new_active = InsertSpell(old_active, onset, terminus, Rboolean(false));
+	atl["active"] = new_active;
+	edge_as_list["atl"] = atl;
+}
+
+void deactivate_vertex(SEXP vertex, SEXP vertex_attribute_list, double onset, double terminus) {
+	List atl = as<List>(vertex);
+	List parent = as<List>(vertex_attribute_list);
+	deactivate(atl, parent, onset, terminus);
+}
+
+void deactivate_edge(SEXP edge, double onset, double terminus) {
+	Rcpp::List edge_as_list = Rcpp::as<Rcpp::List>(edge);
+	Rcpp::List atl = Rcpp::as<Rcpp::List>(edge_as_list["atl"]);
+	deactivate(atl, edge_as_list, onset, terminus);
 }
 
 int edge_in_idx(SEXP edge) {
