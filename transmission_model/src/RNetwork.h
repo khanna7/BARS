@@ -50,9 +50,15 @@ bool is_edge_active(SEXP attribute_list, double at, bool default_active);
  */
 bool is_vertex_active(SEXP vertex, double at, bool default_active);
 
-void activate_vertex(SEXP vertex, double onset, double terminus);
+/**
+ * Activates the specified vertex for the specified time period. The
+ * SEXP representing the vertex may change as a result of setting the
+ * spell, the vertex attribute list (val) is updated to reflect this, and
+ * the new vertex List is returned.
+ */
+Rcpp::List activate_vertex(SEXP vertex_attribute_list, int vertex_idx, SEXP vertex, double onset, double terminus);
 
-void deactivate_vertex(SEXP vertex, double onset, double terminus);
+Rcpp::List deactivate_vertex(SEXP vertex_attribute_list, int vertex_idx, SEXP vertex, double onset, double terminus);
 
 void activate_edge(SEXP edge, double onset, double terminus);
 
@@ -96,6 +102,14 @@ public:
 	template <typename T>
 	T getNetworkAttribute(const std::string& attribute) const;
 
+	Rcpp::List activateVertex(int vertex_idx, double onset, double terminus);
+
+	Rcpp::List activateVertex(int vertex_idx, SEXP vertex, double onset, double terminus);
+
+	Rcpp::List deactivateVertex(int vertex_idx, double onset, double terminus);
+
+	Rcpp::List deactivateVertex(int vertex_idx, SEXP vertex, double onset, double terminus);
+
 	int getVertexCount() const;
 
 	void simulate();
@@ -114,9 +128,11 @@ T RNetwork::getVertexAttribute(int vertex_idx,  const std::string& attribute) {
 }
 
 template <typename T>
-void RNetwork::setVertexAttribute(int vertex_idx, const std::string& attribute, T val) {
-	Rcpp::List v = Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(net["val"])[vertex_idx]);
-	v[attribute] = val;
+void RNetwork::setVertexAttribute(int vertex_idx, const std::string& attribute, T v) {
+	Rcpp::List val = Rcpp::as<Rcpp::List>(net["val"]);
+	Rcpp::List vertex_atl = Rcpp::as<Rcpp::List>(val[vertex_idx]);
+	vertex_atl[attribute] = v;
+	val[vertex_idx] = vertex_atl;
 }
 
 template <typename T>

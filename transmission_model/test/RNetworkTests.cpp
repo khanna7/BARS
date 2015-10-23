@@ -26,9 +26,10 @@ protected:
 	RNetwork* r_net;
 	SEXP edge1, edge2, edge3, edge4;
 	SEXP v1, v2, v3;
+	SEXP val;
 
-	NetworkTests() : r_net(0),
-			edge1(0), edge2(0), edge3(0), edge4(0), v1(0), v2(0), v3(0) {
+	NetworkTests() :
+			r_net(0), edge1(0), edge2(0), edge3(0), edge4(0), v1(0), v2(0), v3(0), val(0) {
 		std::string cmd = "source(file=\"../test_data/is_active_test.R\")";
 		r->parseEvalQ(cmd);
 
@@ -97,6 +98,57 @@ TEST_F(NetworkTests, TestEdgeIsActive) {
 	}
 }
 
+TEST_F(NetworkTests, TestVertexActivate) {
+	// test with raw val
+	SEXP val = Rcpp::as<Rcpp::List>((*r)["triangle"])["val"];
+	// v2 has not spell list, activate it
+	ASSERT_FALSE(is_vertex_active(v2, 2, false));
+
+	v2 = activate_vertex(val, 1, v2, 1, 10);
+	for (int i = 1; i < 10; ++i) {
+		ASSERT_TRUE(is_vertex_active(v2, i, false));
+	}
+	ASSERT_FALSE(is_vertex_active(v2, 10, false));
+
+	// activate via the network
+	v2 = r_net->activateVertex(1, 15, 20);
+	ASSERT_FALSE(is_vertex_active(v2, 12, false));
+	ASSERT_TRUE(is_vertex_active(v2, 16, false));
+
+	v2 = r_net->activateVertex(1, v2, 13, 21);
+	ASSERT_TRUE(is_vertex_active(v2, 13, false));
+	ASSERT_TRUE(is_vertex_active(v2, 20.9, false));
+
+	// make sure network is updated as well.
+	SEXP v2c = r_net->vertexList()[1];
+	ASSERT_FALSE(is_vertex_active(v2c, 12, false));
+	ASSERT_TRUE(is_vertex_active(v2c, 13, false));
+	ASSERT_TRUE(is_vertex_active(v2c, 20.9, false));
+}
+
+TEST_F(NetworkTests, TestVertexDeactivate) {
+	v2 = r_net->activateVertex(1, 15, 20);
+	v2 = r_net->activateVertex(1, 22, 25);
+
+	v2 = r_net->deactivateVertex(1, 7, 16);
+	ASSERT_FALSE(is_vertex_active(v2, 15, false));
+	ASSERT_TRUE(is_vertex_active(v2, 17, false));
+
+	v2 = r_net->deactivateVertex(1, v2, 18, 23);
+	ASSERT_FALSE(is_vertex_active(v2, 22, false));
+
+	v2 = r_net->deactivateVertex(1, v2, 24, R_PosInf);
+	ASSERT_TRUE(is_vertex_active(v2, 23, false));
+	ASSERT_FALSE(is_vertex_active(v2, 25, false));
+
+	// make sure network is updated as well.
+	v2 = r_net->vertexList()[1];
+	ASSERT_TRUE(is_vertex_active(v2, 23, false));
+	ASSERT_FALSE(is_vertex_active(v2, 25, false));
+	ASSERT_FALSE(is_vertex_active(v2, 15, false));
+	ASSERT_TRUE(is_vertex_active(v2, 17, false));
+}
+
 // we don't need too many tests here because
 // the actual insert spell is done by stat-net
 // produced code, so assume that's correct.
@@ -114,7 +166,6 @@ TEST_F(NetworkTests, TestEdgeActivate) {
 
 // TODO Add unit tests for vertex activation and deactivation
 
-
 TEST_F(NetworkTests, TestEdgeDeactivate) {
 	Rcpp::Function print_debug((*r)["print.debug"]);
 	// edge 4 has no activity list, this should add
@@ -123,7 +174,17 @@ TEST_F(NetworkTests, TestEdgeDeactivate) {
 	// true so will return true if activity list doesn't exist
 	ASSERT_FALSE(is_edge_active(edge4, 2, true));
 
-	 // TODO more of these
+	ASSERT_TRUE(is_edge_active(edge1, 2, false));
+	deactivate_edge(edge1, 1, 3);
+	ASSERT_FALSE(is_edge_active(edge1, 2, false));
+
+	activate_edge(edge1, 10, 15);
+	ASSERT_TRUE(is_edge_active(edge1, 10, false));
+	deactivate_edge(edge1, 5, 12.5);
+
+	ASSERT_TRUE(is_edge_active(edge1, 12.5, false));
+	ASSERT_TRUE(is_edge_active(edge1, 14.9, false));
+	ASSERT_FALSE(is_edge_active(edge1, 11, false));
 }
 
 }

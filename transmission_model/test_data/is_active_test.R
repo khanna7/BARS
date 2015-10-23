@@ -24,7 +24,3 @@ activate.edges(triangle, onset=2, terminus=3,
 activate.edges(triangle, onset=6, terminus=Inf,  e=get.edgeIDs(triangle, v=2, alter=3))
 
 activate.vertices(triangle, onset=1, terminus=5, v=1)
-
-print.debug <- function(edge_id) {
-  print(triangle$mel[[edge_id]])
-}
