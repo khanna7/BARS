@@ -8,6 +8,7 @@
 #include "RInside.h"
 
 #include "RNetwork.h"
+#include "REdge.h"
 #include "gtest/gtest.h"
 
 using namespace std;
@@ -25,11 +26,11 @@ protected:
 
 	RNetwork* r_net;
 	SEXP edge1, edge2, edge3, edge4;
-	SEXP v1, v2, v3;
+	SEXP v1, v2, v3, v4;
 	SEXP val;
 
 	NetworkTests() :
-			r_net(0), edge1(0), edge2(0), edge3(0), edge4(0), v1(0), v2(0), v3(0), val(0) {
+			r_net(0), edge1(0), edge2(0), edge3(0), edge4(0), v1(0), v2(0), v3(0), v4(0), val(0) {
 		std::string cmd = "source(file=\"../test_data/is_active_test.R\")";
 		r->parseEvalQ(cmd);
 
@@ -42,16 +43,16 @@ protected:
 		v1 = r_net->vertexList()[0];
 		v2 = r_net->vertexList()[1];
 		v3 = r_net->vertexList()[2];
+		v4 = r_net->vertexList()[3];
 	}
 
 	virtual ~NetworkTests() {
 		delete r_net;
 	}
-
 };
 
 TEST_F(NetworkTests, TestNetworkAttributes) {
-	ASSERT_EQ(3, r_net->getVertexCount());
+	ASSERT_EQ(4, r_net->getVertexCount());
 	ASSERT_EQ(2, r_net->getVertexAttribute<int>(0, "age"));
 	ASSERT_EQ(12, r_net->getVertexAttribute<int>(1, "age"));
 	ASSERT_EQ(18, r_net->getVertexAttribute<int>(2, "age"));
@@ -83,17 +84,18 @@ TEST_F(NetworkTests, TestEdgeIsActive) {
 	ASSERT_EQ(3, edge_out_idx(edge3));
 	ASSERT_EQ(1, edge_in_idx(edge3));
 
-	ASSERT_TRUE(is_edge_active(edge1, 1, false));
+	REdge redge1(edge1);
+	ASSERT_TRUE(redge1.isActive(1, false));
 	ASSERT_TRUE(is_edge_active(edge2, 1, false));
 	ASSERT_TRUE(is_edge_active(edge3, 1, false));
 
 	ASSERT_FALSE(is_edge_active(edge2, 2, false));
 	ASSERT_FALSE(is_edge_active(edge3, 2, false));
-	ASSERT_TRUE(is_edge_active(edge1, 2, false));
+	ASSERT_TRUE(redge1.isActive(2, false));
 
 	for (int i = 6; i < 1000; ++i) {
 		ASSERT_TRUE(is_edge_active(edge2, i, false));
-		ASSERT_FALSE(is_edge_active(edge1, i, false));
+		ASSERT_FALSE(redge1.isActive(i, false));
 		ASSERT_FALSE(is_edge_active(edge3, i, false));
 	}
 }
@@ -164,10 +166,7 @@ TEST_F(NetworkTests, TestEdgeActivate) {
 	ASSERT_TRUE(is_edge_active(edge3, 11, false));
 }
 
-// TODO Add unit tests for vertex activation and deactivation
-
 TEST_F(NetworkTests, TestEdgeDeactivate) {
-	Rcpp::Function print_debug((*r)["print.debug"]);
 	// edge 4 has no activity list, this should add
 	// an activity list
 	deactivate_edge(edge4, 1, R_PosInf);
@@ -185,6 +184,54 @@ TEST_F(NetworkTests, TestEdgeDeactivate) {
 	ASSERT_TRUE(is_edge_active(edge1, 12.5, false));
 	ASSERT_TRUE(is_edge_active(edge1, 14.9, false));
 	ASSERT_FALSE(is_edge_active(edge1, 11, false));
+}
+
+TEST_F(NetworkTests, TestGetEdges) {
+	// vertex one:
+	// 1 -> 2 at 1, 3 -> 1 at 1
+	// 2 -> 3 at 1 and 6+
+	std::vector<SEXP> edges;
+	r_net->edges(0, 1, IN, edges);
+	ASSERT_EQ(1, edges.size());
+	SEXP edge = edges[0];
+	REdge redge(edge);
+	ASSERT_EQ(0, redge.targetVertex());
+	ASSERT_EQ(2, redge.sourceVertex());
+
+	edges.clear();
+	r_net->edges(0, 1, OUT, edges);
+	ASSERT_EQ(1, edges.size());
+	edge = edges[0];
+	redge.bind(edge);
+	ASSERT_EQ(1, redge.targetVertex());
+	ASSERT_EQ(0, redge.sourceVertex());
+
+	edges.clear();
+	r_net->edges(0, 1, COMBINED, edges);
+	ASSERT_EQ(2, edges.size());
+	bool found_in, found_out;
+	found_in = found_out = false;
+	for (SEXP e : edges) {
+		redge.bind(e);
+		if (edge_in_idx(e) == 2) {
+			ASSERT_EQ(1, redge.targetVertex());
+			ASSERT_EQ(0, redge.sourceVertex());
+			found_out = true;
+		} else {
+			ASSERT_EQ(0, redge.targetVertex());
+			ASSERT_EQ(2, redge.sourceVertex());
+			found_in = true;
+		}
+	}
+	ASSERT_TRUE(found_in && found_out);
+
+	edges.clear();
+	r_net->edges(0, 1.5, COMBINED, edges);
+	ASSERT_EQ(0, edges.size());
+
+	edges.clear();
+	r_net->edges(3, 1, COMBINED, edges);
+	ASSERT_EQ(0, edges.size());
 }
 
 }

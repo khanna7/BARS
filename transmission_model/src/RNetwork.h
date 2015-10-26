@@ -14,6 +14,8 @@
 
 namespace TransModel {
 
+ enum Neighborhood {IN, OUT, COMBINED};
+
 
 //struct MELToEdgePair : public std::unary_function<std::pair<int, int>, SEXP> {
 //	std::pair<int, int> operator()(SEXP exp) {
@@ -63,7 +65,6 @@ Rcpp::List deactivate_vertex(SEXP vertex_attribute_list, int vertex_idx, SEXP ve
 void activate_edge(SEXP edge, double onset, double terminus);
 
 void deactivate_edge(SEXP edge, double onset, double terminus);
-
 
 /**
  * Gets the R-style (starts with 1) index of incoming vertex of the edge.
@@ -118,6 +119,12 @@ public:
 
 	Rcpp::List vertexList();
 
+	/**
+	 * Gets the edges for the specified vertex that are active at the specified time.
+	 * Edges are returned in the specified edges vector.
+	 */
+	void edges(int vertex_id, double at, Neighborhood ngh, std::vector<SEXP>& edges);
+
 	void updateRNetwork();
 };
 
@@ -140,7 +147,6 @@ T RNetwork::getNetworkAttribute(const std::string& attribute) const {
     Rcpp::List g = Rcpp::as<Rcpp::List>(net["gal"]);
     return g[attribute];
 }
-
 
 } /* namespace TransModel */
 

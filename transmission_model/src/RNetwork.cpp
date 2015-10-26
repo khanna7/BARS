@@ -67,7 +67,8 @@ List activate_vertex(SEXP val, int vertex_idx, SEXP vertex, double onset, double
 	if (atl.containsElementNamed("active")) {
 		old_active = (atl["active"]);
 		// if vertex is already infinitely active then return
-		if (as<NumericMatrix>(old_active)(0, ONSET) == R_NegInf && as<NumericMatrix>(old_active)(0, TERMINUS) == R_PosInf) {
+		if (as<NumericMatrix>(old_active)(0, ONSET) == R_NegInf
+				&& as<NumericMatrix>(old_active)(0, TERMINUS) == R_PosInf) {
 			return vertex;
 		}
 	}
@@ -174,7 +175,6 @@ Rcpp::List RNetwork::deactivateVertex(int vertex_idx, SEXP vertex, double onset,
 	return deactivate_vertex(net["val"], vertex_idx, vertex, onset, terminus);
 }
 
-
 int RNetwork::getVertexCount() const {
 	return getNetworkAttribute<int>("n");
 }
@@ -189,6 +189,33 @@ List RNetwork::vertexList() {
 
 void RNetwork::updateRNetwork() {
 	net = as<List>((*r_ptr_)[net_name_]);
+}
+
+void collect_edges(int vertex_id, const List& list, List& mel, double at, std::vector<SEXP>& edges) {
+	// integer vector contains R style indices
+	for (int idx : as<IntegerVector>(list[vertex_id])) {
+		SEXP edge = mel[idx - 1];
+		if (is_edge_active(edge, at, false)) {
+			edges.push_back(edge);
+		}
+	}
+}
+
+void RNetwork::edges(int vertex_id, double at, Neighborhood ngh, std::vector<SEXP>& edges) {
+	// if network is undirected then ngh must be combined.
+	if (!getNetworkAttribute<bool>("directed")) {
+		ngh = COMBINED;
+	}
+
+	List mel = as<List>(net["mel"]);
+	if (ngh == IN)
+		collect_edges(vertex_id, as<List>(net["iel"]), mel, at, edges);
+	else if (ngh == OUT)
+		collect_edges(vertex_id, as<List>(net["oel"]), mel, at, edges);
+	else {
+		collect_edges(vertex_id, as<List>(net["iel"]), mel, at, edges);
+		collect_edges(vertex_id, as<List>(net["oel"]), mel, at, edges);
+	}
 }
 
 void RNetwork::simulate() {

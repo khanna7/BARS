@@ -8,7 +8,8 @@ CPP_SOURCE = Person.cpp \
 	Model.cpp \
 	Parameters.cpp \
 	nd_spell_functions.cpp \
-	spell_functions.cpp
+	spell_functions.cpp \
+	REdge.cpp
 
 c_source += $(C_SOURCE)
 cpp_source += $(CPP_SOURCE)
