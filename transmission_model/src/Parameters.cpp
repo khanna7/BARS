@@ -15,6 +15,9 @@ using namespace repast;
 const std::string LIKE_AGE_PROB = "like.age.prob";
 const std::string UNLIKE_AGE_PROB = "unlike.age.prob";
 const std::string R_FILE = "r.file";
+const std::string MAX_SURVIVAL = "max.survival";
+const std::string DAILY_DEATH_PROB = "daily.death.prob";
+const std::string DAILY_BIRTH_RATE = "daily.birth.rate";
 
 Parameters* Parameters::instance_ = 0;
 

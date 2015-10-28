@@ -61,12 +61,18 @@ nw_debug <- function() {
   age <- nw$val[[1]]$age
   nw <<- set.vertex.attribute(nw, "age", age + 1, v=c(1))
   #print(nw.active$val[[1]]$age)
-  print(nw$val[[1]]$age)
 } 
 
 nw_simulate <-
   function() {
     #print("sim start")
+    
+    #print(formation)
+    #print(dissolution)
+    #print(theta.form)
+    #print(theta.diss)
+    #print(constraints)
+    
     nw <<- simulate(nw,
                    formation = formation, 
                    dissolution = dissolution,
@@ -80,6 +86,9 @@ nw_simulate <-
                    #monitor = stats.form,
                    #control = control.simulate.network(MCMC.burnin=10000)
     )
+    
+    
+    #print(network.size(nw))
     #print("sim end")
 }
 

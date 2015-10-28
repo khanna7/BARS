@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 #include "RInside.h"
 
@@ -24,18 +25,20 @@ class Model {
 
 private:
 	std::shared_ptr<RInside> R;
-	std::vector<PersonPtr> persons;
+	std::map<int, PersonPtr> persons;
 	std::shared_ptr<RNetwork> net;
+	std::vector<int> popsize;
 
-	void runTransmission(double timestamp, double like_age_prob, double unlike_age_prob);
+	void runTransmission(double timestamp);
+	void deaths(double time, int max_survival);
+	void births(double time);
+	void deactivateEdges(int id, double time);
 
 public:
 	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var);
 	virtual ~Model();
 
 	void run();
-
-
 };
 
 } /* namespace TransModel */

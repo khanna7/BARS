@@ -10,9 +10,11 @@
 #include "RNetwork.h"
 #include "spell_functions.h"
 
-//extern "C" {
 #include "nd_spell_functions.h"
-//}
+
+extern "C" {
+#include "access.h"
+}
 
 using namespace Rcpp;
 using namespace std;
@@ -153,7 +155,12 @@ int edge_out_idx(SEXP edge) {
 }
 
 RNetwork::RNetwork(shared_ptr<RInside>& r_ptr, const string& net_name) :
-		r_ptr_(r_ptr), net_name_(net_name), net(as<List>((*r_ptr)[net_name])), simulate_((*r_ptr)["nw_simulate"]) {
+		r_ptr_(r_ptr), net(as<List>((*r_ptr)[net_name])), net_name_(net_name), pid_name(), simulate_(
+				(*r_ptr)["nw_simulate"]) {
+
+	if (as<List>(net["gal"]).containsElementNamed("vertex.pid")) {
+		pid_name = as<string>(as<List>(net["gal"])["vertex.pid"]);
+	}
 }
 
 RNetwork::~RNetwork() {
@@ -179,6 +186,21 @@ int RNetwork::getVertexCount() const {
 	return getNetworkAttribute<int>("n");
 }
 
+int RNetwork::getEdgeCount() const {
+	return as<List>(net["mel"]).size();
+}
+
+int RNetwork::getActiveEdgeCount(double at) const {
+	int count = 0;
+	for (auto& sexp : as<List>(net["mel"])) {
+		if (is_edge_active(sexp, at, false)) {
+			++count;
+		}
+	}
+
+	return count;
+}
+
 List RNetwork::edgeList() {
 	return as<List>(net["mel"]);
 }
@@ -187,8 +209,15 @@ List RNetwork::vertexList() {
 	return as<List>(net["val"]);
 }
 
-void RNetwork::updateRNetwork() {
+void RNetwork::updateNetworkToR() {
+	((*r_ptr_)[net_name_]) = net;
+}
+
+void RNetwork::updateNetworkFromR() {
 	net = as<List>((*r_ptr_)[net_name_]);
+	if (as<List>(net["gal"]).containsElementNamed("vertex.pid")) {
+		pid_name = as<string>(as<List>(net["gal"])["vertex.pid"]);
+	}
 }
 
 void collect_edges(int vertex_id, const List& list, List& mel, double at, std::vector<SEXP>& edges) {
@@ -220,6 +249,35 @@ void RNetwork::edges(int vertex_id, double at, Neighborhood ngh, std::vector<SEX
 
 void RNetwork::simulate() {
 	simulate_();
+}
+
+// equivalent to networkDynamic generatePids in vertexpid.R
+void generate_pids(int num, std::set<string>& pids) {
+	while (pids.size() < num) {
+		string pid(string(R_tmpnam("", "")).substr(1, string::npos));
+		while (pids.find(pid) != pids.end()) {
+			pid = string(R_tmpnam("", "")).substr(1, string::npos);
+		}
+		pids.emplace(pid);
+	}
+}
+
+// roughly equivalent to networkDynamic add.vertices.networkDynamic
+void RNetwork::addVertices(int num_to_add, std::vector<int>& ids) {
+	int n = getVertexCount();
+	net = addVertices_R(net, wrap(num_to_add), R_NilValue);
+	ids.resize(num_to_add);
+	std::iota(std::begin(ids), std::end(ids), n);
+	if (pid_name.size() > 0) {
+		set<string> pids;
+		generate_pids(num_to_add, pids);
+		if (pids.size() != ids.size()) throw length_error("ids vector and pids set are not the same size");
+		int vid = 0;
+		for (auto& pid : pids) {
+			setVertexAttribute<string>(ids[vid], pid_name, pid);
+			++vid;
+		}
+	}
 }
 
 } /* namespace TransModel */

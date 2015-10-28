@@ -10,6 +10,9 @@ namespace TransModel {
 extern const std::string LIKE_AGE_PROB;
 extern const std::string UNLIKE_AGE_PROB;
 extern const std::string R_FILE;
+extern const std::string MAX_SURVIVAL;
+extern const std::string DAILY_DEATH_PROB;
+extern const std::string DAILY_BIRTH_RATE;
 
 /**
  * Parameters singleton that contains the model properties.

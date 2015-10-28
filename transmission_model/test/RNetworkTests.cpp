@@ -56,6 +56,8 @@ TEST_F(NetworkTests, TestNetworkAttributes) {
 	ASSERT_EQ(2, r_net->getVertexAttribute<int>(0, "age"));
 	ASSERT_EQ(12, r_net->getVertexAttribute<int>(1, "age"));
 	ASSERT_EQ(18, r_net->getVertexAttribute<int>(2, "age"));
+
+	ASSERT_EQ(4, r_net->getEdgeCount());
 }
 
 TEST_F(NetworkTests, VertexActivity) {
@@ -184,6 +186,24 @@ TEST_F(NetworkTests, TestEdgeDeactivate) {
 	ASSERT_TRUE(is_edge_active(edge1, 12.5, false));
 	ASSERT_TRUE(is_edge_active(edge1, 14.9, false));
 	ASSERT_FALSE(is_edge_active(edge1, 11, false));
+}
+
+TEST_F(NetworkTests, TestAddVertices) {
+	std::vector<int> vert_ids;
+	r_net->addVertices(10, vert_ids);
+	ASSERT_EQ(10, vert_ids.size());
+
+	int exp = 4;
+	for (int i : vert_ids) {
+		ASSERT_EQ(exp, i);
+		SEXP v = r_net->vertexList()[i];
+		ASSERT_NE(v, R_NilValue);
+		++exp;
+	}
+
+	r_net->setVertexAttribute(4, "age", 10);
+	SEXP v = r_net->vertexList()[4];
+	ASSERT_EQ(10, r_net->getVertexAttribute<int>(4, "age"));
 }
 
 TEST_F(NetworkTests, TestGetEdges) {

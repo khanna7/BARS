@@ -85,8 +85,8 @@ class RNetwork {
 
 private:
 	std::shared_ptr<RInside> r_ptr_;
-	std::string net_name_;
 	Rcpp::List net;
+	std::string net_name_, pid_name;
 	Rcpp::Function simulate_;
 
 public:
@@ -111,7 +111,20 @@ public:
 
 	Rcpp::List deactivateVertex(int vertex_idx, SEXP vertex, double onset, double terminus);
 
+	/**
+	 * Adds the specified number of vertices to the network. The
+	 * ids of these vertices will be returned in ids.
+	 *
+	 * @param num_to_add the number of vertices to add
+	 * @param ids filled with the ids of the new vertices
+	 */
+	void addVertices(int num_to_add, std::vector<int>& ids);
+
 	int getVertexCount() const;
+
+	int getEdgeCount() const;
+
+	int getActiveEdgeCount(double at) const;
 
 	void simulate();
 
@@ -125,12 +138,26 @@ public:
 	 */
 	void edges(int vertex_id, double at, Neighborhood ngh, std::vector<SEXP>& edges);
 
-	void updateRNetwork();
+	/**
+	 * Updates the R environment with changes to the network
+	 * made on the C++ model side.
+	 */
+	void updateNetworkToR();
+
+	/**
+	 * Updates the C++ model side with change made to the network
+	 * in the R environment (e.g. from calling simulate).
+	 */
+	void updateNetworkFromR();
 };
 
 template <typename T>
 T RNetwork::getVertexAttribute(int vertex_idx,  const std::string& attribute) {
-    Rcpp::List v = Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(net["val"])[vertex_idx]);
+	Rcpp::List val = Rcpp::as<Rcpp::List>(net["val"]);
+	Rcpp::List v = Rcpp::as<Rcpp::List>(val[vertex_idx]);
+	if (!v.containsElementNamed(attribute.c_str())) {
+		std::cout << vertex_idx << " is missing attribute " << attribute << std::endl;
+	}
     return v[attribute];
 }
 
@@ -138,8 +165,9 @@ template <typename T>
 void RNetwork::setVertexAttribute(int vertex_idx, const std::string& attribute, T v) {
 	Rcpp::List val = Rcpp::as<Rcpp::List>(net["val"]);
 	Rcpp::List vertex_atl = Rcpp::as<Rcpp::List>(val[vertex_idx]);
-	vertex_atl[attribute] = v;
+	vertex_atl[attribute] = Rcpp::wrap(v);
 	val[vertex_idx] = vertex_atl;
+	net["val"] = val;
 }
 
 template <typename T>

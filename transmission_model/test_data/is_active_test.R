@@ -2,6 +2,8 @@ suppressMessages(library(network))
 suppressMessages(library(networkDynamic))
 
 triangle <- network.initialize(3) 
+#set.network.attribute(triangle, 'vertex.pid', 'tergm_pid')
+#add.vertices(triangle, 3)
 add.edge(triangle,1,2)    
 add.edge(triangle,2,3)
 add.edge(triangle,3,1)

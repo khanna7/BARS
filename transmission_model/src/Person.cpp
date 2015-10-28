@@ -33,7 +33,7 @@ Person::Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth) : 
 Person::~Person() {
 	// deactivate when destroyed
 	// std::cout << "deactivating " << id_ << std::endl;
-	net->deactivateVertex(id_, R_NegInf, R_PosInf);
+	net->deactivateVertex(id_, 0, R_PosInf);
 }
 
 int Person::age() const {
