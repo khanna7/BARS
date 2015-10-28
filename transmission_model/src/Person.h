@@ -22,12 +22,13 @@ private:
 
 public:
 	Person(int id, std::shared_ptr<RNetwork> network);
+	Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth);
 
 	virtual ~Person();
 
 	/**
-	 * Gets the id of this person. This is also the vertex idx into
-	 * the R network.
+	 * Gets the id of this person. This is the C-style idx
+	 * of the vertex. R idx is this + 1.
 	 */
 
 	int id() const;
@@ -42,7 +43,7 @@ public:
 
 	//int timeSinceInfection() const;
 
-	int infectionTime() const;
+	double infectionTime() const;
 
 	void setAge(int age);
 
@@ -50,8 +51,17 @@ public:
 
 	//void setTimeSinceInfection(int tsi);
 
-	void setInfectionTime(int timestamp);
+	void setInfectionTime(double time);
 
+	void setTimeOfDeath(double time);
+
+	void setTimeOfBirth(double time);
+
+	/**
+	 * Increments the persons age by one. If age is > 15
+	 * then young property is set to false.
+	 */
+	void incrementAge();
 };
 
 
