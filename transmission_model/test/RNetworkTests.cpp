@@ -1,5 +1,5 @@
 /*
- * RNetworkTests.cpp
+ * RRNetworkTests.cpp
  *
  *  Created on: Oct 20, 2015
  *      Author: nick
@@ -20,7 +20,7 @@ namespace TransModel {
 // a method / function.
 shared_ptr<RInside> r = make_shared<RInside>();
 
-class NetworkTests: public ::testing::Test {
+class RNetworkTests: public ::testing::Test {
 
 protected:
 
@@ -29,7 +29,7 @@ protected:
 	SEXP v1, v2, v3, v4;
 	SEXP val;
 
-	NetworkTests() :
+	RNetworkTests() :
 			r_net(0), edge1(0), edge2(0), edge3(0), edge4(0), v1(0), v2(0), v3(0), v4(0), val(0) {
 		std::string cmd = "source(file=\"../test_data/is_active_test.R\")";
 		r->parseEvalQ(cmd);
@@ -46,12 +46,12 @@ protected:
 		v4 = r_net->vertexList()[3];
 	}
 
-	virtual ~NetworkTests() {
+	virtual ~RNetworkTests() {
 		delete r_net;
 	}
 };
 
-TEST_F(NetworkTests, TestNetworkAttributes) {
+TEST_F(RNetworkTests, TestNetworkAttributes) {
 	ASSERT_EQ(4, r_net->getVertexCount());
 	ASSERT_EQ(2, r_net->getVertexAttribute<int>(0, "age"));
 	ASSERT_EQ(12, r_net->getVertexAttribute<int>(1, "age"));
@@ -60,7 +60,7 @@ TEST_F(NetworkTests, TestNetworkAttributes) {
 	ASSERT_EQ(4, r_net->getEdgeCount());
 }
 
-TEST_F(NetworkTests, VertexActivity) {
+TEST_F(RNetworkTests, VertexActivity) {
 	for (int i = 1; i < 5; ++i) {
 		ASSERT_TRUE(is_vertex_active(v1, i, false));
 		// v2 and v3 have no spell list so should be inactive
@@ -78,7 +78,7 @@ TEST_F(NetworkTests, VertexActivity) {
 	ASSERT_TRUE(is_vertex_active(v3, 5, true));
 }
 
-TEST_F(NetworkTests, TestEdgeIsActive) {
+TEST_F(RNetworkTests, TestEdgeIsActive) {
 	ASSERT_EQ(1, edge_out_idx(edge1));
 	ASSERT_EQ(2, edge_in_idx(edge1));
 	ASSERT_EQ(2, edge_out_idx(edge2));
@@ -102,7 +102,7 @@ TEST_F(NetworkTests, TestEdgeIsActive) {
 	}
 }
 
-TEST_F(NetworkTests, TestVertexActivate) {
+TEST_F(RNetworkTests, TestVertexActivate) {
 	// test with raw val
 	SEXP val = Rcpp::as<Rcpp::List>((*r)["triangle"])["val"];
 	// v2 has not spell list, activate it
@@ -130,7 +130,7 @@ TEST_F(NetworkTests, TestVertexActivate) {
 	ASSERT_TRUE(is_vertex_active(v2c, 20.9, false));
 }
 
-TEST_F(NetworkTests, TestVertexDeactivate) {
+TEST_F(RNetworkTests, TestVertexDeactivate) {
 	v2 = r_net->activateVertex(1, 15, 20);
 	v2 = r_net->activateVertex(1, 22, 25);
 
@@ -156,7 +156,7 @@ TEST_F(NetworkTests, TestVertexDeactivate) {
 // we don't need too many tests here because
 // the actual insert spell is done by stat-net
 // produced code, so assume that's correct.
-TEST_F(NetworkTests, TestEdgeActivate) {
+TEST_F(RNetworkTests, TestEdgeActivate) {
 	// no activity spells
 	ASSERT_FALSE(is_edge_active(edge4, 11, false));
 	activate_edge(edge4, 10, 20);
@@ -168,7 +168,7 @@ TEST_F(NetworkTests, TestEdgeActivate) {
 	ASSERT_TRUE(is_edge_active(edge3, 11, false));
 }
 
-TEST_F(NetworkTests, TestEdgeDeactivate) {
+TEST_F(RNetworkTests, TestEdgeDeactivate) {
 	// edge 4 has no activity list, this should add
 	// an activity list
 	deactivate_edge(edge4, 1, R_PosInf);
@@ -188,7 +188,7 @@ TEST_F(NetworkTests, TestEdgeDeactivate) {
 	ASSERT_FALSE(is_edge_active(edge1, 11, false));
 }
 
-TEST_F(NetworkTests, TestAddVertices) {
+TEST_F(RNetworkTests, TestAddVertices) {
 	std::vector<int> vert_ids;
 	r_net->addVertices(10, vert_ids);
 	ASSERT_EQ(10, vert_ids.size());
@@ -206,7 +206,7 @@ TEST_F(NetworkTests, TestAddVertices) {
 	ASSERT_EQ(10, r_net->getVertexAttribute<int>(4, "age"));
 }
 
-TEST_F(NetworkTests, TestGetEdges) {
+TEST_F(RNetworkTests, TestGetEdges) {
 	// vertex one:
 	// 1 -> 2 at 1, 3 -> 1 at 1
 	// 2 -> 3 at 1 and 6+
