@@ -16,6 +16,7 @@ template<typename V>
 class Edge {
 
 private:
+	unsigned int id_;
 	std::shared_ptr<V> v1_, v2_;
 	double weight_;
 
@@ -23,7 +24,7 @@ public:
 	/**
 	 * Creates an edge from v1 to v2.
 	 */
-	Edge(std::shared_ptr<V> v1, std::shared_ptr<V>, double weight);
+	Edge(unsigned int id, std::shared_ptr<V> v1, std::shared_ptr<V>, double weight);
 	virtual ~Edge();
 
 	std::shared_ptr<V> v1() {
@@ -38,10 +39,15 @@ public:
 		return weight_;
 	}
 
+	unsigned int id() {
+		return id_;
+	}
+
 };
 
 template<typename V>
-Edge<V>::Edge(std::shared_ptr<V> v1, std::shared_ptr<V> v2, double weight) : v1_(v1), v2_(v2), weight_(weight) {
+Edge<V>::Edge(unsigned int id, std::shared_ptr<V> v1, std::shared_ptr<V> v2, double weight) :
+	id_(id), v1_(v1), v2_(v2), weight_(weight) {
 }
 
 template<typename V>

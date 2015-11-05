@@ -10,7 +10,7 @@
 #include "Parameters.h"
 
 #include "Model.h"
-#include "REdge.h"
+#include "network_utils.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -25,15 +25,40 @@ const std::string DAILY_DEATH_BINOMIAL = "daily.death.binomial";
 typedef boost::variate_generator<boost::mt19937&, boost::binomial_distribution<>> BinomialGen;
 typedef boost::variate_generator<boost::mt19937&, boost::poisson_distribution<>> PoissonGen;
 
-Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
-		R(ri), persons(), net(), popsize() {
-	net = make_shared<RNetwork>(ri, net_var);
+typedef VertexPtr<Person> PersonPtr;
 
-	for (int i = 0; i < net->getVertexCount(); ++i) {
-		persons.emplace(std::make_pair(i, make_shared<Person>(i, net)));
+struct PersonCreator {
+
+	int id;
+	PersonCreator() :
+			id(0) {
 	}
 
-	popsize.push_back(persons.size());
+	VertexPtr<Person> operator()(List& val) {
+		int age = as<int>(val["age"]);
+		bool infected = as<bool>(val["inf.status"]);
+		return std::make_shared<Person>(id++, age, infected);
+	}
+
+};
+
+struct YoungSetter {
+
+	void operator()(const VertexPtr<Person>& p, List& vertex) const {
+		vertex["young"] = p->isYoung() ? 1 : 0;
+	}
+
+};
+
+Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
+		R(ri), net(false), popsize(), max_id(0) {
+
+	List rnet = as<List>((*R)[net_var]);
+	PersonCreator person_creator;
+	initialize_network(rnet, net, person_creator);
+
+	popsize.push_back(net.vertexCount());
+	max_id = net.vertexCount();
 
 	double like_age_prob = Parameters::instance()->getDoubleParameter(LIKE_AGE_PROB);
 	BinomialGen like_age_gen(Random::instance()->engine(), boost::random::binomial_distribution<>(1, like_age_prob));
@@ -53,24 +78,23 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 Model::~Model() {
 }
 
-void infection_draw(PersonPtr infectee, PersonPtr infector, vector<int>& infected_idxs) {
+void infection_draw(PersonPtr infectee, PersonPtr infector, vector<PersonPtr>& infecteds) {
 	NumberGenerator* gen =
 			infector->isYoung() && infectee->isYoung() ?
 					Random::instance()->getGenerator(LIKE_AGE_BINOMIAL) :
 					Random::instance()->getGenerator(UNLIKE_AGE_BINOMIAL);
 	int draw = (int) gen->next();
 	if (draw) {
-		infected_idxs.push_back(infectee->id());
+		infecteds.push_back(infectee);
 	}
 }
 
 void Model::run() {
+	YoungSetter young_setter;
 	int max_survival = Parameters::instance()->getIntParameter(MAX_SURVIVAL);
-	for (int t = 2; t < 26; ++t) {
+	for (int t = 2; t < 25; ++t) {
 		std::cout << " ---- " << t << " ---- " << std::endl;
-		(*R)["time"] = t;
-		net->simulate();
-		net->updateNetworkFromR();
+		simulate(R, net, young_setter, t);
 		runTransmission(t);
 		deaths(t, max_survival);
 		births(t);
@@ -78,34 +102,13 @@ void Model::run() {
 		NumericVector theta_form = as<NumericVector>((*R)["theta.form"]);
 		std::cout << "pop sizes: " << popsize[t - 2] << ", " << popsize[t - 1] << std::endl;
 		theta_form[0] = theta_form[0] + std::log(popsize[t - 2]) - std::log(popsize[t - 1]);
-		net->updateNetworkToR();
 
-		std::cout << "edge count: " << net->getEdgeCount() << std::endl;
-		std::cout << "active edge count: " << net->getActiveEdgeCount(t) << std::endl;
+		std::cout << "edge count: " << net.edgeCount() << std::endl;
 	}
-}
-
-void Model::deactivateEdges(int id, double time) {
-	vector<SEXP> edges;
-	net->edges(id, time, COMBINED, edges);
-	for (auto& edge : edges) {
-		deactivate_edge(edge, time, R_PosInf);
-	}
-}
-
-void print(std::vector<int>& ids) {
-	int count = 0;
-	for (int i : ids) {
-		std::cout << ", " << i;
-		if (++count == 20) {
-			std::cout << "\n";
-		}
-	}
-	std::cout << std::endl;
 }
 
 void Model::births(double time) {
-	size_t pop_size = persons.size();
+	size_t pop_size = net.vertexCount();
 	if (pop_size > 0) {
 		double births_prob = Parameters::instance()->getDoubleParameter(DAILY_BIRTH_RATE);
 		PoissonGen birth_gen(Random::instance()->engine(),
@@ -113,53 +116,36 @@ void Model::births(double time) {
 		DefaultNumberGenerator<PoissonGen> gen(birth_gen);
 		int births = (int) gen.next();
 		std::cout << "births: " << births << std::endl;
-		if (births > 0) {
-			vector<int> ids;
-			net->addVertices(births, ids);
-			for (int id : ids) {
-				persons.emplace(make_pair(id, make_shared<Person>(id, net, time)));
-				net->activateVertex(id, time, R_PosInf);
-			}
+		for (int i = 0; i < births; ++i) {
+			VertexPtr<Person> p = make_shared<Person>(max_id, 0, false);
+			p->setTimeOfBirth(time);
+			net.addVertex(p);
+			++max_id;
 		}
 	}
-	popsize.push_back(persons.size());
+	popsize.push_back(net.vertexCount());
 }
 
 void Model::deaths(double time, int max_survival) {
-
-	// persons list should contain only active vertices
-	// increment age and mortality
 	int death_count = 0;
-	for (auto iter = persons.begin(); iter != persons.end();) {
-		PersonPtr person = iter->second;
+	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
+		PersonPtr person = (*iter);
 		person->incrementAge();
-
-		// dead via mortality: deactivated and removed from persons
-		// vector
+		// dead via mortality
 		if (person->age() == max_survival) {
-			if (person->id() == 457) {
-				std::cout << "457 dead" << std::endl;
-			}
-			deactivateEdges(person->id(), time);
+			iter = net.removeVertex(iter);
 			++death_count;
-			// persons should deactivate in destructor.
-			// removing from list should make shared_ptr ref count = 0
-			// so destroyed
-			iter = persons.erase(iter);
 		} else {
 			++iter;
 		}
 	}
 
-	// persons list should contain only active vertices
 	// grim repear deaths
 	NumberGenerator* gen = Random::instance()->getGenerator(DAILY_DEATH_BINOMIAL);
-	for (auto iter = persons.begin(); iter != persons.end();) {
+	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		if ((int) gen->next() == 1) {
-			PersonPtr person = iter->second;
-			person->setTimeOfDeath(time);
-			deactivateEdges(person->id(), time);
-			iter = persons.erase(iter);
+			PersonPtr person = (*iter);
+			iter = net.removeVertex(iter);
 			++death_count;
 		} else {
 			++iter;
@@ -169,33 +155,19 @@ void Model::deaths(double time, int max_survival) {
 }
 
 void Model::runTransmission(double time) {
-	vector<int> infected_idxs;
-
-	List edgeList = net->edgeList();
-	REdge edge;
-	for (auto& item : edgeList) {
-		edge.bind(item);
-		if (edge.isActive(time, false)) {
-			int out_idx = edge.targetVertex();
-			int in_idx = edge.sourceVertex();
-			auto oi = persons.find(out_idx);
-			auto ii = persons.find(in_idx);
-			if (oi != persons.end() && ii != persons.end()) {
-				PersonPtr out_p = oi->second;
-				PersonPtr in_p = ii->second;
-				if (out_p->isInfected() && !in_p->isInfected()) {
-					infection_draw(in_p, out_p, infected_idxs);
-				} else if (!out_p->isInfected() && in_p->isInfected()) {
-					infection_draw(out_p, in_p, infected_idxs);
-				}
-			}
+	vector<PersonPtr> infecteds;
+	for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
+		PersonPtr out_p = (*iter)->v1();
+		PersonPtr in_p = (*iter)->v2();
+		if (out_p->isInfected() && !in_p->isInfected()) {
+			infection_draw(in_p, out_p, infecteds);
+		} else if (!out_p->isInfected() && in_p->isInfected()) {
+			infection_draw(out_p, in_p, infecteds);
 		}
 	}
 
-	for (auto idx : infected_idxs) {
-		shared_ptr<Person> p = persons[idx];
-		p->setInfected(true);
-		p->setInfectionTime(time);
+	for (auto& person : infecteds) {
+		person->setInfected(true, time);
 	}
 }
 

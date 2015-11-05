@@ -43,32 +43,35 @@ using VertexMap = std::map<unsigned int, VertexPtr<V>>;
 template<typename V>
 using VertexIter = boost::transform_iterator<GetVal<VertexPtr<V>>, typename VertexMap<V>::iterator>;
 
+using EdgeList = std::map<unsigned int, std::set<unsigned int>>;
 
 template<typename V>
 class Network {
 
 private:
 	bool directed_;
-
-protected:
-
 	unsigned int edge_idx;
 
 	VertexMap<V> vertices;
 	EdgeMap<V> edges;
-	std::map<unsigned int, std::set<unsigned int>> oel, iel;
+	EdgeList oel, iel;
 
-	virtual void doAddEdge(std::shared_ptr<V>& source, std::shared_ptr<V>& target, double weight) = 0;
+	void doAddEdge(const std::shared_ptr<V>& source, const std::shared_ptr<V>& target, double weight);
+	void removeEdges(unsigned int idx, EdgeList& el, std::vector<EdgePtr<V>>& removed_edges);
 
 public:
 
 	Network(bool directed);
 	virtual ~Network();
 
-	void addVertex(std::shared_ptr<V>& vertex);
-	void removeVertex(std::shared_ptr<V>& vertex);
+	void addVertex(const std::shared_ptr<V>& vertex);
+	bool removeVertex(const std::shared_ptr<V>& vertex);
+	bool removeVertex(unsigned int id);
 
-	void addEdge(std::shared_ptr<V>& source, std::shared_ptr<V>& target, double weight = 1);
+	VertexIter<V> removeVertex(VertexIter<V> iter);
+
+	void addEdge(const std::shared_ptr<V>& source, const std::shared_ptr<V>& target, double weight = 1);
+	void addEdge(unsigned int v1_idx, unsigned int v2_idx, double weight = 1);
 
 	EdgeIter<V> edgesBegin();
 	EdgeIter<V> edgesEnd();
@@ -82,6 +85,22 @@ public:
 
 	unsigned int edgeCount() const {
 		return edges.size();
+	}
+
+	/**
+	 * Gets the number of edges into the specified vertex.
+	 */
+	unsigned int inEdgeCount(const VertexPtr<V>& vert);
+
+	/**
+	 * Gets the number of edges out from the specified vertex.
+	 */
+	unsigned int outEdgeCount(const VertexPtr<V>& vert);
+
+	void clearEdges() {
+		edges.clear();
+		oel.clear();
+		iel.clear();
 	}
 };
 
@@ -119,103 +138,131 @@ VertexIter<V> Network<V>::verticesEnd() {
 }
 
 template<typename V>
-void Network<V>::addVertex(std::shared_ptr<V>& vertex) {
-	vertices.emplace(std::make_pair(vertex->getId(), vertex));
+unsigned int Network<V>::inEdgeCount(const VertexPtr<V>& vertex) {
+	auto iter = iel.find(vertex->id());
+	return iter == iel.end() ? 0 : iter->second.size();
 }
 
 template<typename V>
-void Network<V>::addEdge(std::shared_ptr<V>& source, std::shared_ptr<V>& target, double weight) {
-	if (vertices.find(source->getId()) == vertices.end()) {
-		addVertex(source);
+unsigned int Network<V>::outEdgeCount(const VertexPtr<V>& vertex) {
+	auto iter = oel.find(vertex->id());
+	return iter == oel.end() ? 0 : iter->second.size();
+}
+
+template<typename V>
+void Network<V>::addVertex(const std::shared_ptr<V>& vertex) {
+	vertices.emplace(std::make_pair(vertex->id(), vertex));
+}
+
+template<typename V>
+void Network<V>::removeEdges(unsigned int idx, EdgeList& el, std::vector<EdgePtr<V>>& removed_edges) {
+	auto iter = el.find(idx);
+	if (iter != el.end()) {
+		// set of edges
+		for (auto edge_idx_iter = iter->second.begin(); edge_idx_iter != iter->second.end();) {
+			// remove the entry from mel
+			auto mel_iter = edges.find(*edge_idx_iter);
+			if (mel_iter == edges.end())
+				throw std::invalid_argument(
+						"Unable to delete edge: edge " + std::to_string(edge_idx) + " does not exist.");
+			removed_edges.push_back(mel_iter->second);
+			// erase that edge
+			edges.erase(mel_iter);
+			// remove the mel edge_id from the edge list set
+			edge_idx_iter = iter->second.erase(edge_idx_iter);
+		}
+	}
+}
+
+template<typename V>
+bool Network<V>::removeVertex(const std::shared_ptr<V>& vertex) {
+	unsigned int id = vertex->id();
+	return removeVertex(id);
+}
+
+template<typename V>
+bool Network<V>::removeVertex(unsigned int id) {
+	auto iter = vertices.find(id);
+	if (iter != vertices.end()) {
+		vertices.erase(iter);
+		std::vector<EdgePtr<V>> removed_edges;
+		removeEdges(id, oel, removed_edges);
+		// for each edge get v2 id, remove edge id from oel for v2 id
+		for (auto& edge : removed_edges) {
+			iel[edge->v2()->id()].erase(edge->id());
+		}
+
+		removed_edges.clear();
+		removeEdges(id, iel, removed_edges);
+		// for each edge get v1 id, remove edge id from iel for v1 id
+		for (auto& edge : removed_edges) {
+			oel[edge->v1()->id()].erase(edge->id());
+		}
+		return true;
 	}
 
-	if (vertices.find(target->getId()) == vertices.end()) {
-		addVertex(target);
+	return false;
+}
+
+template<typename V>
+VertexIter<V> Network<V>::removeVertex(VertexIter<V> iter) {
+	VertexPtr<V> v = (*iter);
+	unsigned int id = v->id();
+	auto next_iter = ++iter;
+	removeVertex(id);
+	return next_iter;
+}
+
+template<typename V>
+void Network<V>::doAddEdge(const std::shared_ptr<V>& source, const std::shared_ptr<V>& target, double weight) {
+	// assumes sanity checks have already occured
+	edges.emplace(edge_idx, std::make_shared<Edge<V>>(edge_idx, source, target, weight));
+
+	auto out_iter = Network<V>::oel.find(source->id());
+	if (out_iter == Network<V>::oel.end()) {
+		Network<V>::oel.emplace(source->id(), std::set<unsigned int> { edge_idx });
+	} else {
+		out_iter->second.emplace(edge_idx);
 	}
 
-	edges.emplace(edge_idx, std::make_shared<Edge<V>>(source, target, weight));
-	doAddEdge(source, target, weight);
+	auto in_iter = Network<V>::iel.find(target->id());
+	if (in_iter == Network<V>::iel.end()) {
+		Network<V>::iel.emplace(target->id(), std::set<unsigned int> { edge_idx });
+	} else {
+		in_iter->second.emplace(edge_idx);
+	}
 	++edge_idx;
 }
 
 template<typename V>
-class DirectedNetwork: public Network<V> {
+void Network<V>::addEdge(unsigned int v1_idx, unsigned int v2_idx, double weight) {
+	auto v1 = vertices.find(v1_idx);
+	if (v1 == vertices.end())
+		throw std::invalid_argument(
+				"Unable to create edge: vertex " + std::to_string(v1_idx) + " not found in vertex map");
+	auto v2 = vertices.find(v2_idx);
+	if (v2 == vertices.end())
+		throw std::invalid_argument(
+				"Unable to create edge: vertex " + std::to_string(v2_idx) + " not found in vertex map");
 
-protected:
-
-	virtual void doAddEdge(std::shared_ptr<V>& source, std::shared_ptr<V>& target, double weight);
-
-public:
-	DirectedNetwork();
-	virtual ~DirectedNetwork();
-};
-
-template<typename V>
-DirectedNetwork<V>::DirectedNetwork() :
-		Network<V>(true) {
+	doAddEdge(v1->second, v2->second, weight);
 }
 
 template<typename V>
-DirectedNetwork<V>::~DirectedNetwork() {
-}
-
-template<typename V>
-void DirectedNetwork<V>::doAddEdge(std::shared_ptr<V>& source, std::shared_ptr<V>& target, double weight) {
-	auto out_iter = Network<V>::oel.find(source->getId());
-	if (out_iter == Network<V>::oel.end()) {
-		Network<V>::oel.emplace(source->getId(), std::set<unsigned int> { Network<V>::edge_idx });
-	} else {
-		out_iter->second.push_back(Network<V>::edge_idx);
+void Network<V>::addEdge(const std::shared_ptr<V>& source, const std::shared_ptr<V>& target, double weight) {
+	if (vertices.find(source->id()) == vertices.end()) {
+		addVertex(source);
 	}
 
-	auto in_iter = Network<V>::iel.find(target->getId());
-	if (in_iter == Network<V>::iel.end()) {
-		Network<V>::iel.emplace(target->getId(), std::set<unsigned int> { Network<V>::edge_idx });
-	} else {
-		in_iter->second.emplace(Network<V>::edge_idx);
-	}
-}
-
-template<typename V>
-class UndirectedNetwork: public Network<V> {
-
-protected:
-
-	virtual void doAddEdge(std::shared_ptr<V>& source, std::shared_ptr<V>& target, double weight);
-
-public:
-	UndirectedNetwork();
-	virtual ~UndirectedNetwork();
-};
-
-template<typename V>
-UndirectedNetwork<V>::UndirectedNetwork() :
-		Network<V>::Network(false) {
-}
-
-template<typename V>
-UndirectedNetwork<V>::~UndirectedNetwork() {
-}
-
-template<typename V>
-void UndirectedNetwork<V>::doAddEdge(std::shared_ptr<V>& source, std::shared_ptr<V>& target, double weight) {
-	// use only the oel for non-directed
-	auto out_iter = Network<V>::oel.find(source->getId());
-	if (out_iter == Network<V>::oel.end()) {
-		Network<V>::oel.emplace(source->getId(), std::set<unsigned int> { Network<V>::edge_idx });
-	} else {
-		out_iter->second.emplace(Network<V>::edge_idx);
+	if (vertices.find(target->id()) == vertices.end()) {
+		addVertex(target);
 	}
 
-	out_iter = Network<V>::oel.find(target->getId());
-	if (out_iter == Network<V>::oel.end()) {
-		Network<V>::oel.emplace(target->getId(), std::set<unsigned int> { Network<V>::edge_idx });
-	} else {
-		out_iter->second.emplace(Network<V>::edge_idx);
-	}
+	doAddEdge(source, target, weight);
 }
 
 }
+
 /* namespace TransModel */
 
 #endif /* SRC_NETWORK_H_ */

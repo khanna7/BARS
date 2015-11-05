@@ -5,20 +5,17 @@
  *      Author: nick
  */
 
-#include "RInside.h"
+#include "gtest/gtest.h"
 
 #include "RNetwork.h"
 #include "REdge.h"
-#include "gtest/gtest.h"
+#include "RInstance.h"
+
 
 using namespace std;
 
 namespace TransModel {
 
-// R has to be global within this unit as it
-// doesn't cleanup propertly when initialized within
-// a method / function.
-shared_ptr<RInside> r = make_shared<RInside>();
 
 class RNetworkTests: public ::testing::Test {
 
@@ -32,9 +29,9 @@ protected:
 	RNetworkTests() :
 			r_net(0), edge1(0), edge2(0), edge3(0), edge4(0), v1(0), v2(0), v3(0), v4(0), val(0) {
 		std::string cmd = "source(file=\"../test_data/is_active_test.R\")";
-		r->parseEvalQ(cmd);
+		RInstance::rptr->parseEvalQ(cmd);
 
-		r_net = new RNetwork(r, "triangle");
+		r_net = new RNetwork(RInstance::rptr, "triangle");
 		edge1 = r_net->edgeList()[0];
 		edge2 = r_net->edgeList()[1];
 		edge3 = r_net->edgeList()[2];
@@ -104,7 +101,7 @@ TEST_F(RNetworkTests, TestEdgeIsActive) {
 
 TEST_F(RNetworkTests, TestVertexActivate) {
 	// test with raw val
-	SEXP val = Rcpp::as<Rcpp::List>((*r)["triangle"])["val"];
+	SEXP val = Rcpp::as<Rcpp::List>((*RInstance::rptr)["triangle"])["val"];
 	// v2 has not spell list, activate it
 	ASSERT_FALSE(is_vertex_active(v2, 2, false));
 

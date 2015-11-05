@@ -7,9 +7,11 @@ suppressMessages(library(networkDynamic))
 
 set.seed(1)
 
+# 5000
 N <- 5000
 duration <- 25
 theta.diss <- log(duration-1)
+# 3000
 n.edges <- 3000
 
 n0 <- network.initialize(N, directed=FALSE)
@@ -41,15 +43,14 @@ theta.form[1] <- theta.form[1]-theta.diss
 nw <- fit$network
 formation <- fit$formula
 dissolution <- ~offset(edges)
-popsize <- network.size(nw)
 
 ## Start with all vertices and edges active
-nw <- activate.vertices(nw,onset=1,terminus=Inf)
-nw <- activate.edges(nw,onset=1,terminus=Inf)
-
-nw.active <- network.extract(nw,
-                at = 1,
-                retain.all.vertices = T)
+# nw <- activate.vertices(nw,onset=1,terminus=Inf)
+# nw <- activate.edges(nw,onset=1,terminus=Inf)
+# 
+# nw.active <- network.extract(nw,
+#                 at = 1,
+#                 retain.all.vertices = T)
 
 # holds any code that I want to call from 
 # C++ to make sure changes there are being
@@ -64,7 +65,7 @@ nw_debug <- function() {
 } 
 
 nw_simulate <-
-  function() {
+  function(net, time) {
     #print("sim start")
     
     #print(formation)
@@ -73,7 +74,9 @@ nw_simulate <-
     #print(theta.diss)
     #print(constraints)
     
-    nw <<- simulate(nw,
+    class(net) <- "network"
+    #print(net)
+    new_net <- simulate(net,
                    formation = formation, 
                    dissolution = dissolution,
                    coef.form = theta.form, 
@@ -86,6 +89,7 @@ nw_simulate <-
                    #monitor = stats.form,
                    #control = control.simulate.network(MCMC.burnin=10000)
     )
+    new_net
     
     
     #print(network.size(nw))

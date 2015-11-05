@@ -15,19 +15,17 @@
 #include "RInside.h"
 
 #include "Person.h"
-#include "RNetwork.h"
+#include "Network.h"
 
 namespace TransModel {
-
-typedef std::shared_ptr<Person> PersonPtr;
 
 class Model {
 
 private:
 	std::shared_ptr<RInside> R;
-	std::map<int, PersonPtr> persons;
-	std::shared_ptr<RNetwork> net;
-	std::vector<int> popsize;
+	Network<Person> net;
+	std::vector<unsigned int> popsize;
+	unsigned int max_id;
 
 	void runTransmission(double timestamp);
 	void deaths(double time, int max_survival);
@@ -40,6 +38,7 @@ public:
 
 	void run();
 };
+
 
 } /* namespace TransModel */
 

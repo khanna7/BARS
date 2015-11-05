@@ -17,12 +17,13 @@ namespace TransModel {
 class Person {
 
 private:
-	std::shared_ptr<RNetwork> net;
-	int id_;
+
+	int id_, age_;
+	bool infected_;
+	double time_of_infection, time_of_birth;
 
 public:
-	Person(int id, std::shared_ptr<RNetwork> network);
-	Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth);
+	Person(int id, int age, bool infected);
 
 	virtual ~Person();
 
@@ -31,29 +32,34 @@ public:
 	 * of the vertex. R idx is this + 1.
 	 */
 
-	int id() const;
+	int id() const {
+		return id_;
+	}
+
 	/**
 	 * Gets the age of this Person.
 	 */
-	int age() const;
+	int age() const {
+		return age_;
+	}
 
 	bool isYoung() const;
 
-	bool isInfected() const;
+	bool isInfected() const {
+		return infected_;
+	}
 
-	//int timeSinceInfection() const;
+	double timeOfInfection() const {
+		return time_of_infection;
+	}
 
-	double infectionTime() const;
+	double timeOfBirth() const {
+		return time_of_birth;
+	}
 
 	void setAge(int age);
 
-	void setInfected(bool infected);
-
-	//void setTimeSinceInfection(int tsi);
-
-	void setInfectionTime(double time);
-
-	void setTimeOfDeath(double time);
+	void setInfected(bool infected, double time);
 
 	void setTimeOfBirth(double time);
 
