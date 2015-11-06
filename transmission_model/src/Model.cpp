@@ -92,7 +92,7 @@ void infection_draw(PersonPtr infectee, PersonPtr infector, vector<PersonPtr>& i
 void Model::run() {
 	YoungSetter young_setter;
 	int max_survival = Parameters::instance()->getIntParameter(MAX_SURVIVAL);
-	for (int t = 2; t < 25; ++t) {
+	for (int t = 2; t < 26; ++t) {
 		std::cout << " ---- " << t << " ---- " << std::endl;
 		simulate(R, net, young_setter, t);
 		runTransmission(t);

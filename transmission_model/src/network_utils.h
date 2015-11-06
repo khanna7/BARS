@@ -103,27 +103,27 @@ void create_r_network(List& rnet, Network<V>& net, std::map<unsigned int, unsign
 
 template<typename V, typename F>
 void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_setter, double time) {
+	// rn vertex to n vertex
 	std::map<unsigned int, unsigned int> idx_map;
 	List rnet;
 	create_r_network(rnet, net, idx_map, attributes_setter);
 	//Rf_PrintValue(rnet);
-	rnet = as<List>(as<Function>((*R)["nw_simulate"])(rnet, time));
-	reset_network_edges(rnet, net, idx_map);
+	SEXP changes = as<Function>((*R)["nw_simulate"])(rnet, time);
+	reset_network_edges(changes, net, idx_map);
 }
 
 template<typename V>
-void reset_network_edges(List& rnet, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map) {
-	int r_net_size = as<List>(rnet["gal"])["n"];
-	if (r_net_size != net.vertexCount())
-		throw std::logic_error("R Network and TransModel Network have different vertex counts");
-
-	net.clearEdges();
-	List mel = as<List>(rnet["mel"]);
-	for (auto& sexp : mel) {
-		List edge = as<List>(sexp);
-		int net_in_idx = idx_map.at(as<int>(edge["inl"]));
-		int net_out_idx = idx_map.at(as<int>(edge["outl"]));
-		net.addEdge(net_out_idx, net_in_idx, 1);
+void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map) {
+	NumericMatrix matrix = as<NumericMatrix>(changes);
+	for (int r = 0, n = matrix.rows(); r < n; ++r) {
+		int out = idx_map.at(matrix(r, 1));
+		int in = idx_map.at(matrix(r, 2));
+		int to = matrix(r, 3);
+		if (to) {
+			net.addEdge(out, in);
+		} else {
+			net.removeEdge(out, in);
+		}
 	}
 }
 

@@ -75,13 +75,13 @@ nw_simulate <-
     #print(constraints)
     
     class(net) <- "network"
-    #print(net)
-    new_net <- simulate(net,
+    changes <- simulate(net,
                    formation = formation, 
                    dissolution = dissolution,
                    coef.form = theta.form, 
                    coef.diss = theta.diss,
                    constraints = constraints,
+                   output = "changes",
                    #time.start = ts,
                    time.start = time,
                    #start.time = time,
@@ -89,7 +89,7 @@ nw_simulate <-
                    #monitor = stats.form,
                    #control = control.simulate.network(MCMC.burnin=10000)
     )
-    new_net
+    changes
     
     
     #print(network.size(nw))

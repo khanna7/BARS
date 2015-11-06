@@ -182,6 +182,16 @@ TEST_F(NetworkTests, TestRemovesByIter) {
 	net.addEdge(one, four);
 	net.addEdge(three, four);
 
+	ASSERT_EQ(2, net.outEdgeCount(one));
+	ASSERT_EQ(0, net.outEdgeCount(two));
+	ASSERT_EQ(2, net.outEdgeCount(three));
+	ASSERT_EQ(0, net.outEdgeCount(four));
+
+	ASSERT_EQ(1, net.inEdgeCount(one));
+	ASSERT_EQ(1, net.inEdgeCount(two));
+	ASSERT_EQ(0, net.inEdgeCount(three));
+	ASSERT_EQ(2, net.inEdgeCount(four));
+
 	ASSERT_EQ(4, net.vertexCount());
 	ASSERT_EQ(4, net.edgeCount());
 
@@ -199,6 +209,16 @@ TEST_F(NetworkTests, TestRemovesByIter) {
 
 	ASSERT_EQ(3, net.vertexCount());
 	ASSERT_EQ(1, net.edgeCount());
+
+	ASSERT_EQ(0, net.outEdgeCount(one));
+	ASSERT_EQ(0, net.outEdgeCount(two));
+	ASSERT_EQ(1, net.outEdgeCount(three));
+	ASSERT_EQ(0, net.outEdgeCount(four));
+
+	ASSERT_EQ(0, net.inEdgeCount(one));
+	ASSERT_EQ(0, net.inEdgeCount(two));
+	ASSERT_EQ(0, net.inEdgeCount(three));
+	ASSERT_EQ(1, net.inEdgeCount(four));
 
 	int count = 0;
 	for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
@@ -219,6 +239,53 @@ TEST_F(NetworkTests, TestRemovesByIter) {
 		++count;
 	}
 	ASSERT_EQ(3, count);
+}
+
+TEST_F(NetworkTests, TestRemovesByVertexIds) {
+	Network<Agent> net(false);
+
+	AgentPtr one = std::make_shared<Agent>(1, 1);
+	AgentPtr two = std::make_shared<Agent>(2, 1);
+	AgentPtr three = std::make_shared<Agent>(3, 1);
+	AgentPtr four = std::make_shared<Agent>(4, 1);
+
+	net.addVertex(one);
+	net.addEdge(three, one);
+	net.addEdge(one, two);
+	net.addEdge(one, four);
+	net.addEdge(three, four);
+
+	ASSERT_EQ(4, net.edgeCount());
+
+	net.removeEdge(1, 2);
+
+	ASSERT_EQ(3, net.edgeCount());
+
+	auto eiter = net.edgesBegin();
+	EdgePtr<Agent> edge = (*eiter);
+	ASSERT_EQ(3, edge->v1()->id());
+	ASSERT_EQ(1, edge->v2()->id());
+
+	++eiter;
+	edge = (*eiter);
+	ASSERT_EQ(1, edge->v1()->id());
+	ASSERT_EQ(4, edge->v2()->id());
+
+	++eiter;
+	edge = (*eiter);
+	ASSERT_EQ(3, edge->v1()->id());
+	ASSERT_EQ(4, edge->v2()->id());
+
+	ASSERT_EQ(1, net.outEdgeCount(one));
+	ASSERT_EQ(0, net.outEdgeCount(two));
+	ASSERT_EQ(2, net.outEdgeCount(three));
+	ASSERT_EQ(0, net.outEdgeCount(four));
+
+	ASSERT_EQ(1, net.inEdgeCount(one));
+	ASSERT_EQ(0, net.inEdgeCount(two));
+	ASSERT_EQ(0, net.inEdgeCount(three));
+	ASSERT_EQ(2, net.inEdgeCount(four));
+
 }
 
 struct AgentCreator {
@@ -252,10 +319,12 @@ TEST_F(NetworkTests, CreateRNetTests) {
 	++iter;
 
 	// remove a vertex
+	// all edges with vertex id of 1, rn of 2 are gone
 	bool ret = net.removeVertex(*iter);
 	ASSERT_TRUE(ret);
 
 	net.addVertex(std::make_shared<Agent>(5, 37));
+	net.addEdge(0, 5);
 
 	List rnet;
 	map<unsigned int, unsigned int> idx_map;
@@ -271,10 +340,12 @@ TEST_F(NetworkTests, CreateRNetTests) {
 
 	// f should add an edge between 2 and 3 (c style)
 	Function f = as<Function>((*RInstance::rptr)["try.net.func"]);
-	rnet = f(rnet);
+	SEXP changes = f();
 
-	ASSERT_EQ(1, net.edgeCount());
-	reset_network_edges(rnet, net, idx_map);
+	ASSERT_EQ(2, net.edgeCount());
+	reset_network_edges(changes, net, idx_map);
+	// still 2 because we deleted one and added one
+	// in the try.net.func call
 	ASSERT_EQ(2, net.edgeCount());
 
 	auto eiter = net.edgesBegin();
@@ -284,7 +355,7 @@ TEST_F(NetworkTests, CreateRNetTests) {
 
 	++eiter;
 	edge = (*eiter);
-	ASSERT_EQ(3, edge->v1()->id());
+	ASSERT_EQ(2, edge->v1()->id());
 	ASSERT_EQ(5, edge->v2()->id());
 }
 

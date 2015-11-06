@@ -72,6 +72,7 @@ public:
 
 	void addEdge(const std::shared_ptr<V>& source, const std::shared_ptr<V>& target, double weight = 1);
 	void addEdge(unsigned int v1_idx, unsigned int v2_idx, double weight = 1);
+	bool removeEdge(unsigned int v1_idx, unsigned int v2_idx);
 
 	EdgeIter<V> edgesBegin();
 	EdgeIter<V> edgesEnd();
@@ -155,6 +156,27 @@ void Network<V>::addVertex(const std::shared_ptr<V>& vertex) {
 }
 
 template<typename V>
+bool Network<V>::removeEdge(unsigned int v1_idx, unsigned int v2_idx) {
+	auto iter = oel.find(v1_idx);
+	if (iter == oel.end()) return false;
+	for (auto edge_idx : iter->second) {
+		auto edge_iter = edges.find(edge_idx);
+		if (edge_iter == edges.end())
+			throw std::invalid_argument(
+					"Unable to delete edge: edge " + std::to_string(edge_idx) + " does not exist.");
+		EdgePtr<V> edge = edge_iter->second;
+		if (edge->v2()->id() == v2_idx) {
+			edges.erase(edge_iter);
+			iter->second.erase(edge_idx);
+
+			iel[v2_idx].erase(edge_idx);
+			return true;
+		}
+	}
+	return false;
+}
+
+template<typename V>
 void Network<V>::removeEdges(unsigned int idx, EdgeList& el, std::vector<EdgePtr<V>>& removed_edges) {
 	auto iter = el.find(idx);
 	if (iter != el.end()) {
@@ -164,7 +186,7 @@ void Network<V>::removeEdges(unsigned int idx, EdgeList& el, std::vector<EdgePtr
 			auto mel_iter = edges.find(*edge_idx_iter);
 			if (mel_iter == edges.end())
 				throw std::invalid_argument(
-						"Unable to delete edge: edge " + std::to_string(edge_idx) + " does not exist.");
+						"Unable to delete edge: edge " + std::to_string(*edge_idx_iter) + " does not exist.");
 			removed_edges.push_back(mel_iter->second);
 			// erase that edge
 			edges.erase(mel_iter);

@@ -9,10 +9,13 @@ add.edge(sn,3,1)
 
 set.vertex.attribute(sn, 'age', c(2, 12, 18, 100))
 
-try.net.func <- function(nw) {
-  # not sure how to achieve the effect of this in
-  # c++
-  class(nw) <- "network"
-  nw <- add.edge(nw, 3, 4)
-  nw
+try.net.func <- function() {
+  # delete edge between 1 and 4, create between
+  # 2 and 4
+  # !!! if vertex removed on C++ side, these indices may 
+  # not match those above !!!
+  data <- c(1, 1, 4, 0, 1, 2, 4, 1)
+  m <- matrix(data, nrow=2, byrow=T)
+  colnames(m) <- c("time", "tail", "head", "to")
+  m
 }
