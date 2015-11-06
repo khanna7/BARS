@@ -9,24 +9,7 @@
 
 #include "RInside.h"
 
-extern "C" {
-#include "access.h"
-}
-
 using namespace Rcpp;
-
-template <typename T>
-T get_vertex_attribute(List& nw, int vertex_idx, std::string attribute) {
-    List v = as<List>(as<List>(nw["val"])[vertex_idx]);
-    return v[attribute];
-}
-
-template <typename T>
-void set_vertex_attribute(List& nw, int vertex_idx, const std::string& attribute, T val) {
-	Rcpp::List v = Rcpp::as<Rcpp::List>(Rcpp::as<Rcpp::List>(nw["val"])[vertex_idx]);
-	v[attribute] = val;
-}
-
 
 void init_network(std::shared_ptr<RInside>& R, const std::string& r_file) {
 	std::string cmd = "source(file=\"" + r_file + "\")";
