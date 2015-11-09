@@ -16,6 +16,7 @@
 
 #include "Person.h"
 #include "Network.h"
+#include "Stats.h"
 
 namespace TransModel {
 
@@ -26,6 +27,7 @@ private:
 	Network<Person> net;
 	std::vector<unsigned int> popsize;
 	unsigned int max_id;
+	Stats stats;
 
 	void runTransmission(double timestamp);
 	void deaths(double time, int max_survival);
@@ -36,7 +38,7 @@ public:
 	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var);
 	virtual ~Model();
 
-	void run();
+	void run(const std::string& output_file);
 };
 
 

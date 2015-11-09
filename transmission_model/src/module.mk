@@ -5,6 +5,7 @@ C_SOURCE =
 CPP_SOURCE = Person.cpp \
 	Model.cpp \
 	Parameters.cpp \
+	Stats.cpp
 	
 
 c_source += $(C_SOURCE)

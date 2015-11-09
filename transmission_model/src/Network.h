@@ -43,6 +43,7 @@ using VertexMap = std::map<unsigned int, VertexPtr<V>>;
 template<typename V>
 using VertexIter = boost::transform_iterator<GetVal<VertexPtr<V>>, typename VertexMap<V>::iterator>;
 
+
 using EdgeList = std::map<unsigned int, std::set<unsigned int>>;
 
 template<typename V>

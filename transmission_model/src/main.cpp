@@ -1,4 +1,3 @@
-
 #include <memory>
 #include <vector>
 
@@ -17,36 +16,39 @@ void init_network(std::shared_ptr<RInside>& R, const std::string& r_file) {
 }
 
 int main(int argc, char *argv[]) {
-    
-    try {
-        std::shared_ptr<RInside> R = std::make_shared<RInside>(argc, argv);
-        repast::Properties props(argv[1]);
-        repast::initializeRandom(props);
-        TransModel::Parameters::initialize(props);
-        init_network(R, TransModel::Parameters::instance()->getStringParameter(TransModel::R_FILE));
 
-        TransModel::Model model(R, "nw");
-        model.run();
-        
- //       List nw = as<List>((*R)["nw"]);
+	try {
+		std::shared_ptr<RInside> R = std::make_shared<RInside>(argc, argv);
+		repast::Properties props(argv[1]);
+		for (int i = 0; i < 1; ++i) {
+			props.putProperty("random.seed", i);
+			repast::initializeRandom(props);
+			TransModel::Parameters::initialize(props);
+			init_network(R, TransModel::Parameters::instance()->getStringParameter(TransModel::R_FILE));
+
+			TransModel::Model model(R, "nw");
+			model.run("./output/foo_" + std::to_string(i + 1) + ".csv");
+		}
+
+		//       List nw = as<List>((*R)["nw"]);
 //        List mel = as<List>(nw["mel"]);
 //
 //        TransModel::IsActiveEdge predicate;
-       // TransModel::EdgeIterator iterBegin(mel.begin(), TransModel::MELToEdgePair());
-        //TransModel::EdgeIterator iterEnd(mel.end(), TransModel::MELToEdgePair());
-        //TransModel::EdgeFilterIter iterBegin(predicate, mel.begin(), mel.end());
-        //TransModel::EdgeFilterIter iterEnd(predicate, mel.end(), mel.end());
+		// TransModel::EdgeIterator iterBegin(mel.begin(), TransModel::MELToEdgePair());
+		//TransModel::EdgeIterator iterEnd(mel.end(), TransModel::MELToEdgePair());
+		//TransModel::EdgeFilterIter iterBegin(predicate, mel.begin(), mel.end());
+		//TransModel::EdgeFilterIter iterEnd(predicate, mel.end(), mel.end());
 //
 //        int count = 0;
 //        for (List::iterator iter = mel.begin(); iter != mel.end(); ++iter) {
 //        	SEXP item = (*iter);
- //       }
+		//       }
 //
 
-        //for (TransModel::EdgeFilterIter iter = iterBegin; iter != iterEnd; ++iter) {
-        //	++count;
-        //}
-       // std::cout << count << std::endl;
+		//for (TransModel::EdgeFilterIter iter = iterBegin; iter != iterEnd; ++iter) {
+		//	++count;
+		//}
+		// std::cout << count << std::endl;
 
 //        for (auto& exp : mel) {
 //        	List item = as<List>(exp);
@@ -57,7 +59,6 @@ int main(int argc, char *argv[]) {
 //        	std::cout << (as<LogicalVector>(atl["na"]))[0] << ", " << std::endl;
 //        	break;
 //        }
-
 
 //        std::cout << get_vertex_attribute<int>(nw, 0, "age") << std::endl;
 //        set_vertex_attribute<int>(nw, 0, "age", 104);
@@ -75,7 +76,7 @@ int main(int argc, char *argv[]) {
 //        	R["time"] = t;
 //        	simulate();
 //        }
-        
+
 //        List nw = as<List>(R["nw"]);
 //        List gal = as<List>(nw["gal"]);
 //        double n = gal["n"];
@@ -85,13 +86,12 @@ int main(int argc, char *argv[]) {
 //        std::cout << "Age: " << age << std::endl;
 //
 //        std::cout << isAdjacent(nw, 102, 305, 0) << std::endl;
-        
-        
-    } catch (std::exception& ex) {
-        std::cerr << ex.what() << std::endl;
-    } catch (...) {
-        std::cerr << "Unknown exception caught" << std::endl;
-    }
 
-  exit(0);
+	} catch (std::exception& ex) {
+		std::cerr << ex.what() << std::endl;
+	} catch (...) {
+		std::cerr << "Unknown exception caught" << std::endl;
+	}
+
+	exit(0);
 }

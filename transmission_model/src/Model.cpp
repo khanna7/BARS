@@ -51,7 +51,7 @@ struct YoungSetter {
 };
 
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
-		R(ri), net(false), popsize(), max_id(0) {
+		R(ri), net(false), popsize(), max_id(0), stats() {
 
 	List rnet = as<List>((*R)[net_var]);
 	PersonCreator person_creator;
@@ -59,6 +59,16 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 
 	popsize.push_back(net.vertexCount());
 	max_id = net.vertexCount();
+
+	// get initial stats
+	stats.incrementCurrentEdgeCount(net.edgeCount());
+	stats.incrementCurrentSize(net.vertexCount());
+	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+		if ((*iter)->isInfected()) {
+			stats.incrementCurrentTotalInfectedCount(1);
+		}
+	}
+	stats.resetForNextTimeStep();
 
 	double like_age_prob = Parameters::instance()->getDoubleParameter(LIKE_AGE_PROB);
 	BinomialGen like_age_gen(Random::instance()->engine(), boost::random::binomial_distribution<>(1, like_age_prob));
@@ -89,7 +99,7 @@ void infection_draw(PersonPtr infectee, PersonPtr infector, vector<PersonPtr>& i
 	}
 }
 
-void Model::run() {
+void Model::run(const std::string& output_file) {
 	YoungSetter young_setter;
 	int max_survival = Parameters::instance()->getIntParameter(MAX_SURVIVAL);
 	for (int t = 2; t < 26; ++t) {
@@ -102,9 +112,14 @@ void Model::run() {
 		NumericVector theta_form = as<NumericVector>((*R)["theta.form"]);
 		std::cout << "pop sizes: " << popsize[t - 2] << ", " << popsize[t - 1] << std::endl;
 		theta_form[0] = theta_form[0] + std::log(popsize[t - 2]) - std::log(popsize[t - 1]);
+		((*R)["theta_form"]) = theta_form;
 
 		std::cout << "edge count: " << net.edgeCount() << std::endl;
+		stats.incrementCurrentEdgeCount(net.edgeCount());
+		stats.incrementCurrentSize(net.vertexCount());
+		stats.resetForNextTimeStep();
 	}
+	stats.writeToCSV(output_file);
 }
 
 void Model::births(double time) {
@@ -115,6 +130,7 @@ void Model::births(double time) {
 				boost::random::poisson_distribution<>(births_prob * pop_size));
 		DefaultNumberGenerator<PoissonGen> gen(birth_gen);
 		int births = (int) gen.next();
+		stats.incrementCurrentBirthCount(births);
 		std::cout << "births: " << births << std::endl;
 		for (int i = 0; i < births; ++i) {
 			VertexPtr<Person> p = make_shared<Person>(max_id, 0, false);
@@ -135,6 +151,7 @@ void Model::deaths(double time, int max_survival) {
 		if (person->age() == max_survival) {
 			iter = net.removeVertex(iter);
 			++death_count;
+			stats.incrementCurrentOADeathCount(1);
 		} else {
 			++iter;
 		}
@@ -147,6 +164,7 @@ void Model::deaths(double time, int max_survival) {
 			PersonPtr person = (*iter);
 			iter = net.removeVertex(iter);
 			++death_count;
+			stats.incrementCurrentGRDeathCount(1);
 		} else {
 			++iter;
 		}
@@ -169,6 +187,8 @@ void Model::runTransmission(double time) {
 	for (auto& person : infecteds) {
 		person->setInfected(true, time);
 	}
+	stats.incrementCurrentTransmissionInfectedCount(infecteds.size());
+	stats.incrementCurrentTotalInfectedCount(infecteds.size());
 }
 
 } /* namespace TransModel */

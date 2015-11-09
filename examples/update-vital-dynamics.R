@@ -19,6 +19,8 @@ update.vital.dynamics <-
        age <- nw%v%"age"
        dying.of.age <- which(floor(age) == max.survival &
                               is.active(nw, v=1:network.size(nw), at=time))#26Aug13:VERYIMP
+    
+      stats[time, "old_age_deaths"] <- length(dying.of.age)
  
        if(length(dying.of.age)>0) {
         nw <- deactivate.vertices(nw, onset=time, terminus=Inf, v=dying.of.age)
@@ -36,6 +38,7 @@ update.vital.dynamics <-
            }
     
         if (verbose) cat("Deaths due to age", length(dying.of.age), "\n")
+        
     
         # Activation of network that is left
         node.active <- is.active(nw, v=1:network.size(nw), at=time)
@@ -50,6 +53,8 @@ update.vital.dynamics <-
         dying.of.grim.reaper <- active.nodes[dying.of.grim.reaper.index]
     
         if (verbose) cat("Grim reaper deaths", length(dying.of.grim.reaper), "\n")
+    
+    stats[time, "grim_repear_deaths"] <- length(dying.of.grim.reaper)
     
         if(length(dying.of.grim.reaper)>0) {
         nw <- set.vertex.attribute(nw, "time.of.death",
@@ -91,6 +96,7 @@ update.vital.dynamics <-
     if (verbose){ 
       cat("Number of Intros is ", nintros, "\n")                         
     }
+    stats[time, "births"] <- nintros
     
  
     #     if (nintros>0) {  
@@ -150,6 +156,7 @@ update.vital.dynamics <-
       theta.form[1] <-  theta.form[1] + log(popsize[time-1]) - log(popsize[time])
       ## cat("Finished timestep ",time," of ",timesteps,".\n",sep="")
     
-    return(nw)
+    ret <- list("network"=nw, "stats"=stats)
+    ret
         
       }
