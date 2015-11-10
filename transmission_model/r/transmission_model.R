@@ -5,40 +5,42 @@ suppressMessages(library(tergm))
 suppressMessages(library(network))
 suppressMessages(library(networkDynamic))
 
-set.seed(1)
+load(file="../../examples/example-estimation.RData")
 
-# 5000
-N <- 5000
-duration <- 25
-theta.diss <- log(duration-1)
-# 3000
-n.edges <- 3000
-
-n0 <- network.initialize(N, directed=FALSE)
-n0%v%"age" <- sample(0:30, N, replace=TRUE)
-age <- n0%v%"age"
-age.less.than.15 <- which(age <= 15)
-n0%v%"young" <- rep(0, length=N)
-set.vertex.attribute(n0, "young", 1, age.less.than.15)
-
-inf.status <- rbinom(N, 1, 0.1)
-n0%v%"inf.status" <- inf.status
-
-formation <- ~edges+nodemix("young", base=1)
-formation.n0 <- update.formula(formation, n0~.)
-dissolution <- ~offset(edges)
-target.stats <- c(n.edges, c(1/5*n.edges, 1/2*n.edges)) 
-#50% of partnerships will be btwn "young" individuals 
-
-constraints <- ~.
-
-fit <- ergm(formation.n0,
-            target.stats=target.stats,
-            constraints=constraints,
-            verbose=FALSE)      
-
-theta.form <- fit$coef
-theta.form[1] <- theta.form[1]-theta.diss
+# set.seed(1)
+# 
+# # 5000
+# N <- 5000
+# duration <- 25
+# theta.diss <- log(duration-1)
+# # 3000
+# n.edges <- 3000
+# 
+# n0 <- network.initialize(N, directed=FALSE)
+# n0%v%"age" <- sample(0:30, N, replace=TRUE)
+# age <- n0%v%"age"
+# age.less.than.15 <- which(age <= 15)
+# n0%v%"young" <- rep(0, length=N)
+# set.vertex.attribute(n0, "young", 1, age.less.than.15)
+# 
+# inf.status <- rbinom(N, 1, 0.1)
+# n0%v%"inf.status" <- inf.status
+# 
+# formation <- ~edges+nodemix("young", base=1)
+# formation.n0 <- update.formula(formation, n0~.)
+# dissolution <- ~offset(edges)
+# target.stats <- c(n.edges, c(1/5*n.edges, 1/2*n.edges)) 
+# #50% of partnerships will be btwn "young" individuals 
+# 
+# constraints <- ~.
+# 
+# fit <- ergm(formation.n0,
+#             target.stats=target.stats,
+#             constraints=constraints,
+#             verbose=FALSE)      
+# 
+# theta.form <- fit$coef
+# theta.form[1] <- theta.form[1]-theta.diss
 
 nw <- fit$network
 formation <- fit$formula
