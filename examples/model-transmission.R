@@ -24,6 +24,8 @@
        ## discordant partnerships with "left" partner of
         ## status matrix above infected
            ## list    
+       
+       count <- 0
            discordant.1pos <- intersect(which(status.el[, 1] == 1),
                                        which(status.el[, 2] == 0))
         
@@ -48,6 +50,7 @@
                    nw <- set.vertex.attribute(nw, "inf.status", 1, v=infectible.2[i])
                    nw <- set.vertex.attribute(nw, "inf.time", time, v=infectible.2[i])
                    nw <- set.vertex.attribute(nw, "infector", transmittable.1[i], v=infectible.2[i])
+                   count <- count + 1
                }
            }
 
@@ -78,8 +81,9 @@
                    nw <- set.vertex.attribute(nw, "inf.status", 1, v=infectible.1[i])
                    nw <- set.vertex.attribute(nw, "inf.time", time, v=infectible.1[i])
                    nw <- set.vertex.attribute(nw, "infector", transmittable.2[i], v=infectible.1[i])
+                   count <- count + 1
                }
            }
 
-      return(nw);
+      return(list("network"=nw, "infected_count"=count));
       }
