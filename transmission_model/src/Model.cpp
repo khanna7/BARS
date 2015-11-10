@@ -80,9 +80,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 	Random::instance()->putGenerator(UNLIKE_AGE_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(unlike_age_gen));
 
 	double daily_death_prob = Parameters::instance()->getDoubleParameter(DAILY_DEATH_PROB);
-	BinomialGen dail_death_gen(Random::instance()->engine(),
+	BinomialGen daily_death_gen(Random::instance()->engine(),
 			boost::random::binomial_distribution<>(1, daily_death_prob));
-	Random::instance()->putGenerator(DAILY_DEATH_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(dail_death_gen));
+	Random::instance()->putGenerator(DAILY_DEATH_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(daily_death_gen));
 }
 
 Model::~Model() {
@@ -90,7 +90,8 @@ Model::~Model() {
 
 void infection_draw(PersonPtr infectee, PersonPtr infector, vector<PersonPtr>& infecteds) {
 	NumberGenerator* gen =
-			infector->isYoung() && infectee->isYoung() ?
+			// if both young, or both not young then use like age
+			infector->isYoung() == infectee->isYoung() ?
 					Random::instance()->getGenerator(LIKE_AGE_BINOMIAL) :
 					Random::instance()->getGenerator(UNLIKE_AGE_BINOMIAL);
 	int draw = (int) gen->next();
@@ -185,10 +186,15 @@ void Model::runTransmission(double time) {
 	}
 
 	for (auto& person : infecteds) {
-		person->setInfected(true, time);
+		// if person has multiple partners who are infected,
+		// person gets multiple chances to become infected from them
+		// and so may appear more than once in the infecteds list
+		if (!person->isInfected()) {
+			person->setInfected(true, time);
+			stats.incrementCurrentTransmissionInfectedCount(1);
+			stats.incrementCurrentTotalInfectedCount(1);
+		}
 	}
-	stats.incrementCurrentTransmissionInfectedCount(infecteds.size());
-	stats.incrementCurrentTotalInfectedCount(infecteds.size());
 }
 
 } /* namespace TransModel */
