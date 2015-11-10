@@ -159,7 +159,9 @@ void Network<V>::addVertex(const std::shared_ptr<V>& vertex) {
 template<typename V>
 bool Network<V>::removeEdge(unsigned int v1_idx, unsigned int v2_idx) {
 	auto iter = oel.find(v1_idx);
-	if (iter == oel.end()) return false;
+	if (iter == oel.end()) {
+		return false;
+	}
 	for (auto edge_idx : iter->second) {
 		auto edge_iter = edges.find(edge_idx);
 		if (edge_iter == edges.end())

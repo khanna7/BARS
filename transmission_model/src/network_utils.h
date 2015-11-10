@@ -105,6 +105,7 @@ template<typename V, typename F>
 void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_setter, double time) {
 	// rn vertex to n vertex
 	std::map<unsigned int, unsigned int> idx_map;
+
 	List rnet;
 	create_r_network(rnet, net, idx_map, attributes_setter);
 	//Rf_PrintValue(rnet);
@@ -115,16 +116,28 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 template<typename V>
 void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map) {
 	NumericMatrix matrix = as<NumericMatrix>(changes);
+
+	int count = net.edgeCount();
+	int added = 0;
+	int removed = 0;
 	for (int r = 0, n = matrix.rows(); r < n; ++r) {
-		int out = idx_map.at(matrix(r, 1));
-		int in = idx_map.at(matrix(r, 2));
+		int in = idx_map.at(matrix(r, 1));
+		int out = idx_map.at(matrix(r, 2));
 		int to = matrix(r, 3);
 		if (to) {
 			net.addEdge(out, in);
+			++added;
 		} else {
-			net.removeEdge(out, in);
+			bool res = net.removeEdge(out, in);
+			if (!res) {
+				throw std::domain_error("Updating from tergm changes: trying to remove an edge that doesn't exist");
+			}
+			++removed;
 		}
 	}
+
+	int expected = count + added - removed;
+	std::cout << "expected: " << expected << ", edge count: " << net.edgeCount() << std::endl;
 }
 
 /**

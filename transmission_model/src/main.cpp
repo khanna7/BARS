@@ -20,14 +20,14 @@ int main(int argc, char *argv[]) {
 	try {
 		std::shared_ptr<RInside> R = std::make_shared<RInside>(argc, argv);
 		repast::Properties props(argv[1]);
-		for (int i = 0; i < 1; ++i) {
+		for (int i = 0; i < 5; ++i) {
 			props.putProperty("random.seed", i);
 			repast::initializeRandom(props);
 			TransModel::Parameters::initialize(props);
 			init_network(R, TransModel::Parameters::instance()->getStringParameter(TransModel::R_FILE));
 
 			TransModel::Model model(R, "nw");
-			model.run("./output/foo_" + std::to_string(i + 1) + ".csv");
+			model.run("./output/data_" + std::to_string(i + 1) + ".csv");
 		}
 
 		//       List nw = as<List>((*R)["nw"]);

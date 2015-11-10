@@ -105,9 +105,9 @@ void Model::run(const std::string& output_file) {
 	for (int t = 2; t < 26; ++t) {
 		std::cout << " ---- " << t << " ---- " << std::endl;
 		simulate(R, net, young_setter, t);
-		runTransmission(t);
 		deaths(t, max_survival);
 		births(t);
+		runTransmission(t);
 
 		NumericVector theta_form = as<NumericVector>((*R)["theta.form"]);
 		std::cout << "pop sizes: " << popsize[t - 2] << ", " << popsize[t - 1] << std::endl;
