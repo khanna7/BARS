@@ -12,18 +12,20 @@ load(file="example-estimation.RData")
 
 collect.stats <- function(time) {
   xn.nw <- network.collapse(nw, at=time)
-  xn.infected <- which(xn.nw%v%"inf.status" == 1)
+  nw.infected <- which(nw%v%"inf.status" == 1)
   
   ## births, deaths of old age, grim reaper deaths, total number infected, number infected via transmission, edge count, vertex count
-  stats[time, "total_number_infected"] <- length(xn.infected)
-  #stats[time, "infected_via_transmission"] <- length((xn.nw%v%"infector")[which(!is.na(xn.nw%v%"infector"))])
+  stats[time, "total_number_infected"] <- length(nw.infected)
+  if (time > 1) {
+    stats[time, "infected_via_transmission"] <- length(nw.infected) - stats[time - 1, "total_number_infected"]
+  }
   stats[time, "edge_count"] <- network.edgecount(xn.nw) #num. of edges at last time
   stats[time, "vertex_count"] <- network.size(xn.nw) #vertex count at last time
   
   stats
 }
 
-for (r in 1:1) {
+for (r in 1:5) {
   set.seed(r)
   nw <- fit$network
   formation <- fit$formula
@@ -62,26 +64,23 @@ for (r in 1:1) {
                    #control = control.simulate.network(MCMC.burnin=10000)
     )
     
-#     ret <- update.vital.dynamics(nw,
-#                                 max.survival=50,
-#                                 daily.death.prob=0.01/100,
-#                                 daily.birth.rate=1/100
-#                                 )
-    #nw <- ret$network
-    #stats <- ret$stats
+     ret <- update.vital.dynamics(nw,
+                                 max.survival=50,
+                                 daily.death.prob=0.01/100,
+                                 daily.birth.rate=1/100
+                                 )
+    nw <- ret$network
+    stats <- ret$stats
     cat("Total number of edges is ",
         network.edgecount(nw), "\n")
     cat("Number of alive edges is ",
         network.edgecount(network.extract(nw, at=time)),
         "\n") 
   
-    ret <- transmission(nw, verbose=TRUE,
+    nw <- transmission(nw, verbose=TRUE,
                        like.age.prob=10/100,
                        unlike.age.prob=20/100,
                        )
-
-    nw = ret$network
-    stats[time, "infected_via_transmission"] <- ret$infected_count
     
     stats <- collect.stats(time)
     xn.nw <- network.collapse(nw, at=time)
