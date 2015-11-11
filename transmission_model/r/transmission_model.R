@@ -5,7 +5,7 @@ suppressMessages(library(tergm))
 suppressMessages(library(network))
 suppressMessages(library(networkDynamic))
 
-load(file="../../examples/example-estimation.RData")
+load(file="../r/example-estimation.RData")
 
 # set.seed(1)
 # 
