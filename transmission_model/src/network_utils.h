@@ -136,8 +136,8 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 		}
 	}
 
-	int expected = count + added - removed;
-	std::cout << "expected: " << expected << ", edge count: " << net.edgeCount() << std::endl;
+	//int expected = count + added - removed;
+	//std::cout << "expected: " << expected << ", edge count: " << net.edgeCount() << std::endl;
 }
 
 /**
