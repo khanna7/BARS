@@ -10,8 +10,6 @@
 
 #include "RCpp.h"
 
-#include "RNetwork.h"
-
 namespace TransModel {
 
 class Person {
@@ -28,8 +26,7 @@ public:
 	virtual ~Person();
 
 	/**
-	 * Gets the id of this person. This is the C-style idx
-	 * of the vertex. R idx is this + 1.
+	 * Gets the id of this person.
 	 */
 
 	int id() const {
