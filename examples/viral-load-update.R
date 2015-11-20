@@ -1,3 +1,6 @@
+### Viral load update
+### from SDP project, https://github.com/khanna7/sero-discordant-couples/blob/master/Code/Engine/compute.viral.load_d7_d3.R
+
 
 ## 20 Feb 2014: Differentiate post-cessation trajectories for Option A and B
 
