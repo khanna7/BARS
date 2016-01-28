@@ -26,12 +26,11 @@ struct InfectionParameters {
 
 	bool infection_status, art_status;
 	float time_since_infection, time_since_art_init, time_since_art_cessation;
-	float dur_inf_by_age;
-};
+	float dur_inf_by_age, viral_load, vl_art_traj_slope, cd4_count;
 
-struct IndividualViralLoadParameters {
-
-	float viral_load, vl_art_traj_slope;
+	InfectionParameters() : infection_status(false), art_status(false),
+			time_since_infection(-1), time_since_art_init(-1), time_since_art_cessation(-1),
+			dur_inf_by_age(-1), viral_load(0), vl_art_traj_slope(0), cd4_count(0) {}
 
 };
 

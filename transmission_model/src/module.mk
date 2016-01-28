@@ -8,7 +8,9 @@ CPP_SOURCE = Person.cpp \
 	Stats.cpp \
 	DiseaseParameters.cpp \
 	CD4Calculator.cpp \
-	ViralLoadCalculator.cpp
+	ViralLoadCalculator.cpp \
+	Stage.cpp \
+	TransmissionRunner.cpp
 	
 
 c_source += $(C_SOURCE)

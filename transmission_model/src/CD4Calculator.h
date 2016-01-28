@@ -32,7 +32,7 @@ public:
 	/**
 	 * Assumes infected individual.
 	 */
-	double calculateCD4(float age, double cd4_count, InfectionParameters& infection_params);
+	float calculateCD4(float age, const InfectionParameters& infection_params);
 };
 
 } /* namespace TransModel */

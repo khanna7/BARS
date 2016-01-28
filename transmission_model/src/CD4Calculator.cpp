@@ -44,12 +44,12 @@ float CD4Calculator::getB6AgeValue(float age) {
 	return B6_AGE_50;
 }
 
-double CD4Calculator::calculateCD4(float age, double cd4_count, InfectionParameters& infection_params) {
-	double cd4 = cd4_count;
+float CD4Calculator::calculateCD4(float age, const InfectionParameters& infection_params) {
+	float cd4 = infection_params.cd4_count;
 	if (infection_params.art_status) {
 		// with anti-retroviral treatment
-		if (infection_params.time_since_art_init <= cd4_recovery_time_ && cd4_count <= cd4_at_infection_male_) {
-			cd4 = cd4_count + (per_day_cd4_recovery_ * size_of_timestep_);
+		if (infection_params.time_since_art_init <= cd4_recovery_time_ && infection_params.cd4_count <= cd4_at_infection_male_) {
+			cd4 = infection_params.cd4_count + (per_day_cd4_recovery_ * size_of_timestep_);
 		}
 	} else {
 		// no anti-retroviral treatment

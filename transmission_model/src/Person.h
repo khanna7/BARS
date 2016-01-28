@@ -9,19 +9,20 @@
 #define SRC_PERSON_H_
 
 #include "RCpp.h"
+#include "DiseaseParameters.h"
 
 namespace TransModel {
 
 class Person {
 
 private:
-
 	int id_, age_;
-	bool infected_;
-	double time_of_infection, time_of_birth;
+	InfectionParameters infection_parameters_;
+	float infectivity_;
+	bool prep_;
 
 public:
-	Person(int id, int age, bool infected);
+	Person(int id, int age);
 
 	virtual ~Person();
 
@@ -40,33 +41,60 @@ public:
 		return age_;
 	}
 
+	bool onPrep() const {
+		return prep_;
+	}
+
+	const InfectionParameters& infectionParameters() const {
+		return infection_parameters_;
+	}
+
 	bool isYoung() const;
 
 	bool isInfected() const {
-		return infected_;
+		return infection_parameters_.infection_status;
 	}
 
-	double timeOfInfection() const {
-		return time_of_infection;
+	float infectivity() const {
+		return infectivity_;
 	}
 
-	double timeOfBirth() const {
-		return time_of_birth;
+	float timeSinceInfection() const {
+		return infection_parameters_.time_since_infection;
 	}
+
+	void setViralLoad(float viral_load);
+
+	void setCD4Count(float cd4_count);
+
+	void setInfectivity(float infectivity);
 
 	void setAge(int age);
 
-	void setInfected(bool infected, double time);
-
-	void setTimeOfBirth(double time);
+	/**
+	 * Infects this Person and sets whether or not they are on ART
+	 * and the duration of the infection.
+	 */
+	void infect(bool onART, float duration_of_infection);
 
 	/**
-	 * Increments the persons age by one. If age is > 15
-	 * then young property is set to false.
+	 * Updates age, etc. of person.
 	 */
-	void incrementAge();
-};
+	void updateVitals(float size_of_timestep);
 
+	/**
+	 * Checks if person is dead of old age. This doesn't kill
+	 * the person, it just checks.
+	 */
+	bool deadOfAge(int max_age);
+
+	/**
+	 * Checks if person is dead of AIDS. This doesn't kill
+	 * the person, it just checks.
+	 */
+	bool deadOfAIDS();
+
+};
 
 } /* namespace TransModel */
 
