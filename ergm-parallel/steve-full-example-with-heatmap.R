@@ -3,9 +3,9 @@
 
 ##########################
 # params to set
-nresp <- 100
-nalters <- 100
-mdeg <- 50
+nresp <- 1000
+nalters <- 1000
+mdeg <- 25
 
 ##########################
 # Process
