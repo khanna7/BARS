@@ -1,5 +1,6 @@
-## Simple ERGM example
-
+## Simple ergm/ergm-parallel example
+   ## Modified from code initially written by Steven M Goodreau
+   
   ## libraries
   library(ergm)
   library(snow)
