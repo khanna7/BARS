@@ -7,9 +7,9 @@
   library(methods)
 
   ## parameters
-  nresp <- 1e3
-  nalters <- 2e3
-  mdeg <- 50
+  nresp <- 1000
+  nalters <- 1000
+  mdeg <- 15
 
   n <- nresp + nalters
 
@@ -19,8 +19,8 @@
   mynet <- set.vertex.attribute(mynet, 'greg', greg)
 
   ## Network specificaton
-  formula <- mynet~edges+nodecov('greg')
-  target.stats <- target.stats
+  formula <- mynet~edges+nodecov('greg')+degree(0)
+  target.stats <- c(mdeg*n/2, 1.1*mdeg*n/2, n/10)
 
   ## Fit ERGM (serial)
   t0 <- proc.time()
@@ -28,23 +28,24 @@
   myfit.ser <- ergm(formula=formula,
                     target.stats=target.stats) 
 
-  proc.time()-t0
+  print(proc.time()-t0)
 
 
   ## Fit ERGM (parallel)
+
+
   np <- mpi.universe.size()-1
-  cluster <- makeCLuster(np, type="MPI")
+  cluster <- makeCluster(np, type="MPI")
 
   t1 <- proc.time()
- 
   myfit.par <- ergm(formula=formula, 
                     target.stats=target.stats,
-                    control=control.ergm(parallel=np, parallel.type="MPI")
+                    control=control.ergm(parallel=np, parallel.type="MPI"))
 
-  proc.time()-t1
+  print(proc.time()-t1)
 
   ## Simulate once to generate a network
-  sim_net <- simulate(myfit)
+  #sim_net <- simulate(myfit.ser)
 
   ## Exit MPI                   
   stopCluster(cluster)
