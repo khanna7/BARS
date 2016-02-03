@@ -5,7 +5,12 @@ C_SOURCE =
 CPP_SOURCE = Person.cpp \
 	Model.cpp \
 	Parameters.cpp \
-	Stats.cpp
+	Stats.cpp \
+	DiseaseParameters.cpp \
+	CD4Calculator.cpp \
+	ViralLoadCalculator.cpp \
+	Stage.cpp \
+	TransmissionRunner.cpp
 	
 
 c_source += $(C_SOURCE)

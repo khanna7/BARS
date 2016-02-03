@@ -7,14 +7,10 @@ CXX = /usr/local/bin/mpicxx
 CXXLD = /usr/local/bin/mpicxx
 CC = clang
 
-CXX_RELEASE_FLAGS = -Wall -O3 -g0 -std=c++11
-CXX_DEBUG_FLAGS = -O0 -g3 -std=c++11
-
-C_RELEASE_FLAGS = -Wall -O3 -g0 
-C_DEBUG_FLAGS = -Wall -O0 -g3
+CXX_RELEASE_FLAGS = -Wall -O3 -g0 -std=c++11 -MMD -MP
+CXX_DEBUG_FLAGS = -Wall -O0 -g3 -std=c++11 -MMD -MP
 
 CXX_FLAGS = $(CXX_RELEASE_FLAGS)
-C_FLAGS = $(C_RELEASE_FLAGS)
 
 INCLUDES :=
 LIBS :=
@@ -65,12 +61,10 @@ OBJECTS += $(subst .c,.o, $(addprefix $(BUILD_DIR)/, $(c_source)))
 # objects and deps for executable
 EXEC_OBJECTS := $(OBJECTS)
 EXEC_OBJECTS += $(BUILD_DIR)/main.o
-EXEC_DEPS = $(subst .o,.d,$(EXEC_OBJECTS))
 
 TEST_OBJECTS := $(OBJECTS)
 TEST_OBJECTS += $(subst .cpp,.o, $(addprefix $(BUILD_DIR)/, $(test_src)))
 TEST_OBJECTS += $(BUILD_DIR)/test_main.o
-TEST_DEPS = $(subst .o,.d,$(TEST_OBJECTS))
 
 VPATH = ../src ../test
 
@@ -81,10 +75,10 @@ TEST_NAME = unit_tests
 SED := sed
 MV := mv -f
 
--include $(EXEC_DEPS)
--include $(TEST_DEPS)
+-include $(TEST_OBJECTS:.o=.d)
+-include $(EXEC_OBJECTS:.o=.d)
 
-.PHONY: all transmission_model tests
+.PHONY: all transmission_model tests clean
 
 all: transmission_model tests
 
@@ -95,25 +89,10 @@ tests : $(TEST_DEPS) $(TEST_OBJECTS)
 	$(CXXLD) $(filter-out %.d, $^) $(LIBS) $(RPATHS) $(GTEST_LIB) -o $(TEST_NAME)
 	
 $(BUILD_DIR)/%.o : %.cpp
+	@-mkdir -p $(dir $@)
 	$(CXX) $(CXX_FLAGS) $(INCLUDES) $(TEST_INCLUDES) -c $< -o $@
 	
-$(BUILD_DIR)/%.o : %.c
-	$(CC) $(C_FLAGS) $(INCLUDES) -c $< -o $@
-
-$(BUILD_DIR)/%.d : %.cpp
-	@-mkdir -p $(dir $@)
-	@echo Calculating dependencies for $<
-	@$(CXX) $(CPPFLAGS) $(INCLUDES) $(TEST_INCLUDES) -M $< | \
-	$(SED) 's,\($(notdir $*)\.o\) *:,$(dir $@)\1 $@: ,' > $@.tmp
-	@$(MV) $@.tmp $@
-	
-$(BUILD_DIR)/%.d : %.c
-	@-mkdir -p $(dir $@)
-	@echo Calculating dependencies for $<
-	@$(CC) $(C_FLAGS) $(INCLUDES) -M $< | \
-	$(SED) 's,\($(notdir $*)\.o\) *:,$(dir $@)\1 $@: ,' > $@.tmp
-	@$(MV) $@.tmp $@
 
 clean:
 	rm -fv $(NAME) $(TEST_NAME)
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)/*

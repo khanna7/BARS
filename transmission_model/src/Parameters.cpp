@@ -12,12 +12,42 @@ namespace TransModel {
 
 using namespace repast;
 
-const std::string LIKE_AGE_PROB = "like.age.prob";
-const std::string UNLIKE_AGE_PROB = "unlike.age.prob";
 const std::string R_FILE = "r.file";
 const std::string MAX_SURVIVAL = "max.survival";
 const std::string DAILY_DEATH_PROB = "daily.death.prob";
 const std::string DAILY_BIRTH_RATE = "daily.birth.rate";
+
+const std::string CIRC_MULT = "circumcision.multiplier";
+const std::string PREP_MULT = "prep.multiplier";
+const std::string DUR_INF_BY_AGE = "duration.of.infection.by.age";
+
+const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
+
+const std::string ART_COVERAGE_RATE = "art.coverage.rate";
+
+const std::string CD4_RECOVERY_TIME = "cd4.recovery.time";
+const std::string CD4_AT_INFECTION = "cd4.at.infection";
+const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
+
+const std::string TIME_INFECTION_TO_PEAK_LOAD = "time.infection.to.peak.load";
+const std::string TIME_INFECTION_TO_SET_POINT = "time.infection.to.set.point";
+const std::string TIME_INFECTION_TO_LATE_STAGE = "time.infection.to.late.stage";
+const std::string TIME_TO_FULL_SUPP = "time.to.full.supp";
+const std::string PEAK_VIRAL_LOAD = "peak.viral.load";
+const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
+const std::string LATE_STAGE_VIRAL_LOAD = "late.stage.viral.load";
+const std::string UNDETECTABLE_VIRAL_LOAD = "undetectable.viral.load";
+
+const std::string ACUTE_RANGE_MAX_NUMERATOR = "acute.range.max.numerator";
+const std::string CHRONIC_RANGE_MAX_NUMERATOR = "chronic.range.max.numerator";
+const std::string LATE_RANGE_MAX_NUMERATOR = "late.range.max.numerator";
+const std::string MIN_CHRONIC_INFECTIVITY_UNADJ = "min.chronic.infectivity.unadj";
+const std::string ACUTE_MULTIPLIER = "acute.multiplier";
+const std::string CHRONIC_MULTIPLIER = "chronic.multiplier";
+const std::string LATE_MULTIPLIER = "late_multiplier";
+
+const std::string SEX_ACTS_PER_TIMESTEP = "sex.acts.per.timestep";
+
 
 Parameters* Parameters::instance_ = 0;
 

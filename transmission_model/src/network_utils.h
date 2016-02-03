@@ -117,7 +117,6 @@ template<typename V>
 void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map) {
 	NumericMatrix matrix = as<NumericMatrix>(changes);
 
-	int count = net.edgeCount();
 	int added = 0;
 	int removed = 0;
 	for (int r = 0, n = matrix.rows(); r < n; ++r) {

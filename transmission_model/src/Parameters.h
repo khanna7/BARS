@@ -7,12 +7,49 @@
 
 namespace TransModel {
 
-extern const std::string LIKE_AGE_PROB;
-extern const std::string UNLIKE_AGE_PROB;
 extern const std::string R_FILE;
 extern const std::string MAX_SURVIVAL;
 extern const std::string DAILY_DEATH_PROB;
 extern const std::string DAILY_BIRTH_RATE;
+
+extern const std::string CIRC_MULT;
+extern const std::string PREP_MULT;
+extern const std::string DUR_INF_BY_AGE;
+
+extern const std::string SIZE_OF_TIMESTEP;
+
+extern const std::string ART_COVERAGE_RATE;
+
+// cd4 params
+extern const std::string CD4_RECOVERY_TIME;
+extern const std::string CD4_AT_INFECTION;
+extern const std::string PER_DAY_CD4_RECOVERY;
+
+// viral load params
+extern const std::string TIME_INFECTION_TO_PEAK_LOAD;
+extern const std::string TIME_INFECTION_TO_SET_POINT;
+extern const std::string TIME_INFECTION_TO_LATE_STAGE;
+extern const std::string TIME_TO_FULL_SUPP;
+extern const std::string PEAK_VIRAL_LOAD;
+extern const std::string SET_POINT_VIRAL_LOAD;
+extern const std::string LATE_STAGE_VIRAL_LOAD;
+extern const std::string UNDETECTABLE_VIRAL_LOAD;
+
+// 121, 1877, 3300
+extern const std::string ACUTE_RANGE_MAX_NUMERATOR;
+extern const std::string CHRONIC_RANGE_MAX_NUMERATOR;
+extern const std::string LATE_RANGE_MAX_NUMERATOR;
+// 0.000497/2.89
+extern const std::string MIN_CHRONIC_INFECTIVITY_UNADJ;
+// 4.98, 3.49
+extern const std::string ACUTE_MULTIPLIER;
+extern const std::string LATE_MULTIPLIER;
+
+extern const std::string SEX_ACTS_PER_TIMESTEP;
+
+
+
+
 
 /**
  * Parameters singleton that contains the model properties.
