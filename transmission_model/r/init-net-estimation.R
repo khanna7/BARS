@@ -117,21 +117,33 @@
    art.status <- rep(NA, n) #everyone
    art.status[init.infected] <- 0
 
-   art.init.elig <- which(time.since.infection > art.init.time)
+   art.uptaker <- init.infected[which(art.covered == 1)]
+   art.inf.long.enough <- which(time.since.infection > art.init.time)
+   art.init.elig <- intersect(art.inf.long.enough,
+                              art.uptaker)
+      # (art.init.time is a constant describing delay between
+      #  infection and ART update)
    art.status[art.init.elig] <- 1
 
    n0 %v% "art.status" <- art.status
 
    ## time since ART initiation
-   time.since.art.initiation <- time.since.infection - art.init.time
-   n0%v% "time.since.art.initiation" <- time.since.art.initiation
+   on.art <- which(art.status == 1)
+   time.since.art.initiation <- rep(NA, n)
+   time.since.art.initiation[on.art] <- 0
+              #everyone who has ART just went on it
+   n0 %v% "time.since.art.initiation" <- time.since.art.initiation
 
-   ## cd4.count.today (for those on ART)
+   ## time of ART initiation
+   time.of.art.initiation <- 0-time.of.art.initiation
+   n0 %v% "time.of.art.initiation" <- time.of.art.initiation
+
+   ## cd4.count.today (for those on ART
        ## (we have list of those on ART
        ## and how long they have been on ART
        ## multiply by CD4 recovery in every time step, and
        ## we get their updated CD4 count.)
-    on.art <- which(art.status == 1)
+
     for (i in 1:length(on.art)){
         cd4.count.today[on.art[i]] <- cd4.count.today[on.art[i]]*
                                        cd4.rec.per.timestep*
