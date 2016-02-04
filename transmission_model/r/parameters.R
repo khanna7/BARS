@@ -1,5 +1,5 @@
 ## initial values of parameters
-
+   #####################
    ## NETWORK
    n <- 5000
    nedges <- 2500
@@ -7,13 +7,16 @@
 
    duration <- 100
 
+   #####################
    ## TIMESTEP
    size.of.timestep <- 1 #currently set as 1 day
-
+ 
+   #####################
    ## DEMOGRAPHIC
    min.age <- 16
    max.age <- 65
 
+   #####################
    ## BIOLOGICAL
    circum.rate <- 0.10
    init.hiv.prev <- 0.10
@@ -55,6 +58,7 @@
   time.to.full.supp <- 4*30/size.of.timestep ## 4 months
   undetectable.vl <- log(50, base=10)
 
+   #####################
    ## ART
    baseline.art.coverage.rate <- 0.60
    art.init.time <- 365 # currently set to one year, make more complex later
