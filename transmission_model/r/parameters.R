@@ -1,6 +1,6 @@
 ## initial values of parameters
-   #####################
    
+   #####################
    ## NETWORK
    n <- 5000
    nedges <- 2500
