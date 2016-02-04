@@ -135,7 +135,7 @@
    n0 %v% "time.since.art.initiation" <- time.since.art.initiation
 
    ## time of ART initiation
-   time.of.art.initiation <- 0-time.of.art.initiation
+   time.of.art.initiation <- 0-time.since.art.initiation
    n0 %v% "time.of.art.initiation" <- time.of.art.initiation
 
    ## cd4.count.today (for those on ART
@@ -221,7 +221,7 @@
         n0%v%"viral.load.today" <- viral.load.today
         n0%v%"vl.art.traj.slope" <- vl.art.traj.slope 
 
-        ## stage of infectino
+        ## stage of infection
        stage.of.infection <- classify.stage.numeric.rewrite(
                                time.since.infection)
        n0%v%"stage.of.infection" <- stage.of.infection
