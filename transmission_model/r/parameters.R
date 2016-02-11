@@ -65,6 +65,9 @@
    art.init.time <- 365 # currently set to one year, make more complex later
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month
    cd4.rec.per.timestep <- per.day.cd4.recovery*size.of.timestep
-
-
+   ## parameter for viral decline (add)
+   ## ART cessation parameters (what to consider)
    
+   #####################
+   ## PrEP
+   ##  rate of uptake, reduction in infection transmission (per act), cessation conditions/metrics
