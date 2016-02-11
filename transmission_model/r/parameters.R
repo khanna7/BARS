@@ -49,6 +49,8 @@
   untreated.cd4.daily.decline <- 0.14 # (for men and women)
   untreated.cd4.perstep.decline <- untreated.cd4.daily.decline*
                                    size.of.timestep
+   ## healthy level of CD4: sample from some distribution, or should it be the same for all uninfected men?
+   
   ## (viral load)
   time.infection.to.peak.viremia <- floor(14/size.of.timestep)
   time.infection.to.peak.viral.load <- time.infection.to.peak.viremia
