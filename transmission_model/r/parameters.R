@@ -17,6 +17,7 @@
    min.age <- 16
    max.age <- 65
    ## distribution of ages (between min and max)
+   ## number of births (n.births: for now take it as 1% per year)
    
    #####################
    ## BIOLOGICAL
