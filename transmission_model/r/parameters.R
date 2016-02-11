@@ -16,7 +16,8 @@
    ## DEMOGRAPHIC
    min.age <- 16
    max.age <- 65
-
+   ## distribution of ages (between min and max)
+   
    #####################
    ## BIOLOGICAL
    circum.rate <- 0.10
