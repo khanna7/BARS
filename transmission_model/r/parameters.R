@@ -76,3 +76,16 @@
    #####################
    ## PrEP
    ##  rate of uptake, reduction in infection transmission (per act), cessation conditions/metrics
+   
+   #####################
+   ## Transmission Parameters
+   num.sex.acts.per.timestep <- 2.4*size.of.timestep/7
+   acute.mult <- 4.98
+   late.mult <- 3.49
+   preg.mult <- 2.5 ## check
+   circum.mult <- 0.60 ## check
+   preg.susc.mult <- 1.7
+   acute.mult.holling <- 26
+   late.mult.holling <- 7
+   
+   ## relationship between viral load and chronic infectivity (hughes et al.)
