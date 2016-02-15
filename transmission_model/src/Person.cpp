@@ -11,10 +11,9 @@ using namespace Rcpp;
 
 namespace TransModel {
 
-const double YOUNG_THRESHOLD = 16;
-
-Person::Person(int id, int age) :
-		id_(id), age_(age), infection_parameters_(), infectivity_(0), prep_(false) {
+Person::Person(int id, float age, bool circum_status) :
+		id_(id), age_(age), circum_status_(circum_status),
+		infection_parameters_(), infectivity_(0), prep_(false) {
 }
 
 //Person::Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth) : net(network), id_(id) {
@@ -27,18 +26,14 @@ Person::~Person() {
 }
 
 void Person::infect(bool onART, float duration_of_infection) {
-	infection_parameters_.art_status = true;
+	infection_parameters_.art_status = onART;
 	infection_parameters_.dur_inf_by_age = duration_of_infection;
 	infection_parameters_.infection_status = true;
 	infection_parameters_.time_since_art_init = 0;
 	infection_parameters_.time_since_infection = 0;
 }
 
-bool Person::isYoung() const {
-	return age_ < YOUNG_THRESHOLD;
-}
-
-void Person::setAge(int age) {
+void Person::setAge(float age) {
 	age_ = age;
 }
 

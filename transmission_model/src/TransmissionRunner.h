@@ -22,6 +22,8 @@ private:
 	float circumcision_multiplier_, prep_multiplier_;
 	std::vector<float> dur_inf_by_age;
 
+
+
 public:
 	TransmissionRunner(float circumcision_multiplier, float prep_multiplier,
 			std::vector<float>& given_dur_inf_by_age);
@@ -43,6 +45,11 @@ public:
 	 * starts him or her on ART with some probability.
 	 */
 	void infect(PersonPtr infectee);
+
+	/**
+	 * Gets the expected duration of the infection given a Person's age.
+	 */
+	float durInfByAge(float age);
 
 
 };

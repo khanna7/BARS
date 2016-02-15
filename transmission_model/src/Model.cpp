@@ -14,6 +14,7 @@
 #include "common.h"
 #include "TransmissionRunner.h"
 #include "DiseaseParameters.h"
+#include "PersonCreator.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -21,30 +22,12 @@ using namespace repast;
 
 namespace TransModel {
 
-struct PersonCreator {
 
-	int id;
-	shared_ptr<TransmissionRunner> trans_runner_;
-	PersonCreator(shared_ptr<TransmissionRunner>& trans_runner) :
-			id(0), trans_runner_(trans_runner) {
-	}
 
-	PersonPtr operator()(List& val) {
-		int age = as<int>(val["age"]);
-		bool infected = as<bool>(val["inf.status"]);
-		PersonPtr person = std::make_shared<Person>(id++, age);
-		if (infected) {
-			trans_runner_->infect(person);
-		}
-		return person;
-	}
-
-};
-
-struct YoungSetter {
+struct PersonToVAL {
 
 	void operator()(const PersonPtr& p, List& vertex) const {
-		vertex["young"] = p->isYoung() ? 1 : 0;
+
 	}
 
 };
@@ -140,12 +123,12 @@ Model::~Model() {
 }
 
 void Model::run(const std::string& output_file) {
-	YoungSetter young_setter;
+	PersonToVAL p2val;
 	int max_survival = Parameters::instance()->getIntParameter(MAX_SURVIVAL);
 	float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
 	for (int t = 2; t < 26; ++t) {
 		std::cout << " ---- " << t << " ---- " << std::endl;
-		simulate(R, net, young_setter, t);
+		simulate(R, net, p2val, t);
 		births(t);
 		runTransmission(t);
 		updateVitals(size_of_timestep, max_survival);
@@ -192,6 +175,7 @@ void Model::updateVitals(float size_of_timestep, int max_survival) {
 	}
 }
 
+// TODO rename to entries
 void Model::births(double time) {
 	size_t pop_size = net.vertexCount();
 	if (pop_size > 0) {
@@ -203,7 +187,8 @@ void Model::births(double time) {
 		stats.incrementCurrentBirthCount(births);
 		std::cout << "births: " << births << std::endl;
 		for (int i = 0; i < births; ++i) {
-			VertexPtr<Person> p = make_shared<Person>(max_id, 0);
+			// TODO should set to min age and do circumsize draw
+			VertexPtr<Person> p = make_shared<Person>(max_id, 0, false);
 			//p->setTimeOfBirth(time);
 			net.addVertex(p);
 			++max_id;

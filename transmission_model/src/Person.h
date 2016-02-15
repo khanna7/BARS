@@ -13,16 +13,22 @@
 
 namespace TransModel {
 
+class PersonCreator;
+
 class Person {
 
 private:
-	int id_, age_;
+	friend PersonCreator;
+
+	int id_;
+	float age_;
+	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
 	bool prep_;
 
 public:
-	Person(int id, int age);
+	Person(int id, float age, bool circum_status);
 
 	virtual ~Person();
 
@@ -37,7 +43,7 @@ public:
 	/**
 	 * Gets the age of this Person.
 	 */
-	int age() const {
+	float age() const {
 		return age_;
 	}
 
@@ -49,7 +55,9 @@ public:
 		return infection_parameters_;
 	}
 
-	bool isYoung() const;
+	bool isCircumcised() const {
+		return circum_status_;
+	}
 
 	bool isInfected() const {
 		return infection_parameters_.infection_status;
@@ -69,7 +77,7 @@ public:
 
 	void setInfectivity(float infectivity);
 
-	void setAge(int age);
+	void setAge(float age);
 
 	/**
 	 * Infects this Person and sets whether or not they are on ART
