@@ -46,6 +46,7 @@
                     floor(3300/size.of.timestep)
 
   ## (cd4 decline)
+  cd4.at.infection.male <- 518 #cells/mm3
   untreated.cd4.daily.decline <- 0.14 # (for men and women)
   untreated.cd4.perstep.decline <- untreated.cd4.daily.decline*
                                    size.of.timestep
@@ -70,6 +71,7 @@
    art.init.time <- 365 # currently set to one year, make more complex later
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month
    cd4.rec.per.timestep <- per.day.cd4.recovery*size.of.timestep
+   cd4.recovery.time <- 3*365/size.of.timestep ## CD4 recovery for 3 years
    ## parameter for viral decline (add)
    ## ART cessation parameters (what to consider)
    
@@ -87,5 +89,6 @@
    preg.susc.mult <- 1.7
    acute.mult.holling <- 26
    late.mult.holling <- 7
+   min.chronic.infectivity.unadj <- 0.000497/2.89 
    
    ## relationship between viral load and chronic infectivity (hughes et al.)
