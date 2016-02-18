@@ -17,6 +17,7 @@
    min.age <- 16
    max.age <- 65
    given.dur.inf.by.age <- 10*365/size.of.timestep #(not age-specific yet)  
+   daily.entry.rate <- 0.01
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
@@ -79,6 +80,7 @@
    #####################
    ## PrEP
    ##  rate of uptake, reduction in infection transmission (per act), cessation conditions/metrics
+   prep.mult <- 1.0
    
    #####################
    ## Transmission Parameters

@@ -5,49 +5,76 @@
  *      Author: nick
  */
 
-#include "Parameters.h"
 #include "repast_hpc/Utilities.h"
+#include "repast_hpc/Properties.h"
 
-namespace TransModel {
+#include "Parameters.h"
 
 using namespace repast;
 
+
+namespace TransModel {
+
+const std::string STOP_AT = "stop.at";
+const std::string R_PARAMETERS_FILE = "r.parameters.file";
 const std::string R_FILE = "r.file";
-const std::string MAX_SURVIVAL = "max.survival";
-const std::string DAILY_DEATH_PROB = "daily.death.prob";
-const std::string DAILY_BIRTH_RATE = "daily.birth.rate";
 
-const std::string CIRC_MULT = "circumcision.multiplier";
-const std::string PREP_MULT = "prep.multiplier";
-const std::string DUR_INF_BY_AGE = "duration.of.infection.by.age";
+const std::string PREP_MULT = "prep.mult";
 
-const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
-
-const std::string ART_COVERAGE_RATE = "art.coverage.rate";
-
+// generated from parameters.R
+const std::string ACUTE_LENGTH_MIN = "acute.length.min";
+const std::string ACUTE_LENGTH_MAX = "acute.length.max";
+const std::string ACUTE_MULT = "acute.mult";
+const std::string ACUTE_MULT_HOLLING = "acute.mult.holling";
+const std::string ART_INIT_TIME = "art.init.time";
+const std::string B1_REF = "b1.ref";
+const std::string B2_AFRICAN = "b2.african";
+const std::string B3_FEMALE = "b3.female";
+const std::string B4_CD4_REF = "b4.cd4.ref";
+const std::string B5_AFRICAN = "b5.african";
+const std::string B6_AGE_15TO29 = "b6.age.15to29";
+const std::string B6_AGE_30TO39 = "b6.age.30to39";
+const std::string B6_AGE_40TO49 = "b6.age.40to49";
+const std::string B6_AGE_50ORMORE = "b6.age.50ormore";
+const std::string BASELINE_ART_COVERAGE_RATE = "baseline.art.coverage.rate";
+const std::string CD4_AT_INFECTION_MALE = "cd4.at.infection.male";
+const std::string CD4_REC_PER_TIMESTEP = "cd4.rec.per.timestep";
 const std::string CD4_RECOVERY_TIME = "cd4.recovery.time";
-const std::string CD4_AT_INFECTION = "cd4.at.infection";
-const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
-
-const std::string TIME_INFECTION_TO_PEAK_LOAD = "time.infection.to.peak.load";
-const std::string TIME_INFECTION_TO_SET_POINT = "time.infection.to.set.point";
-const std::string TIME_INFECTION_TO_LATE_STAGE = "time.infection.to.late.stage";
-const std::string TIME_TO_FULL_SUPP = "time.to.full.supp";
-const std::string PEAK_VIRAL_LOAD = "peak.viral.load";
-const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
+const std::string CHRONIC_LENGTH_MIN = "chronic.length.min";
+const std::string CHRONIC_LENGTH_MAX = "chronic.length.max";
+const std::string CIRCUM_MULT = "circum.mult";
+const std::string CIRCUM_RATE = "circum.rate";
+const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
+const std::string DEG_SEQ = "deg_seq";
+const std::string DUR_INF = "dur.inf";
+const std::string DURATION = "duration";
+const std::string DURATION_OF_INFECTION = "duration.of.infection";
+const std::string DUR_INF_BY_AGE = "given.dur.inf.by.age";
+const std::string INIT_HIV_PREV = "init.hiv.prev";
+const std::string LATE_LENGTH_MIN = "late.length.min";
+const std::string LATE_LENGTH_MAX = "late.length.max";
+const std::string LATE_MULT = "late.mult";
+const std::string LATE_MULT_HOLLING = "late.mult.holling";
 const std::string LATE_STAGE_VIRAL_LOAD = "late.stage.viral.load";
-const std::string UNDETECTABLE_VIRAL_LOAD = "undetectable.viral.load";
-
-const std::string ACUTE_RANGE_MAX_NUMERATOR = "acute.range.max.numerator";
-const std::string CHRONIC_RANGE_MAX_NUMERATOR = "chronic.range.max.numerator";
-const std::string LATE_RANGE_MAX_NUMERATOR = "late.range.max.numerator";
+const std::string MAX_AGE = "max.age";
+const std::string MIN_AGE = "min.age";
 const std::string MIN_CHRONIC_INFECTIVITY_UNADJ = "min.chronic.infectivity.unadj";
-const std::string ACUTE_MULTIPLIER = "acute.multiplier";
-const std::string CHRONIC_MULTIPLIER = "chronic.multiplier";
-const std::string LATE_MULTIPLIER = "late_multiplier";
-
-const std::string SEX_ACTS_PER_TIMESTEP = "sex.acts.per.timestep";
-
+const std::string NUM_SEX_ACTS_PER_TIMESTEP = "num.sex.acts.per.timestep";
+const std::string PEAK_VIRAL_LOAD = "peak.viral.load";
+const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
+const std::string PREG_MULT = "preg.mult";
+const std::string PREG_SUSC_MULT = "preg.susc.mult";
+const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
+const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
+const std::string TIME_INFECTION_TO_LATE_STAGE = "time.infection.to.late.stage";
+const std::string TIME_INFECTION_TO_PEAK_VIRAL_LOAD = "time.infection.to.peak.viral.load";
+const std::string TIME_INFECTION_TO_PEAK_VIREMIA = "time.infection.to.peak.viremia";
+const std::string TIME_INFECTION_TO_VIRAL_SET_POINT = "time.infection.to.viral.set.point";
+const std::string TIME_TO_FULL_SUPP = "time.to.full.supp";
+const std::string UNDETECTABLE_VL = "undetectable.vl";
+const std::string UNINFECTED_CD4_LEVEL = "uninfected.cd4.level";
+const std::string UNTREATED_CD4_DAILY_DECLINE = "untreated.cd4.daily.decline";
+const std::string UNTREATED_CD4_PERSTEP_DECLINE = "untreated.cd4.perstep.decline";
 
 Parameters* Parameters::instance_ = 0;
 
@@ -83,6 +110,10 @@ std::string Parameters::getStringParameter(const std::string& prop_name) const {
 
 int Parameters::getIntParameter(const std::string& prop_name) const {
 	return strToInt(getStringParameter(prop_name));
+}
+
+float Parameters::getFloatParameter(const std::string& prop_name) const {
+	return std::stof(getStringParameter(prop_name));
 }
 
 double Parameters::getDoubleParameter(const std::string& prop_name) const {

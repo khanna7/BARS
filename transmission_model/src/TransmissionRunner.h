@@ -44,7 +44,7 @@ public:
 	 * Sets the infection flag, time of infection etc on the specified person and
 	 * starts him or her on ART with some probability.
 	 */
-	void infect(PersonPtr infectee);
+	void infect(PersonPtr infectee, float time);
 
 	/**
 	 * Gets the expected duration of the infection given a Person's age.

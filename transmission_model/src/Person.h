@@ -59,8 +59,16 @@ public:
 		return circum_status_;
 	}
 
+	bool isOnART() const {
+		return infection_parameters_.art_status;
+	}
+
 	bool isInfected() const {
 		return infection_parameters_.infection_status;
+	}
+
+	bool isARTCovered() const {
+		return infection_parameters_.art_covered;
 	}
 
 	float infectivity() const {
@@ -75,20 +83,28 @@ public:
 
 	void setCD4Count(float cd4_count);
 
+	void setViralLoadARTSlope(float slope);
+
 	void setInfectivity(float infectivity);
 
 	void setAge(float age);
 
 	/**
-	 * Infects this Person and sets whether or not they are on ART
-	 * and the duration of the infection.
+	 * Puts this Person on ART with the specified time stamp.
 	 */
-	void infect(bool onART, float duration_of_infection);
+	void putOnART(float time_stamp);
 
 	/**
-	 * Updates age, etc. of person.
+	 * Infects this Person and sets whether or not they will
+	 * be on ART after the delay, the duration of the infection,
+	 * and the time of infection.
 	 */
-	void updateVitals(float size_of_timestep);
+	void infect(bool art_coverted, float duration_of_infection, float time);
+
+	/**
+	 * Updates age, etc. of person., to be called each iteration of the model.
+	 */
+	void step(float size_of_timestep);
 
 	/**
 	 * Checks if person is dead of old age. This doesn't kill
@@ -100,7 +116,7 @@ public:
 	 * Checks if person is dead of AIDS. This doesn't kill
 	 * the person, it just checks.
 	 */
-	bool deadOfAIDS();
+	bool deadOfInfection();
 
 };
 

@@ -19,14 +19,14 @@ TEST(CreatorTests, TestInfectedPersonCreationNoART) {
 	RInstance::rptr->parseEvalQ(cmd);
 	List rnet = as<List>((*RInstance::rptr)["n0"]);
 	List val = as<List>(rnet["val"]);
-	List val11 = as<List>(val[11]);
+	List p_list = as<List>(val[11]);
 	// make sure I have the right one
-	ASSERT_NEAR(21.81211, as<double>(val11["age"]), 0.00001);
+	ASSERT_NEAR(21.81211, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
 	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
 	PersonCreator creator(runner);
-	PersonPtr person = creator(val11);
+	PersonPtr person = creator(p_list);
 	ASSERT_TRUE(person->isCircumcised());
 	ASSERT_TRUE(person->isInfected());
 	ASSERT_NEAR(21.81211f, person->age(), 0.00001);
@@ -52,14 +52,14 @@ TEST(CreatorTests, TestUninfectedPersonCreation) {
 	RInstance::rptr->parseEvalQ(cmd);
 	List rnet = as<List>((*RInstance::rptr)["n0"]);
 	List val = as<List>(rnet["val"]);
-	List val11 = as<List>(val[0]);
+	List p_list = as<List>(val[0]);
 	// make sure I have the right one
-	ASSERT_NEAR(43.8509, as<double>(val11["age"]), 0.00001);
+	ASSERT_NEAR(43.8509, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
 	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
 	PersonCreator creator(runner);
-	PersonPtr person = creator(val11);
+	PersonPtr person = creator(p_list);
 	ASSERT_TRUE(person->isCircumcised());
 	ASSERT_FALSE(person->isInfected());
 	ASSERT_NEAR(43.8509f, person->age(), 0.00001);
@@ -85,14 +85,14 @@ TEST(CreatorTests, TestInfectedPersonCreationART) {
 	RInstance::rptr->parseEvalQ(cmd);
 	List rnet = as<List>((*RInstance::rptr)["n0"]);
 	List val = as<List>(rnet["val"]);
-	List val11 = as<List>(val[22]);
+	List p_list = as<List>(val[22]);
 	// make sure I have the right one
-	ASSERT_NEAR(37.97986, as<double>(val11["age"]), 0.00001);
+	ASSERT_NEAR(37.97986, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
 	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
 	PersonCreator creator(runner);
-	PersonPtr person = creator(val11);
+	PersonPtr person = creator(p_list);
 	ASSERT_FALSE(person->isCircumcised());
 	ASSERT_TRUE(person->isInfected());
 	ASSERT_NEAR(37.97986f, person->age(), 0.00001);

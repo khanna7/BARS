@@ -13,7 +13,7 @@
 namespace TransModel {
 
 /**
- * Inclusive Range
+ * Range from [x, y)
  */
 template<typename T>
 class Range {
@@ -38,7 +38,7 @@ Range<T>::~Range() {
 
 template<typename T>
 bool Range<T>::within(T val) {
-	return val >= start_ && val <= end_;
+	return val >= start_ && val < end_;
 }
 
 class Stage {

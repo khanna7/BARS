@@ -22,6 +22,8 @@ typedef boost::variate_generator<boost::mt19937&, boost::binomial_distribution<>
 typedef boost::variate_generator<boost::mt19937&, boost::poisson_distribution<>> PoissonGen;
 
 const std::string ART_COVERAGE_BINOMIAL = "art.coverage.binomial";
+const std::string CIRCUM_STATUS_BINOMIAL = "circum.status.binomial";
+
 
 }
 

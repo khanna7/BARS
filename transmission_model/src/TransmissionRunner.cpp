@@ -50,10 +50,10 @@ float TransmissionRunner::durInfByAge(float age) {
 	return dur_inf;
 }
 
-void TransmissionRunner::infect(PersonPtr infectee) {
+void TransmissionRunner::infect(PersonPtr infectee, float time) {
 	int draw = (int) repast::Random::instance()->getGenerator(ART_COVERAGE_BINOMIAL)->next();
 	float dur_inf = durInfByAge(infectee->age());
-	infectee->infect(draw == 1, dur_inf);
+	infectee->infect(draw == 1, dur_inf, time);
 }
 
 } /* namespace TransModel */
