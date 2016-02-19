@@ -18,6 +18,8 @@ namespace TransModel {
 const std::string STOP_AT = "stop.at";
 const std::string R_PARAMETERS_FILE = "r.parameters.file";
 const std::string R_FILE = "r.file";
+const std::string EVENT_FILE = "event.file";
+const std::string EVENT_FILE_BUFFER_SIZE = "event.file.buffer.size";
 
 const std::string PREP_MULT = "prep.mult";
 

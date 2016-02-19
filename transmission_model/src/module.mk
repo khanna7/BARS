@@ -14,6 +14,7 @@ CPP_SOURCE = Person.cpp \
 	TransmissionRunner.cpp \
 	PersonCreator.cpp \
 	ARTScheduler.cpp \
+	EventWriter.cpp \
 	utils.cpp
 	
 

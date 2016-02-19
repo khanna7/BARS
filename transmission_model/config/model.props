@@ -1,5 +1,8 @@
 random.seed = 1
-stop.at = 200
+stop.at = 400
 
 r.parameters.file = ../r/common/parameters.R
 r.file = ../r/network_model/transmission_model.R
+
+event.file = ./events.h5
+event.file.buffer.size = 200;

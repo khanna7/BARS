@@ -6,6 +6,8 @@
  */
 
 #include "ARTScheduler.h"
+#include "EventWriter.h"
+#include "Events.h"
 
 namespace TransModel {
 
@@ -19,6 +21,7 @@ ARTScheduler::~ARTScheduler() {
 void ARTScheduler::operator()() {
 	for (auto& p : persons) {
 		p->putOnART(time_stamp_);
+		EventWriter::instance()->addEvent(time_stamp_, p, ON_ART);
 	}
 }
 

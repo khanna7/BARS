@@ -17,6 +17,7 @@
 #include "DiseaseParameters.h"
 #include "PersonCreator.h"
 #include "ARTScheduler.h"
+#include "EventWriter.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -151,6 +152,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 	ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
 	runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
+
+	EventWriter::initialize(Parameters::instance()->getStringParameter(EVENT_FILE),
+			Parameters::instance()->getIntParameter(EVENT_FILE_BUFFER_SIZE));
 
 }
 

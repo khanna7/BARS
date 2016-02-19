@@ -8,7 +8,9 @@ namespace TransModel {
 extern const std::string STOP_AT;
 extern const std::string R_PARAMETERS_FILE;
 extern const std::string R_FILE;
-extern const std::string DAILY_ENTRY_RATE;
+
+extern const std::string EVENT_FILE;
+extern const std::string EVENT_FILE_BUFFER_SIZE;
 
 extern const std::string PREP_MULT;
 

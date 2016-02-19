@@ -24,6 +24,10 @@ REPAST_LIB_DIR = /Users/nick/bin/repast_hpc/lib
 REPAST_LIB = repast_hpc-2.1
 REPAST_INCLUDE = /Users/nick/bin/repast_hpc/include
 
+HDF5_INCLUDE = /usr/local/include
+HDF5_LIB_DIR = /usr/local/lib
+HDF5_LIBS = -l hdf5_cpp -l hdf5
+
 BOOST_INCLUDE = /usr/local/include
 BOOST_LIB_DIR = /usr/local/lib
 BOOST_LIBS = -lboost_mpi-mt -lboost_system-mt -lboost_filesystem-mt
@@ -33,6 +37,7 @@ INCLUDES += -I $(R_USER_LIBS)/RInside/include
 INCLUDES += -I $(R_USER_LIBS)/Rcpp/include
 INCLUDES += -I $(REPAST_INCLUDE)
 INCLUDES += -I $(BOOST_INCLUDE)
+INCLUDES += -I $(HDF5_INCLUDE)
 INCLUDES += -I ../src
 
 GTEST_HOME = /Users/nick/bin/googletest
@@ -43,6 +48,7 @@ LIBS += -L $(R_USER_LIBS)/RInside/lib -l RInside
 LIBS += -L $(R_HOME)/lib -l R
 LIBS += -L $(REPAST_LIB_DIR) -l$(REPAST_LIB)
 LIBS += -L $(BOOST_LIB_DIR) $(BOOST_LIBS)
+LIBS += -L $(HDF5_LIB_DIR) $(HDF5_LIBS)
 
 RPATHS += -Wl,-rpath -Wl,$(R_USER_LIBS)/RInside/lib
 RPATHS += -Wl,-rpath -Wl,$(R_HOME)/lib/R/lib
