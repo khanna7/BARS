@@ -8,7 +8,7 @@
 #ifndef SRC_PERSON_H_
 #define SRC_PERSON_H_
 
-#include "RCpp.h"
+#include "Rcpp.h"
 #include "DiseaseParameters.h"
 
 namespace TransModel {
