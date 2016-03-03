@@ -5,17 +5,28 @@
  *      Author: nick
  */
 
-#include <fstream>
 #include "boost/filesystem.hpp"
 
 #include "Stats.h"
+#include "file_utils.h"
 
 namespace TransModel {
 
-Stats::Stats() : items(), current_item { 0, 0, 0, 0, 0, 0, 0} {
+Stats::Stats(const std::string& fname, size_t buffer_size) :
+		items(), current_item { 0, 0, 0, 0, 0, 0, 0}, buffer_size_(buffer_size), out {}, last_written_timestep{0} {
+	std::string file_name = unique_file_name(fname);
+	boost::filesystem::path filepath(file_name);
+	if (!boost::filesystem::exists(filepath.parent_path()))
+		boost::filesystem::create_directories(filepath.parent_path());
+
+	out.open(file_name.c_str());
+	out << "\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\","
+			<< "\"edge_count\",\"vertex_count\"\n";
 }
 
 Stats::~Stats() {
+	write();
+	out.close();
 }
 
 void Stats::incrementCurrentEdgeCount(unsigned int edge_count) {
@@ -28,18 +39,17 @@ void Stats::incrementCurrentTransmissionInfectedCount(unsigned int infected) {
 	current_item.infected += infected;
 }
 
-void Stats::incrementCurrentTotalInfectedCount(unsigned int infected) {
-	current_item.total_infected += infected;
-}
-
 void Stats::resetForNextTimeStep() {
 	items.push_back(current_item);
-	current_item =  {0, 0, 0, 0, 0, 0, 0};
-	current_item.total_infected = items[items.size() - 1].total_infected;
+	current_item = {0, 0, 0, 0, 0, 0, 0};
+
+	if (items.size() == buffer_size_) {
+		write();
+	}
 }
 
-void Stats::incrementCurrentBirthCount(unsigned int count) {
-	current_item.births += count;
+void Stats::incrementCurrentEntryCount(unsigned int count) {
+	current_item.entries += count;
 }
 
 void Stats::incrementCurrentOADeathCount(unsigned int count) {
@@ -50,20 +60,17 @@ void Stats::incrementCurrentGRDeathCount(unsigned int count) {
 	current_item.gr_deaths += count;
 }
 
-void Stats::writeToCSV(const std::string& file) {
-	boost::filesystem::path p(file);
-	boost::filesystem::create_directories(p.parent_path());
-	std::ofstream out;
-	out.open(p.c_str());
-	out << "\"time\",\"births\",\"old_age_deaths\",\"grim_repear_deaths\",\"total_number_infected\"," <<
-			"\"infected_via_transmission\",\"edge_count\",\"vertex_count\"\n";
-	int t = 1;
+//void Stats::incrementCurrentARTCount(unsigned int count) {
+//	current_item.on_art += count;
+//}
+
+void Stats::write() {
 	for (auto item : items) {
-		out << t << "," << item.births << "," << item.age_deaths << "," << item.gr_deaths << "," << item.total_infected << "," <<
-				item.infected << "," << item.edge_count << "," << item.size << "\n";
-		++t;
+		out << last_written_timestep << "," << item.entries << "," << item.age_deaths << "," << item.gr_deaths << "," << item.infected
+				<< "," << item.edge_count << "," << item.size << "\n";
+		++last_written_timestep;
 	}
-	out.close();
+	items.clear();
 }
 
 } /* namespace TransModel */

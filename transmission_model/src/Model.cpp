@@ -17,7 +17,7 @@
 #include "DiseaseParameters.h"
 #include "PersonCreator.h"
 #include "ARTScheduler.h"
-#include "EventWriter.h"
+//#include "EventWriter.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -127,7 +127,7 @@ void init_generators() {
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size{0},
-				previous_pop_size{0}, max_id{0}, stage_map(), stats() {
+				previous_pop_size{0}, max_id{0}, stage_map(), stats(Parameters::instance()->getStringParameter(COUNTS_PER_TIMESTEP_OUTPUT_FILE)) {
 
 	List rnet = as<List>((*R)[net_var]);
 	PersonCreator person_creator(trans_runner);
@@ -141,8 +141,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 	stats.incrementCurrentEdgeCount(net.edgeCount());
 	stats.incrementCurrentSize(net.vertexCount());
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
-		if ((*iter)->isInfected()) {
-			stats.incrementCurrentTotalInfectedCount(1);
+		PersonPtr p = *iter;
+		if (p->isInfected()) {
+			stats.incrementCurrentTransmissionInfectedCount(1);
 		}
 	}
 	stats.resetForNextTimeStep();
@@ -153,8 +154,8 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 	runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
 
-	EventWriter::initialize(Parameters::instance()->getStringParameter(EVENT_FILE),
-			Parameters::instance()->getIntParameter(EVENT_FILE_BUFFER_SIZE));
+	//EventWriter::initialize(Parameters::instance()->getStringParameter(EVENT_FILE),
+	//		Parameters::instance()->getIntParameter(EVENT_FILE_BUFFER_SIZE));
 
 }
 
@@ -180,12 +181,9 @@ void Model::step() {
 	theta_form[0] = theta_form[0] + std::log(previous_pop_size) - std::log(current_pop_size);
 	((*R)["theta_form"]) = theta_form;
 
-	std::cout << "edge count: " << net.edgeCount() << std::endl;
 	stats.incrementCurrentEdgeCount(net.edgeCount());
 	stats.incrementCurrentSize(net.vertexCount());
 	stats.resetForNextTimeStep();
-
-	//stats.writeToCSV(output_file);
 }
 
 void Model::updateVitals(float size_of_timestep, int max_age) {
@@ -220,7 +218,6 @@ void Model::updateVitals(float size_of_timestep, int max_age) {
 			++iter;
 		}
 	}
-	std::cout << "dead: " << dead_count << std::endl;
 }
 
 void Model::entries(double time) {
@@ -232,7 +229,7 @@ void Model::entries(double time) {
 				boost::random::poisson_distribution<>(births_prob * pop_size));
 		DefaultNumberGenerator<PoissonGen> gen(birth_gen);
 		int entries = (int) gen.next();
-		stats.incrementCurrentBirthCount(entries);
+		stats.incrementCurrentEntryCount(entries);
 		std::cout << "entries: " << entries << std::endl;
 		for (int i = 0; i < entries; ++i) {
 			int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
@@ -294,7 +291,6 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 				art_scheduler->addPerson(person);
 			}
 			stats.incrementCurrentTransmissionInfectedCount(1);
-			stats.incrementCurrentTotalInfectedCount(1);
 		}
 	}
 

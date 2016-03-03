@@ -14,8 +14,10 @@ CPP_SOURCE = Person.cpp \
 	TransmissionRunner.cpp \
 	PersonCreator.cpp \
 	ARTScheduler.cpp \
-	EventWriter.cpp \
-	utils.cpp
+	utils.cpp \
+	file_utils.cpp
+	
+#	EventWriter.cpp \
 	
 
 c_source += $(C_SOURCE)
