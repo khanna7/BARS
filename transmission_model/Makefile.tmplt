@@ -30,7 +30,10 @@ HDF5_LIBS = -l hdf5_cpp -l hdf5
 
 BOOST_INCLUDE = /usr/local/include
 BOOST_LIB_DIR = /usr/local/lib
-BOOST_LIBS = -lboost_mpi-mt -lboost_system-mt -lboost_filesystem-mt
+BOOST_LIBS = -lboost_mpi-mt -lboost_system-mt -lboost_filesystem-mt -boost_serialization-mt
+
+NET_CDF_LIB_DIR = 
+NET_CDF_LIB =
 
 INCLUDES += -I $(R_HOME)/include
 INCLUDES += -I $(R_USER_LIBS)/RInside/include
@@ -49,9 +52,13 @@ LIBS += -L $(R_HOME)/lib -l R
 LIBS += -L $(REPAST_LIB_DIR) -l$(REPAST_LIB)
 LIBS += -L $(BOOST_LIB_DIR) $(BOOST_LIBS)
 LIBS += -L $(HDF5_LIB_DIR) $(HDF5_LIBS)
+LIBS += -L $(NET_CDF_LIB_DIR) -l$(NET_CDF_LIB)
 
 RPATHS += -Wl,-rpath -Wl,$(R_USER_LIBS)/RInside/lib
-RPATHS += -Wl,-rpath -Wl,$(R_HOME)/lib/R/lib
+RPATHS += -Wl,-rpath -Wl,$(R_HOME)/lib
+RPATHS += -Wl,-rpath -Wl,$(BOOST_LIB_DIR)
+RPATHS += -Wl,-rpath -Wl,$(REPAST_LIB_DIR)
+RPATHS += -Wl,-rpath -Wl,$(NET_CDF_LIB_DIR)
 
 SRC_DIR=../src
 BUILD_DIR = ./build
