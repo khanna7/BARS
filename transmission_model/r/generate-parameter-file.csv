@@ -4,7 +4,7 @@ size.of.timestep, 1, NA, Discrete, C
 NETWORK PARAMETERS, , , , 
 Number of edges, 2500, Type, Discrete, E
 Degree 0, 1800, NA, Discrete, E
-Degree 1, , Discrete, E
-Degree 2, , Discrete, E
-..., , Discrete, E
+Degree 1, , NA, Discrete, E
+Degree 2, , NA, Discrete, E
+..., , NA, Discrete, E
 Mean partnership duration, 730, NA, Discrete, C
