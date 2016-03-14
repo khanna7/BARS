@@ -1,1 +1,10 @@
-A, B, C, D
+Parameter, Min, Max, Type, Constant (C) or Evolving with time (E)
+N, 5000, NA, Discrete, E
+size.of.timestep, 1, NA, C
+NETWORK PARAMETERS, , , , 
+Number of edges, 2500, Type, Discrete, E
+Degree 0, 1800, NA, Discrete, E
+Degree 1, , Discrete, E
+Degree 2, , Discrete, E
+..., , Discrete, E
+Mean partnership duration, 730, NA, Discrete, C
