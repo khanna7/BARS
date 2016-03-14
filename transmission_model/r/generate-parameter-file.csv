@@ -10,7 +10,7 @@ Degree 2, , NA, Discrete, E
 Mean partnership duration, 730, NA, Discrete, C
 DEMOGRAPHIC PARAMETERS, , , ,
 Age, 16 years, 65 years, Discrete, C
-Duration of Infection by Age, 10 years, Discrete, C
+Duration of Infection by Age, 10 years, NA, Discrete, C, 
 Daily Entry Rate, 0.001, --, Discrete, C (free parameter -- might need more experimentation)
 Age Specific Mortality Rates, , , , C (not yet in model)
 BIOLOGICAL, , , ,
