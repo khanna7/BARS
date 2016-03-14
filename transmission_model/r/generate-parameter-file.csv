@@ -1,6 +1,6 @@
 Parameter, Min, Max, Type, Constant (C) or Evolving with time (E)
 N, 5000, NA, Discrete, E
-size.of.timestep, 1, NA, C
+size.of.timestep, 1, NA, Discrete, C
 NETWORK PARAMETERS, , , , 
 Number of edges, 2500, Type, Discrete, E
 Degree 0, 1800, NA, Discrete, E
