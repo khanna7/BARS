@@ -47,4 +47,6 @@ baseline.art.coverage.rate, 60% (for experimentation purposes - will need to cla
 art.initiation.time (days post-infection), 365 (for experimentation purposes - will need to classify by city & race), TBD, Discrete, C
 per.day.cd4.recovery (cells per day), 15/30 (15 cells/month), NA, Discrete, C
 cd4.recovery.time (maximum number of days until which CD4 will recover), 3*365, NA, Discrete, C
+PREP PARAMETERS , , , ,
+prep.mult, 100% (for experimentation purposes - need data-based estimate), TBD, Discrete, C
 
