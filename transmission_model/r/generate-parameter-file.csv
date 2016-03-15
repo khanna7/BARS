@@ -49,4 +49,16 @@ per.day.cd4.recovery (cells per day), 15/30 (15 cells/month), NA, Discrete, C
 cd4.recovery.time (maximum number of days until which CD4 will recover), 3*365, NA, Discrete, C
 PREP PARAMETERS , , , ,
 prep.mult, 100% (for experimentation purposes - need data-based estimate), TBD, Discrete, C
+TRANSMISSION PARAMETERS , , , ,
+   num.sex.acts.per.timestep <- 2.4*size.of.timestep/7
+   acute.mult, 4.98, 26 (Holling), Discrete, C 
+   late.mult, 3.49, 7 (Holling), Discrete, C
+   circum.mult, 0.60 (check), NA, Discrete, C
+   min.chronic.infectivity.unadj <- 0.000497/2.89 
+Adjust number of sex acts for condom use (?), , , , 
+Protectiveness on account of condom use (?), , , , 
+SEXUAL ROLE , , , ,
+Insertive/receptive, , , , 
+CASUAL PARTNERSHIPS (data needed), , , , 
+ONE-OFF PARTNERSHIPS (If included), , , ,
 
