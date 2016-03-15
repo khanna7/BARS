@@ -54,11 +54,10 @@ TRANSMISSION PARAMETERS , , , ,
    acute.mult, 4.98, 26 (Holling), Discrete, C 
    late.mult, 3.49, 7 (Holling), Discrete, C
    circum.mult, 0.60 (check), NA, Discrete, C
-   min.chronic.infectivity.unadj <- 0.000497/2.89 
+   min.chronic.infectivity.unadj, 0.000497/2.89, NA, Discrete, C 
 Adjust number of sex acts for condom use (?), , , , 
 Protectiveness on account of condom use (?), , , , 
 SEXUAL ROLE , , , ,
 Insertive/receptive, , , , 
 CASUAL PARTNERSHIPS (data needed), , , , 
 ONE-OFF PARTNERSHIPS (If included), , , ,
-
