@@ -42,4 +42,3 @@ Daily decline in CD4, 0.14, NA, Discrete, C
   late.stage.viral.load, NA, 5.05, Discrete, C 
   time.to.full.supp (days), 120, NA, Discrete, C
   undetectable.vl, log 50 (base 10), NA, Discrete, C
-  
