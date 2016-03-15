@@ -16,3 +16,14 @@ Age Specific Mortality Rates, , , , C (not yet in model)
 BIOLOGICAL, , , ,
 Male Circumcision (%), 10% (for experimentation purposes - will need to classify by city), NA, Discrete, C 
 Initial HIV prevalence (%), 10% (for experimentation purposes - will need to classify by city), NA, Discrete, C 
+Duration of infection (days), 3300, NA, Discrete, C
+CD4 count evolution paramters, , , , 
+   b1.ref, 23.53, NA, Discrete, C
+   b2.african, -0.76, NA, Discrete, C
+   b3.female, 1.11, NA, Discrete, C
+   b4.cd4.ref, -1.49, NA, Discrete, C
+   b5.african, 0.34, NA, Discrete, C
+   b6.age.15to29, 0, NA, Discrete, C
+   b6.age.30to39, -0.1, NA, Discrete, C
+   b6.age.40to49, -0.34, NA, Discrete, C
+   b6.age.50ormore, -0.63, NA, Discrete, C
