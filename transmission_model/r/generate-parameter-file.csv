@@ -27,3 +27,8 @@ CD4 count evolution paramters:, , , ,
    b6.age.30to39, -0.1, NA, Discrete, C
    b6.age.40to49, -0.34, NA, Discrete, C
    b6.age.50ormore, -0.63, NA, Discrete, C
+Start/end of acute infection (days), 1, 121, Discrete, C
+Start/end of chronic infection (days), 1, 121, Discrete, C
+Start/end of late infection (days), 1, 121, Discrete, C
+CD4 count at/before infection, 518, NA, Discrete, C (feedback from group needed)
+Daily decline in CD4, 0.14, NA, Discrete, C
