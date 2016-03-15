@@ -43,3 +43,8 @@ Daily decline in CD4, 0.14, NA, Discrete, C
   time.to.full.supp (days), 120, NA, Discrete, C
   undetectable.vl, log 50 (base 10), NA, Discrete, C
 ART PARAMETERS, , , ,
+baseline.art.coverage.rate, 60% (for experimentation purposes - will need to classify by city), TBD, Discrete, C 
+art.initiation.time (days post-infection), 365 (for experimentation purposes - will need to classify by city & race), TBD, Discrete, C
+per.day.cd4.recovery (cells per day), 15/30 (15 cells/month), NA, Discrete, C
+cd4.recovery.time (maximum number of days until which CD4 will recover), 3*365, NA, Discrete, C
+
