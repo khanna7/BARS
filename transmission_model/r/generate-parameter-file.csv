@@ -32,3 +32,14 @@ Start/end of chronic infection (days), 1, 121, Discrete, C
 Start/end of late infection (days), 1, 121, Discrete, C
 CD4 count at/before infection, 518, NA, Discrete, C (feedback from group needed)
 Daily decline in CD4, 0.14, NA, Discrete, C
+  time.infection.to.peak.viremia (days), 14, NA, Discrete, C
+  time.infection.to.peak.viral.load, 14, NA, Discrete, C (same as above)
+  peak.viral.load, 6.17, NA, Discrete, C
+  time.infection.to.viral.set.point (days), 121, NA, Discrete, C
+  set.point.viral.load, 4.2, NA, Discrete, C
+  time.infection.to.late.stage (days), 1877/size.of.timestep, NA, Discrete, C
+  dur.inf, 3300, NA, Discrete, C
+  late.stage.viral.load, NA, 5.05, Discrete, C 
+  time.to.full.supp (days), 120, NA, Discrete, C
+  undetectable.vl, log(50, base=10), NA, Discrete, C
+  
