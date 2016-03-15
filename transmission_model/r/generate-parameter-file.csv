@@ -15,3 +15,4 @@ Daily Entry Rate, 0.001, --, Discrete, C (free parameter -- might need more expe
 Age Specific Mortality Rates, , , , C (not yet in model)
 BIOLOGICAL, , , ,
 Male Circumcision (%), 10% (for experimentation purposes - will need to classify by city), NA, Discrete, C 
+Initial HIV prevalence (%), 10% (for experimentation purposes - will need to classify by city), NA, Discrete, C 
