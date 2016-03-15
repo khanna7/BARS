@@ -14,4 +14,4 @@ Duration of Infection by Age, 10 years, NA, Discrete, C
 Daily Entry Rate, 0.001, --, Discrete, C (free parameter -- might need more experimentation)
 Age Specific Mortality Rates, , , , C (not yet in model)
 BIOLOGICAL, , , ,
-Male Circumcision (%), 10% (for experimentation purposes, will need to classify by city), NA, Discrete, C 
+Male Circumcision (%), 10% (for experimentation purposes - will need to classify by city), NA, Discrete, C 
