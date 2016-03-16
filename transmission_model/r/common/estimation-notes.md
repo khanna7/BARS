@@ -32,11 +32,18 @@
                  
      * Houston:  
      * LA: 
-     
+      
      ### Sexual Role  
       * Chicago: From YMAP. (BMSM only). Exclusively insertive: 20.5%, Exclusively receptive: 22.9%.   
       * Houston:
       * LA:   
       
-      ### 
-    
+## Sexual Network parameters: Casual Partners.
+
+## Demographic parameters
+
+## ART Parameters
+
+## PrEP parameters
+
+## Overall incidence/prevalence data
