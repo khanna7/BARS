@@ -1,7 +1,7 @@
 # BARS parameters
 
-   ## Sexual Network parameters: STEADY PARTNERSHIPS
-   ### Degree distribution
+   ## Sexual Network parameters: STEADY PARTNERSHIPS  
+   ### Degree distribution   
    * Chicago: uConnect data will be summarized by Nikki.YMAP data prefered for comparability with Houston, but those need to first be synchronized with Northwestern database  
    * Houston: YMAP
    * LA: 
@@ -26,4 +26,11 @@
 | 31 - 65      | 33,3     |   38.1|  
      * Houston:  
      * LA: 
+     
+     ### Sexual Role  
+      * Chicago: (From YMAP).  Exclusively insertive: 20.5%, Exclusively receptive: 22.9%.   
+      * Houston:
+      * LA:   
+      
+      ### 
     
