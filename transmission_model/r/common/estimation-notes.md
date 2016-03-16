@@ -23,10 +23,10 @@
      * Chicago: From YMAP (as reported by BMSM, past 6? months) : 18-30 yr-old BMSM have 92.7% partnerships with BMSM, and 7.3% Other Black MSM 
                 From NHBS: (as reported by BMSM, last partner).   
 
-|       |18 - 30           | 31-65  |
-| ------------- |:-------------:| -----:|
-| 18 - 30    | 66.7 | 61.9 |
-| 31 - 65      | 33,3     |   38.1|    
+                  |       |18 - 30           | 31-65  |
+                  | ------------- |:-------------:| -----:|
+                  | 18 - 30    | 66.7 | 61.9 |
+                  | 31 - 65      | 33,3     |   38.1|    
    
                  From NHBS: (as reported by OMSM, see spreadsheet).
                  
