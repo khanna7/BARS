@@ -1,7 +1,7 @@
 # BARS parameters
-
-   ## Sexual Network parameters: STEADY PARTNERSHIPS  
-   ### Degree distribution   
+           
+   ## Sexual Network parameters: STEADY PARTNERSHIPS     
+   ### Degree distribution              
    * Chicago: uConnect data will be summarized by Nikki.YMAP data prefered for comparability with Houston, but those need to first be synchronized with Northwestern database  
    * Houston: YMAP
    * LA: 
