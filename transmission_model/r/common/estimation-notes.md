@@ -70,7 +70,8 @@
    ### Sexual Role  
       * Chicago: From YMAP. (BMSM only). Exclusively insertive: 24.6%, Exclusively receptive: 19.6%.   
       * Houston:
-      * LA:   
+      * LA:       
+       
 ## Demographic parameters
    ### Age distribution
        * Chicago: Nikki is recalibrating for 16 to 65
@@ -83,15 +84,14 @@
       * LA:   
       
    ### Age-specific mortality rate
-       * Chicago: non-HIV rates
-                     |       |Black           | Other  |
-                  | ------------- |:-------------:| -----:|
-                  | 18 - 30    | check | 50% |
-                  | 31 - 65      | check     |   50% |    
-                  
-                  
+       * Chicago: non-HIV rates (see spreadsheet)
+       * Houston:
+       * LA: 
+                   
 ## ART Parameters
-
+    ### 
 ## PrEP parameters
 
 ## Overall incidence/prevalence data
+   * Chicago:
+   * 
