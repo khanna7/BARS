@@ -5,8 +5,8 @@
   
 ## Calibration Output parameters   
    (this should perhaps be the last step)  
-  * HIV Prevalence: At conclusion of burnin should be approximately equal to the empirically known prevalence  
-  * HIV includence: At conclusion of burnin, annual incidence should be approximately equal to empirically known incidence.  
+  * HIV Prevalence: At conclusion of burnin should be approximately equal to the empirically known prevalence  (can be done now)
+  * HIV incidence: At conclusion of burnin, annual incidence should be approximately equal to empirically known incidence (can be done now).  
   Both prevalence and annual incidence over time should be plotted.
 
 ## Sexual Network parameters
