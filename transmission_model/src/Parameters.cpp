@@ -20,7 +20,8 @@ const std::string R_PARAMETERS_FILE = "r.parameters.file";
 const std::string R_FILE = "r.file";
 const std::string EVENT_FILE = "event.file";
 const std::string EVENT_FILE_BUFFER_SIZE = "event.file.buffer.size";
-const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE= "output.file";
+const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE= "per.tick.counts.output.file";
+const std::string PARTNERSHIP_EVENTS_FILE = "partnership.events.file";
 
 const std::string PREP_MULT = "prep.mult";
 

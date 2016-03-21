@@ -16,7 +16,6 @@
 
 #include "Person.h"
 #include "Network.h"
-#include "Stats.h"
 #include "Stage.h"
 #include "TransmissionRunner.h"
 #include "CD4Calculator.h"
@@ -37,7 +36,6 @@ private:
 	unsigned int current_pop_size, previous_pop_size;
 	unsigned int max_id;
 	std::map<float, std::shared_ptr<Stage>> stage_map;
-	Stats stats;
 
 	void runTransmission(double timestamp, float size_of_time_step);
 	bool dead(PersonPtr person, int max_survival);
@@ -50,6 +48,7 @@ public:
 	virtual ~Model();
 
 	void step();
+	void atEnd();
 };
 
 

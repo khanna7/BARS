@@ -1,0 +1,39 @@
+/*
+ * StatsBuilder.cpp
+ *
+ *  Created on: Mar 21, 2016
+ *      Author: nick
+ */
+
+#include "StatsBuilder.h"
+
+namespace TransModel {
+
+StatsBuilder::StatsBuilder() : counts_writer{nullptr}, pevent_writer{nullptr} {
+}
+
+StatsBuilder::~StatsBuilder() {
+}
+
+StatsBuilder* StatsBuilder::countsWriter(const std::string& fname, unsigned int buffer) {
+	counts_writer = std::make_shared<StatsWriter<Counts>>(fname, Counts::header, buffer);
+	return this;
+
+}
+StatsBuilder* StatsBuilder::partnershipEventWriter(const std::string& fname, unsigned int buffer) {
+	pevent_writer = std::make_shared<StatsWriter<PartnershipEvent>>(fname, PartnershipEvent::header, buffer);
+	return this;
+}
+
+void StatsBuilder::createStatsSingleton() {
+	if (counts_writer && pevent_writer) {
+		if (Stats::instance_ != nullptr) {
+			delete Stats::instance_;
+		}
+		Stats::instance_ = new Stats(counts_writer, pevent_writer);
+	} else {
+		throw std::domain_error("Stats must be fully initialized from StatsBuilder before being used.");
+	}
+}
+
+} /* namespace TransModel */

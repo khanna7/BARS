@@ -14,6 +14,7 @@
 #include "RInside.h"
 
 #include "Network.h"
+#include "Stats.h"
 
 using namespace Rcpp;
 
@@ -110,11 +111,12 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 	create_r_network(rnet, net, idx_map, attributes_setter);
 	//Rf_PrintValue(rnet);
 	SEXP changes = as<Function>((*R)["nw_simulate"])(rnet, time);
-	reset_network_edges(changes, net, idx_map);
+	reset_network_edges(changes, net, idx_map, time);
 }
 
 template<typename V>
-void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map) {
+void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map,
+		double time) {
 	NumericMatrix matrix = as<NumericMatrix>(changes);
 
 	int added = 0;
@@ -126,11 +128,13 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 		if (to) {
 			net.addEdge(out, in);
 			++added;
+			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::STARTED);
 		} else {
 			bool res = net.removeEdge(out, in);
 			if (!res) {
 				throw std::domain_error("Updating from tergm changes: trying to remove an edge that doesn't exist");
 			}
+			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::ENDED);
 			++removed;
 		}
 	}

@@ -17,6 +17,8 @@
 #include "DiseaseParameters.h"
 #include "PersonCreator.h"
 #include "ARTScheduler.h"
+#include "Stats.h"
+#include "StatsBuilder.h"
 //#include "EventWriter.h"
 
 using namespace Rcpp;
@@ -122,12 +124,17 @@ void init_generators() {
 	Random::instance()->putGenerator(CIRCUM_STATUS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(rate));
 }
 
-
+void init_stats() {
+	StatsBuilder builder;
+	builder.countsWriter(Parameters::instance()->getStringParameter(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
+	builder.partnershipEventWriter(Parameters::instance()->getStringParameter(PARTNERSHIP_EVENTS_FILE));
+	builder.createStatsSingleton();
+}
 
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size{0},
-				previous_pop_size{0}, max_id{0}, stage_map(), stats(Parameters::instance()->getStringParameter(COUNTS_PER_TIMESTEP_OUTPUT_FILE)) {
+				previous_pop_size{0}, max_id{0}, stage_map() {
 
 	List rnet = as<List>((*R)[net_var]);
 	PersonCreator person_creator(trans_runner);
@@ -138,15 +145,17 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 	max_id = net.vertexCount();
 
 	// get initial stats
-	stats.incrementCurrentEdgeCount(net.edgeCount());
-	stats.incrementCurrentSize(net.vertexCount());
+	init_stats();
+	Stats* stats = TransModel::Stats::instance();
+	stats->currentCounts().edge_count = net.edgeCount();
+	stats->currentCounts().size = net.vertexCount();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
 		PersonPtr p = *iter;
 		if (p->isInfected()) {
-			stats.incrementCurrentTransmissionInfectedCount(1);
+			++stats->currentCounts().infected;
 		}
 	}
-	stats.resetForNextTimeStep();
+	stats->resetForNextTimeStep();
 
 	init_generators();
 
@@ -154,20 +163,30 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 	runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
 
+	runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::atEnd)));
+
 	//EventWriter::initialize(Parameters::instance()->getStringParameter(EVENT_FILE),
 	//		Parameters::instance()->getIntParameter(EVENT_FILE_BUFFER_SIZE));
 
+}
+
+
+void Model::atEnd() {
+	delete Stats::instance();
 }
 
 Model::~Model() {
 }
 
 void Model::step() {
+	double t = RepastProcess::instance()->getScheduleRunner().currentTick();
+	Stats* stats = Stats::instance();
+	stats->currentCounts().tick = t;
+
 	PersonToVAL p2val;
 	float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
 	float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
 
-	double t = RepastProcess::instance()->getScheduleRunner().currentTick();
 	std::cout << " ---- " << t << " ---- " << std::endl;
 	simulate(R, net, p2val, t);
 	entries(t);
@@ -181,9 +200,9 @@ void Model::step() {
 	theta_form[0] = theta_form[0] + std::log(previous_pop_size) - std::log(current_pop_size);
 	((*R)["theta_form"]) = theta_form;
 
-	stats.incrementCurrentEdgeCount(net.edgeCount());
-	stats.incrementCurrentSize(net.vertexCount());
-	stats.resetForNextTimeStep();
+	stats->currentCounts().edge_count = net.edgeCount();
+	stats->currentCounts().size = net.vertexCount();
+	stats->resetForNextTimeStep();
 }
 
 void Model::updateVitals(float size_of_timestep, int max_age) {
@@ -229,7 +248,7 @@ void Model::entries(double time) {
 				boost::random::poisson_distribution<>(births_prob * pop_size));
 		DefaultNumberGenerator<PoissonGen> gen(birth_gen);
 		int entries = (int) gen.next();
-		stats.incrementCurrentEntryCount(entries);
+		Stats::instance()->currentCounts().entries = entries;
 		std::cout << "entries: " << entries << std::endl;
 		for (int i = 0; i < entries; ++i) {
 			int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
@@ -246,14 +265,14 @@ bool Model::dead(PersonPtr person, int max_age) {
 	// dead via mortality
 	if (person->deadOfAge(max_age)) {
 		++death_count;
-		stats.incrementCurrentOADeathCount(1);
+		++Stats::instance()->currentCounts().age_deaths;
 		died = true;
 	}
 
 	if (!died && person->deadOfInfection()) {
 		// grim repear deaths
 		++death_count;
-		stats.incrementCurrentGRDeathCount(1);
+		++Stats::instance()->currentCounts().gr_deaths;
 		died = true;
 	}
 
@@ -281,6 +300,7 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 	double art_at_tick = art_delay / size_of_timestep + time_stamp;
 	ARTScheduler* art_scheduler = new ARTScheduler((float)art_at_tick);
 
+	Stats* stats = Stats::instance();
 	for (auto& person : infecteds) {
 		// if person has multiple partners who are infected,
 		// person gets multiple chances to become infected from them
@@ -290,7 +310,7 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 			if (person->isARTCovered()) {
 				art_scheduler->addPerson(person);
 			}
-			stats.incrementCurrentTransmissionInfectedCount(1);
+			++stats->currentCounts().infected;
 		}
 	}
 

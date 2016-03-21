@@ -6,6 +6,7 @@ CPP_SOURCE = Person.cpp \
 	Model.cpp \
 	Parameters.cpp \
 	Stats.cpp \
+	StatsBuilder.cpp \
 	DiseaseParameters.cpp \
 	CD4Calculator.cpp \
 	ViralLoadCalculator.cpp \
@@ -14,6 +15,7 @@ CPP_SOURCE = Person.cpp \
 	TransmissionRunner.cpp \
 	PersonCreator.cpp \
 	ARTScheduler.cpp \
+	FileOutput.cpp \
 	utils.cpp \
 	file_utils.cpp
 	

@@ -9,6 +9,7 @@ extern const std::string STOP_AT;
 extern const std::string R_PARAMETERS_FILE;
 extern const std::string R_FILE;
 extern const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE;
+extern const std::string PARTNERSHIP_EVENTS_FILE;
 
 extern const std::string EVENT_FILE;
 extern const std::string EVENT_FILE_BUFFER_SIZE;

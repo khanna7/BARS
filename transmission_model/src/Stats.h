@@ -11,37 +11,66 @@
 #include <vector>
 #include <fstream>
 
+#include "FileOutput.h"
+#include "StatsWriter.h"
+
 namespace TransModel {
 
-struct  StatItem {
+struct PartnershipEvent {
+
+	static std::string header;
+
+	enum PEventType {ENDED, STARTED};
+
+	double tick_;
+	int p1_id, p2_id;
+	PEventType type_;
+
+	PartnershipEvent(double tick, int p1, int p2, PEventType type);
+	void writeTo(FileOutput& out);
+
+};
+
+struct Counts {
+
+	static std::string header;
+
+	double tick;
 	unsigned int edge_count, size, infected,
-	entries, age_deaths, gr_deaths, on_art;
+	entries, age_deaths, gr_deaths;
+
+	Counts();
+	void reset();
+	void writeTo(FileOutput& out);
+
 };
 
 class Stats {
 
 private:
-	std::vector<StatItem> items;
-	StatItem current_item;
-	size_t buffer_size_;
-	std::ofstream out;
-	unsigned int last_written_timestep;
+	std::shared_ptr<StatsWriter<Counts>> counts_writer;
+	Counts current_counts;
+	std::shared_ptr<StatsWriter<PartnershipEvent>> pevent_writer;
 
-	void write();
+	friend class StatsBuilder;
+	static Stats* instance_;
+
+	Stats(std::shared_ptr<StatsWriter<Counts>> counts, std::shared_ptr<StatsWriter<PartnershipEvent>> pevents);
 
 public:
-	Stats(const std::string& fname, size_t buffer_size = 1000);
 	virtual ~Stats();
 
-	void incrementCurrentEdgeCount(unsigned int edge_count);
-	void incrementCurrentSize(unsigned int edge_count);
-	void incrementCurrentTransmissionInfectedCount(unsigned int edge_count);
-	void incrementCurrentEntryCount(unsigned int count);
-	void incrementCurrentOADeathCount(unsigned int count);
-	void incrementCurrentGRDeathCount(unsigned int count);
-	//void incrementCurrentARTCount(unsigned int count);
-
 	void resetForNextTimeStep();
+
+	Counts& currentCounts() {
+		return current_counts;
+	}
+
+	static Stats* instance() {
+		return instance_;
+	}
+
+	void recordPartnershipEvent(double time, int p1, int p2, PartnershipEvent::PEventType event_type);
 };
 
 } /* namespace TransModel */
