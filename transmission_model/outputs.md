@@ -7,6 +7,7 @@ Events are recorded in the file defined by *partnership.events.file* in the mode
 * type: the type of partnership event.
   * 0: partnership dissolved
   * 1: partnership added
+  
 ### Infection Events
 Events are recorded in the file defined by *infection.events.file* in the model properties file. The format is csv with each row recording an infection event. The columns are:
 * tick: the time step at which the event occurred.
