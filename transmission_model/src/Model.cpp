@@ -128,6 +128,7 @@ void init_stats() {
 	StatsBuilder builder;
 	builder.countsWriter(Parameters::instance()->getStringParameter(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
 	builder.partnershipEventWriter(Parameters::instance()->getStringParameter(PARTNERSHIP_EVENTS_FILE));
+	builder.infectionEventWriter(Parameters::instance()->getStringParameter(INFECTION_EVENTS_FILE));
 	builder.createStatsSingleton();
 }
 
@@ -287,10 +288,12 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 		if (out_p->isInfected() && !in_p->isInfected()) {
 			if (trans_runner->determineInfection(out_p, in_p)) {
 				infecteds.push_back(in_p);
+				Stats::instance()->recordInfectionEvent(time_stamp, out_p, in_p, false);
 			}
 		} else if (!out_p->isInfected() && in_p->isInfected()) {
 			if (trans_runner->determineInfection(in_p, out_p)) {
 				infecteds.push_back(out_p);
+				Stats::instance()->recordInfectionEvent(time_stamp, in_p, out_p, false);
 			}
 		}
 	}

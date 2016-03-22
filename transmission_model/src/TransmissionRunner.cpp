@@ -18,7 +18,7 @@ TransmissionRunner::TransmissionRunner(float circumcision_multiplier, float prep
 TransmissionRunner::~TransmissionRunner() {
 }
 
-bool TransmissionRunner::determineInfection(PersonPtr infector, PersonPtr infectee) {
+bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infectee) {
 	float infectivity = infector->infectivity();
 
 	// modify infectivity appropriately

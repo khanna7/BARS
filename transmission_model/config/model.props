@@ -9,3 +9,4 @@ event.file.buffer.size = 200;
 
 per.tick.counts.output.file = ./output/counts.csv
 partnership.events.file = ./output/partnership_events.csv
+infection.events.file = ./output/infection_events.csv

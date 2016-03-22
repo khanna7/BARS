@@ -38,7 +38,7 @@ public:
 	 * @param infector the infected person
 	 * @param infectee the uninfected partner
 	 */
-	bool determineInfection(PersonPtr infector, PersonPtr infectee);
+	bool determineInfection(PersonPtr& infector, PersonPtr& infectee);
 
 	/**
 	 * Sets the infection flag, time of infection etc on the specified person and

@@ -20,6 +20,7 @@ class StatsBuilder {
 private:
 	std::shared_ptr<StatsWriter<Counts>> counts_writer;
 	std::shared_ptr<StatsWriter<PartnershipEvent>> pevent_writer;
+	std::shared_ptr<StatsWriter<InfectionEvent>> ievent_writer;
 
 public:
 	StatsBuilder();
@@ -27,6 +28,7 @@ public:
 
 	StatsBuilder* countsWriter(const std::string& fname, unsigned int buffer = 1000);
 	StatsBuilder* partnershipEventWriter(const std::string& fname, unsigned int buffer = 1000);
+	StatsBuilder* infectionEventWriter(const std::string& fname, unsigned int buffer = 1000);
 
 	void createStatsSingleton();
 };
