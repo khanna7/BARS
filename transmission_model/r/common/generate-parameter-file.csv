@@ -1,0 +1,63 @@
+Parameter, Min, Max, Type, Constant (C) or Evolving with time (E)
+N, 5000, NA, Discrete, E
+size.of.timestep, 1, NA, Discrete, C
+NETWORK PARAMETERS, , , , 
+Number of edges, 2500, Type, Discrete, E
+Degree 0, 1800, NA, Discrete, E
+Degree 1, , NA, Discrete, E
+Degree 2, , NA, Discrete, E
+..., , NA, Discrete, E
+Mean partnership duration, 730, NA, Discrete, C
+DEMOGRAPHIC PARAMETERS, , , ,
+Age, 16 years, 65 years, Discrete, C
+Duration of Infection by Age, 10 years, NA, Discrete, C
+Daily Entry Rate, 0.001, --, Discrete, C (free parameter -- might need more experimentation)
+Age Specific Mortality Rates, , , , C (not yet in model)
+BIOLOGICAL, , , ,
+Male Circumcision (%), 10% (for experimentation purposes - will need to classify by city), NA, Discrete, C 
+Initial HIV prevalence (%), 10% (for experimentation purposes - will need to classify by city), NA, Discrete, C 
+Duration of infection (days), 3300, NA, Discrete, C
+CD4 count evolution paramters:, , , , 
+   b1.ref, 23.53, NA, Discrete, C
+   b2.african, -0.76, NA, Discrete, C
+   b3.female, 1.11, NA, Discrete, C
+   b4.cd4.ref, -1.49, NA, Discrete, C
+   b5.african, 0.34, NA, Discrete, C
+   b6.age.15to29, 0, NA, Discrete, C
+   b6.age.30to39, -0.1, NA, Discrete, C
+   b6.age.40to49, -0.34, NA, Discrete, C
+   b6.age.50ormore, -0.63, NA, Discrete, C
+Start/end of acute infection (days), 1, 121, Discrete, C
+Start/end of chronic infection (days), 121, 1877, Discrete, C
+Start/end of late infection (days), 1877, 3300, Discrete, C
+CD4 count at/before infection, 518, NA, Discrete, C (feedback from group needed)
+Daily decline in CD4, 0.14, NA, Discrete, C
+  time.infection.to.peak.viremia (days), 14, NA, Discrete, C
+  time.infection.to.peak.viral.load, 14, NA, Discrete, C (same as above)
+  peak.viral.load, 6.17, NA, Discrete, C
+  time.infection.to.viral.set.point (days), 121, NA, Discrete, C
+  set.point.viral.load, 4.2, NA, Discrete, C
+  time.infection.to.late.stage (days), 1877/size.of.timestep, NA, Discrete, C
+  dur.inf, 3300, NA, Discrete, C
+  late.stage.viral.load, NA, 5.05, Discrete, C 
+  time.to.full.supp (days), 120, NA, Discrete, C
+  undetectable.vl, log 50 (base 10), NA, Discrete, C
+ART PARAMETERS, , , ,
+baseline.art.coverage.rate, 60% (for experimentation purposes - will need to classify by city), TBD, Discrete, C 
+art.initiation.time (days post-infection), 365 (for experimentation purposes - will need to classify by city & race), TBD, Discrete, C
+per.day.cd4.recovery (cells per day), 15/30 (15 cells/month), NA, Discrete, C
+cd4.recovery.time (maximum number of days until which CD4 will recover), 3*365, NA, Discrete, C
+PREP PARAMETERS , , , ,
+prep.mult, 100% (for experimentation purposes - need data-based estimate), TBD, Discrete, C
+TRANSMISSION PARAMETERS , , , ,
+   num.sex.acts.per.timestep, 2.4*size.of.timestep/7, TBD, Discrete, C
+   acute.mult, 4.98, 26 (Holling), Discrete, C 
+   late.mult, 3.49, 7 (Holling), Discrete, C
+   circum.mult, 0.60 (check), NA, Discrete, C
+   min.chronic.infectivity.unadj, 0.000497/2.89, NA, Discrete, C 
+Adjust number of sex acts for condom use (?), , , , 
+Protectiveness on account of condom use (?), , , , 
+SEXUAL ROLE , , , ,
+Insertive/receptive, , , , 
+CASUAL PARTNERSHIPS (data needed), , , , 
+ONE-OFF PARTNERSHIPS (If included), , , ,
