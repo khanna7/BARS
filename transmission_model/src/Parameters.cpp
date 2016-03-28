@@ -23,6 +23,11 @@ const std::string EVENT_FILE_BUFFER_SIZE = "event.file.buffer.size";
 const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE= "per.tick.counts.output.file";
 const std::string PARTNERSHIP_EVENTS_FILE = "partnership.events.file";
 const std::string INFECTION_EVENTS_FILE =  "infection.events.file";
+const std::string BIOMARKER_FILE = "biomarker.log.file";
+const std::string BIOMARKER_LOG_COUNT = "biomarker.number.of.persons.to.log";
+const std::string DEATH_EVENT_FILE = "death.events.file";
+const std::string NET_SAVE_FILE = "net.save.file";
+const std::string NET_SAVE_AT = "save.network.at";
 
 const std::string PREP_MULT = "prep.mult";
 

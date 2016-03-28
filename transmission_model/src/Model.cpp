@@ -4,6 +4,8 @@
  *  Created on: Oct 8, 2015
  *      Author: nick
  */
+#include "boost/algorithm/string.hpp"
+#include "boost/filesystem.hpp"
 
 #include "repast_hpc/Random.h"
 #include "repast_hpc/RepastProcess.h"
@@ -19,11 +21,14 @@
 #include "ARTScheduler.h"
 #include "Stats.h"
 #include "StatsBuilder.h"
+#include "file_utils.h"
 //#include "EventWriter.h"
 
 using namespace Rcpp;
 using namespace std;
 using namespace repast;
+
+namespace fs = boost::filesystem;
 
 namespace TransModel {
 
@@ -129,24 +134,66 @@ void init_stats() {
 	builder.countsWriter(Parameters::instance()->getStringParameter(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
 	builder.partnershipEventWriter(Parameters::instance()->getStringParameter(PARTNERSHIP_EVENTS_FILE));
 	builder.infectionEventWriter(Parameters::instance()->getStringParameter(INFECTION_EVENTS_FILE));
+	builder.biomarkerWriter(Parameters::instance()->getStringParameter(BIOMARKER_FILE));
+	builder.deathEventWriter(Parameters::instance()->getStringParameter(DEATH_EVENT_FILE));
+
 	builder.createStatsSingleton();
+}
+
+void init_network_save(Model* model) {
+	string save_prop = Parameters::instance()->getStringParameter(NET_SAVE_AT);
+	vector<string> ats;
+	boost::split(ats, save_prop, boost::is_any_of(","));
+	if (ats.size() > 0) {
+		ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
+		for (auto& at : ats) {
+			boost::trim(at);
+			if (at == "end") {
+				//std::cout << "scheduling at end" << std::endl;
+				runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(model, &Model::saveRNetwork)));
+			} else {
+				double tick = stod(at);
+				//std::cout << "scheduling at " << tick << std::endl;
+				runner.scheduleEvent(tick + 0.1, Schedule::FunctorPtr(new MethodFunctor<Model>(model, &Model::saveRNetwork)));
+			}
+		}
+	}
+}
+
+void init_biomarker_logging(Network<Person>& net, std::set<int>& ids_to_log) {
+	int number_to_log = Parameters::instance()->getIntParameter(BIOMARKER_LOG_COUNT);
+	std::vector<PersonPtr> persons;
+	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+		persons.push_back(*iter);
+	}
+
+	IntUniformGenerator gen = Random::instance()->createUniIntGenerator(0, persons.size() - 1);
+	for (int i = 0; i < number_to_log; ++i) {
+		int id = (int) gen.next();
+		while (ids_to_log.find(id) != ids_to_log.end()) {
+			id = (int) gen.next();
+		}
+		ids_to_log.emplace(id);
+	}
 }
 
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
-				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size{0},
-				previous_pop_size{0}, max_id{0}, stage_map() {
+				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
+				0 }, previous_pop_size { 0 }, max_id { 0 }, stage_map { }, persons_to_log { } {
 
 	List rnet = as<List>((*R)[net_var]);
 	PersonCreator person_creator(trans_runner);
 	initialize_network(rnet, net, person_creator);
 	init_stage_map(stage_map);
+	init_network_save(this);
 
 	current_pop_size = net.vertexCount();
 	max_id = net.vertexCount();
 
 	// get initial stats
 	init_stats();
+	init_biomarker_logging(net, persons_to_log);
 	Stats* stats = TransModel::Stats::instance();
 	stats->currentCounts().edge_count = net.edgeCount();
 	stats->currentCounts().size = net.vertexCount();
@@ -171,7 +218,6 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
 
 }
 
-
 void Model::atEnd() {
 	delete Stats::instance();
 }
@@ -192,7 +238,7 @@ void Model::step() {
 	simulate(R, net, p2val, t);
 	entries(t);
 	runTransmission(t, size_of_timestep);
-	updateVitals(size_of_timestep, max_survival);
+	updateVitals(t, size_of_timestep, max_survival);
 	previous_pop_size = current_pop_size;
 	current_pop_size = net.vertexCount();
 
@@ -206,9 +252,10 @@ void Model::step() {
 	stats->resetForNextTimeStep();
 }
 
-void Model::updateVitals(float size_of_timestep, int max_age) {
+void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 	float sex_acts_per_timestep = Parameters::instance()->getFloatParameter(NUM_SEX_ACTS_PER_TIMESTEP);
 	unsigned int dead_count = 0;
+	Stats* stats = Stats::instance();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		PersonPtr person = (*iter);
 		// update viral load
@@ -230,8 +277,12 @@ void Model::updateVitals(float size_of_timestep, int max_age) {
 			person->setInfectivity(infectivity);
 		}
 
+		if (persons_to_log.find(person->id()) != persons_to_log.end()) {
+			stats->recordBiomarker(t, person);
+		}
+
 		person->step(size_of_timestep);
-		if (dead(person, max_age)) {
+		if (dead(t, person, max_age)) {
 			iter = net.removeVertex(iter);
 			++dead_count;
 		} else {
@@ -260,13 +311,31 @@ void Model::entries(double time) {
 	}
 }
 
-bool Model::dead(PersonPtr person, int max_age) {
+void Model::saveRNetwork() {
+	List rnet;
+	std::map<unsigned int, unsigned int> idx_map;
+	PersonToVAL p2val;
+	create_r_network(rnet, net, idx_map, p2val);
+
+	long tick  = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
+	fs::path filepath(Parameters::instance()->getStringParameter(NET_SAVE_FILE));
+	std::string stem = filepath.stem().string();
+
+	std::stringstream ss;
+	ss << stem << "_" << tick << filepath.extension().string();
+	fs::path newName(filepath.parent_path() / ss.str());
+
+	as<Function>((*R)["nw_save"])(rnet, unique_file_name(newName.string()));
+}
+
+bool Model::dead(double tick, PersonPtr person, int max_age) {
 	int death_count = 0;
 	bool died = false;
 	// dead via mortality
 	if (person->deadOfAge(max_age)) {
 		++death_count;
 		++Stats::instance()->currentCounts().age_deaths;
+		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::AGE);
 		died = true;
 	}
 
@@ -274,6 +343,7 @@ bool Model::dead(PersonPtr person, int max_age) {
 		// grim repear deaths
 		++death_count;
 		++Stats::instance()->currentCounts().gr_deaths;
+		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::INFECTION);
 		died = true;
 	}
 
@@ -298,10 +368,9 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 		}
 	}
 
-
 	double art_delay = Parameters::instance()->getDoubleParameter(ART_INIT_TIME);
 	double art_at_tick = art_delay / size_of_timestep + time_stamp;
-	ARTScheduler* art_scheduler = new ARTScheduler((float)art_at_tick);
+	ARTScheduler* art_scheduler = new ARTScheduler((float) art_at_tick);
 
 	Stats* stats = Stats::instance();
 	for (auto& person : infecteds) {
@@ -317,7 +386,8 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 		}
 	}
 
-	RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick + 0.1, repast::Schedule::FunctorPtr(art_scheduler));
+	RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick + 0.1,
+			repast::Schedule::FunctorPtr(art_scheduler));
 }
 
 } /* namespace TransModel */

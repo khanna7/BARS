@@ -36,12 +36,13 @@ private:
 	unsigned int current_pop_size, previous_pop_size;
 	unsigned int max_id;
 	std::map<float, std::shared_ptr<Stage>> stage_map;
+	std::set<int> persons_to_log;
 
 	void runTransmission(double timestamp, float size_of_time_step);
-	bool dead(PersonPtr person, int max_survival);
+	bool dead(double tick, PersonPtr person, int max_survival);
 	void entries(double time);
 	void deactivateEdges(int id, double time);
-	void updateVitals(float size_of_time_step, int max_survival);
+	void updateVitals(double time, float size_of_time_step, int max_survival);
 
 public:
 	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var);
@@ -49,6 +50,7 @@ public:
 
 	void step();
 	void atEnd();
+	void saveRNetwork();
 };
 
 

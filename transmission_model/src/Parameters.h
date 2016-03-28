@@ -11,6 +11,11 @@ extern const std::string R_FILE;
 extern const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE;
 extern const std::string PARTNERSHIP_EVENTS_FILE;
 extern const std::string INFECTION_EVENTS_FILE;
+extern const std::string BIOMARKER_FILE;
+extern const std::string BIOMARKER_LOG_COUNT;
+extern const std::string DEATH_EVENT_FILE;
+extern const std::string NET_SAVE_FILE;
+extern const std::string NET_SAVE_AT;
 
 extern const std::string EVENT_FILE;
 extern const std::string EVENT_FILE_BUFFER_SIZE;

@@ -42,6 +42,11 @@ nw_simulate <-
     #print(network.size(nw))
     #print("sim end")
   }
+  
+nw_save <- function(net, fname) {
+	class(net) <- "network"
+	saveRDS(net, file=fname)
+}
 
 # holds any code that I want to call from 
 # C++ to make sure changes there are being

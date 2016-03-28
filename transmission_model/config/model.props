@@ -4,9 +4,14 @@ stop.at = 20
 r.parameters.file = ../r/common/parameters.R
 r.file = ../r/network_model/transmission_model.R
 
-event.file = ./events.h5
-event.file.buffer.size = 200;
-
 per.tick.counts.output.file = ./output/counts.csv
 partnership.events.file = ./output/partnership_events.csv
 infection.events.file = ./output/infection_events.csv
+
+biomarker.log.file = ./output/biomarker_log.csv
+biomarker.number.of.persons.to.log = 100
+
+death.events.file = ./output/death_events.csv
+
+net.save.file = ./output/network.RDS
+save.network.at = 4, end
