@@ -44,3 +44,11 @@ Death events are recorded each time a person dies. The event is recorded in the 
 * cause: the cause of death. This is one of:
   * AGE
   * INFECTION
+  
+### R Network
+The network can be saved as a R network image at some specified times. The file into which the network is saved is defined in the *net.save.file* property in the model properties. The file will have the timestep at which the network was saved appended to it. The time steps at which to the save file are defined in the *save.network.at* property. The format for the *save.network.at* property is a comma delimited list of numeric timesteps. Note that 'end' can be used as a timestep value to save the network at the end of the simulation. For example,
+```
+net.save.file = ./output/network.RDS
+save.network.at = 4, end
+```
+will save the network at timestep 4 and at the end of the simulation, resulting in two files: network_4.RDS and network_N.RDS where N is the last timestep of the simulation.
