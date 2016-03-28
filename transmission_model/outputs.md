@@ -16,10 +16,12 @@ Events are recorded in the file defined by *infection.events.file* in the model 
 * p1_viral_load: the viral load of p1 at time 'tick'
 * p1_cd4: the cd4 count of p1 at time 'tick'
 * p1_art_status: the ART status of p1 at time 'tick'. 0 - not on ART; 1 - on ART.
+* p1_on_prep: whether or not p2 was on PreP at time 'tick'
 * p1_infectivity: the infectivity of p1 at time 'tick'. This does not include PreP or circumcision multipliers
 * condom_used: whether or not a condom was used. 0 - no condom was used; 1 - a condom was used.
 * p2: the id of the infectee (the uninfected persons who has just been infected)
 * p2_age: the age of p2 at time 'tick'
 * p2_viral_load: the viral load of p2 at time 'tick'
 * p2_cd4: the cd4 count of p2 at time 'tick'
+* p2_on_pre: whether or not p2 was on PreP at time 'tick'
 
