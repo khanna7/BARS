@@ -51,4 +51,7 @@ The network can be saved as a R network image at some specified times. The file 
 net.save.file = ./output/network.RDS
 save.network.at = 4, end
 ```
-will save the network at timestep 4 and at the end of the simulation, resulting in two files: network_4.RDS and network_N.RDS where N is the last timestep of the simulation.
+will save the network at timestep 4 and at the end of the simulation, resulting in two files: network_4.RDS and network_N.RDS where N is the last timestep of the simulation. The R function 'saveRDS' is used to save the network. It can be loaded into any variable with 'readRDS'. For example,
+```
+my.net <- readRDS('../transmission_model/Debug/output/network_4.RDS')
+```
