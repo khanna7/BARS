@@ -23,5 +23,5 @@ Events are recorded in the file defined by *infection.events.file* in the model 
 * p2_age: the age of p2 at time 'tick'
 * p2_viral_load: the viral load of p2 at time 'tick'
 * p2_cd4: the cd4 count of p2 at time 'tick'
-* p2_on_pre: whether or not p2 was on PreP at time 'tick'
+* p2_on_prep: whether or not p2 was on PreP at time 'tick'
 
