@@ -38,6 +38,12 @@ struct PersonToVAL {
 	}
 };
 
+ARTScheduler* create_art_scheduler(double tick, float size_of_timestep) {
+	double art_delay = Parameters::instance()->getDoubleParameter(ART_INIT_TIME);
+	double art_at_tick = art_delay / size_of_timestep + tick;
+	return new ARTScheduler((float) art_at_tick);
+}
+
 shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float circ_mult = (float) Parameters::instance()->getDoubleParameter(CIRCUM_MULT);
 	float prep_mult = (float) Parameters::instance()->getDoubleParameter(PREP_MULT);
@@ -154,7 +160,8 @@ void init_network_save(Model* model) {
 			} else {
 				double tick = stod(at);
 				//std::cout << "scheduling at " << tick << std::endl;
-				runner.scheduleEvent(tick + 0.1, Schedule::FunctorPtr(new MethodFunctor<Model>(model, &Model::saveRNetwork)));
+				runner.scheduleEvent(tick + 0.1,
+						Schedule::FunctorPtr(new MethodFunctor<Model>(model, &Model::saveRNetwork)));
 			}
 		}
 	}
@@ -236,7 +243,7 @@ void Model::step() {
 
 	std::cout << " ---- " << t << " ---- " << std::endl;
 	simulate(R, net, p2val, t);
-	entries(t);
+	entries(t, size_of_timestep);
 	runTransmission(t, size_of_timestep);
 	updateVitals(t, size_of_timestep, max_survival);
 	previous_pop_size = current_pop_size;
@@ -291,7 +298,7 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 	}
 }
 
-void Model::entries(double time) {
+void Model::entries(double tick, float size_of_timestep) {
 	float min_age = Parameters::instance()->getFloatParameter(MIN_AGE);
 	size_t pop_size = net.vertexCount();
 	if (pop_size > 0) {
@@ -300,14 +307,37 @@ void Model::entries(double time) {
 				boost::random::poisson_distribution<>(births_prob * pop_size));
 		DefaultNumberGenerator<PoissonGen> gen(birth_gen);
 		int entries = (int) gen.next();
-		Stats::instance()->currentCounts().entries = entries;
+		Stats* stats = Stats::instance();
+		stats->currentCounts().entries = entries;
 		std::cout << "entries: " << entries << std::endl;
+
+		ARTScheduler* art_scheduler = create_art_scheduler(tick, size_of_timestep);
+		double infected_prob = Parameters::instance()->getDoubleParameter(INIT_HIV_PREV_ENTRIES);
+
 		for (int i = 0; i < entries; ++i) {
 			int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
 			VertexPtr<Person> p = make_shared<Person>(max_id, min_age, status == 1);
+			if (Random::instance()->nextDouble() <= infected_prob) {
+				// as if infected at previous timestep
+				float infected_at = tick - (size_of_timestep * 1);
+				trans_runner->infect(p, infected_at);
+				if (p->isARTCovered()) {
+					art_scheduler->addPerson(p);
+				}
+				float viral_load = viral_load_calculator.calculateViralLoad(p->infectionParameters());
+				p->setViralLoad(viral_load);
+				// update cd4
+				float cd4 = cd4_calculator.calculateCD4(p->age(), p->infectionParameters());
+				p->setCD4Count(cd4);
+				++stats->currentCounts().infected;
+				stats->recordInfectionEvent(infected_at, p);
+			}
 			net.addVertex(p);
 			++max_id;
 		}
+
+		RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_scheduler->artAtTick() + 0.1,
+				repast::Schedule::FunctorPtr(art_scheduler));
 	}
 }
 
@@ -317,7 +347,7 @@ void Model::saveRNetwork() {
 	PersonToVAL p2val;
 	create_r_network(rnet, net, idx_map, p2val);
 
-	long tick  = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
+	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
 	fs::path filepath(Parameters::instance()->getStringParameter(NET_SAVE_FILE));
 	std::string stem = filepath.stem().string();
 
@@ -368,9 +398,7 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 		}
 	}
 
-	double art_delay = Parameters::instance()->getDoubleParameter(ART_INIT_TIME);
-	double art_at_tick = art_delay / size_of_timestep + time_stamp;
-	ARTScheduler* art_scheduler = new ARTScheduler((float) art_at_tick);
+	ARTScheduler* art_scheduler = create_art_scheduler(time_stamp, size_of_timestep);
 
 	Stats* stats = Stats::instance();
 	for (auto& person : infecteds) {
@@ -386,7 +414,7 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 		}
 	}
 
-	RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick + 0.1,
+	RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_scheduler->artAtTick() + 0.1,
 			repast::Schedule::FunctorPtr(art_scheduler));
 }
 

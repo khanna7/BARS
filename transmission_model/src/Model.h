@@ -40,7 +40,7 @@ private:
 
 	void runTransmission(double timestamp, float size_of_time_step);
 	bool dead(double tick, PersonPtr person, int max_survival);
-	void entries(double time);
+	void entries(double tick, float size_of_time_step);
 	void deactivateEdges(int id, double time);
 	void updateVitals(double time, float size_of_time_step, int max_survival);
 

@@ -12,18 +12,13 @@
 
 namespace TransModel {
 
+const std::string DeathEvent::header("\"tick\",\"p_id\",\"age\",\"art_status\",\"cause\"");
+const std::string DeathEvent::AGE("AGE");
+const std::string DeathEvent::INFECTION("INFECTION");
 
-
-	const std::string DeathEvent::header("\"tick\",\"p_id\",\"age\",\"art_status\",\"cause\"");
-	const std::string DeathEvent::AGE("AGE");
-	const std::string DeathEvent::INFECTION("INFECTION");
-
-
-	void DeathEvent::writeTo(FileOutput& out) {
-		out << tick << "," << p_id << "," << age << "," << art_status << "," << cause << "\n";
-	}
-
-
+void DeathEvent::writeTo(FileOutput& out) {
+	out << tick << "," << p_id << "," << age << "," << art_status << "," << cause << "\n";
+}
 
 const std::string Biomarker::header("\"tick\",\"p_id\",\"viral_load\",\"cd4_count\",\"art_status\"");
 
@@ -31,33 +26,37 @@ void Biomarker::writeTo(FileOutput& out) {
 	out << tick << "," << p_id << "," << viral_load << "," << cd4 << "," << on_art << "\n";
 }
 
-const std::string InfectionEvent::header("\"tick\",\"p1\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\"," \
-		"\"condom_used\",\"p2\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p1_on_prep\"");
+const std::string InfectionEvent::header(
+		"\"tick\",\"p1\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\","
+				"\"condom_used\",\"p2\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p1_on_prep\"");
 
 void InfectionEvent::writeTo(FileOutput& out) {
-	out << tick << "," << p1_id << "," << p1_age << "," << p1_viral_load << "," <<
-			p1_cd4 << "," << p1_art << "," << p1_on_prep << "," << p1_infectivity << "," << condom_used <<
-			"," << p2_id << "," << p2_age << "," << p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "\n";
+	out << tick << "," << p1_id << "," << p1_age << "," << p1_viral_load << "," << p1_cd4 << "," << p1_art << ","
+			<< p1_on_prep << "," << p1_infectivity << "," << condom_used << "," << p2_id << "," << p2_age << ","
+			<< p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "\n";
 }
 
 const std::string PartnershipEvent::header("\"tick\",\"p1\",\"p2\",\"type\"");
 
-PartnershipEvent::PartnershipEvent(double tick, int p1, int p2, PEventType type) : tick_(tick), p1_id(p1), p2_id(p2), type_{type} {}
+PartnershipEvent::PartnershipEvent(double tick, int p1, int p2, PEventType type) :
+		tick_(tick), p1_id(p1), p2_id(p2), type_ { type } {
+}
 
 void PartnershipEvent::writeTo(FileOutput& out) {
 	out << tick_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "\n";
 }
 
-
-const std::string Counts::header("\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"edge_count\",\"vertex_count\"");
+const std::string Counts::header(
+		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"edge_count\",\"vertex_count\"");
 
 void Counts::writeTo(FileOutput& out) {
-	out << tick << "," << entries << "," << age_deaths << "," << gr_deaths << "," << infected
-			<< "," << edge_count << "," << size << "\n";
+	out << tick << "," << entries << "," << age_deaths << "," << gr_deaths << "," << infected << "," << edge_count
+			<< "," << size << "\n";
 }
 
-Counts::Counts() : tick{0}, edge_count{0}, size{0}, infected{0}, entries{0},
-		age_deaths{0}, gr_deaths{0} {}
+Counts::Counts() :
+		tick { 0 }, edge_count { 0 }, size { 0 }, infected { 0 }, entries { 0 }, age_deaths { 0 }, gr_deaths { 0 } {
+}
 
 void Counts::reset() {
 	tick = 0;
@@ -69,13 +68,12 @@ Stats* Stats::instance_ = nullptr;
 Stats::Stats(std::shared_ptr<StatsWriter<Counts>> counts, std::shared_ptr<StatsWriter<PartnershipEvent>> pevents,
 		std::shared_ptr<StatsWriter<InfectionEvent>> ievent, std::shared_ptr<StatsWriter<Biomarker>> bio_writer,
 		std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer) :
-		counts_writer{counts}, current_counts{}, pevent_writer{pevents}, ievent_writer{ievent},
-		biomarker_writer{bio_writer}, death_writer{death_event_writer} {
+		counts_writer { counts }, current_counts { }, pevent_writer { pevents }, ievent_writer { ievent }, biomarker_writer {
+				bio_writer }, death_writer { death_event_writer } {
 }
 
 Stats::~Stats() {
 }
-
 
 void Stats::resetForNextTimeStep() {
 	counts_writer->addOutput(current_counts);
@@ -83,7 +81,26 @@ void Stats::resetForNextTimeStep() {
 }
 
 void Stats::recordPartnershipEvent(double t, int p1, int p2, PartnershipEvent::PEventType event_type) {
-	pevent_writer->addOutput(PartnershipEvent{t, p1, p2, event_type});
+	pevent_writer->addOutput(PartnershipEvent { t, p1, p2, event_type });
+}
+
+void Stats::recordInfectionEvent(double time, const PersonPtr& p) {
+	InfectionEvent evt;
+	evt.tick = time;
+	evt.p1_id = p->id();
+	evt.p1_age = p->age();
+	evt.p1_art = p->infectionParameters().art_status;
+	evt.p1_cd4 = p->infectionParameters().cd4_count;
+	evt.p1_infectivity = p->infectivity();
+	evt.p1_viral_load = p->infectionParameters().viral_load;
+	evt.p1_on_prep =  p->onPrep();
+	evt.p2_id =  -1;
+	evt.p2_age = 0;
+	evt.p2_cd4 = 0;
+	evt.p2_viral_load = 0;
+	evt.p2_on_prep = false;
+	evt.condom_used = false;
+	ievent_writer->addOutput(evt);
 }
 
 void Stats::recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom) {
@@ -124,7 +141,5 @@ void Stats::recordDeathEvent(double time, const PersonPtr& person, const std::st
 	event.cause = cause;
 	death_writer->addOutput(event);
 }
-
-
 
 } /* namespace TransModel */

@@ -117,6 +117,11 @@ public:
 
 	void recordPartnershipEvent(double time, int p1, int p2, PartnershipEvent::PEventType event_type);
 	void recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom);
+
+	/**
+	 * Records an infection event for persons entering the model as infected.
+	 */
+	void recordInfectionEvent(double time, const PersonPtr& p);
 	void recordBiomarker(double time, const PersonPtr& person);
 	void recordDeathEvent(double time, const PersonPtr& person, const std::string& cause);
 };

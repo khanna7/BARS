@@ -29,6 +29,10 @@ public:
 	void operator()();
 
 	void addPerson(PersonPtr person);
+
+	float artAtTick() const {
+		return time_stamp_;
+	}
 };
 
 } /* namespace TransModel */
