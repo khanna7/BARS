@@ -11,7 +11,7 @@ Partnership events are recorded in the file defined by *partnership.events.file*
   * 1: partnership added
   
 ### Infection Events
-Infection events are recorded in the file defined by *infection.events.file* in the model properties file. The format is csv with each row recording an infection event. The columns are:
+Infection events are recorded in the file defined by *infection.events.file* in the model properties file. The format is csv with each row recording an infection event. An infection event is also recorded when an infected persons enters the model. In that case, only the person 1 attributes are recorded. The columns are:
 * tick: the time step at which the event occurred.
 * p1: the id of the infector (the infected person)
 * p1_age: the age of p1 at the time 'tick'
