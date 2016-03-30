@@ -32,9 +32,37 @@ namespace fs = boost::filesystem;
 
 namespace TransModel {
 
+struct NoOpPersonToVAL {
+
+	void operator()(const PersonPtr& p, List& vertex) const {
+	}
+};
+
 struct PersonToVAL {
 
 	void operator()(const PersonPtr& p, List& vertex) const {
+		vertex["c++_id"] = p->id();
+		vertex["age"] = p->age();
+		vertex["cd4.count.today"] = p->infectionParameters().cd4_count;
+		vertex["circum.status"] = p->isCircumcised();
+		if (p->isInfected()) {
+			vertex["infectivity"] = p->infectivity();
+			vertex["art.covered"] = p->isARTCovered();
+			vertex["art.status"] = p->isOnART();
+			vertex["inf.status"] = p->isInfected();
+			vertex["time.since.infection"] = p->infectionParameters().time_since_infection;
+			vertex["time.of.infection"] = p->infectionParameters().time_of_infection;
+			vertex["age.at.infection"] = p->infectionParameters().age_at_infection;
+			vertex["viral.load.today"] = p->infectionParameters().viral_load;
+
+			if (p->isOnART()) {
+				vertex["time.since.art.initiation"] = p->infectionParameters().time_since_art_init;
+				vertex["time.of.art.initiation"] = p->infectionParameters().time_of_art_init;
+				vertex["vl.art.traj.slope"] = p->infectionParameters().vl_art_traj_slope;
+				vertex["cd4_at_art_init"] = p->infectionParameters().cd4_at_art_init;
+				vertex["vl.at.art.initiation"] = p->infectionParameters().vl_at_art_init;
+			}
+		}
 	}
 };
 
@@ -237,7 +265,7 @@ void Model::step() {
 	Stats* stats = Stats::instance();
 	stats->currentCounts().tick = t;
 
-	PersonToVAL p2val;
+	NoOpPersonToVAL p2val;
 	float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
 	float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
 

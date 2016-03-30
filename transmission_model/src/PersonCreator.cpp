@@ -16,7 +16,6 @@ PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner) 
 }
 
 PersonCreator::~PersonCreator() {
-	// TODO Auto-generated destructor stub
 }
 
 PersonPtr PersonCreator::operator()(Rcpp::List& val) {
