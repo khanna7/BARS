@@ -45,6 +45,8 @@
    
    ### Probability of condomless sex 
    * Chicago: From YMAP. (BMSM) numbers shown in table
+   
+  |  |  |  |  |  From YMAP: Condomless sex
                   |       |negative/undiagnosed         | positive  |
                   | ------------- |:-------------:| -----:|
                   | negative/undiagnosed    | 19 | 4 |
@@ -86,6 +88,8 @@
       
  ### Probability of condomless sex 
    * Chicago: From YMAP. (BMSM) numbers shown in table
+   
+  |  |  |  |  |  From YMAP: Condomless sex
                   |       |negative/undiagnosed         | positive  |
                   | ------------- |:-------------:| -----:|
                   | negative/undiagnosed    | 39 | 1 |
