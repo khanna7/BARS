@@ -50,17 +50,17 @@ const std::string Counts::header(
 		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"edge_count\",\"vertex_count\"");
 
 void Counts::writeTo(FileOutput& out) {
-	out << tick << "," << entries << "," << age_deaths << "," << gr_deaths << "," << infected << "," << edge_count
+	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << infected << "," << edge_count
 			<< "," << size << "\n";
 }
 
 Counts::Counts() :
-		tick { 0 }, edge_count { 0 }, size { 0 }, infected { 0 }, entries { 0 }, age_deaths { 0 }, gr_deaths { 0 } {
+		tick { 0 }, edge_count { 0 }, size { 0 }, infected { 0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 } {
 }
 
 void Counts::reset() {
 	tick = 0;
-	edge_count = size = infected = entries = age_deaths = gr_deaths = 0;
+	edge_count = size = infected = entries = age_deaths = infection_deaths = 0;
 }
 
 Stats* Stats::instance_ = nullptr;

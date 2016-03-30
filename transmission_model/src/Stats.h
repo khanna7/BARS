@@ -77,7 +77,7 @@ struct Counts {
 
 	double tick;
 	unsigned int edge_count, size, infected,
-	entries, age_deaths, gr_deaths;
+	entries, age_deaths, infection_deaths;
 
 	Counts();
 	void reset();

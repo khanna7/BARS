@@ -361,7 +361,7 @@ void Model::saveRNetwork() {
 bool Model::dead(double tick, PersonPtr person, int max_age) {
 	int death_count = 0;
 	bool died = false;
-	// dead via mortality
+	// dead of old age
 	if (person->deadOfAge(max_age)) {
 		++death_count;
 		++Stats::instance()->currentCounts().age_deaths;
@@ -370,9 +370,9 @@ bool Model::dead(double tick, PersonPtr person, int max_age) {
 	}
 
 	if (!died && person->deadOfInfection()) {
-		// grim repear deaths
+		// infection deaths
 		++death_count;
-		++Stats::instance()->currentCounts().gr_deaths;
+		++Stats::instance()->currentCounts().infection_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::INFECTION);
 		died = true;
 	}
