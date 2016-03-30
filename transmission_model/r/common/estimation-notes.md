@@ -30,8 +30,8 @@
 
                   |       |18 - 30           | 31-65  |
                   | ------------- |:-------------:| -----:|
-                  | 18 - 30    | 66.7 | 61.9 |
-                  | 31 - 65      | 33.3     |   38.1|    
+                  | % with Black MSM    | 63.6 | 61.9 |
+                  | % with Other MSM    | 36.4     |   38.1|    
    
                  From NHBS: (as reported by OMSM, see spreadsheet).
                  
@@ -73,8 +73,8 @@
 
                   |       |18 - 30           | 31-65  |
                   | ------------- |:-------------:| -----:|
-                  | 18 - 30    | check | 50% |
-                  | 31 - 65      | check     |   50% |    
+                  | % with Black MSM    | 33.3% | 50% |
+                  | % with Other MSM     | 66.7%  |   50% |    
    
                  From NHBS: (as reported by OMSM, see spreadsheet).
                  
@@ -98,12 +98,27 @@
        
 ## Demographic parameters
    ### Age distribution
-       * Chicago: Nikki is recalibrating for 16 to 65
+       * Chicago:
+
+               Age distribution from US Census Bureau
+                  |       |Age category       | Percent  |
+                 | 15 to 19  |	9.8 |
+                 | 20 to 24  |	11.6 |
+                 | 25 to 29  |	14.4 |
+                 | 30 to 34  |	12.8 |
+                 | 35 to 39  |	10.8 |
+                 | 40 to 44  |	9.6 |
+                 | 45 to 49  |	9.2 |
+                 | 50 to 54  |	8.6 |
+                 | 55 to 59  |	7.3 |
+                 | 60 to 64  |	5.8 |
+
        * Houston: 
        * LA:
        
-   ### Population Growth rate
-      * Chicago: 2010-13: 0.4%. 2010-14: 0.5%. (Checking if annual or over entire period).
+   ### Population Growth rate from US Census Bureau
+      * Chicago: 2010-13: 1.0%. 2010-14: 1.0%. (Over entire period).
+      *          2010-13: 0.33%. 2010-14: 0.25%. (Annual change). 
       * Houston:  
       * LA:   
       
@@ -113,9 +128,21 @@
        * LA: 
                    
 ## ART Parameters
-    ### 
+    ### Adherence
+        * Chicago: YMAP: (YBMSM): Virally suppressed at study visit - Acheived viral suppression: 25.9%, Not virally suppressed: 74.1%         * Houston:
+       * LA: 
+                   
 ## PrEP parameters
 
 ## Overall incidence/prevalence data
-   * Chicago:
-   * 
+   * Chicago: from Chicago Department of Public Health
+   * BMSM age 15-29 (for denominator used Livak et al estimate of # of BMSM on the south side of Chicago age 16-29)
+          Incidence: 4.3% 
+          Prevalence: 22.4% 
+   * Black Men (for denominator used US Census Bureau data on Black Men in Chicago)
+           Incidence: 0.16% 
+           Prevalence: 3.0%
+   * Other Men (for denominator used US Census Bureau data on other men in Chicago)
+            Incidence: 0.007% 
+           Prevalence: 1.4%
+
