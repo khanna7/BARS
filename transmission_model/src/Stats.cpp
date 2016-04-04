@@ -27,8 +27,8 @@ void Biomarker::writeTo(FileOutput& out) {
 }
 
 const std::string InfectionEvent::header(
-		"\"tick\",\"p1\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\","
-				"\"condom_used\",\"p2\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p1_on_prep\"");
+		"\"tick\",\"infector\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\","
+				"\"condom_used\",\"infectee\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p1_on_prep\"");
 
 void InfectionEvent::writeTo(FileOutput& out) {
 	out << tick << "," << p1_id << "," << p1_age << "," << p1_viral_load << "," << p1_cd4 << "," << p1_art << ","
