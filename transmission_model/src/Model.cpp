@@ -310,6 +310,8 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 			float infectivity = stage_map.upper_bound(person->timeSinceInfection())->second->calculateInfectivity(
 					person->infectionParameters(), sex_acts_per_timestep);
 			person->setInfectivity(infectivity);
+		} else {
+			++stats->currentCounts().uninfected;
 		}
 
 		if (persons_to_log.find(person->id()) != persons_to_log.end()) {
@@ -357,7 +359,7 @@ void Model::entries(double tick, float size_of_timestep) {
 				// update cd4
 				float cd4 = cd4_calculator.calculateCD4(p->age(), p->infectionParameters());
 				p->setCD4Count(cd4);
-				++stats->currentCounts().infected;
+				++stats->currentCounts().infected_at_entry;
 				stats->recordInfectionEvent(infected_at, p);
 			}
 			net.addVertex(p);
