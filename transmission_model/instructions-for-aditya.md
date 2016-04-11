@@ -27,4 +27,4 @@
 
 Link: http://htmlpreview.github.io/?[--insert-github-html-link]
 
-see example [here](https://github.com/khanna7/BARS/blob/development/transmission_model/r/testing/testing-apr06-2016.html).
+see example [here](http://htmlpreview.github.io/?https://github.com/khanna7/BARS/blob/development/transmission_model/r/testing/testing-apr06-2016.html).
