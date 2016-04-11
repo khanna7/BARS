@@ -27,8 +27,8 @@ void Biomarker::writeTo(FileOutput& out) {
 }
 
 const std::string InfectionEvent::header(
-		"\"tick\",\"p1\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\","
-				"\"condom_used\",\"p2\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p1_on_prep\"");
+		"\"tick\",\"infector\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\","
+				"\"condom_used\",\"infectee\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p1_on_prep\"");
 
 void InfectionEvent::writeTo(FileOutput& out) {
 	out << tick << "," << p1_id << "," << p1_age << "," << p1_viral_load << "," << p1_cd4 << "," << p1_art << ","
@@ -47,20 +47,21 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 }
 
 const std::string Counts::header(
-		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"edge_count\",\"vertex_count\"");
+		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"infected_at_entry\",\"uninfected\",\"edge_count\",\"vertex_count\"");
+
 
 void Counts::writeTo(FileOutput& out) {
-	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << infected << "," << edge_count
-			<< "," << size << "\n";
+	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << infected << "," << infected_at_entry
+			<< "," << uninfected << "," << edge_count << "," << size << "\n";
 }
 
 Counts::Counts() :
-		tick { 0 }, edge_count { 0 }, size { 0 }, infected { 0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 } {
+		tick { 0 }, edge_count { 0 }, size { 0 }, infected { 0 }, infected_at_entry{0}, uninfected {0}, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 } {
 }
 
 void Counts::reset() {
 	tick = 0;
-	edge_count = size = infected = entries = age_deaths = infection_deaths = 0;
+	edge_count = size = infected = entries = age_deaths = uninfected = infection_deaths = infected_at_entry = 0;
 }
 
 Stats* Stats::instance_ = nullptr;

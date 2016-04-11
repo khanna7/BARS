@@ -76,7 +76,7 @@ struct Counts {
 	static const std::string header;
 
 	double tick;
-	unsigned int edge_count, size, infected,
+	unsigned int edge_count, size, infected, infected_at_entry, uninfected,
 	entries, age_deaths, infection_deaths;
 
 	Counts();

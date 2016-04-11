@@ -1,6 +1,18 @@
 # Model Outputs
 Note that where the output is written to a file, the model will not overwrite an existing file. It will create a new output file name by appending a number to the file in order to create a file that does not already exist. For example, if counts.csv, counts_1.csv, and counts_2.csv exist, and output is to be written to counts.csv, then the new output will be written to counts_3.csv.
 
+### Per timestep aggregate data
+The aggregate data consist of various aggregate per time step stats (e.g. the total number of persons infected during a timestep). These are recorded in the file defined by *per.tick.counts.output.file* in the model properties file. The format is csv with each row recording the stats for that timestep. The columns are:
+* tick: the timestep at which the stats were generated
+* entries: the number of persons who entered the simulation at that timestep
+* old_age_deaths: the number of persons who died from old age (person's age > max age) at that timestep
+* infection_deaths: the number of persons who died from infection at that timestep
+* infected_via_transmission: the number of persons infected via transmission at that timestep
+* infected_at_entry: the number of persons who were infected when entering the model
+* uninfected: the number of uninfected persons at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
+* edge_count: the number of edges in the model at the end of the timestep
+* vertex_count: the total number of vertices at the end of the timestep. This takes into account adding entries and subtracting deaths.
+
 ### Partnership Events
 Partnership events are recorded in the file defined by *partnership.events.file* in the model properties file. The format is csv with each row recording an event. The columns are:
 * tick: the time step at which the event occurred.
