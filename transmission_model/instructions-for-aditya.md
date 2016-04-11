@@ -1,6 +1,4 @@
-Aditya,
-
-I’ve compiled the transmission model on midway. The easiest way to get this running for you is to:
+## Compiling BARS Repast code
 
 1. Pull the development branch of the BARS repo into your midway account.
 
@@ -24,12 +22,9 @@ export R_LIBS=/home/ntcollie/R/x86_64-unknown-linux-gnu-library/3.2
 
 ./transmission_model-0.0 ../config/config.props ../config/model.props
 
-Jonathan and I tested this procedure on his account and the model ran.
 
-A few of the model properties (such as the output file) are specified in the config/model.props file. The others are all in transmission_model/r/common/parameters.R
+## previewing html docs from github
 
-At the moment the output file records the number of entries, old age and infection deaths, and number iof infected that occured during a timestep as well as the number of edges and vertices at the end of each timestep. 
+http://htmlpreview.github.io/?[--insert-github-html-link]
 
-I haven’t tried running this on the cluster itself via the queue, but that should be straight forward. We could also talk (next week?) about strategies for doing multiple parallel runs on the cluster to calibrate parameters, if that is necessary.
-
-Nick
+see example [here](https://github.com/khanna7/BARS/blob/development/transmission_model/r/testing/testing-apr06-2016.html).
