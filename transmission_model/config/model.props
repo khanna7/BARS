@@ -1,5 +1,4 @@
-random.seed = 1
-stop.at = 20
+stop.at = 10000
 
 r.parameters.file = ../r/common/parameters.R
 r.file = ../r/network_model/transmission_model.R
