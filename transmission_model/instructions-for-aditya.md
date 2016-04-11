@@ -1,30 +1,30 @@
 ## Compiling BARS Repast code
 
-1. Pull the development branch of the BARS repo into your midway account.
+* Pull the development branch of the BARS repo into your midway account.
 
-2. Create a Release directory under the transmission_model directory (i.e. BARS/transmission_model/Release)
+* Create a Release directory under the transmission_model directory (i.e. BARS/transmission_model/Release)
 
-3. Copy the transmission model from my Release directory to your Release directory. The transmission model is:
+* Copy the transmission model from my Release directory to your Release directory. The transmission model is:
 
-/home/ntcollie/src/BARS/transmission_model/Release/transmission_model-0.0 
+     `/home/ntcollie/src/BARS/transmission_model/Release/transmission_model-0.0`
 
-4. The following modules need to be loaded in order for it to work
+* The following modules need to be loaded in order for it to work
 
-module load R
-module load netcdf/4.2
-module load gcc/4.8
+   `module load R`  
+   `module load netcdf/4.2`  
+   `module load gcc/4.8`
 
-5. I had to install some R packages (ergm etc.) but I imagine you’ve got those already installed. I did have to export R_LIBS though:
+* I had to install some R packages (ergm etc.) but I imagine you’ve got those already installed. I did have to export R_LIBS though:
 
-export R_LIBS=/home/ntcollie/R/x86_64-unknown-linux-gnu-library/3.2
+   `export R_LIBS=/home/ntcollie/R/x86_64-unknown-linux-gnu-library/3.2`
 
-6. Run the model from within the Release directory with 
+* Run the model from within the Release directory with 
 
-./transmission_model-0.0 ../config/config.props ../config/model.props
+   `./transmission_model-0.0 ../config/config.props ../config/model.props`
 
 
 ## previewing html docs from github
 
-http://htmlpreview.github.io/?[--insert-github-html-link]
+Link: http://htmlpreview.github.io/?[--insert-github-html-link]
 
 see example [here](https://github.com/khanna7/BARS/blob/development/transmission_model/r/testing/testing-apr06-2016.html).
