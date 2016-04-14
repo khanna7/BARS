@@ -17,7 +17,7 @@
    min.age <- 16
    max.age <- 65
    given.dur.inf.by.age <- 10*365/size.of.timestep #(not age-specific yet)  
-   daily.entry.rate <- 0.0001*2
+   daily.entry.rate <- 0.00008
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
@@ -26,7 +26,7 @@
    ## BIOLOGICAL
    circum.rate <- 0.10
    init.hiv.prev <- 0.10
-   init.hiv.prev.for.entries <- 0.001 # probability that an entering person will have HIV
+   init.hiv.prev.for.entries <- 0.00001 # probability that an entering person will have HIV
    duration.of.infection <- 3300
    uninfected.cd4.level <- 518 #(might draw uniformly from a range)
 
