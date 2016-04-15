@@ -6,7 +6,7 @@
    nedges <- 2500
    deg_seq <- c(1800)
 
-   duration <- 100
+   duration <- 500
 
    #####################
    ## TIMESTEP
