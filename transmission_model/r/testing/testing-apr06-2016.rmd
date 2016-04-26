@@ -43,13 +43,13 @@ and read in the various datasets that are generated:
 
 ```{r}
 ## data
-net <- readRDS("network_10000.RDS") #network at the end
+net <- readRDS("../../Release/output/network_10000.RDS") #network at the end
 
-biom_data <- read.csv("biomarker_log_6.csv")
-counts_data <- read.csv("counts_13.csv")
-inf_event_data <- read.csv("infection_events_6.csv")
-death_data <- read.csv("death_events_6.csv")
-partnership_event_data <- read.csv("partnership_events_6.csv")
+biom_data <- read.csv("../../Release/output/biomarker_log_6.csv")
+counts_data <- read.csv("../../Release/output/counts_13.csv")
+inf_event_data <- read.csv("../../Release/output/infection_events_6.csv")
+death_data <- read.csv("../../Release/output/death_events_6.csv")
+partnership_event_data <- read.csv("../../Release/output/partnership_events_6.csv")
 ```
 These datasets include the sexual network at the 10,000th (i.e. last) time step, biomarker data with detailed trajectories, infection, death and partnership events, and counts of various quantities at each time step.
 
