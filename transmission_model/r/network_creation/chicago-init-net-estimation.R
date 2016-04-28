@@ -8,16 +8,16 @@
    library(networkDynamic)
    library(tergm)
 
-   source("../common/parameters.R")
+   source("../common/chicago-parameters.R")
    source("common-functions.R")
 
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(1)
+   formation <- ~edges+degree(0:1)
 
    dissolution <- ~offset(edges)
    theta.diss <- log(duration-1)
-   target.stats <- c(nedges, deg_seq)
+   target.stats <- c(nedges, deg_seq[1:2])
 
    constraints <- ~.
 
@@ -249,7 +249,8 @@
    ## FIT MODEL
    fit <- ergm(formation.n0, 
                target.stats=target.stats, 
-               constraints=constraints
+               constraints=constraints,
+               eval.loglik=FALSE
                )
 
    theta.form <- fit$coef 
