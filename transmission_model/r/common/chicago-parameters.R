@@ -3,10 +3,19 @@
    #####################
    ## NETWORK
    n <- 5000
-   nedges <- 2500
-   deg_seq <- c(1800)
 
-   duration <- 1000
+
+   ## empirical edegree information
+     ## 0 main partnerships = 56.6% of men
+     ## 1 main partnership = 41.2% of men
+     ## 2 main partnerships = 1.8 % of men
+     ## >=3 main partnerships = 0.3 % of men
+     mean_deg <- (0*0.566)+(1*0.412)+(2*0.018)+(3*0.003)
+     nedges <- n*mean_deg/2
+
+   deg_seq <- c(56.6, 41.2, 1.8)*n/100
+
+   duration <- (562+1260)/2
 
    #####################
    ## TIMESTEP
