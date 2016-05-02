@@ -105,3 +105,11 @@
    min.chronic.infectivity.unadj <- 0.000497/2.89 
    
    ## relationship between viral load and chronic infectivity (hughes et al.)
+   
+   #####################
+   ## BEHAVIORAL
+   pr.insertive <- 20.9/100
+   pr.receptive <- 24.2/100
+   pr.versatile <- 1-(pr.insertive + pr.receptive)
+   nodematch.inf.status <- 0.75*nedges #28/35 partnerships match on infection status, 
+                                       #almost equal between susc-susc and inf-inf 

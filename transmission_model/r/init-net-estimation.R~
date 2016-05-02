@@ -1,0 +1,47 @@
+## initial network estimation
+
+   ## top matter
+   rm(list=ls())
+   library(statnet)
+
+   source("parameters.R")
+
+   ## Model setup
+   formation <- ~edges+degree(0:1)
+   formation.n0 <- update.formula(formation ~ n0)
+
+   dissolution <- ~offset (edges)
+   theta.diss <- log(duration-1)
+   target.stas <- c(nedges, degree_seq)
+
+   constraints <- ~.
+
+   ## Other initialization parameters
+   ## ....
+
+   ## Create network
+   n0 <- network.initalize(n, directed=FALSE)
+
+   ## Fit model
+   fit <- ergm(formation.n0, 
+               target.stats=target.stats, 
+               constraints=constraints,
+               maxit=50
+               )
+
+   theta.form <- fit$coef 
+   theta.form[1] <- theta.form[1] - theta.diss
+
+  ## Simulate over one time step
+  hetdeg.diag.sim <- simulate(n0,
+                              formation=formation.w.age.mix,
+                              dissolution=dissolution,
+                              coef.form=theta.form, coef.diss=theta.diss,
+                              ##time.slices=1000,
+                              time.slices=2e4,
+                              constraints=constraints,
+                              monitor=~edges+b1degree(0:5)+b2degree(0:5)#,
+                              #control=control.simulate.network(MCMC.burnin=10000)
+                              )
+
+

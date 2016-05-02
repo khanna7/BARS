@@ -8,7 +8,7 @@
    library(networkDynamic)
    library(tergm)
 
-   source("../common/chicago-parameters.R")
+   source("../common/chicago_parameters.R")
    source("common-functions.R")
 
    #####################
