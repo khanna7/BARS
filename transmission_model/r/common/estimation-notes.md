@@ -1,4 +1,4 @@
-# BARS transmission model parameters for each of the three cities
+# BARS transmission model parameters: Chicago
    
 ## Sexual Network parameters: STEADY PARTNERSHIPS 
    
@@ -8,27 +8,23 @@
    *                           1 main partnership    = 41.2% of men
    *                           2 main partnerships   = 1.8 % of men
    *                           >=3 main partnerships = 0.3 % of men
-   * Houston: YMAP
-   * LA: 
+
    
  ### Mean partnership duration 
-   * Chicago: NHBS (BMSM). (18-30): 562 days. (31-65): 1260 days.    
+   * Chicago: NHBS (BMSM). (18-30): 562 days. (31-65): 1260 days.        
               NHBS (OMSM). (18-30): 485 days. (31-65): 1582 days. 
-   * Houson:
-   * LA:
+    
    
  ### Agemixing: absdiff for difference in square-root of ages 
     * Chicago: YMAP (for BMSM). 0.33 
                NHBS (for BMSM): (18 - 30) 0.68. (31-65): 0.80   
                NHBS (for other): (18 - 30) 0.92. (31-65): 0.65
-    * Houston: 
-    * LA:
   
   ### Race mixing
      * Chicago: From YMAP (as reported by BMSM, past 6? months) : 18-30 yr-old BMSM have 93.9% partnerships with BMSM, and 6.1% Other Black MSM 
                 From NHBS: (as reported by BMSM, last partner).   
 
-                  |       |18 - 30           | 31-65  |
+                  |       18 - 30           | 31-65  |
                   | ------------- |:-------------:| -----:|
                   | % with Black MSM    | 63.6 | 61.9 |
                   | % with Other MSM    | 36.4     |   38.1|    
