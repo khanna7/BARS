@@ -16,16 +16,16 @@
 
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:1)
+   formation_cas <- ~edges+degree(0:1)
 
-   dissolution <- ~offset(edges)
-   theta.diss <- log(dur_cas - 1)
-   target.stats <- c(cas_n_edges, cas_deg_seq[1:2]
+   dissolution_cas <- ~offset(edges)
+   theta.diss_cas <- log(dur_cas - 1)
+   target.stats_cas <- c(cas_n_edges, cas_deg_seq[1:2]
                     )
 
-   constraints <- ~.
+   constraints_cas <- ~.
 
-   formation.n0 <- update.formula(formation, n0~.)
+   formation.n_cas <- update.formula(formation_cas, n_cas~.)
 
    #####################
    ## CREATE EMPTY NETWORK TO START
@@ -33,36 +33,16 @@
 
    #####################
    ## FIT MODEL
-   cas_fit <- ergm(formation.n0, 
-                   target.stats=target.stats, 
-                   constraints=constraints,
+   cas_fit <- ergm(formation.n_cas, 
+                   target.stats=target.stats_cas, 
+                   constraints=constraints_cas,
                    eval.loglik=FALSE,
                    verbose=TRUE,
                    control=control.ergm(MCMLE.maxit=500)
                     )
 
-   theta.form <- fit$coef 
-   theta.form[1] <- theta.form[1] - theta.diss
-
-   #####################
-   ## SIMULATE (for testing)
-#     hetdeg.diag.sim <- simulate(n0,
-#                                 formation=formation.n0,
-#                                 dissolution=dissolution,
-#                                 coef.form=theta.form, 
-#                                 coef.diss=theta.diss,
-#                                 time.slices=2e4,
-#                                 #time.slices=1e2,
-#                                 constraints=constraints,
-#                                 monitor=~edges+degree(0:5)
-#                                 )
-
-   #####################
-#    ## TEST
-#    net.f <- network.collapse(hetdeg.diag.sim, at=1000)
-#    network.size(net.f)
-#    network.edgecount(net.f)
-#    degreedist(net.f) 
+   theta.form_cas <- cas_fit$coef 
+   theta.form_cas[1] <- theta.form_cas[1] - theta.diss_cas
 
    #####################
    ## SAVE BINARY
