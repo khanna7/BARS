@@ -89,7 +89,7 @@
                   |       |negative/undiagnosed         | positive  |
                   | ------------- |:-------------:| -----:|
                   | positive   | 24| 30 |
-                  | negative/undiagnosed      | 5     |   703 |    
+                  | negative/undiagnosed      | 5     |   73 |    
    
        
 ## Demographic parameters
