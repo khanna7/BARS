@@ -33,7 +33,7 @@ void add_from_R(const std::string& r_file, Parameters* params, std::shared_ptr<R
 		if (TYPEOF(val) == REALSXP) {
 			Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(val);
 			if (v.size() == 1) {
-				params->putParameter(name, v.at(0));
+				params->putParameter(name, v[0]);
 			}
 			//std::cout << "extern const std::string " << upper_name << ";" << std::endl; //" = \"" << name << "\";" << std::endl;
 		} else if (TYPEOF(val) == INTSXP && (name == ACUTE_LENGTH || name == CHRONIC_LENGTH ||
