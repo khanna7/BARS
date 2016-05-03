@@ -1,6 +1,6 @@
 stop.at = 10000
 
-r.parameters.file = ../r/common/parameters2.R
+r.parameters.file = ../r/common/chicago_parameters.R
 r.file = ../r/network_model/transmission_model.R
 
 per.tick.counts.output.file = ./output/counts.csv
