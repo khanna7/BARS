@@ -45,8 +45,8 @@
                   From YMAP: Condomless sex
                   |       |negative/undiagnosed         | positive  |
                   | ------------- |:-------------:| -----:|
-                  | negative/undiagnosed    | 19 | 4 |
-                  | positive      | 3     |   9 |    
+                  | positive    | 11 | 5 |
+                  | negative/undiagnosed      | 5    |   25 |    
    
       
 ## Sexual Network parameters: Casual Partners.
@@ -88,8 +88,8 @@
                  From YMAP: Condomless sex
                   |       |negative/undiagnosed         | positive  |
                   | ------------- |:-------------:| -----:|
-                  | negative/undiagnosed    | 39 | 1 |
-                  | positive      | 13     |   13 |    
+                  | positive   | 24| 30 |
+                  | negative/undiagnosed      | 5     |   703 |    
    
        
 ## Demographic parameters
