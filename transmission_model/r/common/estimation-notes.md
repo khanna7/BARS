@@ -9,7 +9,7 @@
    *                           2 main partnerships   = 2.0 % of men
    *                           >=3 main partnerships = 0.3 % of men
    *                           Unknown               = 6.8 % of men
-
+   *                           
    
  ### Mean partnership duration 
    * Chicago: NHBS (BMSM). (18-30): 562 days. (31-65): 1260 days.        
@@ -58,7 +58,7 @@
    *                           1 main partnership    = 35.4% of men
    *                           2 main partnerships   = 7.6 % of men
    *                           >=3 main partnerships = 2.9 % of men
-
+   *                           
  ### Mean partnership duration 
    * Chicago: NHBS (BMSM). (18-30): 214 days. (31-65): 456 days.    
               NHBS (OMSM). (18-30): 119 days. (31-65): 308 days. 
