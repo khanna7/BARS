@@ -1,9 +1,8 @@
 ## initial values of parameters
    
    #####################
-   ## NETWORK
-   n <- 5000
-
+   ## NETWORK (steady)
+     n <- 5000
 
    ## empirical edegree information
      ## 0 main partnerships = 56.6% of men
@@ -11,11 +10,19 @@
      ## 2 main partnerships = 1.8 % of men
      ## >=3 main partnerships = 0.3 % of men
      mean_deg <- (0*0.566)+(1*0.412)+(2*0.018)+(3*0.003)
-     nedges <- n*mean_deg/2
+     nedges <- n*mean_deg/2 
 
-   deg_seq <- c(56.6, 41.2, 1.8)*n/100
-
-   duration <- (562+1260)/2
+     deg_seq <- c(56.6, 41.2, 1.8)*n/100   
+     duration <- (562+1260)/2
+      
+     ## role
+     pr.insertive <- 20.9/100
+     pr.receptive <- 24.2/100
+     pr.versatile <- 1-(pr.insertive + pr.receptive)
+     nodematch.inf.status <- 0.75*nedges 
+       #28/35 partnerships match on infection status, 
+       #almost equal between susc-susc and inf-inf 
+   
 
    #####################
    ## TIMESTEP
@@ -35,7 +42,7 @@
    ## BIOLOGICAL
    circum.rate <- 0.10
    init.hiv.prev <- 0.10
-   init.hiv.prev.for.entries <- 0.001 # probability that an entering person will have HIV
+   init.hiv.prev.for.entries <- 5/100 # probability that an entering person will have HIV
    duration.of.infection <- 3300
    uninfected.cd4.level <- 518 #(might draw uniformly from a range)
 
@@ -107,9 +114,24 @@
    ## relationship between viral load and chronic infectivity (hughes et al.)
    
    #####################
-   ## BEHAVIORAL
-   pr.insertive <- 20.9/100
-   pr.receptive <- 24.2/100
-   pr.versatile <- 1-(pr.insertive + pr.receptive)
-   nodematch.inf.status <- 0.75*nedges #28/35 partnerships match on infection status, 
-                                       #almost equal between susc-susc and inf-inf 
+   ## Casual (steady)
+      ## duration
+      dur_cas <- (214 + 456)/2
+      ##degree 
+        ## 0: 54.1%
+        ## 1: 35.4%
+        ## 2: 7.6% 
+        ## 3: 2.9%
+      cas_deg_seq <- c(54.1, 35.4, 7.6, 2.9)*n/100
+      ## nedges
+         cas_tot_deg <- (0*cas_deg_seq[1])+(1*cas_deg_seq[2])+
+                        (2*cas_deg_seq[3])+(3*cas_deg_seq[4])
+         cas_n_edges <- cas_tot_deg/2
+      ## role
+      pr_insertive_casual <- 25.8/100
+      pr_receptive_casual <- 19.4/100
+      pr_versatile_casual <- 1 - (pr_insertive_casual + pr_receptive_casual)
+      ## serosorting
+   
+      
+   
