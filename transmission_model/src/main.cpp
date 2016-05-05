@@ -38,10 +38,13 @@ void run(std::string propsFile, int argc, char** argv) {
 
 	TransModel::Parameters::initialize(props);
 	TransModel::add_from_R(Parameters::instance()->getStringParameter(R_PARAMETERS_FILE), Parameters::instance(), R);
-	init_network(R, TransModel::Parameters::instance()->getStringParameter(TransModel::R_FILE));
+	init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE));
+
+	std::string net_var = Parameters::instance()->getStringParameter(NET_VAR);
+	std::string cas_net_var = Parameters::instance()->getStringParameter(CASUAL_NET_VAR);
 
 	// constructor should schedule the step method
-	TransModel::Model model(R, "nw");
+	TransModel::Model model(R, "nw", cas_net_var);
 	// now can run
 	repast::RepastProcess::instance()->getScheduleRunner().run();
 

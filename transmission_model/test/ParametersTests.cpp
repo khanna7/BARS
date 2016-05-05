@@ -24,4 +24,7 @@ TEST(ParametersTests, TestCreateFromR) {
 	ASSERT_EQ(1.11, params->getDoubleParameter(B3_FEMALE));
 	ASSERT_EQ(1, params->getIntParameter(ACUTE_LENGTH_MIN));
 	ASSERT_EQ(3.5f, params->getFloatParameter(STOP_AT));
+
+	// make sure that R vectors of size > 1 are ignored
+	ASSERT_FALSE(params->contains("vector.param"));
 }

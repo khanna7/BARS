@@ -20,7 +20,7 @@ class Person {
 private:
 	friend PersonCreator;
 
-	int id_;
+	int id_, role_;
 	float age_;
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
@@ -28,7 +28,7 @@ private:
 	bool prep_;
 
 public:
-	Person(int id, float age, bool circum_status);
+	Person(int id, float age, bool circum_status, int role);
 
 	virtual ~Person();
 
@@ -38,6 +38,10 @@ public:
 
 	int id() const {
 		return id_;
+	}
+
+	int role() const {
+		return role_;
 	}
 
 	/**

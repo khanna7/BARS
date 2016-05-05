@@ -10,6 +10,7 @@
 #include "RInstance.h"
 #include "Network.h"
 #include "network_utils.h"
+#include "StatsBuilder.h"
 
 using namespace TransModel;
 using namespace Rcpp;
@@ -48,6 +49,15 @@ protected:
 	NetworkTests() {
 		std::string cmd = "source(file=\"../test_data/network_tests.R\")";
 		RInstance::rptr->parseEvalQ(cmd);
+
+		StatsBuilder builder;
+		builder.countsWriter("/dev/null");
+		builder.partnershipEventWriter("/dev/null");
+		builder.infectionEventWriter("/dev/null");
+		builder.biomarkerWriter("/dev/null");
+		builder.deathEventWriter("/dev/null");
+
+		builder.createStatsSingleton();
 	}
 
 	virtual ~NetworkTests() {
@@ -343,7 +353,7 @@ TEST_F(NetworkTests, CreateRNetTests) {
 	SEXP changes = f();
 
 	ASSERT_EQ(2, net.edgeCount());
-	reset_network_edges(changes, net, idx_map);
+	reset_network_edges(changes, net, idx_map, 1);
 	// still 2 because we deleted one and added one
 	// in the try.net.func call
 	ASSERT_EQ(2, net.edgeCount());

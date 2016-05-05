@@ -15,6 +15,9 @@ using namespace repast;
 
 namespace TransModel {
 
+const std::string NET_VAR = "net.variable.name";
+const std::string CASUAL_NET_VAR = "casual.net.variable.name";
+
 const std::string STOP_AT = "stop.at";
 const std::string R_PARAMETERS_FILE = "r.parameters.file";
 const std::string R_FILE = "r.file";
@@ -87,6 +90,9 @@ const std::string UNINFECTED_CD4_LEVEL = "uninfected.cd4.level";
 const std::string UNTREATED_CD4_DAILY_DECLINE = "untreated.cd4.daily.decline";
 const std::string UNTREATED_CD4_PERSTEP_DECLINE = "untreated.cd4.perstep.decline";
 
+const std::string PR_INSERTIVE = "pr.insertive";
+const std::string PR_RECEPTIVE = "pr.receptive";
+
 Parameters* Parameters::instance_ = 0;
 
 Parameters::Parameters(repast::Properties& props) :
@@ -117,6 +123,10 @@ std::string Parameters::getStringParameter(const std::string& prop_name) const {
 		throw std::invalid_argument(
 				"Invalid property name '" + prop_name + "', no property found.");
 	return val;
+}
+
+bool Parameters::contains(const std::string& prop_name) const {
+	return props_.contains(prop_name);
 }
 
 int Parameters::getIntParameter(const std::string& prop_name) const {

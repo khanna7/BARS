@@ -11,8 +11,8 @@ using namespace Rcpp;
 
 namespace TransModel {
 
-Person::Person(int id, float age, bool circum_status) :
-		id_(id), age_(age), circum_status_(circum_status),
+Person::Person(int id, float age, bool circum_status, int role) :
+		id_(id), role_(role), age_(age), circum_status_(circum_status),
 		infection_parameters_(), infectivity_(0), prep_(false) {
 }
 

@@ -8,6 +8,8 @@
 
    duration <- 100
 
+   vector.param <-c(12, 23, 34)
+
    #####################
    ## TIMESTEP
    size.of.timestep <- 1 #currently set as 1 day

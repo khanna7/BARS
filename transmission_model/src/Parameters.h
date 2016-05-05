@@ -5,6 +5,9 @@
 
 namespace TransModel {
 
+extern const std::string NET_VAR;
+extern const std::string CASUAL_NET_VAR;
+
 extern const std::string STOP_AT;
 extern const std::string R_PARAMETERS_FILE;
 extern const std::string R_FILE;
@@ -76,6 +79,9 @@ extern const std::string UNDETECTABLE_VL;
 extern const std::string UNINFECTED_CD4_LEVEL;
 extern const std::string UNTREATED_CD4_DAILY_DECLINE;
 extern const std::string UNTREATED_CD4_PERSTEP_DECLINE;
+
+extern const std::string PR_INSERTIVE;
+extern const std::string PR_RECEPTIVE;
 
 /**
  * Parameters singleton that contains the model properties.
@@ -155,6 +161,8 @@ public:
 	 * @return the named parameter.
 	 */
 	bool getBooleanParameter(const std::string& prop_name) const;
+
+	bool contains(const std::string& prop_name) const;
 
 private:
 	static Parameters* instance_;

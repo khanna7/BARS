@@ -32,9 +32,11 @@ namespace fs = boost::filesystem;
 
 namespace TransModel {
 
-struct NoOpPersonToVAL {
+struct PersonToVALForSimulate {
 
 	void operator()(const PersonPtr& p, List& vertex) const {
+		vertex["role"] = p->role();
+		vertex["inf.status"] = p->isInfected();
 	}
 };
 
@@ -87,6 +89,20 @@ shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float duration = Parameters::instance()->getFloatParameter(DUR_INF_BY_AGE);
 	vector<float> dur_inf_by_age(4, duration);
 	return make_shared<TransmissionRunner>(circ_mult, prep_mult, dur_inf_by_age);
+}
+
+int calculate_role() {
+	double insertive = Parameters::instance()->getDoubleParameter(PR_INSERTIVE);
+	double receptive = Parameters::instance()->getDoubleParameter(PR_RECEPTIVE) + insertive;
+
+	double draw = Random::instance()->nextDouble();
+	if (draw <= insertive) {
+		return 0;
+	} else if (draw <= receptive) {
+		return 1;
+	} else {
+		return 2;
+	}
 }
 
 CD4Calculator create_CD4Calculator() {
@@ -212,7 +228,7 @@ void init_biomarker_logging(Network<Person>& net, std::set<int>& ids_to_log) {
 	}
 }
 
-Model::Model(shared_ptr<RInside>& ri, const std::string& net_var) :
+Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, max_id { 0 }, stage_map { }, persons_to_log { } {
@@ -265,7 +281,7 @@ void Model::step() {
 	Stats* stats = Stats::instance();
 	stats->currentCounts().tick = t;
 
-	NoOpPersonToVAL p2val;
+	PersonToVALForSimulate p2val;
 	float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
 	float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
 
@@ -346,7 +362,7 @@ void Model::entries(double tick, float size_of_timestep) {
 
 		for (int i = 0; i < entries; ++i) {
 			int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
-			VertexPtr<Person> p = make_shared<Person>(max_id, min_age, status == 1);
+			VertexPtr<Person> p = make_shared<Person>(max_id, min_age, status == 1, calculate_role());
 			if (Random::instance()->nextDouble() <= infected_prob) {
 				// as if infected at previous timestep
 				float infected_at = tick - (size_of_timestep * 1);
