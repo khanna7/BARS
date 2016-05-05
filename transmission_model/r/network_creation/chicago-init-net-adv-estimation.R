@@ -11,14 +11,12 @@
    library(networkDynamic)
    library(tergm)
 
+   load(file="initialized-model.RData")
    source("../common/chicago_parameters.R")
-   source("common-functions.R")
 
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:1)+
-                       nodematch("role", diff=TRUE, keep=c(1,2))+
-                       nodematch("inf.status", diff=FALSE)
+   formation <- ~edges+degree(0:1)
 
    dissolution <- ~offset(edges)
    theta.diss <- log(duration-1)
@@ -293,6 +291,6 @@
 
    #####################
    ## SAVE BINARY
-   save.image(file="initialized-model.RData")
+   save.image
 
    

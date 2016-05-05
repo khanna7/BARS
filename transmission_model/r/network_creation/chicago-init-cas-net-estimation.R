@@ -44,6 +44,17 @@
    theta.form_cas <- cas_fit$coef 
    theta.form_cas[1] <- theta.form_cas[1] - theta.diss_cas
 
+    cas_sim_test <- simulate(n0,
+                                formation=formation.n_cas,
+                                dissolution=dissolution_cas,
+                                coef.form=theta.form_cas, 
+                                coef.diss=theta.diss_cas,
+                                time.slices=2e4,
+                                #time.slices=1e2,
+                                constraints=constraints_cas,
+                                monitor=~edges+degree(0:5)
+                                )
+
    #####################
    ## SAVE BINARY
    save.image(file="cas_net.RData")
