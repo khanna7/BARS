@@ -15,6 +15,7 @@ suppressMessages(library(parallel))
 load(file="../r/network_model/cas_net.RData")
 
 np <- detectCores()
+
 nw <- fit$network
 
 formation <- fit$formula
