@@ -129,8 +129,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 		int out = idx_map.at(matrix(r, 2));
 		int to = matrix(r, 3);
 		if (to) {
-			// weight of 1
-			net.addEdge(out, in, 1, edge_type);
+			net.addEdge(out, in, edge_type);
 			++added;
 			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::STARTED);
 		} else {
@@ -165,8 +164,7 @@ void initialize_network(List& rnet, Network<V>& net, F vertex_creator, int edge_
 	List mel = as<List>(rnet["mel"]);
 	for (auto& sexp : mel) {
 		List edge = as<List>(sexp);
-		// weight of 1
-		net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, 1, edge_type);
+		net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, edge_type);
 	}
 }
 
@@ -178,8 +176,7 @@ void initialize_edges(List& rnet, Network<V>& net, int edge_type) {
 	List mel = as<List>(rnet["mel"]);
 	for (auto& sexp : mel) {
 		List edge = as<List>(sexp);
-		// weight of 1
-		net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, 1, edge_type);
+		net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, edge_type);
 	}
 }
 
