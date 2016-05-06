@@ -2,3 +2,4 @@ slurm*
 *.out
 *~
 *.Rout
+#*#
