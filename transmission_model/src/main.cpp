@@ -44,7 +44,7 @@ void run(std::string propsFile, int argc, char** argv) {
 	std::string cas_net_var = Parameters::instance()->getStringParameter(CASUAL_NET_VAR);
 
 	// constructor should schedule the step method
-	TransModel::Model model(R, "nw", cas_net_var);
+	TransModel::Model model(R, net_var, cas_net_var);
 	// now can run
 	repast::RepastProcess::instance()->getScheduleRunner().run();
 
