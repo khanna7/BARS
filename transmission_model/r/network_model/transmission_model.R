@@ -10,8 +10,9 @@ suppressMessages(library(network))
 
 suppressMessages(library(networkDynamic))
 
-
 load(file="../r/network_model/cas_net.RData")
+
+nw <- fit$network
 
 formation <- fit$formula
 
@@ -53,9 +54,17 @@ nw_simulate <-
 
                    output = "changes",
 
+                   #time.start = ts,
+
                    time.start = time,
 
-                   time.slices = 1
+                   #start.time = time,
+
+                   time.slices = 1#,
+
+                   #monitor = stats.form,
+
+                   #control = control.simulate.network(MCMC.burnin=10000)
 
     )
 
@@ -98,9 +107,17 @@ n_cas_simulate <-
 
                         output = "changes",
 
+                        #time.start = ts,
+
                         time.start = time,
 
-                        time.slices = 1
+                        #start.time = time,
+
+                        time.slices = 1#,
+
+                        #monitor = stats.form,
+
+                        #control = control.simulate.network(MCMC.burnin=10000)
 
     )
 
@@ -140,8 +157,6 @@ nw_debug <- function() {
   #print(nw.active$val[[1]]$age)
 
 } 
-
-
 
 
 
