@@ -10,8 +10,11 @@ suppressMessages(library(network))
 
 suppressMessages(library(networkDynamic))
 
+suppressMessages(library(parallel))
+
 load(file="../r/network_model/cas_net.RData")
 
+np <- detectCores()
 nw <- fit$network
 
 formation <- fit$formula
@@ -64,7 +67,7 @@ nw_simulate <-
 
                    #monitor = stats.form,
 
-                   #control = control.simulate.network(MCMC.burnin=10000)
+                   control = control.simulate(parallel=np)
 
     )
 
