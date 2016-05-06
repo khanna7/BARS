@@ -57,15 +57,9 @@ nw_simulate <-
 
                    output = "changes",
 
-                   #time.start = ts,
-
                    time.start = time,
 
-                   #start.time = time,
-
-                   time.slices = 1#,
-
-                   #monitor = stats.form,
+                   time.slices = 1,
 
                    control = control.simulate(parallel=np)
 
