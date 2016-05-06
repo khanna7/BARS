@@ -42,7 +42,7 @@
    ## BIOLOGICAL
    circum.rate <- 0.10
    init.hiv.prev <- 0.10
-   init.hiv.prev.for.entries <- 5/100 # probability that an entering person will have HIV
+   init.hiv.prev.for.entries <- 0.01/100 # probability that an entering person will have HIV
    duration.of.infection <- 3300
    uninfected.cd4.level <- 518 #(might draw uniformly from a range)
 
