@@ -10,7 +10,6 @@ suppressMessages(library(network))
 
 suppressMessages(library(networkDynamic))
 
-load(file="../r/network_model/initialized-model.RData")
 load(file="../r/network_model/cas_net.RData")
 
 nw <- fit$network

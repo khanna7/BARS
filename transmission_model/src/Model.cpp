@@ -395,21 +395,35 @@ void Model::entries(double tick, float size_of_timestep) {
 	}
 }
 
+std::string get_net_out_filename(const std::string& file_name) {
+	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
+		fs::path filepath(file_name);
+		std::string stem = filepath.stem().string();
+
+		std::stringstream ss;
+		ss << stem << "_" << tick << filepath.extension().string();
+		fs::path newName(filepath.parent_path() / ss.str());
+
+		return newName.string();
+
+}
+
 void Model::saveRNetwork() {
 	List rnet;
 	std::map<unsigned int, unsigned int> idx_map;
 	PersonToVAL p2val;
+
 	create_r_network(rnet, net, idx_map, p2val, MAIN_NETWORK_TYPE);
+	std::string file_name = Parameters::instance()->getStringParameter(NET_SAVE_FILE);
+	as<Function>((*R)["nw_save"])(rnet, unique_file_name(get_net_out_filename(file_name)));
 
-	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
-	fs::path filepath(Parameters::instance()->getStringParameter(NET_SAVE_FILE));
-	std::string stem = filepath.stem().string();
-
-	std::stringstream ss;
-	ss << stem << "_" << tick << filepath.extension().string();
-	fs::path newName(filepath.parent_path() / ss.str());
-
-	as<Function>((*R)["nw_save"])(rnet, unique_file_name(newName.string()));
+	if (Parameters::instance()->contains(CASUAL_NET_SAVE_FILE)) {
+		idx_map.clear();
+		List cas_net;
+		create_r_network(cas_net, net, idx_map, p2val, CASUAL_NETWORK_TYPE);
+		file_name = Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
+		as<Function>((*R)["nw_save"])(cas_net, unique_file_name(get_net_out_filename(file_name)));
+	}
 }
 
 bool Model::dead(double tick, PersonPtr person, int max_age) {
