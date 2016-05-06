@@ -1,4 +1,4 @@
-## initial network estimation
+## initial main network estimation
 ## For chicago, model in the last  version contained:
    ## density (mean edges), degree distribution, duration parameter
    ## add: age-mixing, sexual role, sero-sorting
