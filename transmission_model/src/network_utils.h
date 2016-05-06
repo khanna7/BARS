@@ -129,7 +129,8 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 		int out = idx_map.at(matrix(r, 2));
 		int to = matrix(r, 3);
 		if (to) {
-			net.addEdge(out, in, edge_type);
+			// weight of 1
+			net.addEdge(out, in, 1, edge_type);
 			++added;
 			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::STARTED);
 		} else {
