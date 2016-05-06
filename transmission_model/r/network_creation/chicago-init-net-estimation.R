@@ -1,4 +1,7 @@
-## initial network estimation
+## initial main network estimation
+## For chicago, model in the last  version contained:
+   ## density (mean edges), degree distribution, duration parameter
+   ## add: age-mixing, sexual role, sero-sorting
 
    ## top matter
    rm(list=ls())
@@ -10,14 +13,18 @@
 
    source("../common/chicago_parameters.R")
    source("common-functions.R")
-
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:1)
+   formation <- ~edges+degree(0:1)+
+                 nodematch("role", diff=TRUE, keep=c(1,2))+
+                 nodematch("inf.status", diff=FALSE)
 
    dissolution <- ~offset(edges)
    theta.diss <- log(duration-1)
-   target.stats <- c(nedges, deg_seq[1:2])
+   target.stats <- c(nedges, deg_seq[1:2], 
+                             c(0,0),
+                             nodematch.inf.status
+                     )
 
    constraints <- ~.
 
@@ -36,6 +43,7 @@
    ## age
    age <- runif(n, min.age, max.age)
    n0 %v% "age" <- age
+   n0 %v% "sqrt.age" <- sqrt(age)
 
    ## circumcision status
    circum.status <- rbinom(n, 1, circum.rate)
@@ -46,7 +54,11 @@
    n0 %v% "inf.status" <- init.inf.status
    init.infected <- which(init.inf.status == 1)
 
-
+   ## sexual role
+   role <- sample(0:2, n, c(pr.versatile, pr.insertive, pr.receptive), replace=TRUE)
+   table(role, exclude=NULL)
+   n0 %v% "role" <- role #0=versatile, 1=insertive, 2=receptive
+   
    ## time since infection
    ## (draw from uniform distribution)
    time.since.infection <- rep(NA, n)
@@ -250,7 +262,9 @@
    fit <- ergm(formation.n0, 
                target.stats=target.stats, 
                constraints=constraints,
-               eval.loglik=FALSE
+               eval.loglik=FALSE,
+               verbose=TRUE,
+               control=control.ergm(MCMLE.maxit=500)
                )
 
    theta.form <- fit$coef 
@@ -258,26 +272,25 @@
 
    #####################
    ## SIMULATE (for testing)
-    hetdeg.diag.sim <- simulate(n0,
-                                formation=formation.n0,
-                                dissolution=dissolution,
-                                coef.form=theta.form, 
-                                coef.diss=theta.diss,
-                                time.slices=2e4,
-                                #time.slices=1e2,
-                                constraints=constraints,
-                                monitor=~edges+degree(0:5)
-                                )
+#     hetdeg.diag.sim <- simulate(n0,
+#                                 formation=formation.n0,
+#                                 dissolution=dissolution,
+#                                 coef.form=theta.form, 
+#                                 coef.diss=theta.diss,
+#                                 time.slices=2e4,
+#                                 #time.slices=1e2,
+#                                 constraints=constraints,
+#                                 monitor=~edges+degree(0:5)
+#                                 )
 
    #####################
-   ## TEST
-   net.f <- network.collapse(hetdeg.diag.sim, at=1000)
-   network.size(net.f)
-   network.edgecount(net.f)
-   degreedist(net.f) 
+#    ## TEST
+#    net.f <- network.collapse(hetdeg.diag.sim, at=1000)
+#    network.size(net.f)
+#    network.edgecount(net.f)
+#    degreedist(net.f) 
 
    #####################
    ## SAVE BINARY
    save.image(file="initialized-model.RData")
-
    
