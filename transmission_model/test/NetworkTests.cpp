@@ -77,7 +77,8 @@ TEST_F(NetworkTests, TestAdds) {
 	ASSERT_EQ(2, net.vertexCount());
 	ASSERT_EQ(0, net.edgeCount());
 
-	net.addEdge(three, four, 14);
+	EdgePtr<Agent> e = net.addEdge(three, four);
+	e->setWeight(14);
 	ASSERT_EQ(4, net.vertexCount());
 	int id = 1;
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
@@ -117,7 +118,7 @@ TEST_F(NetworkTests, TestAdds) {
 	ASSERT_EQ(2, count);
 
 	ASSERT_EQ(net.edgeCount(), net.edgeCount(0));
-	net.addEdge(two, one, 1, 10);
+	net.addEdge(two, one, 10);
 	ASSERT_EQ(1, net.edgeCount(10));
 	ASSERT_EQ(3, net.edgeCount());
 	ASSERT_EQ(1, net.outEdgeCount(two, 0));
@@ -195,7 +196,7 @@ TEST_F(NetworkTests, TestRemoves) {
 	ASSERT_EQ(3, count);
 
 	unsigned int edge_count = net.edgeCount();
-	net.addEdge(two, one, 1, 10);
+	net.addEdge(two, one, 10);
 	ASSERT_EQ(edge_count + 1, net.edgeCount());
 	ASSERT_FALSE(net.removeEdge(two->id(), one->id(), 0));
 	ASSERT_EQ(1, net.outEdgeCount(two, 10));
@@ -216,9 +217,9 @@ TEST_F(NetworkTests, TestRemovesByIter) {
 
 	net.addVertex(one);
 	net.addEdge(three, one);
-	net.addEdge(one, two, 1, 13);
+	net.addEdge(one, two, 13);
 	net.addEdge(one, four);
-	net.addEdge(three, four, 1, 12);
+	net.addEdge(three, four, 12);
 
 	ASSERT_EQ(2, net.outEdgeCount(one));
 	ASSERT_EQ(0, net.outEdgeCount(two));
@@ -294,8 +295,8 @@ TEST_F(NetworkTests, TestRemovesByVertexIds) {
 	net.addEdge(three, one);
 	net.addEdge(one, two);
 	net.addEdge(one, four);
-	net.addEdge(three, four, 1, 15);
-	net.addEdge(three, four, 1, 0);
+	net.addEdge(three, four, 15);
+	net.addEdge(three, four, 0);
 
 	ASSERT_EQ(5, net.edgeCount());
 
