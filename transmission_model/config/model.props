@@ -1,5 +1,8 @@
 stop.at = 10000
 
+net.variable.name = nw
+casual.net.variable.name = n_cas
+
 r.parameters.file = ../r/common/chicago_parameters.R
 r.file = ../r/network_model/transmission_model.R
 

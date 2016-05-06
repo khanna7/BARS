@@ -235,7 +235,10 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 
 	List rnet = as<List>((*R)[net_var]);
 	PersonCreator person_creator(trans_runner);
-	initialize_network(rnet, net, person_creator);
+	initialize_network(rnet, net, person_creator, MAIN_NETWORK_TYPE);
+	rnet = as<List>((*R)[cas_net_var]);
+	initialize_edges(rnet, net, CASUAL_NETWORK_TYPE);
+
 	init_stage_map(stage_map);
 	init_network_save(this);
 
@@ -276,6 +279,12 @@ void Model::atEnd() {
 Model::~Model() {
 }
 
+void Model::updateThetaForm(const std::string& var_name) {
+	NumericVector theta_form = as<NumericVector>((*R)[var_name]);
+	theta_form[0] = theta_form[0] + std::log(previous_pop_size) - std::log(current_pop_size);
+	((*R)[var_name]) = theta_form;
+}
+
 void Model::step() {
 	double t = RepastProcess::instance()->getScheduleRunner().currentTick();
 	Stats* stats = Stats::instance();
@@ -293,10 +302,9 @@ void Model::step() {
 	previous_pop_size = current_pop_size;
 	current_pop_size = net.vertexCount();
 
-	NumericVector theta_form = as<NumericVector>((*R)["theta.form"]);
 	std::cout << "pop sizes: " << previous_pop_size << ", " << current_pop_size << std::endl;
-	theta_form[0] = theta_form[0] + std::log(previous_pop_size) - std::log(current_pop_size);
-	((*R)["theta_form"]) = theta_form;
+	updateThetaForm("theta.form");
+	updateThetaForm("theta.form_cas");
 
 	stats->currentCounts().edge_count = net.edgeCount();
 	stats->currentCounts().size = net.vertexCount();
@@ -391,7 +399,7 @@ void Model::saveRNetwork() {
 	List rnet;
 	std::map<unsigned int, unsigned int> idx_map;
 	PersonToVAL p2val;
-	create_r_network(rnet, net, idx_map, p2val);
+	create_r_network(rnet, net, idx_map, p2val, MAIN_NETWORK_TYPE);
 
 	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
 	fs::path filepath(Parameters::instance()->getStringParameter(NET_SAVE_FILE));

@@ -43,6 +43,7 @@ private:
 	void entries(double tick, float size_of_time_step);
 	void deactivateEdges(int id, double time);
 	void updateVitals(double time, float size_of_time_step, int max_survival);
+	void updateThetaForm(const std::string& var_name);
 
 public:
 	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);

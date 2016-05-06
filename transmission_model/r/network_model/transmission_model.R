@@ -6,10 +6,15 @@ suppressMessages(library(network))
 suppressMessages(library(networkDynamic))
 
 load(file="../r/network_model/initialized-model.RData")
+load(file="../r/network_model/cas_net.RData")
 
 nw <- fit$network
 formation <- fit$formula
 dissolution <- ~offset(edges)
+
+n_cas <- cas_fit$network
+cas_formation <- cas_fit$formula
+cas_dissolution <- cas_fit$dissolution
 
 nw_simulate <-
   function(net, time) {
@@ -41,6 +46,26 @@ nw_simulate <-
     
     #print(network.size(nw))
     #print("sim end")
+  }
+
+n_cas_simulate <-
+  function(cas_net, time) {
+    class(cas_net) <- "network"
+    changes <- simulate(cas_net,
+                        formation = cas_formation, 
+                        dissolution = cas_dissolution,
+                        coef.form = theta.form_cas, 
+                        coef.diss = theta.diss_cas,
+                        constraints = constraints_cas,
+                        output = "changes",
+                        #time.start = ts,
+                        time.start = time,
+                        #start.time = time,
+                        time.slices = 1#,
+                        #monitor = stats.form,
+                        #control = control.simulate.network(MCMC.burnin=10000)
+    )
+    changes
   }
   
 nw_save <- function(net, fname) {

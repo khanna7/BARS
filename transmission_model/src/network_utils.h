@@ -22,7 +22,7 @@ namespace TransModel {
 
 template<typename V, typename F>
 void create_r_network(List& rnet, Network<V>& net, std::map<unsigned int, unsigned int>& idx_to_v_map,
-		const F& attributes_setter) {
+		const F& attributes_setter, int edge_type) {
 	List gal;
 	gal["n"] = net.vertexCount();
 	gal["directed"] = false;
@@ -54,47 +54,44 @@ void create_r_network(List& rnet, Network<V>& net, std::map<unsigned int, unsign
 
 		int c_index = idx - 1;
 		val[c_index] = vlist;
-		unsigned int in_count = net.inEdgeCount(v);
-		if (in_count > 0) {
-			iel_idx_map.emplace(v->id(), 0);
-		}
+
+		unsigned int in_count = net.inEdgeCount(v, edge_type);
 		iel[c_index] = IntegerVector(in_count);
-		unsigned int out_count = net.outEdgeCount(v);
-		if (out_count > 0) {
-			oel_idx_map.emplace(v->id(), 0);
-		}
+
+		unsigned int out_count = net.outEdgeCount(v, edge_type);
 		oel[c_index] = IntegerVector(out_count);
 
 		++idx;
 	}
 	rnet["val"] = val;
 
-	List mel(net.edgeCount());
+	List mel(net.edgeCount(edge_type));
 
 	int eidx = 1;
 	for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
-		List eal;
-		List atl;
-		atl["na"] = false;
-		eal["atl"] = atl;
-
 		EdgePtr<V> edge = (*iter);
-		unsigned int in_idx = v_to_idx_map.at(edge->v2()->id());
-		unsigned int out_idx = v_to_idx_map.at(edge->v1()->id());
-		eal["inl"] = in_idx;
-		eal["outl"] = out_idx;
-		mel(eidx - 1) = eal;
+		if (edge->type() == edge_type) {
+			List eal;
+			List atl;
+			atl["na"] = false;
+			eal["atl"] = atl;
+			unsigned int in_idx = v_to_idx_map.at(edge->v2()->id());
+			unsigned int out_idx = v_to_idx_map.at(edge->v1()->id());
+			eal["inl"] = in_idx;
+			eal["outl"] = out_idx;
+			mel(eidx - 1) = eal;
 
-		int idx = iel_idx_map[edge->v2()->id()];
-		as<IntegerVector>(iel[in_idx - 1])(idx) = eidx;
-		iel_idx_map[edge->v2()->id()] = ++idx;
+			int idx = iel_idx_map[edge->v2()->id()];
+			as<IntegerVector>(iel[in_idx - 1])(idx) = eidx;
+			iel_idx_map[edge->v2()->id()] = ++idx;
 
-		idx = oel_idx_map[edge->v1()->id()];
-		as<IntegerVector>(oel[out_idx - 1])(idx) = eidx;
-		++idx;
-		oel_idx_map[edge->v1()->id()] = idx;
+			idx = oel_idx_map[edge->v1()->id()];
+			as<IntegerVector>(oel[out_idx - 1])(idx) = eidx;
+			++idx;
+			oel_idx_map[edge->v1()->id()] = idx;
 
-		++eidx;
+			++eidx;
+		}
 	}
 
 	rnet["oel"] = oel;
@@ -108,15 +105,21 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 	std::map<unsigned int, unsigned int> idx_map;
 
 	List rnet;
-	create_r_network(rnet, net, idx_map, attributes_setter);
+	create_r_network(rnet, net, idx_map, attributes_setter, MAIN_NETWORK_TYPE);
 	//Rf_PrintValue(rnet);
 	SEXP changes = as<Function>((*R)["nw_simulate"])(rnet, time);
-	reset_network_edges(changes, net, idx_map, time);
+	reset_network_edges(changes, net, idx_map, time, MAIN_NETWORK_TYPE);
+
+	List cas_net;
+	idx_map.clear();
+	create_r_network(cas_net, net, idx_map, attributes_setter, CASUAL_NETWORK_TYPE);
+	changes = as<Function>((*R)["n_cas_simulate"])(cas_net, time);
+	reset_network_edges(changes, net, idx_map, time, CASUAL_NETWORK_TYPE);
 }
 
 template<typename V>
 void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map,
-		double time) {
+		double time, int edge_type) {
 	NumericMatrix matrix = as<NumericMatrix>(changes);
 
 	int added = 0;
@@ -126,11 +129,11 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 		int out = idx_map.at(matrix(r, 2));
 		int to = matrix(r, 3);
 		if (to) {
-			net.addEdge(out, in);
+			net.addEdge(out, in, edge_type);
 			++added;
 			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::STARTED);
 		} else {
-			bool res = net.removeEdge(out, in);
+			bool res = net.removeEdge(out, in, edge_type);
 			if (!res) {
 				throw std::domain_error("Updating from tergm changes: trying to remove an edge that doesn't exist");
 			}
@@ -148,7 +151,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
  * rnet's val becomes a Vertex, and the appropriate edges are created.
  */
 template<typename V, typename F>
-void initialize_network(List& rnet, Network<V>& net, F vertex_creator) {
+void initialize_network(List& rnet, Network<V>& net, F vertex_creator, int edge_type = 0) {
 	if (net.vertexCount() != 0)
 		throw std::invalid_argument("Cannot initialize network: network is not empty");
 	List val = as<List>(rnet["val"]);
@@ -161,7 +164,21 @@ void initialize_network(List& rnet, Network<V>& net, F vertex_creator) {
 	List mel = as<List>(rnet["mel"]);
 	for (auto& sexp : mel) {
 		List edge = as<List>(sexp);
-		net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1);
+		// weight of 1
+		net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, 1, edge_type);
+	}
+}
+
+/**
+ * Adds the edges in the r network to the Network net.
+ */
+template<typename V>
+void initialize_edges(List& rnet, Network<V>& net, int edge_type) {
+	List mel = as<List>(rnet["mel"]);
+	for (auto& sexp : mel) {
+		List edge = as<List>(sexp);
+		// weight of 1
+		net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, 1, edge_type);
 	}
 }
 
