@@ -10,7 +10,8 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * infected_via_transmission: the number of persons infected via transmission at that timestep
 * infected_at_entry: the number of persons who were infected when entering the model
 * uninfected: the number of uninfected persons at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
-* edge_count: the number of edges in the model at the end of the timestep
+* main_edge_count: the number of edges in the main network in the model at the end of the timestep
+* casual_edge_count: the number of edges in the casual network in the model at the end of the timestep
 * vertex_count: the total number of vertices at the end of the timestep. This takes into account adding entries and subtracting deaths.
 * overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false. 
 
@@ -22,6 +23,9 @@ Partnership events are recorded in the file defined by *partnership.events.file*
 * type: the type of partnership event.
   * 0: partnership dissolved
   * 1: partnership added
+* network_type: the type of network in which the event occurred
+  * 0: the main network
+  * 1: the casual network
   
 ### Infection Events
 Infection events are recorded in the file defined by *infection.events.file* in the model properties file. The format is csv with each row recording an infection event. An infection event is recorded when one person infects another. An infection event is also recorded when an infected persons enters the model. In that case, only the person 1 attributes are recorded. The columns are:
@@ -39,6 +43,9 @@ Infection events are recorded in the file defined by *infection.events.file* in 
 * p2_viral_load: the viral load of p2 at time 'tick'
 * p2_cd4: the cd4 count of p2 at time 'tick'
 * p2_on_prep: whether or not p2 was on PreP at time 'tick'
+* network_type: the type of network in which the event occurred
+  * 0: the main network
+  * 1: the casual network
 
 ### Biomarker logging
 Some number of persons can be selected at the start of the model for biomarker logging. Biomarker logging logs the viral load, cd4 count and art status of each selected person at each time step. The data is recorded in the file defined by the *biomarker.log.file* property in the model.props file. The number of persons to log is defined by the *biomarker.number.of.persons.to.log* property. The persons to log are selected randomly from all persons prior to simulation start. The format is csv with each row logging the data for a particular person. The columns in the output are:
