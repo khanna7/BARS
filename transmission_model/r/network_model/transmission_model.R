@@ -62,7 +62,7 @@ nw_simulate <-
 
                    time.slices = 1,
 
-                   control = control.simulate.network(parallel=np)
+                   control = control.simulate.network()
 
     )
 
@@ -109,7 +109,7 @@ n_cas_simulate <-
 
                         time.slices = 1,
 
-                        control = control.simulate.network(parallel=np)
+                        control = control.simulate.network()
 
     )
 
