@@ -131,13 +131,13 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 		if (to) {
 			net.addEdge(out, in, edge_type);
 			++added;
-			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::STARTED);
+			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::STARTED, edge_type);
 		} else {
 			bool res = net.removeEdge(out, in, edge_type);
 			if (!res) {
 				throw std::domain_error("Updating from tergm changes: trying to remove an edge that doesn't exist");
 			}
-			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::ENDED);
+			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::ENDED, edge_type);
 			++removed;
 		}
 	}

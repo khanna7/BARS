@@ -28,22 +28,22 @@ void Biomarker::writeTo(FileOutput& out) {
 
 const std::string InfectionEvent::header(
 		"\"tick\",\"infector\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\","
-				"\"condom_used\",\"infectee\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p1_on_prep\"");
+				"\"condom_used\",\"infectee\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p1_on_prep\",\"network_type\"");
 
 void InfectionEvent::writeTo(FileOutput& out) {
 	out << tick << "," << p1_id << "," << p1_age << "," << p1_viral_load << "," << p1_cd4 << "," << p1_art << ","
 			<< p1_on_prep << "," << p1_infectivity << "," << condom_used << "," << p2_id << "," << p2_age << ","
-			<< p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "\n";
+			<< p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "," << network_type << "\n";
 }
 
-const std::string PartnershipEvent::header("\"tick\",\"p1\",\"p2\",\"type\"");
+const std::string PartnershipEvent::header("\"tick\",\"p1\",\"p2\",\"type\",\"network_type\"");
 
-PartnershipEvent::PartnershipEvent(double tick, int p1, int p2, PEventType type) :
-		tick_(tick), p1_id(p1), p2_id(p2), type_ { type } {
+PartnershipEvent::PartnershipEvent(double tick, int p1, int p2, PEventType type, int net_type) :
+		tick_(tick), p1_id(p1), p2_id(p2), type_ { type }, network_type{net_type} {
 }
 
 void PartnershipEvent::writeTo(FileOutput& out) {
-	out << tick_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "\n";
+	out << tick_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "," << network_type << "\n";
 }
 
 const std::string Counts::header(
@@ -85,8 +85,8 @@ void Stats::resetForNextTimeStep() {
 	current_counts.reset();
 }
 
-void Stats::recordPartnershipEvent(double t, int p1, int p2, PartnershipEvent::PEventType event_type) {
-	pevent_writer->addOutput(PartnershipEvent { t, p1, p2, event_type });
+void Stats::recordPartnershipEvent(double t, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type) {
+	pevent_writer->addOutput(PartnershipEvent { t, p1, p2, event_type, net_type });
 }
 
 void Stats::recordInfectionEvent(double time, const PersonPtr& p) {
@@ -105,10 +105,11 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p) {
 	evt.p2_viral_load = 0;
 	evt.p2_on_prep = false;
 	evt.condom_used = false;
+	evt.network_type = -1;
 	ievent_writer->addOutput(evt);
 }
 
-void Stats::recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom) {
+void Stats::recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom, int net_type) {
 	InfectionEvent evt;
 	evt.tick = time;
 	evt.p1_id = p1->id();
@@ -124,6 +125,7 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p1, const PersonP
 	evt.p2_viral_load = p2->infectionParameters().viral_load;
 	evt.p2_on_prep = p2->onPrep();
 	evt.condom_used = condom;
+	evt.network_type = net_type;
 	ievent_writer->addOutput(evt);
 }
 

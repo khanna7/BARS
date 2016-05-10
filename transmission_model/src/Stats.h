@@ -52,6 +52,7 @@ struct InfectionEvent {
 	float p1_age, p2_age;
 	float p1_viral_load, p2_viral_load, p1_infectivity, p1_cd4, p2_cd4;
 	bool p1_art, p1_on_prep, p2_on_prep, condom_used;
+	int network_type;
 
 	void writeTo(FileOutput& out);
 };
@@ -65,8 +66,9 @@ struct PartnershipEvent {
 	double tick_;
 	int p1_id, p2_id;
 	PEventType type_;
+	int network_type;
 
-	PartnershipEvent(double tick, int p1, int p2, PEventType type);
+	PartnershipEvent(double tick, int p1, int p2, PEventType type, int net_type);
 	void writeTo(FileOutput& out);
 
 };
@@ -116,8 +118,8 @@ public:
 		return instance_;
 	}
 
-	void recordPartnershipEvent(double time, int p1, int p2, PartnershipEvent::PEventType event_type);
-	void recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom);
+	void recordPartnershipEvent(double time, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type);
+	void recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom, int net_type);
 
 	/**
 	 * Records an infection event for persons entering the model as infected.
