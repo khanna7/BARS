@@ -9,6 +9,10 @@
 
 namespace TransModel {
 
+const int VERSATILE = 0;
+const int INSERTIVE = 1;
+const int RECEPTIVE = 2;
+
 TransmissionRunner::TransmissionRunner(float circumcision_multiplier, float prep_multiplier,
 		std::vector<float>& given_dur_inf_by_age) :
 		circumcision_multiplier_(circumcision_multiplier), prep_multiplier_(prep_multiplier), dur_inf_by_age(
@@ -21,18 +25,15 @@ TransmissionRunner::~TransmissionRunner() {
 bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infectee) {
 	float infectivity = infector->infectivity();
 
-	// modify infectivity appropriately
 	if (infectee->onPrep()) {
 		infectivity *= prep_multiplier_;
 	}
 
-	/*
-	 // TODO: need to figure how to handle insertive / receptive and
-	 // switching them
-	 if (infector is receptive && infectee is circumcised) {
-	 infectivity *= circumcision_multiplier_;
-	 }
-	 */
+	if (infectee->isCircumcised() && (infectee->role() == INSERTIVE || infectee->role() == VERSATILE)
+			&& infector->role() == RECEPTIVE) {
+		infectivity *= circumcision_multiplier_;
+	}
+
 	return infectivity >= repast::Random::instance()->nextDouble();
 }
 
