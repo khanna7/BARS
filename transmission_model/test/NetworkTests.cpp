@@ -119,6 +119,7 @@ TEST_F(NetworkTests, TestAdds) {
 
 	ASSERT_EQ(net.edgeCount(), net.edgeCount(0));
 	net.addEdge(two, one, 10);
+	ASSERT_TRUE(net.hasEdge(two, one, 10));
 	ASSERT_EQ(1, net.edgeCount(10));
 	ASSERT_EQ(3, net.edgeCount());
 	ASSERT_EQ(1, net.outEdgeCount(two, 0));
@@ -132,6 +133,11 @@ TEST_F(NetworkTests, TestAdds) {
 	ASSERT_EQ(1, ep->v2()->id());
 	ASSERT_EQ(1, ep->weight());
 
+	net.addEdge(two, three, 10);
+	ASSERT_FALSE(net.hasEdge(two, three));
+	ASSERT_FALSE(net.hasEdge(two, three, 0));
+	ASSERT_TRUE(net.hasEdge(two, three, 10));
+	ASSERT_FALSE(net.hasEdge(three, two, 10));
 }
 
 TEST_F(NetworkTests, TestRemoves) {

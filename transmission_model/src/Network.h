@@ -44,6 +44,7 @@ template<typename V>
 using VertexIter = boost::transform_iterator<GetVal<VertexPtr<V>>, typename VertexMap<V>::iterator>;
 
 struct EdgeListData {
+	// edge id
 	std::set<unsigned int> edge_idxs;
 	std::map<int, unsigned int> edge_counts;
 
@@ -62,7 +63,10 @@ private:
 	unsigned int edge_idx;
 
 	VertexMap<V> vertices;
+	// all edges: key -> edge id, value -> Edge
 	EdgeMap<V> edges;
+	// EdgeList is map: key -> vertex id, value -> EdgeListData
+	// oel: outgoing edge list, iel: incoming edge list
 	EdgeList oel, iel;
 	std::map<int, unsigned int> edge_counts;
 
@@ -83,6 +87,8 @@ public:
 	EdgePtr<V> addEdge(const std::shared_ptr<V>& source, const std::shared_ptr<V>& target, int type = 0);
 	EdgePtr<V> addEdge(unsigned int v1_idx, unsigned int v2_idx, int type = 0);
 	bool removeEdge(unsigned int v1_idx, unsigned int v2_idx, int type = 0);
+	bool hasEdge(VertexPtr<V> v1, VertexPtr<V> v2, int type = 0);
+	bool hasEdge(unsigned int v1_idx, unsigned int v2_idx, int type = 0);
 
 	EdgeIter<V> edgesBegin();
 	EdgeIter<V> edgesEnd();
@@ -189,6 +195,33 @@ unsigned int Network<V>::outEdgeCount(const VertexPtr<V>& vertex, int edge_type)
 template<typename V>
 void Network<V>::addVertex(const std::shared_ptr<V>& vertex) {
 	vertices.emplace(std::make_pair(vertex->id(), vertex));
+}
+
+template<typename V>
+bool Network<V>::hasEdge(VertexPtr<V> v1, VertexPtr<V> v2, int type) {
+	return hasEdge(v1->id(), v2->id(), type);
+}
+
+template<typename V>
+bool Network<V>::hasEdge(unsigned int v1_idx, unsigned int v2_idx, int type) {
+	auto iter = oel.find(v1_idx);
+	if (iter == oel.end()) return false;
+
+	auto type_iter = iter->second.edge_counts.find(type);
+	if (type_iter != iter->second.edge_counts.end() && type_iter->second > 0) {
+		for (auto edge_idx : iter->second.edge_idxs) {
+			auto edge_iter = edges.find(edge_idx);
+			if (edge_iter == edges.end())
+				throw std::invalid_argument(
+						"Unexpectedly missing edge in hasEdge(v1, v2, type): edge " + std::to_string(edge_idx) + " does not exist.");
+			EdgePtr<V> edge = edge_iter->second;
+			if (edge->type() == type && edge->v2()->id() == v2_idx) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 template<typename V>

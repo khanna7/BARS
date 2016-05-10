@@ -285,6 +285,29 @@ void Model::updateThetaForm(const std::string& var_name) {
 	((*R)[var_name]) = theta_form;
 }
 
+void Model::countOverlap() {
+	int target_type = 0;
+	int other_type = 0;
+	if (net.edgeCount(MAIN_NETWORK_TYPE) < net.edgeCount(CASUAL_NETWORK_TYPE)) {
+		target_type = MAIN_NETWORK_TYPE;
+		other_type = CASUAL_NETWORK_TYPE;
+	} else {
+		target_type = CASUAL_NETWORK_TYPE;
+		other_type = MAIN_NETWORK_TYPE;
+	}
+
+	Stats* stats = Stats::instance();
+	for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
+		if ((*iter)->type() == target_type) {
+			EdgePtr<Person> edge = (*iter);
+			if (net.hasEdge(edge->v1(), edge->v2(), other_type) ||
+					net.hasEdge(edge->v2(), edge->v1(), other_type)) {
+				++(stats->currentCounts().overlaps);
+			}
+		}
+	}
+}
+
 void Model::step() {
 	double t = RepastProcess::instance()->getScheduleRunner().currentTick();
 	Stats* stats = Stats::instance();
@@ -296,6 +319,11 @@ void Model::step() {
 
 	std::cout << " ---- " << t << " ---- " << std::endl;
 	simulate(R, net, p2val, t);
+	if (Parameters::instance()->getBooleanParameter(COUNT_OVERLAPS)) {
+		countOverlap();
+	} else {
+		stats->currentCounts().overlaps = -1;
+	}
 	entries(t, size_of_timestep);
 	runTransmission(t, size_of_timestep);
 	updateVitals(t, size_of_timestep, max_survival);

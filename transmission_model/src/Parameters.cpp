@@ -18,6 +18,7 @@ namespace TransModel {
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";
 
+
 const std::string STOP_AT = "stop.at";
 const std::string R_PARAMETERS_FILE = "r.parameters.file";
 const std::string R_FILE = "r.file";
@@ -32,6 +33,7 @@ const std::string DEATH_EVENT_FILE = "death.events.file";
 const std::string NET_SAVE_FILE = "net.save.file";
 const std::string CASUAL_NET_SAVE_FILE = "casual.net.save.file";
 const std::string NET_SAVE_AT = "save.network.at";
+const std::string COUNT_OVERLAPS = "count.overlaps";
 
 const std::string PREP_MULT = "prep.mult";
 

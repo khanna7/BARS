@@ -78,6 +78,7 @@ struct Counts {
 	double tick;
 	unsigned int edge_count, size, infected, infected_at_entry, uninfected,
 	entries, age_deaths, infection_deaths;
+	int overlaps;
 
 	Counts();
 	void reset();

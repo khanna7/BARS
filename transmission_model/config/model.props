@@ -19,3 +19,4 @@ net.save.file = ./output/main_network.RDS
 casual.net.save.file = ./output/casual_network.RDS
 
 save.network.at = end
+count.overlaps = true
