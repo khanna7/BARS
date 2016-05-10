@@ -249,7 +249,8 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	init_stats();
 	init_biomarker_logging(net, persons_to_log);
 	Stats* stats = TransModel::Stats::instance();
-	stats->currentCounts().edge_count = net.edgeCount();
+	stats->currentCounts().main_edge_count = net.edgeCount(MAIN_NETWORK_TYPE);
+	stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
 	stats->currentCounts().size = net.vertexCount();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
 		PersonPtr p = *iter;
@@ -334,7 +335,8 @@ void Model::step() {
 	updateThetaForm("theta.form");
 	updateThetaForm("theta.form_cas");
 
-	stats->currentCounts().edge_count = net.edgeCount();
+	stats->currentCounts().main_edge_count = net.edgeCount(MAIN_NETWORK_TYPE);
+	stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
 	stats->currentCounts().size = net.vertexCount();
 	stats->resetForNextTimeStep();
 }

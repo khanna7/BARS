@@ -47,23 +47,24 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 }
 
 const std::string Counts::header(
-		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"infected_at_entry\",\"uninfected\",\"edge_count\","  \
-		"\"vertex_count\",\"overlaps\"");
+		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"infected_at_entry\",\"uninfected\","
+		"\"main_edge_count\",\"casual_edge_count\",\"vertex_count\",\"overlaps\"");
 
 
 void Counts::writeTo(FileOutput& out) {
 	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << infected << "," << infected_at_entry
-			<< "," << uninfected << "," << edge_count << "," << size << "," << overlaps << "\n";
+			<< "," << uninfected << "," << main_edge_count << "," << casual_edge_count << "," << size << "," << overlaps << "\n";
 }
 
 Counts::Counts() :
-		tick { 0 }, edge_count { 0 }, size { 0 }, infected { 0 }, infected_at_entry{0}, uninfected {0}, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 },
-		overlaps{0} {
+		tick { 0 }, main_edge_count { 0 }, casual_edge_count{0}, size { 0 }, infected { 0 }, infected_at_entry{0}, uninfected {0}, entries { 0 },
+		age_deaths { 0 }, infection_deaths { 0 }, overlaps{0} {
 }
 
 void Counts::reset() {
 	tick = 0;
-	edge_count = size = infected = entries = age_deaths = uninfected = infection_deaths = infected_at_entry = 0;
+	main_edge_count = casual_edge_count = size = infected = entries = age_deaths = uninfected =
+			infection_deaths = infected_at_entry = 0;
 	overlaps = 0;
 }
 
