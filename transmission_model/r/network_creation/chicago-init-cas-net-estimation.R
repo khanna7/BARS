@@ -19,11 +19,12 @@
    #####################
    ## MODEL SETUP
    net <- fit$network
-   formation_cas <- net~edges
+   formation_cas <- net~edges+degree(0:1)
 
    dissolution_cas <- net~offset(edges)
    theta.diss_cas <- log(dur_cas - 1)
-   target.stats_cas <- c(cas_n_edges
+   target.stats_cas <- c(cas_n_edges,
+                         cas_deg_seq[1:2]
                     )
 
 
@@ -59,6 +60,6 @@
 
    #####################
    ## SAVE BINARY
-   save.image(file="cas_net_simple.RData")
+   save.image(file="cas_net.RData")
 
    
