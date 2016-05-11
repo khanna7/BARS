@@ -60,13 +60,9 @@ nw_simulate <-
 
                    time.start = time,
 
-<<<<<<< Updated upstream
-                   time.slices = 1,
+                   control = control.simulate.network(),
 
-                   control = control.simulate.network()
-=======
                    time.slices = 1
->>>>>>> Stashed changes
 
     )
 
@@ -108,8 +104,6 @@ n_cas_simulate <-
                         time.slices = 1,
 
                         control = control.simulate.network()
-
-                        time.slices = 1
     )
 
     changes
