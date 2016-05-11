@@ -2,7 +2,7 @@ BARS Transmission Model: Chicago
 ========================================================
 -- Aditya, Nikki, Nick, and Jonathan 
 
-Chicago model: steady partnerships with degree distribution, partnership duration, density
+Chicago model: with main and casual partnerships
 
 ```{r}
 rm(list=ls())
@@ -10,19 +10,24 @@ rm(list=ls())
 suppressPackageStartupMessages(library(network))
 suppressPackageStartupMessages(library(ergm))
 suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(reshape2))
 ```
 and read in the various datasets that are generated:
 
 ```{r}
 ## data
-net <- readRDS("../../Release/output/network_10000_9.RDS") #network at the end
+net <- readRDS("../../Release/output/main_network_10000_2.RDS") #main network at the end
+cas_net <- readRDS("../../Release/output/main_network_10000_2.RDS")#casual network at the end
 
-biom_data <- read.csv("../../Release/output/biomarker_log_10.csv")
-counts_data <- read.csv("../../Release/output/counts_10.csv")
-inf_event_data <- read.csv("../../Release/output/infection_events_10.csv")
-death_data <- read.csv("../../Release/output/death_events_10.csv")
-partnership_event_data <- read.csv("../../Release/output/partnership_events_10.csv")
+biom_data <- read.csv("../../Release/output/biomarker_log_33.csv")
+counts_data <- read.csv("../../Release/output/counts_33.csv")
+inf_event_data <- read.csv("../../Release/output/infection_events_33.csv")
+death_data <- read.csv("../../Release/output/death_events_33.csv")
+partnership_event_data <- read.csv("../../Release/output/partnership_events_33.csv")
+
+input_parameter_data <- source("../common/chicago_parameters.R")
 ```
+
 These datasets include the sexual network at the 10,000th (i.e. last) time step, biomarker data with detailed trajectories, infection, death and partnership events, and counts of various quantities at each time step.
 
 # Results
@@ -88,7 +93,7 @@ plot(
         colnames(annual_inc_data) <- c("year", "ann_inc_pp_py")
         ggplot(annual_inc_data, aes(year, ann_inc_pp_py*100))+
          geom_line()+xlab("Year")+ylab("Incidence Rate (per 100 person years)")+
-         scale_y_continuous(limits=c(0,10))
+         scale_y_continuous(limits=c(0,12))
      
      ```
 
@@ -101,16 +106,61 @@ plot(
   
   
 ## Sexual Networks
-The momentary distribution of the number of partnerships is
 
-```{r, results='show'}
-degree_dist <- degreedist(net)
-barplot(degree_dist/sum(degree_dist), ylim=c(0, 0.5))
+### Main Partnerships
+
+#### Mean degree. 
+The target main mean degree is `r round(nedges*2/n, 2)` and the target casual mean degree is
+`r round(cas_n_edges*2)/n. (Currently contains both, but eventually will contain only 1).
+
+```{r, echo=FALSE, show='asis'}
+   counts_data <- cbind(counts_data, (nedges*2/n+cas_n_edges*2/n))
+   colnames(counts_data)[length(colnames(counts_data))] <- "target"
+   
+  ggplot(counts_data, aes(x=time))+
+        geom_line(aes(y=(edge_count*2/vertex_count)))+
+        geom_line(aes(y=target))+
+        xlab("time step")+ylab("mean degree")
 ```
 
-We see that about 35.3% of the nodes have 1 partner (the target was 36%).
+#### Degree distribution.
+The simulated and target momentary degree distributions are below.
+```{r, echo=FALSE, results='show'}
+sim_deg_dist <- degreedist(net)
+names(sim_deg_dist) <- c("0", "1", "2")
+target_deg_dist <- deg_seq
+names(target_deg_dist) <- c("0", "1", "2")
 
+main_deg_dist_data <- cbind(t(sim_deg_dist[1:3]), t(target_deg_dist))
+main_deg_dist_data <- melt(main_deg_dist_data, id.vars=c("degree0, degree1, degree2"))
+main_deg_dist_data <- cbind(main_deg_dist_data, c(rep("simulated", 3), rep("target", 3)))
+colnames(main_deg_dist_data) <- c("ID", "degree", "value", "type")
 
+ggplot(main_deg_dist_data, aes(x=degree, y=value, fill=type))+
+  geom_bar(position="dodge", stat="identity")+
+  ylab("Number of Agents")
+
+```
+
+### Casual Partnerships
+The simulated and target momentary degree distributions are below.
+
+```{r, echo=FALSE, results='show'}
+sim_deg_dist <- degreedist(cas_net)
+names(sim_deg_dist) <- c("0", "1", "2")
+target_deg_dist <- cas_deg_seq
+names(target_deg_dist) <- c("0", "1", "2")
+
+casual_deg_dist_data <- cbind(t(sim_deg_dist[1:3]), t(target_deg_dist[1:3]))
+casual_deg_dist_data <- melt(casual_deg_dist_data, id.vars=c("degree0, degree1, degree2"))
+casual_deg_dist_data <- cbind(casual_deg_dist_data, c(rep("simulated", 3), rep("target", 3)))
+colnames(casual_deg_dist_data) <- c("ID", "degree", "value", "type")
+
+ggplot(casual_deg_dist_data, aes(x=degree, y=value, fill=type))+
+  geom_bar(position="dodge", stat="identity")+
+  ylab("Number of Agents")
+
+```
    
 ## ART metrics
 
@@ -129,12 +179,17 @@ The ART initiation portion was simplified so that all infected's initate ART 1 y
 Example CD4 and viral load trajectories for one person are below.
 
 ```{r, results='asis'}
-   ## Selected upto 5 infecteds at random
+   ## Selected upto n.to.follow infecteds at random
+   n_to_follow <- 10
    infectees <- inf_event_data$infectee
    uniq_biom_pid <- unique(biom_data$p_id)
 
    infectee_uniq_biom_pid <- uniq_biom_pid[which(uniq_biom_pid %in% infectees)]
    new <- biom_data[which(biom_data$p_id == infectee_uniq_biom_pid[1]),]
+
+   if (length(infectee_uniq_biom_pid > n_to_follow)){
+     infectee_uniq_biom_pid <- infectee_uniq_biom_pid[1:n_to_follow]
+   }
    
    for (i in 2:length(infectee_uniq_biom_pid)){
      new_entry <- biom_data[which(biom_data$p_id == infectee_uniq_biom_pid[i]),]

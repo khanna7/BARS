@@ -10,11 +10,11 @@ suppressMessages(library(network))
 
 suppressMessages(library(networkDynamic))
 
-suppressMessages(library(parallel))
+#suppressMessages(library(parallel))
 
 load(file="../r/network_model/cas_net.RData")
 
-np <- detectCores()
+#np <- detectCores()
 
 nw <- fit$network
 
@@ -60,18 +60,17 @@ nw_simulate <-
 
                    time.start = time,
 
+<<<<<<< Updated upstream
                    time.slices = 1,
 
                    control = control.simulate.network()
+=======
+                   time.slices = 1
+>>>>>>> Stashed changes
 
     )
 
     changes
-
-    
-
-    
-
     #print(network.size(nw))
 
     #print("sim end")
@@ -83,7 +82,6 @@ n_cas <- cas_fit$network
 cas_formation <- cas_fit$formula
 
 cas_dissolution <- dissolution_cas
-
 
 n_cas_simulate <-
 
@@ -107,16 +105,20 @@ n_cas_simulate <-
 
                         time.start = time,
 
+<<<<<<< Updated upstream
                         time.slices = 1,
 
                         control = control.simulate.network()
 
+=======
+                        time.slices = 1
+>>>>>>> Stashed changes
     )
 
     changes
 
   }
-  
+
 
 nw_save <- function(net, fname) {
 
@@ -149,8 +151,3 @@ nw_debug <- function() {
   #print(nw.active$val[[1]]$age)
 
 } 
-
-
-
-
-
