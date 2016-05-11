@@ -10,35 +10,37 @@
    library(network)
    library(networkDynamic)
    library(tergm)
+   library(parallel)
 
    load(file="initialized-model.RData")
    source("../common/chicago_parameters.R")
+   np <- detectCores()
 
    #####################
    ## MODEL SETUP
-   formation_cas <- ~edges+degree(0:1)
+   net <- fit$network
+   formation_cas <- net~edges
 
-   dissolution_cas <- ~offset(edges)
+   dissolution_cas <- net~offset(edges)
    theta.diss_cas <- log(dur_cas - 1)
-   target.stats_cas <- c(cas_n_edges, cas_deg_seq[1:2]
+   target.stats_cas <- c(cas_n_edges
                     )
 
-   constraints_cas <- ~.
 
-   formation.n_cas <- update.formula(formation_cas, n_cas~.)
+   constraints_cas <- ~.
+   formation.n_cas <- update.formula(formation_cas, net~.)
 
    #####################
    ## CREATE EMPTY NETWORK TO START
-   n_cas <- network.initialize(n, directed=FALSE, bipartite=FALSE)
+   #n_cas <- network.initialize(n, directed=FALSE, bipartite=FALSE)
 
-   #####################
-   ## FIT MODEL
    cas_fit <- ergm(formation.n_cas, 
                    target.stats=target.stats_cas, 
                    constraints=constraints_cas,
                    eval.loglik=FALSE,
                    verbose=TRUE,
-                   control=control.ergm(MCMLE.maxit=500)
+                   control=control.ergm(MCMLE.maxit=500,
+                                        parallel=np)
                     )
 
    theta.form_cas <- cas_fit$coef 
@@ -57,6 +59,6 @@
 
    #####################
    ## SAVE BINARY
-   save.image(file="cas_net.RData")
+   save.image(file="cas_net_simple.RData")
 
    
