@@ -75,3 +75,23 @@ will save the network at timestep 4 and at the end of the simulation, resulting 
 ```
 my.net <- readRDS('../transmission_model/Debug/output/network_4.RDS')
 ```
+
+### Person Data
+Person data recording collects the following attributes for each person in the model. The file in which the data is saved is defined by the *person.data.file* model property. The format is csv with one row per person.
+* id: the id of the person
+* time of entry: the timestamp at which the person entred the model. This is 0 for persons entering during intitialization.
+* time of death: the timestamp at which the person died. If the person has not died by the end of the simulation this will be -1.
+* infection status: the infection status of the person at death or simulation end.
+  * 0: uninfected
+  * 1: infected
+* time of infection: the timestamp at which the person was infected. If never infected, then -1.
+* art status: The ART status of the person at death or simulation end.
+  * 0: not on ART
+  * 1: on ART
+* time of art initiation: the timestamp when the person when on ART. If never on ART then -1.
+* time of art cessation: the timestamp when the person went off of ART. If never went off of ART then -1.
+* prep status: The PrEP status of the person at death or simulation end
+  * 0: not on PrEP
+  * 1: on PrEP
+* time of prep initiation: the timestep when the person went on PrEP. If never on PrEP, then -1.
+* time of prep cessation: the timestep when the person went off of PrEP. If never went of PrEP then -1.
