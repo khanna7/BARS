@@ -39,7 +39,7 @@ void InfectionEvent::writeTo(FileOutput& out) {
 const std::string PartnershipEvent::header("\"tick\",\"p1\",\"p2\",\"type\",\"network_type\"");
 
 PartnershipEvent::PartnershipEvent(double tick, int p1, int p2, PEventType type, int net_type) :
-		tick_(tick), p1_id(p1), p2_id(p2), type_ { type }, network_type{net_type} {
+		tick_(tick), p1_id(p1), p2_id(p2), type_ { type }, network_type { net_type } {
 }
 
 void PartnershipEvent::writeTo(FileOutput& out) {
@@ -48,23 +48,23 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 
 const std::string Counts::header(
 		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"infected_at_entry\",\"uninfected\","
-		"\"main_edge_count\",\"casual_edge_count\",\"vertex_count\",\"overlaps\"");
-
+				"\"main_edge_count\",\"casual_edge_count\",\"vertex_count\",\"overlaps\"");
 
 void Counts::writeTo(FileOutput& out) {
-	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << infected << "," << infected_at_entry
-			<< "," << uninfected << "," << main_edge_count << "," << casual_edge_count << "," << size << "," << overlaps << "\n";
+	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << infected << ","
+			<< infected_at_entry << "," << uninfected << "," << main_edge_count << "," << casual_edge_count << ","
+			<< size << "," << overlaps << "\n";
 }
 
 Counts::Counts() :
-		tick { 0 }, main_edge_count { 0 }, casual_edge_count{0}, size { 0 }, infected { 0 }, infected_at_entry{0}, uninfected {0}, entries { 0 },
-		age_deaths { 0 }, infection_deaths { 0 }, overlaps{0} {
+		tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, size { 0 }, infected { 0 }, infected_at_entry { 0 }, uninfected {
+				0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, overlaps { 0 } {
 }
 
 void Counts::reset() {
 	tick = 0;
-	main_edge_count = casual_edge_count = size = infected = entries = age_deaths = uninfected =
-			infection_deaths = infected_at_entry = 0;
+	main_edge_count = casual_edge_count = size = infected = entries = age_deaths = uninfected = infection_deaths =
+			infected_at_entry = 0;
 	overlaps = 0;
 }
 
@@ -72,9 +72,9 @@ Stats* Stats::instance_ = nullptr;
 
 Stats::Stats(std::shared_ptr<StatsWriter<Counts>> counts, std::shared_ptr<StatsWriter<PartnershipEvent>> pevents,
 		std::shared_ptr<StatsWriter<InfectionEvent>> ievent, std::shared_ptr<StatsWriter<Biomarker>> bio_writer,
-		std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer) :
+		std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer, const std::string& person_data_fname) :
 		counts_writer { counts }, current_counts { }, pevent_writer { pevents }, ievent_writer { ievent }, biomarker_writer {
-				bio_writer }, death_writer { death_event_writer } {
+				bio_writer }, death_writer { death_event_writer }, pd_recorder{person_data_fname, 1000} {
 }
 
 Stats::~Stats() {
@@ -98,8 +98,8 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p) {
 	evt.p1_cd4 = p->infectionParameters().cd4_count;
 	evt.p1_infectivity = p->infectivity();
 	evt.p1_viral_load = p->infectionParameters().viral_load;
-	evt.p1_on_prep =  p->onPrep();
-	evt.p2_id =  -1;
+	evt.p1_on_prep = p->isOnPrep();
+	evt.p2_id = -1;
 	evt.p2_age = 0;
 	evt.p2_cd4 = 0;
 	evt.p2_viral_load = 0;
@@ -118,12 +118,12 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p1, const PersonP
 	evt.p1_cd4 = p1->infectionParameters().cd4_count;
 	evt.p1_infectivity = p1->infectivity();
 	evt.p1_viral_load = p1->infectionParameters().viral_load;
-	evt.p1_on_prep = p1->onPrep();
+	evt.p1_on_prep = p1->isOnPrep();
 	evt.p2_id = p2->id();
 	evt.p2_age = p2->age();
 	evt.p2_cd4 = p2->infectionParameters().cd4_count;
 	evt.p2_viral_load = p2->infectionParameters().viral_load;
-	evt.p2_on_prep = p2->onPrep();
+	evt.p2_on_prep = p2->isOnPrep();
 	evt.condom_used = condom;
 	evt.network_type = net_type;
 	ievent_writer->addOutput(evt);

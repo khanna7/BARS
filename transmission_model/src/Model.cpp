@@ -186,6 +186,7 @@ void init_stats() {
 	builder.infectionEventWriter(Parameters::instance()->getStringParameter(INFECTION_EVENTS_FILE));
 	builder.biomarkerWriter(Parameters::instance()->getStringParameter(BIOMARKER_FILE));
 	builder.deathEventWriter(Parameters::instance()->getStringParameter(DEATH_EVENT_FILE));
+	builder.personDataRecorder(Parameters::instance()->getStringParameter(PERSON_DATA_FILE));
 
 	builder.createStatsSingleton();
 }
@@ -233,6 +234,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, max_id { 0 }, stage_map { }, persons_to_log { } {
 
+
+	// get initial stats
+	init_stats();
 	List rnet = as<List>((*R)[net_var]);
 	PersonCreator person_creator(trans_runner);
 	initialize_network(rnet, net, person_creator, MAIN_NETWORK_TYPE);
@@ -245,8 +249,6 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	current_pop_size = net.vertexCount();
 	max_id = net.vertexCount();
 
-	// get initial stats
-	init_stats();
 	init_biomarker_logging(net, persons_to_log);
 	Stats* stats = TransModel::Stats::instance();
 	stats->currentCounts().main_edge_count = net.edgeCount(MAIN_NETWORK_TYPE);
@@ -257,6 +259,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 		if (p->isInfected()) {
 			++stats->currentCounts().infected;
 		}
+		stats->personDataRecorder().initRecord(p, 0);
 	}
 	stats->resetForNextTimeStep();
 
@@ -267,13 +270,10 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
 
 	runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::atEnd)));
-
-	//EventWriter::initialize(Parameters::instance()->getStringParameter(EVENT_FILE),
-	//		Parameters::instance()->getIntParameter(EVENT_FILE_BUFFER_SIZE));
-
 }
 
 void Model::atEnd() {
+	// forces stat writing via destructors
 	delete Stats::instance();
 }
 
@@ -418,6 +418,7 @@ void Model::entries(double tick, float size_of_timestep) {
 			}
 			net.addVertex(p);
 			++max_id;
+			Stats::instance()->personDataRecorder().initRecord(p, tick);
 		}
 
 		RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_scheduler->artAtTick() + 0.1,
@@ -464,6 +465,7 @@ bool Model::dead(double tick, PersonPtr person, int max_age) {
 		++death_count;
 		++Stats::instance()->currentCounts().age_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::AGE);
+		Stats::instance()->personDataRecorder().recordDeath(person, tick);
 		died = true;
 	}
 
@@ -472,6 +474,7 @@ bool Model::dead(double tick, PersonPtr person, int max_age) {
 		++death_count;
 		++Stats::instance()->currentCounts().infection_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::INFECTION);
+		Stats::instance()->personDataRecorder().recordDeath(person, tick);
 		died = true;
 	}
 
@@ -509,6 +512,7 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 				art_scheduler->addPerson(person);
 			}
 			++stats->currentCounts().infected;
+			stats->personDataRecorder().recordInfection(person, time_stamp);
 		}
 	}
 

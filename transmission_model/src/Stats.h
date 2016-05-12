@@ -14,6 +14,7 @@
 #include "FileOutput.h"
 #include "StatsWriter.h"
 #include "common.h"
+#include "PersonDataRecorder.h"
 
 namespace TransModel {
 
@@ -98,12 +99,14 @@ private:
 	std::shared_ptr<StatsWriter<Biomarker>> biomarker_writer;
 	std::shared_ptr<StatsWriter<DeathEvent>> death_writer;
 
+	PersonDataRecorder pd_recorder;
+
 	friend class StatsBuilder;
 	static Stats* instance_;
 
 	Stats(std::shared_ptr<StatsWriter<Counts>> counts, std::shared_ptr<StatsWriter<PartnershipEvent>> pevents,
 			std::shared_ptr<StatsWriter<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriter<Biomarker>> bio_writer,
-			std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer);
+			std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer, const std::string& person_data_fname);
 
 public:
 	virtual ~Stats();
@@ -112,6 +115,10 @@ public:
 
 	Counts& currentCounts() {
 		return current_counts;
+	}
+
+	PersonDataRecorder& personDataRecorder() {
+		return pd_recorder;
 	}
 
 	static Stats* instance() {

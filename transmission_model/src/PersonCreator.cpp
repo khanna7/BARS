@@ -45,6 +45,7 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val) {
 
 		person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
 	}
+
 	return person;
 }
 
