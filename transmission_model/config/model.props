@@ -1,4 +1,4 @@
-stop.at = 10000
+stop.at = 15000
 
 net.variable.name = nw
 casual.net.variable.name = n_cas
