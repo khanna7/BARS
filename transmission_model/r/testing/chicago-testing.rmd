@@ -16,14 +16,14 @@ and read in the various datasets that are generated:
 
 ```{r}
 ## data
-net <- readRDS("../../Release/output/main_network_10000_2.RDS") #main network at the end
-cas_net <- readRDS("../../Release/output/main_network_10000_2.RDS")#casual network at the end
+net <- readRDS("../../Release/output/main_network_15000.RDS") #main network at the end
+cas_net <- readRDS("../../Release/output/main_network_15000.RDS")#casual network at the end
 
-biom_data <- read.csv("../../Release/output/biomarker_log_33.csv")
-counts_data <- read.csv("../../Release/output/counts_33.csv")
-inf_event_data <- read.csv("../../Release/output/infection_events_33.csv")
-death_data <- read.csv("../../Release/output/death_events_33.csv")
-partnership_event_data <- read.csv("../../Release/output/partnership_events_33.csv")
+biom_data <- read.csv("../../Release/output/biomarker_log_36.csv")
+counts_data <- read.csv("../../Release/output/counts_36.csv")
+inf_event_data <- read.csv("../../Release/output/infection_events_36.csv")
+death_data <- read.csv("../../Release/output/death_events_36.csv")
+partnership_event_data <- read.csv("../../Release/output/partnership_events_36.csv")
 
 input_parameter_data <- source("../common/chicago_parameters.R")
 ```
@@ -99,10 +99,6 @@ plot(
 
   
   The mean annual incidence is `r round(summ_inc_per_timestep[4]*365*100, 2)`%, and the annual incidence rates over the course of the simulation are shown above.
-
-    ```{r, echo=FALSE, results='asis'} 
-
-     ```
   
   
 ## Sexual Networks
@@ -110,16 +106,17 @@ plot(
 ### Main Partnerships
 
 #### Mean degree. 
-The target main mean degree is `r round(nedges*2/n, 2)` and the target casual mean degree is
-`r round(cas_n_edges*2)/n. (Currently contains both, but eventually will contain only 1).
+The target main mean degree is `r round(nedges*2/n, 2)` and a plot of the simulated mean
+degree, over the course of the simulation, is below.
 
 ```{r, echo=FALSE, show='asis'}
-   counts_data <- cbind(counts_data, (nedges*2/n+cas_n_edges*2/n))
-   colnames(counts_data)[length(colnames(counts_data))] <- "target"
+   #counts_data <- rbind(counts_data, nedges)
+   #type <- c(rep("simulated", (nrow(counts_data)-1)), rep("target", 1))
+   #counts_data <- as.data.frame(cbind(counts_data, type))
    
-  ggplot(counts_data, aes(x=time))+
-        geom_line(aes(y=(edge_count*2/vertex_count)))+
-        geom_line(aes(y=target))+
+  ggplot(counts_data)+
+        geom_line(aes(x=time, y=main_edge_count*2/vertex_count))+
+        geom_line(aes(x=time, y=nedges*2/n))+
         xlab("time step")+ylab("mean degree")
 ```
 
@@ -143,6 +140,20 @@ ggplot(main_deg_dist_data, aes(x=degree, y=value, fill=type))+
 ```
 
 ### Casual Partnerships
+
+#### Mean degree. 
+The target casual mean degree is `r round(cas_n_edges*2/n, 2)` and a plot of the simulated mean
+degree, over the course of the simulation, is below.
+
+```{r, echo=FALSE, show='asis'}
+   
+  ggplot(counts_data)+
+        geom_line(aes(x=time, y=casual_edge_count*2/vertex_count))+
+        geom_line(aes(x=time, y=cas_n_edges*2/n))+
+        xlab("time step")+ylab("mean degree")
+```
+
+#### Degree distribution.  
 The simulated and target momentary degree distributions are below.
 
 ```{r, echo=FALSE, results='show'}
@@ -161,7 +172,27 @@ ggplot(casual_deg_dist_data, aes(x=degree, y=value, fill=type))+
   ylab("Number of Agents")
 
 ```
-   
+
+### Overlap between main and casual partnerships.
+```{r, echo=FALSE, results='show'}
+
+overlap_counts <- as.data.frame(
+  cbind(counts_data$time, counts_data$overlaps/counts_data$main_edge_count)
+  )
+overlap_counts <- rbind(overlap_counts, 
+                        cbind(counts_data$time, counts_data$overlaps/counts_data$casual_edge_count))
+denominator <- c(rep("main", nrow(overlap_counts)/2), 
+                 rep("casual", nrow(overlap_counts)/2)
+                 )
+overlap_counts <- cbind(overlap_counts, denominator)
+overlap_counts <- as.data.frame(overlap_counts)
+colnames(overlap_counts) <- c("time", "overlap", "denominator")
+
+ggplot(overlap_counts, aes(x=time, y=overlap, color=denominator))+
+  geom_line()
+
+```
+
 ## ART metrics
 
 The ART initiation portion was simplified so that all infected's initate ART 1 year after seroconversion. At presetnt, the proportion of the infected on ART was
