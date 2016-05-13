@@ -25,7 +25,7 @@ TransmissionRunner::~TransmissionRunner() {
 bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infectee) {
 	float infectivity = infector->infectivity();
 
-	if (infectee->onPrep()) {
+	if (infectee->isOnPrep()) {
 		infectivity *= prep_multiplier_;
 	}
 

@@ -17,7 +17,8 @@ CPP_SOURCE = Person.cpp \
 	ARTScheduler.cpp \
 	FileOutput.cpp \
 	utils.cpp \
-	file_utils.cpp
+	file_utils.cpp \
+	PersonDataRecorder.cpp
 	
 #	EventWriter.cpp \
 	

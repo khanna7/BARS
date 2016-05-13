@@ -6,6 +6,7 @@
  */
 
 #include "ARTScheduler.h"
+#include "Stats.h"
 //#include "EventWriter.h"
 //#include "Events.h"
 
@@ -21,6 +22,7 @@ ARTScheduler::~ARTScheduler() {
 void ARTScheduler::operator()() {
 	for (auto& p : persons) {
 		p->putOnART(time_stamp_);
+		Stats::instance()->personDataRecorder().recordARTInit(p, time_stamp_);
 		//EventWriter::instance()->addEvent(time_stamp_, p, ON_ART);
 	}
 }

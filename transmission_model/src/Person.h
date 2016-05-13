@@ -51,7 +51,7 @@ public:
 		return age_;
 	}
 
-	bool onPrep() const {
+	bool isOnPrep() const {
 		return prep_;
 	}
 

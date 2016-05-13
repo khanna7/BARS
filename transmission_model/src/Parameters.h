@@ -17,6 +17,7 @@ extern const std::string INFECTION_EVENTS_FILE;
 extern const std::string BIOMARKER_FILE;
 extern const std::string BIOMARKER_LOG_COUNT;
 extern const std::string DEATH_EVENT_FILE;
+extern const std::string PERSON_DATA_FILE;
 extern const std::string NET_SAVE_FILE;
 extern const std::string CASUAL_NET_SAVE_FILE;
 extern const std::string NET_SAVE_AT;
