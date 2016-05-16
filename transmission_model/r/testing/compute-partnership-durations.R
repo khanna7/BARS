@@ -6,7 +6,8 @@ dt <- fread("partnership_events_36.csv")
 dt_main <- dt[network_type == 0]
 
 # group by p1, p2
-dt_main[,.(counts = .N),by=.(p1,p2),][,unique(counts)] # 1 2 4 3dt_main[,.(counts = .N),by=.(p1,p2),][,.N,by=counts]
+dt_main[,.(counts = .N),by=.(p1,p2),][,unique(counts)] # 1 2 4 3
+dt_main[,.(counts = .N),by=.(p1,p2),][,.N,by=counts]
 
 # counts     N
 # 1:      1  5501
