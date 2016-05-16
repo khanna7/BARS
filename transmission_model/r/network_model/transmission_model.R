@@ -60,7 +60,8 @@ nw_simulate <-
 
                    time.start = time,
 
-                   control = control.simulate.network(),
+                   control = control.simulate.network(MCMC.burnin.min=1e5,
+                       MCMC.burnin.max=1e7),
 
                    time.slices = 1
 
