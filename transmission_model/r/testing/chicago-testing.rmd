@@ -11,6 +11,7 @@ suppressPackageStartupMessages(library(network))
 suppressPackageStartupMessages(library(ergm))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(reshape2))
+suppressPackageStartupMessages(library(dplyr))
 ```
 and read in the various datasets that are generated:
 
@@ -139,6 +140,35 @@ ggplot(main_deg_dist_data, aes(x=degree, y=value, fill=type))+
 
 ```
 
+#### Partnership duration.
+```{r}
+main_partnerships <- partnership_event_data[which(partnership_event_data$network_type == 0),]
+dim(main_partnerships)
+
+dis_main_ptshps <- distinct(select(main_partnerships, p1, p2))
+sim_dur_form_dissolved <- NULL
+
+for (i in 1:nrow(dis_main_ptshps)){
+  occur <- 
+    intersect(which(main_partnerships$p1 == dis_main_ptshps$p1[i]),
+            which(main_partnerships$p2 == dis_main_ptshps$p2[i])
+            )
+  
+  if (length(occur) == 2){
+    
+    duration_new <- main_partnerships$tick[max(occur)] - main_partnerships$tick[min(occur)]
+    
+    sim_dur_form_dissolved <- c(sim_dur_form_dissolved, duration_new)
+  
+    }
+
+  }
+
+main_sim_duration_form_dissolved <- sim_dur_form_dissolved
+summary(main_sim_duration_form_dissolved)
+hist(main_sim_duration_form_dissolved)
+```
+
 ### Casual Partnerships
 
 #### Mean degree. 
@@ -173,6 +203,35 @@ ggplot(casual_deg_dist_data, aes(x=degree, y=value, fill=type))+
 
 ```
 
+#### Partnership duration.
+```{r, echo=TRUE, results='show'}
+casual_partnerships <- partnership_event_data[which(partnership_event_data$network_type == 1),]
+dim(casual_partnerships)
+
+dis_casual_ptshps <- distinct(select(casual_partnerships, p1, p2))
+sim_dur_form_dissolved <- NULL
+
+for (i in 1:nrow(dis_casual_ptshps)){
+  occur <- 
+    intersect(which(casual_partnerships$p1 == dis_casual_ptshps$p1[i]),
+            which(casual_partnerships$p2 == dis_casual_ptshps$p2[i])
+            )
+  
+  if (length(occur) == 2){
+    
+    duration_new <- casual_partnerships$tick[max(occur)] - casual_partnerships$tick[min(occur)]
+    
+    sim_dur_form_dissolved <- c(sim_dur_form_dissolved, duration_new)
+  
+    }
+
+  }
+
+casual_sim_duration_form_dissolved <- sim_dur_form_dissolved
+summary(casual_sim_duration_form_dissolved)
+hist(casual_sim_duration_form_dissolved)
+```
+
 ### Overlap between main and casual partnerships.
 ```{r, echo=FALSE, results='show'}
 
@@ -191,6 +250,16 @@ colnames(overlap_counts) <- c("time", "overlap", "denominator")
 ggplot(overlap_counts, aes(x=time, y=overlap, color=denominator))+
   geom_line()
 
+```
+
+### Total mean degree: main and casual partnerships combined.
+
+```{r, echo=FALSE, results='show'}
+qplot(data=counts_data, x=time, 
+      y=((main_edge_count*2/vertex_count)+
+           (casual_edge_count*2/vertex_count)), 
+      main="Sim 36", ylab=("total mean degree"),
+      geom="line")
 ```
 
 ## ART metrics
