@@ -478,6 +478,7 @@ bool Model::dead(double tick, PersonPtr person, int max_age) {
 		died = true;
 	}
 
+	person->setDead(died);
 	return died;
 }
 

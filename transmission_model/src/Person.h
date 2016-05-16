@@ -25,7 +25,7 @@ private:
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
-	bool prep_;
+	bool prep_, dead_;
 
 public:
 	Person(int id, float age, bool circum_status, int role);
@@ -121,6 +121,14 @@ public:
 	 * the person, it just checks.
 	 */
 	bool deadOfInfection();
+
+	void setDead(bool isDead) {
+		dead_ = isDead;
+	}
+
+	bool isDead() const {
+		return dead_;
+	}
 
 };
 
