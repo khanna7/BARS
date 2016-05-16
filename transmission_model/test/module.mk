@@ -3,6 +3,7 @@ SRC = NetworkTests.cpp \
 	RInstance.cpp \
 	CD4ViralTests.cpp \
 	CreatorTests.cpp \
-	ParametersTests.cpp
+	ParametersTests.cpp \
+	RTests.cpp
 	
 test_src += $(SRC)

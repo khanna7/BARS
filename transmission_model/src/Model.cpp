@@ -43,10 +43,12 @@ struct PersonToVALForSimulate {
 struct PersonToVAL {
 
 	void operator()(const PersonPtr& p, List& vertex) const {
-		vertex["c++_id"] = p->id();
+		vertex[C_ID] = p->id();
 		vertex["age"] = p->age();
 		vertex["cd4.count.today"] = p->infectionParameters().cd4_count;
 		vertex["circum.status"] = p->isCircumcised();
+		vertex["role"] = p->role();
+
 		if (p->isInfected()) {
 			vertex["infectivity"] = p->infectivity();
 			vertex["art.covered"] = p->isARTCovered();
@@ -56,14 +58,29 @@ struct PersonToVAL {
 			vertex["time.of.infection"] = p->infectionParameters().time_of_infection;
 			vertex["age.at.infection"] = p->infectionParameters().age_at_infection;
 			vertex["viral.load.today"] = p->infectionParameters().viral_load;
+		} else {
+			vertex["infectivity"] = 0;
+			vertex["art.covered"] = NA_LOGICAL;
+			vertex["art.status"] = NA_LOGICAL;
+			vertex["inf.status"] = false;
+			vertex["time.since.infection"] = NA_REAL;
+			vertex["time.of.infection"] = NA_REAL;
+			vertex["age.at.infection"] = NA_REAL;
+			vertex["viral.load.today"] = 0;
+		}
 
-			if (p->isOnART()) {
-				vertex["time.since.art.initiation"] = p->infectionParameters().time_since_art_init;
-				vertex["time.of.art.initiation"] = p->infectionParameters().time_of_art_init;
-				vertex["vl.art.traj.slope"] = p->infectionParameters().vl_art_traj_slope;
-				vertex["cd4_at_art_init"] = p->infectionParameters().cd4_at_art_init;
-				vertex["vl.at.art.initiation"] = p->infectionParameters().vl_at_art_init;
-			}
+		if (p->isOnART()) {
+			vertex["time.since.art.initiation"] = p->infectionParameters().time_since_art_init;
+			vertex["time.of.art.initiation"] = p->infectionParameters().time_of_art_init;
+			vertex["vl.art.traj.slope"] = p->infectionParameters().vl_art_traj_slope;
+			vertex["cd4.at.art.initiation"] = p->infectionParameters().cd4_at_art_init;
+			vertex["vl.at.art.initiation"] = p->infectionParameters().vl_at_art_init;
+		} else {
+			vertex["time.since.art.initiation"] = NA_REAL;
+			vertex["time.of.art.initiation"] = NA_REAL;
+			vertex["vl.art.traj.slope"] = NA_REAL;
+			vertex["cd4.at.art.initiation"] = NA_REAL;
+			vertex["vl.at.art.initiation"] = NA_REAL;
 		}
 	}
 };
@@ -234,9 +251,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, max_id { 0 }, stage_map { }, persons_to_log { } {
 
-
 	// get initial stats
 	init_stats();
+
 	List rnet = as<List>((*R)[net_var]);
 	PersonCreator person_creator(trans_runner);
 	initialize_network(rnet, net, person_creator, MAIN_NETWORK_TYPE);
@@ -301,8 +318,7 @@ void Model::countOverlap() {
 	for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
 		if ((*iter)->type() == target_type) {
 			EdgePtr<Person> edge = (*iter);
-			if (net.hasEdge(edge->v1(), edge->v2(), other_type) ||
-					net.hasEdge(edge->v2(), edge->v1(), other_type)) {
+			if (net.hasEdge(edge->v1(), edge->v2(), other_type) || net.hasEdge(edge->v2(), edge->v1(), other_type)) {
 				++(stats->currentCounts().overlaps);
 			}
 		}
@@ -428,14 +444,14 @@ void Model::entries(double tick, float size_of_timestep) {
 
 std::string get_net_out_filename(const std::string& file_name) {
 	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
-		fs::path filepath(file_name);
-		std::string stem = filepath.stem().string();
+	fs::path filepath(file_name);
+	std::string stem = filepath.stem().string();
 
-		std::stringstream ss;
-		ss << stem << "_" << tick << filepath.extension().string();
-		fs::path newName(filepath.parent_path() / ss.str());
+	std::stringstream ss;
+	ss << stem << "_" << tick << filepath.extension().string();
+	fs::path newName(filepath.parent_path() / ss.str());
 
-		return newName.string();
+	return newName.string();
 
 }
 
@@ -444,16 +460,17 @@ void Model::saveRNetwork() {
 	std::map<unsigned int, unsigned int> idx_map;
 	PersonToVAL p2val;
 
+	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
 	create_r_network(rnet, net, idx_map, p2val, MAIN_NETWORK_TYPE);
 	std::string file_name = Parameters::instance()->getStringParameter(NET_SAVE_FILE);
-	as<Function>((*R)["nw_save"])(rnet, unique_file_name(get_net_out_filename(file_name)));
+	as<Function>((*R)["nw_save"])(rnet, unique_file_name(get_net_out_filename(file_name)), tick);
 
 	if (Parameters::instance()->contains(CASUAL_NET_SAVE_FILE)) {
 		idx_map.clear();
 		List cas_net;
 		create_r_network(cas_net, net, idx_map, p2val, CASUAL_NETWORK_TYPE);
 		file_name = Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
-		as<Function>((*R)["nw_save"])(cas_net, unique_file_name(get_net_out_filename(file_name)));
+		as<Function>((*R)["nw_save"])(cas_net, unique_file_name(get_net_out_filename(file_name)), tick);
 	}
 }
 
@@ -478,6 +495,7 @@ bool Model::dead(double tick, PersonPtr person, int max_age) {
 		died = true;
 	}
 
+	person->setDead(died);
 	return died;
 }
 

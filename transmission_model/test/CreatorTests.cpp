@@ -112,5 +112,20 @@ TEST(CreatorTests, TestInfectedPersonCreationART) {
 	ASSERT_NEAR(0.02084192f, params.vl_art_traj_slope, 0.000001);
 	ASSERT_FLOAT_EQ(4.2f, params.vl_at_art_init);
 	ASSERT_FLOAT_EQ(0, params.cd4_at_art_init);
+}
 
+TEST(CreatorTests, TestCreatorMaxID) {
+	std::string cmd = "nw.test <- readRDS(file=\"../test_data/network.RDS\")";
+	RInstance::rptr->parseEvalQ(cmd);
+	List rnet = as<List>((*RInstance::rptr)["nw.test"]);
+	std::vector<float> dur_inf { 10, 20, 30, 40 };
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
+	PersonCreator creator(runner);
+	List val = as<List>(rnet["val"]);
+
+	// will throw exception if there's an issue
+	for (auto& sexp : val) {
+		List v = as<List>(sexp);
+		creator(v);
+	}
 }

@@ -17,6 +17,12 @@ void init_network(std::shared_ptr<RInside>& R, const std::string& r_file) {
 	R->parseEvalQ(cmd);
 }
 
+void load_networks(std::shared_ptr<RInside>& R, const std::string& main_file, const std::string& casual_file) {
+	std::string cmd = "source(file=\"../r/network_model/load_serialized_networks.R\")";
+	R->parseEvalQ(cmd);
+	as<Function>((*R)["load.networks"])(main_file, casual_file);
+}
+
 void usage() {
 	std::cerr << "usage: transmission_model repast_config model_config" << std::endl;
 	std::cerr << "  first string: string is the path to the Repast HPC \n\tconfiguration properties file" << std::endl;
@@ -42,6 +48,12 @@ void run(std::string propsFile, int argc, char** argv) {
 
 	std::string net_var = Parameters::instance()->getStringParameter(NET_VAR);
 	std::string cas_net_var = Parameters::instance()->getStringParameter(CASUAL_NET_VAR);
+
+	if (Parameters::instance()->contains(MAIN_NETWORK_FILE)) {
+		std::string main_file = Parameters::instance()->getStringParameter(MAIN_NETWORK_FILE);
+		std::string casual_file = Parameters::instance()->getStringParameter(CASUAL_NETWORK_FILE);
+		load_networks(R, main_file, casual_file);
+	}
 
 	// constructor should schedule the step method
 	TransModel::Model model(R, net_var, cas_net_var);

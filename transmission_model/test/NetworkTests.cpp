@@ -56,6 +56,7 @@ protected:
 		builder.infectionEventWriter("/dev/null");
 		builder.biomarkerWriter("/dev/null");
 		builder.deathEventWriter("/dev/null");
+		builder.personDataRecorder("/dev/null");
 
 		builder.createStatsSingleton();
 	}

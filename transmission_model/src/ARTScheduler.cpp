@@ -21,9 +21,12 @@ ARTScheduler::~ARTScheduler() {
 
 void ARTScheduler::operator()() {
 	for (auto& p : persons) {
-		p->putOnART(time_stamp_);
-		Stats::instance()->personDataRecorder().recordARTInit(p, time_stamp_);
-		//EventWriter::instance()->addEvent(time_stamp_, p, ON_ART);
+		// person might be die in between ART is scheduled
+		// and actually going on ART.
+		if (!p->isDead()) {
+			p->putOnART(time_stamp_);
+			Stats::instance()->personDataRecorder().recordARTInit(p, time_stamp_);
+		}
 	}
 }
 
