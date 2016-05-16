@@ -15,15 +15,11 @@
    source("common-functions.R")
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:1)+
-                 nodematch("role", diff=TRUE, keep=c(1,2))+
-                 nodematch("inf.status", diff=FALSE)
+   formation <- ~edges+degree(0:1)
 
    dissolution <- ~offset(edges)
    theta.diss <- log(duration-1)
-   target.stats <- c(nedges, deg_seq[1:2], 
-                             c(0,0),
-                             nodematch.inf.status
+   target.stats <- c(nedges, deg_seq[1:2]
                      )
 
    constraints <- ~.
