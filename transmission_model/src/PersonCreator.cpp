@@ -19,9 +19,12 @@ PersonCreator::~PersonCreator() {
 }
 
 PersonPtr PersonCreator::operator()(Rcpp::List& val) {
+	//std::cout << "------------" << std::endl;
+	//Rf_PrintValue(val);
 	float age = as<float>(val["age"]);
 	bool circum_status = as<bool>(val["circum.status"]);
 	int role = as<int>(val["role"]);
+
 	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role);
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
 

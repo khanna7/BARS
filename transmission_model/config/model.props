@@ -6,6 +6,11 @@ casual.net.variable.name = n_cas
 r.parameters.file = ../r/common/chicago_parameters.R
 r.file = ../r/network_model/transmission_model.R
 
+# if these properties are not commented out
+# then these networks will replace existing ones
+#main.network.file = ../r/network_model/main_network.RDS
+#casual.network.file = ../r/network_model/casual_network.RDS
+
 per.tick.counts.output.file = ./output/counts.csv
 partnership.events.file = ./output/partnership_events.csv
 infection.events.file = ./output/infection_events.csv

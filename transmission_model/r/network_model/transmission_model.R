@@ -111,12 +111,10 @@ n_cas_simulate <-
   }
 
 
-nw_save <- function(net, fname) {
-
+nw_save <- function(net, fname, tick) {
 	class(net) <- "network"
-
+	set.network.attribute(net, "tick", tick)
 	saveRDS(net, file=fname)
-
 }
 
 
