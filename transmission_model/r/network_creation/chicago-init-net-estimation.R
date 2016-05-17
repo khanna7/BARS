@@ -273,7 +273,9 @@
       time.until.next.test[not.diagnosed] <- rgeom(length(not.diagnosed), p=daily.testing.prob)
       time.until.next.test <- time.until.next.test+1 #because random draws from geom dist will yield sone zeros
       set.vertex.attribute(n0, "time.until.next.test", time.until.next.test)
-
+      
+      ## attribute: lag between diagnosis and ART initiation
+      n0 %v% "lag.bet.testing.and.art.init" <- lag.bet.testing.and.art.init
    #####################
    ## FIT MODEL
    fit <- ergm(formation.n0, 
