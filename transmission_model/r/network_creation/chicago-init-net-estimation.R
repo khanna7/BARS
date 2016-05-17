@@ -275,7 +275,7 @@
       set.vertex.attribute(n0, "time.until.next.test", time.until.next.test)
       
       ## attribute: lag between diagnosis and ART initiation
-      n0 %v% "lag.bet.testing.and.art.init" <- lag.bet.testing.and.art.init
+      n0 %v% "lag.bet.diagnosis.and.art.init" <- lag.bet.diagnosis.and.art.init
    #####################
    ## FIT MODEL
    fit <- ergm(formation.n0, 
