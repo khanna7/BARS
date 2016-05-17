@@ -1,97 +1,93 @@
 #include <memory>
 #include <vector>
 
-#include "Parameters.h"
 #include "repast_hpc/initialize_random.h"
+#include "repast_hpc/RepastProcess.h"
+#include "repast_hpc/io.h"
 
 #include "Model.h"
-
-#include "RInside.h"
+#include "Parameters.h"
+#include "utils.h"
 
 using namespace Rcpp;
+using namespace TransModel;
 
 void init_network(std::shared_ptr<RInside>& R, const std::string& r_file) {
 	std::string cmd = "source(file=\"" + r_file + "\")";
 	R->parseEvalQ(cmd);
 }
 
+void load_networks(std::shared_ptr<RInside>& R, const std::string& main_file, const std::string& casual_file) {
+	std::string cmd = "source(file=\"../r/network_model/load_serialized_networks.R\")";
+	R->parseEvalQ(cmd);
+	as<Function>((*R)["load.networks"])(main_file, casual_file);
+}
+
+void usage() {
+	std::cerr << "usage: transmission_model repast_config model_config" << std::endl;
+	std::cerr << "  first string: string is the path to the Repast HPC \n\tconfiguration properties file" << std::endl;
+	std::cerr << "  second string: string is the path to the model properties file" << std::endl;
+}
+
+void run(std::string propsFile, int argc, char** argv) {
+	boost::mpi::communicator comm;
+	if (comm.rank() == 0) {
+		std::string time;
+		repast::timestamp(time);
+		std::cout << "Start Time: " << time << std::endl;
+	}
+
+	repast::Properties props(propsFile, argc, argv);
+	//props.putProperty("random.seed", i);
+	repast::initializeRandom(props);
+	std::shared_ptr<RInside> R = std::make_shared<RInside>(argc, argv);
+
+	TransModel::Parameters::initialize(props);
+	TransModel::add_from_R(Parameters::instance()->getStringParameter(R_PARAMETERS_FILE), Parameters::instance(), R);
+	init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE));
+
+	std::string net_var = Parameters::instance()->getStringParameter(NET_VAR);
+	std::string cas_net_var = Parameters::instance()->getStringParameter(CASUAL_NET_VAR);
+
+	if (Parameters::instance()->contains(MAIN_NETWORK_FILE)) {
+		std::string main_file = Parameters::instance()->getStringParameter(MAIN_NETWORK_FILE);
+		std::string casual_file = Parameters::instance()->getStringParameter(CASUAL_NETWORK_FILE);
+		load_networks(R, main_file, casual_file);
+	}
+
+	// constructor should schedule the step method
+	TransModel::Model model(R, net_var, cas_net_var);
+	// now can run
+	repast::RepastProcess::instance()->getScheduleRunner().run();
+
+	if (comm.rank() == 0) {
+		std::string time;
+		repast::timestamp(time);
+		std::cout << "End Time: " << time << std::endl;
+	}
+}
+
 int main(int argc, char *argv[]) {
+	boost::mpi::environment env(argc, argv);
+
+	if (argc < 3) {
+		usage();
+		return -1;
+	}
+
+	std::string config(argv[1]);
+	std::string props(argv[2]);
 
 	try {
-		std::shared_ptr<RInside> R = std::make_shared<RInside>(argc, argv);
-		repast::Properties props(argv[1]);
-		for (int i = 0; i < 5; ++i) {
-			props.putProperty("random.seed", i);
-			repast::initializeRandom(props);
-			TransModel::Parameters::initialize(props);
-			init_network(R, TransModel::Parameters::instance()->getStringParameter(TransModel::R_FILE));
-
-			TransModel::Model model(R, "nw");
-			model.run("./output/data_" + std::to_string(i + 1) + ".csv");
-		}
-
-		//       List nw = as<List>((*R)["nw"]);
-//        List mel = as<List>(nw["mel"]);
-//
-//        TransModel::IsActiveEdge predicate;
-		// TransModel::EdgeIterator iterBegin(mel.begin(), TransModel::MELToEdgePair());
-		//TransModel::EdgeIterator iterEnd(mel.end(), TransModel::MELToEdgePair());
-		//TransModel::EdgeFilterIter iterBegin(predicate, mel.begin(), mel.end());
-		//TransModel::EdgeFilterIter iterEnd(predicate, mel.end(), mel.end());
-//
-//        int count = 0;
-//        for (List::iterator iter = mel.begin(); iter != mel.end(); ++iter) {
-//        	SEXP item = (*iter);
-		//       }
-//
-
-		//for (TransModel::EdgeFilterIter iter = iterBegin; iter != iterEnd; ++iter) {
-		//	++count;
-		//}
-		// std::cout << count << std::endl;
-
-//        for (auto& exp : mel) {
-//        	List item = as<List>(exp);
-//        	std::cout << TYPEOF(item["outl"]) << std::endl;
-//        	std::cout << (as<IntegerVector>(item["outl"]))[0] << " -> " << (as<IntegerVector>(item["inl"]))[0] << std::endl;
-//        	List atl = as<List>(item["atl"]);
-//        	std::cout << TYPEOF(atl["na"]) << std::endl;
-//        	std::cout << (as<LogicalVector>(atl["na"]))[0] << ", " << std::endl;
-//        	break;
-//        }
-
-//        std::cout << get_vertex_attribute<int>(nw, 0, "age") << std::endl;
-//        set_vertex_attribute<int>(nw, 0, "age", 104);
-//        Function extract = (*R)["nw_extract"];
-//		for (int i = 0; i < 2; ++i) {
-//			extract();
-//			//
-//			nw = as<List>((*R)["nw"]);
-//			std::cout << get_vertex_attribute<int>(nw, 0, "age") << std::endl;
-//		}
-
-//        Function simulate = R["nw_simulate"];
-//        for (int t = 2; t < 25; ++t) {
-//        	std::cout << "t: " << t << " simulating" << std::endl;
-//        	R["time"] = t;
-//        	simulate();
-//        }
-
-//        List nw = as<List>(R["nw"]);
-//        List gal = as<List>(nw["gal"]);
-//        double n = gal["n"];
-//        std::cout << "Vertex Count: " << n << std::endl;
-//
-//        int age = get_vertex_attribute<int>(nw, 250, "age");
-//        std::cout << "Age: " << age << std::endl;
-//
-//        std::cout << isAdjacent(nw, 102, 305, 0) << std::endl;
-
+		boost::mpi::communicator world;
+		repast::RepastProcess::init(config);
+		run(props, argc, argv);
 	} catch (std::exception& ex) {
 		std::cerr << ex.what() << std::endl;
 	} catch (...) {
 		std::cerr << "Unknown exception caught" << std::endl;
 	}
+	repast::RepastProcess::instance()->done();
 
-	exit(0);
+	return 0;
 }

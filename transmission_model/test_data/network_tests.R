@@ -9,6 +9,10 @@ add.edge(sn,3,1)
 
 set.vertex.attribute(sn, 'age', c(2, 12, 18, 100))
 
+sn.1 <- network.initialize(4)
+add.edge(sn.1, 1, 4)
+add.edge(sn.1, 4, 2)
+
 try.net.func <- function() {
   # delete edge between 1 and 4, create between
   # 2 and 4

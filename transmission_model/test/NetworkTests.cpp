@@ -10,6 +10,7 @@
 #include "RInstance.h"
 #include "Network.h"
 #include "network_utils.h"
+#include "StatsBuilder.h"
 
 using namespace TransModel;
 using namespace Rcpp;
@@ -48,6 +49,16 @@ protected:
 	NetworkTests() {
 		std::string cmd = "source(file=\"../test_data/network_tests.R\")";
 		RInstance::rptr->parseEvalQ(cmd);
+
+		StatsBuilder builder;
+		builder.countsWriter("/dev/null");
+		builder.partnershipEventWriter("/dev/null");
+		builder.infectionEventWriter("/dev/null");
+		builder.biomarkerWriter("/dev/null");
+		builder.deathEventWriter("/dev/null");
+		builder.personDataRecorder("/dev/null");
+
+		builder.createStatsSingleton();
 	}
 
 	virtual ~NetworkTests() {
@@ -67,7 +78,8 @@ TEST_F(NetworkTests, TestAdds) {
 	ASSERT_EQ(2, net.vertexCount());
 	ASSERT_EQ(0, net.edgeCount());
 
-	net.addEdge(three, four, 14);
+	EdgePtr<Agent> e = net.addEdge(three, four);
+	e->setWeight(14);
 	ASSERT_EQ(4, net.vertexCount());
 	int id = 1;
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
@@ -84,6 +96,7 @@ TEST_F(NetworkTests, TestAdds) {
 		ASSERT_EQ(3, edge->v1()->id());
 		ASSERT_EQ(4, edge->v2()->id());
 		ASSERT_EQ(14, edge->weight());
+		ASSERT_EQ(0, edge->type());
 	}
 	ASSERT_EQ(1, count);
 
@@ -104,6 +117,28 @@ TEST_F(NetworkTests, TestAdds) {
 		++count;
 	}
 	ASSERT_EQ(2, count);
+
+	ASSERT_EQ(net.edgeCount(), net.edgeCount(0));
+	net.addEdge(two, one, 10);
+	ASSERT_TRUE(net.hasEdge(two, one, 10));
+	ASSERT_EQ(1, net.edgeCount(10));
+	ASSERT_EQ(3, net.edgeCount());
+	ASSERT_EQ(1, net.outEdgeCount(two, 0));
+	ASSERT_EQ(1, net.outEdgeCount(two, 10));
+	auto iter = net.edgesBegin();
+	advance(iter, 2);
+	EdgePtr<Agent> ep = (*iter);
+	ASSERT_EQ(2, ep->id());
+	ASSERT_EQ(10, ep->type());
+	ASSERT_EQ(2, ep->v1()->id());
+	ASSERT_EQ(1, ep->v2()->id());
+	ASSERT_EQ(1, ep->weight());
+
+	net.addEdge(two, three, 10);
+	ASSERT_FALSE(net.hasEdge(two, three));
+	ASSERT_FALSE(net.hasEdge(two, three, 0));
+	ASSERT_TRUE(net.hasEdge(two, three, 10));
+	ASSERT_FALSE(net.hasEdge(three, two, 10));
 }
 
 TEST_F(NetworkTests, TestRemoves) {
@@ -166,6 +201,17 @@ TEST_F(NetworkTests, TestRemoves) {
 		++count;
 	}
 	ASSERT_EQ(3, count);
+
+	unsigned int edge_count = net.edgeCount();
+	net.addEdge(two, one, 10);
+	ASSERT_EQ(edge_count + 1, net.edgeCount());
+	ASSERT_FALSE(net.removeEdge(two->id(), one->id(), 0));
+	ASSERT_EQ(1, net.outEdgeCount(two, 10));
+	ASSERT_EQ(1, net.inEdgeCount(one, 10));
+	ASSERT_TRUE(net.removeEdge(two->id(), one->id(), 10));
+	ASSERT_EQ(0, net.outEdgeCount(two, 10));
+	ASSERT_EQ(0, net.inEdgeCount(one, 10));
+	ASSERT_EQ(edge_count, net.edgeCount());
 }
 
 TEST_F(NetworkTests, TestRemovesByIter) {
@@ -178,9 +224,9 @@ TEST_F(NetworkTests, TestRemovesByIter) {
 
 	net.addVertex(one);
 	net.addEdge(three, one);
-	net.addEdge(one, two);
+	net.addEdge(one, two, 13);
 	net.addEdge(one, four);
-	net.addEdge(three, four);
+	net.addEdge(three, four, 12);
 
 	ASSERT_EQ(2, net.outEdgeCount(one));
 	ASSERT_EQ(0, net.outEdgeCount(two));
@@ -207,10 +253,13 @@ TEST_F(NetworkTests, TestRemovesByIter) {
 		++i;
 	}
 
+	ASSERT_EQ(0, net.edgeCount(13));
+
 	ASSERT_EQ(3, net.vertexCount());
 	ASSERT_EQ(1, net.edgeCount());
 
 	ASSERT_EQ(0, net.outEdgeCount(one));
+	ASSERT_EQ(0, net.outEdgeCount(one, 13));
 	ASSERT_EQ(0, net.outEdgeCount(two));
 	ASSERT_EQ(1, net.outEdgeCount(three));
 	ASSERT_EQ(0, net.outEdgeCount(four));
@@ -253,13 +302,16 @@ TEST_F(NetworkTests, TestRemovesByVertexIds) {
 	net.addEdge(three, one);
 	net.addEdge(one, two);
 	net.addEdge(one, four);
-	net.addEdge(three, four);
+	net.addEdge(three, four, 15);
+	net.addEdge(three, four, 0);
 
-	ASSERT_EQ(4, net.edgeCount());
+	ASSERT_EQ(5, net.edgeCount());
 
 	net.removeEdge(1, 2);
 
-	ASSERT_EQ(3, net.edgeCount());
+	ASSERT_EQ(4, net.edgeCount());
+	ASSERT_EQ(3, net.edgeCount(0));
+	ASSERT_EQ(1, net.edgeCount(15));
 
 	auto eiter = net.edgesBegin();
 	EdgePtr<Agent> edge = (*eiter);
@@ -275,16 +327,23 @@ TEST_F(NetworkTests, TestRemovesByVertexIds) {
 	edge = (*eiter);
 	ASSERT_EQ(3, edge->v1()->id());
 	ASSERT_EQ(4, edge->v2()->id());
+	ASSERT_EQ(15, edge->type());
+
+	++eiter;
+	edge = (*eiter);
+	ASSERT_EQ(3, edge->v1()->id());
+	ASSERT_EQ(4, edge->v2()->id());
+	ASSERT_EQ(0, edge->type());
 
 	ASSERT_EQ(1, net.outEdgeCount(one));
 	ASSERT_EQ(0, net.outEdgeCount(two));
-	ASSERT_EQ(2, net.outEdgeCount(three));
+	ASSERT_EQ(3, net.outEdgeCount(three));
 	ASSERT_EQ(0, net.outEdgeCount(four));
 
 	ASSERT_EQ(1, net.inEdgeCount(one));
 	ASSERT_EQ(0, net.inEdgeCount(two));
 	ASSERT_EQ(0, net.inEdgeCount(three));
-	ASSERT_EQ(2, net.inEdgeCount(four));
+	ASSERT_EQ(3, net.inEdgeCount(four));
 
 }
 
@@ -313,7 +372,7 @@ TEST_F(NetworkTests, CreateRNetTests) {
 	Network<Agent> net(false);
 	List init_net = as<List>((*RInstance::rptr)["sn"]);
 	AgentCreator creator;
-	initialize_network(init_net, net, creator);
+	initialize_network(init_net, net, creator, 1);
 
 	auto iter = net.verticesBegin();
 	++iter;
@@ -329,7 +388,7 @@ TEST_F(NetworkTests, CreateRNetTests) {
 	List rnet;
 	map<unsigned int, unsigned int> idx_map;
 	AgeSetter setter;
-	create_r_network(rnet, net, idx_map, setter);
+	create_r_network(rnet, net, idx_map, setter, 0);
 	ASSERT_EQ(4, idx_map.size());
 	// exp is vertex id
 	ASSERT_EQ(0, idx_map.at(1));
@@ -343,7 +402,7 @@ TEST_F(NetworkTests, CreateRNetTests) {
 	SEXP changes = f();
 
 	ASSERT_EQ(2, net.edgeCount());
-	reset_network_edges(changes, net, idx_map);
+	reset_network_edges(changes, net, idx_map, 1, 0);
 	// still 2 because we deleted one and added one
 	// in the try.net.func call
 	ASSERT_EQ(2, net.edgeCount());
@@ -363,7 +422,7 @@ TEST_F(NetworkTests, InitNetTest) {
 	Network<Agent> net(false);
 	List rnet = as<List>((*RInstance::rptr)["sn"]);
 	AgentCreator creator;
-	initialize_network(rnet, net, creator);
+	initialize_network(rnet, net, creator, 1);
 
 	ASSERT_EQ(4, net.vertexCount());
 	auto iter = net.verticesBegin();
@@ -391,15 +450,36 @@ TEST_F(NetworkTests, InitNetTest) {
 	EdgePtr<Agent> edge = (*eiter);
 	ASSERT_EQ(0, edge->v1()->id());
 	ASSERT_EQ(1, edge->v2()->id());
+	ASSERT_EQ(1, edge->type());
 
 	++eiter;
 	edge = (*eiter);
 	ASSERT_EQ(1, edge->v1()->id());
 	ASSERT_EQ(2, edge->v2()->id());
+	ASSERT_EQ(1, edge->type());
 
 	++eiter;
 	edge = (*eiter);
 	ASSERT_EQ(2, edge->v1()->id());
 	ASSERT_EQ(0, edge->v2()->id());
+	ASSERT_EQ(1, edge->type());
+
+	rnet = as<List>((*RInstance::rptr)["sn.1"]);
+	initialize_edges(rnet, net, 2);
+
+	ASSERT_EQ(5, net.edgeCount());
+	eiter = net.edgesBegin();
+	advance(eiter, 3);
+	edge = (*eiter);
+	std::cout << edge->id() << std::endl;
+	ASSERT_EQ(0, edge->v1()->id());
+	ASSERT_EQ(3, edge->v2()->id());
+	ASSERT_EQ(2, edge->type());
+
+	++eiter;
+	edge = (*eiter);
+	ASSERT_EQ(3, edge->v1()->id());
+	ASSERT_EQ(1, edge->v2()->id());
+	ASSERT_EQ(2, edge->type());
 }
 

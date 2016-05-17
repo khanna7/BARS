@@ -1,0 +1,42 @@
+## Simple ergm/ergm-parallel example
+   ## Modified from code initially written by Steven M Goodreau
+   
+  ## libraries
+  library(ergm)
+  library(snow)
+  library(Rmpi)
+  library(methods)
+
+  ## Network object
+  load("sim_net_small.RData")
+
+  ## ## FIT ERGM (serial)
+  ## t0 <- proc.time()
+  ## sim_fit_ser <- ergm(sim_net_small ~ edges+gwesp(1, fixed=FALSE)
+  ##                     )
+  ## print(proc.time()-t0)
+
+  ## ## Fit ERGM (parallel)
+  np <- mpi.universe.size()-1
+  cluster <- makeCluster(np, type="MPI")
+
+  ## t1 <- proc.time()
+  ## sim_fit_par<- ergm(sim_net_small ~ edges+gwesp(1, fixed=FALSE),
+  ##                              control=control.ergm(parallel=np, parallel.type="MPI")
+  ##                    )
+  ## print(proc.time()-t1)
+
+  ## Fit different ERGM model 
+
+  respdeg <- sapply(1:n, function(x) sum(sim_net_small[x,1:nresp])) # Calculate degree with respondents
+  sim_net_small <- set.vertex.attribute(sim_net_small, 'respdeg', respdeg)  # Make nodal attribute
+
+  sim_fit_par<- ergm(sim_net_small ~ edges+nodecov('respdeg')+gwesp(1, fixed=TRUE),
+                     control=control.ergm(parallel=cluster,
+                                          parallel.type="MPI",
+                                          parallel.version.check=TRUE)
+                     )
+
+  ## Exit MPI                   
+  stopCluster(cluster)
+  mpi.exit()
