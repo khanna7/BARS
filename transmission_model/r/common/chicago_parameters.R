@@ -138,6 +138,6 @@
     detection.window <- 22
     mean.time.until.next.test <- 365
     daily.testing.prob <- 1/mean.time.until.next.test
-    lag.bet.testing.and.art.init <- 15
+    lag.bet.diagnosis.and.art.init <- 15
       
    
