@@ -253,6 +253,27 @@
 
        ## vl.at.art.cessation
 
+   ## testing and diagnosis
+
+      ## attribute: diagnosed
+      n0%v%"diagnosed" <- 0
+      set.vertex.attribute(n0, "diagnosed", 1, on.art)
+
+      ## attribute: tested today
+      n0%v%"tested.today" <- 0
+      set.vertex.attribute(n0, "tested.today", 1, on.art)
+
+      ## attribute: number.of.tests
+      n0%v%"number.of.tests" <- 0
+      set.vertex.attribute(n0, "number.of.tests", 1, on.art)
+
+      ## attribute: time until next test
+      not.diagnosed <- which(n0 %v% "diagnosed" == 0)
+      time.until.next.test <- rep(-1, n)
+      time.until.next.test[not.diagnosed] <- rgeom(length(not.diagnosed), p=daily.testing.prob)
+      time.until.next.test <- time.until.next.test+1 #because random draws from geom dist will yield sone zeros
+      set.vertex.attribute(n0, "time.until.next.test", time.until.next.test)
+
    #####################
    ## FIT MODEL
    fit <- ergm(formation.n0, 
