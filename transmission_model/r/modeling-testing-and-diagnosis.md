@@ -9,7 +9,7 @@ To model testing and diagnosis, we need some new constants and attributes.
 | Daily testing probability (`daily.testing.prob`) | Lag between diagnosis and ART initiaion  (`lag.bet.diagnosis.and.art.init`) |      
 |Lag between diagnosis and ART initiation (`lag.bet.diagnosis.and.art.init`) | |  
 
-These new attributes and constants are included in `chicago-init-net-est.R` and 'chicago_parameters.R' respectively. They are included in the main network created at time 0, where all attribute information is initialized.
+These new constants are in `chicago_parameters.R`, and are used to initialize the new attributes in the main network at time 0 in `chicago-init-net-est.R`.
 
 In the temporal simulation:
 For everyone who is not diagnosed (including HIV- and HIV+ individuals), there is a `time.until.next.test` attribute, drawn from a geometric distribution where
