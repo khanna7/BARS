@@ -7,7 +7,8 @@ To model testing and diagnosis, we need some new constants and attributes.
 | Detection Window  (`detection.window`)    | Diagnosed (`diagnosed`)| 
 | Mean time until next test (`mean.time.until.next.test`)      |  Time until next test (`time.until.next.test`)     |   
 | Daily testing probability (`daily.testing.prob`) | Lag between diagnosis and ART initiaion  (`lag.bet.diagnosis.and.art.init`) |      
-|Lag between diagnosis and ART initiation (`lag.bet.diagnosis.and.art.init`) | |  
+|Lag between diagnosis and ART initiation (`lag.bet.diagnosis.and.art.init`) | Tested today (`tested.today`)|  
+|| Number of Tests (`number.of.tests`)|  
 
 These new constants are in `chicago_parameters.R`, and are used to initialize the new attributes in the main network at time 0 in `chicago-init-net-est.R`.
 
@@ -22,3 +23,5 @@ where `daily.testing.prob = 1/mean.time.until.next.test`. Initially, we will spe
 For HIV+ diagnosed individuals, when the lag time  between diagnosis and ART initiation has passed (`lag.bet.diagnosis.and.art.initation`), ART will be initiated -- currently set to a constant value of 0, but I will work on parameterizing this quantity soon -- at which point it will only exist as an individual-level attribute. 
 
 At this point, both the testing and lag between diagnosis and ART initiation are simple, which is probably okay for the baseline  burnin. At some point, we could get into more realistic testing recommendations and guidelines --- an interesting research area in it's own right. 
+
+Two other attributes for specified for bookkeeping: an indicator for whether a particular agent tested today, and the number of tests an individual has had over the course of their lifetime. 
