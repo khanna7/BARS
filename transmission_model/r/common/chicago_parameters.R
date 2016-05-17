@@ -133,5 +133,10 @@
       pr_versatile_casual <- 1 - (pr_insertive_casual + pr_receptive_casual)
       ## serosorting
    
+    #####################
+    ## Testing and diagnosis
+    detection.window <- 22
+    mean.time.until.next.test <- 365
+    daily.testing.prob <- 1/mean.time.until.next.test
       
    
