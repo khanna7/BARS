@@ -31,6 +31,10 @@ TEST(CreatorTests, TestInfectedPersonCreationNoART) {
 	ASSERT_TRUE(person->isInfected());
 	ASSERT_EQ(0, person->role());
 	ASSERT_NEAR(51.174f, person->age(), 0.00001);
+	ASSERT_FALSE(person->isDiagnosed());
+	// created at tick 1 so 541 from tick 1
+	ASSERT_EQ(541, person->timeUntilNextTest(1));
+	ASSERT_EQ(0, person->diagnosisARTLag());
 
 	InfectionParameters params = person->infectionParameters();
 	ASSERT_FALSE(params.art_covered);
@@ -99,6 +103,11 @@ TEST(CreatorTests, TestInfectedPersonCreationART) {
 	ASSERT_EQ(1, person->role());
 	ASSERT_NEAR(43.70214f, person->age(), 0.00001);
 
+	ASSERT_TRUE(person->isDiagnosed());
+	// should always be 0 for diagnosed person
+	ASSERT_EQ(0, person->timeUntilNextTest(1));
+	ASSERT_EQ(0, person->diagnosisARTLag());
+
 	InfectionParameters params = person->infectionParameters();
 	ASSERT_TRUE(params.art_covered);
 	ASSERT_TRUE(params.art_status);
@@ -166,4 +175,7 @@ TEST(CreatorTests, TestDiagnosis) {
 	// or the detection window to insure a positive test
 	double test_at = std::max(7 + next_test_at, 12.0f);
 	ASSERT_TRUE(p2->diagnose(test_at));
+	// should always be 0 if diagnosed
+	ASSERT_EQ(0, p2->timeUntilNextTest(50));
+	ASSERT_TRUE(p2->isDiagnosed());
 }

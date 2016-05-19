@@ -33,7 +33,7 @@ public:
 
 	bool test(double tick, const InfectionParameters& inf_params);
 
-	double timeUntilNextTest(double current_tick);
+	double timeUntilNextTest(double current_tick) const;
 
 	unsigned int testCount() const;
 
@@ -74,7 +74,7 @@ bool Diagnoser<G>::test(double tick, const InfectionParameters& inf_params) {
 }
 
 template<typename G>
-double Diagnoser<G>::timeUntilNextTest(double current_tick) {
+double Diagnoser<G>::timeUntilNextTest(double current_tick) const {
 	return next_test_at_ - current_tick;
 }
 

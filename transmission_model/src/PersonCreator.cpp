@@ -54,6 +54,8 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 	// float detection_window, float next_test_at, unsigned int test_count, std::shared_ptr<G> generator
 	Diagnoser<GeometricDistribution> diagnoser(detection_window_, next_test_at, as<unsigned int>(val["number.of.tests"]), dist);
 	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role, diagnoser);
+	person->diagnosed_ = as<bool>(val["diagnosed"]);
+	person->diagnosis_art_lag = as<float>(val["lag.bet.diagnosis.and.art.init"]);
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
 
 	bool infected = as<bool>(val["inf.status"]);

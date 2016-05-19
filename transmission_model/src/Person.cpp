@@ -13,7 +13,7 @@ namespace TransModel {
 
 Person::Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser) :
 		id_(id), role_(role), age_(age), circum_status_(circum_status),
-		infection_parameters_(), infectivity_(0), prep_(false), dead_(false), diagnoser_(diagnoser) {
+		infection_parameters_(), infectivity_(0), prep_(false), dead_(false), diagnosed_(false), diagnoser_(diagnoser) {
 }
 
 //Person::Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth) : net(network), id_(id) {
@@ -84,7 +84,12 @@ bool Person::deadOfInfection() {
 }
 
 bool Person::diagnose(double tick) {
-	return diagnoser_.test(tick, infection_parameters_);
+	diagnosed_ = diagnoser_.test(tick, infection_parameters_);
+	return diagnosed_;
+}
+
+double Person::timeUntilNextTest(double tick) const {
+	return diagnosed_ ? 0 : diagnoser_.timeUntilNextTest(tick);
 }
 
 } /* namespace TransModel */

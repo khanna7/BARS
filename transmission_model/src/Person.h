@@ -27,7 +27,8 @@ private:
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
-	bool prep_, dead_;
+	bool prep_, dead_, diagnosed_;
+	float diagnosis_art_lag;
 	Diagnoser<GeometricDistribution> diagnoser_;
 
 public:
@@ -86,6 +87,14 @@ public:
 		return infection_parameters_.time_since_infection;
 	}
 
+	float diagnosisARTLag() const {
+		return diagnosis_art_lag;
+	}
+
+	const Diagnoser<GeometricDistribution> diagnoser() const {
+		return diagnoser_;
+	}
+
 	void setViralLoad(float viral_load);
 
 	void setCD4Count(float cd4_count);
@@ -133,11 +142,13 @@ public:
 		return dead_;
 	}
 
+	bool isDiagnosed() const {
+		return diagnosed_;
+	}
+
 	bool diagnose(double tick);
 
-	double timeUntilNextTest(double tick) {
-		return diagnoser_.timeUntilNextTest(tick);
-	}
+	double timeUntilNextTest(double tick) const;
 
 };
 

@@ -362,7 +362,7 @@ struct AgentCreator {
 
 struct AgeSetter {
 
-	void operator()(const VertexPtr<Agent>& agent, List vertex) const {
+	void operator()(const VertexPtr<Agent>& agent, List vertex, double time) const {
 		vertex["age"] = agent->age();
 	}
 
@@ -388,7 +388,7 @@ TEST_F(NetworkTests, CreateRNetTests) {
 	List rnet;
 	map<unsigned int, unsigned int> idx_map;
 	AgeSetter setter;
-	create_r_network(rnet, net, idx_map, setter, 0);
+	create_r_network(1, rnet, net, idx_map, setter, 0);
 	ASSERT_EQ(4, idx_map.size());
 	// exp is vertex id
 	ASSERT_EQ(0, idx_map.at(1));

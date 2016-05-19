@@ -21,7 +21,7 @@ using namespace Rcpp;
 namespace TransModel {
 
 template<typename V, typename F>
-void create_r_network(List& rnet, Network<V>& net, std::map<unsigned int, unsigned int>& idx_to_v_map,
+void create_r_network(double tick, List& rnet, Network<V>& net, std::map<unsigned int, unsigned int>& idx_to_v_map,
 		const F& attributes_setter, int edge_type) {
 	List gal;
 	gal["n"] = net.vertexCount();
@@ -50,7 +50,7 @@ void create_r_network(List& rnet, Network<V>& net, std::map<unsigned int, unsign
 		v_to_idx_map.emplace(v->id(), idx);
 		vlist["na"] = false;
 		vlist["vertex.names"] = idx;
-		attributes_setter(v, vlist);
+		attributes_setter(v, vlist, tick);
 
 		int c_index = idx - 1;
 		val[c_index] = vlist;
@@ -105,14 +105,14 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 	std::map<unsigned int, unsigned int> idx_map;
 
 	List rnet;
-	create_r_network(rnet, net, idx_map, attributes_setter, MAIN_NETWORK_TYPE);
+	create_r_network(time, rnet, net, idx_map, attributes_setter, MAIN_NETWORK_TYPE);
 	//Rf_PrintValue(rnet);
 	SEXP changes = as<Function>((*R)["nw_simulate"])(rnet, time);
 	reset_network_edges(changes, net, idx_map, time, MAIN_NETWORK_TYPE);
 
 	List cas_net;
 	idx_map.clear();
-	create_r_network(cas_net, net, idx_map, attributes_setter, CASUAL_NETWORK_TYPE);
+	create_r_network(time, cas_net, net, idx_map, attributes_setter, CASUAL_NETWORK_TYPE);
 	changes = as<Function>((*R)["n_cas_simulate"])(cas_net, time);
 	reset_network_edges(changes, net, idx_map, time, CASUAL_NETWORK_TYPE);
 }

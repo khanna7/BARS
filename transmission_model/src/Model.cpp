@@ -34,7 +34,7 @@ namespace TransModel {
 
 struct PersonToVALForSimulate {
 
-	void operator()(const PersonPtr& p, List& vertex) const {
+	void operator()(const PersonPtr& p, List& vertex, double tick) const {
 		vertex["role"] = p->role();
 		vertex["inf.status"] = p->isInfected();
 	}
@@ -42,12 +42,19 @@ struct PersonToVALForSimulate {
 
 struct PersonToVAL {
 
-	void operator()(const PersonPtr& p, List& vertex) const {
+	void operator()(const PersonPtr& p, List& vertex, double tick) const {
 		vertex[C_ID] = p->id();
 		vertex["age"] = p->age();
 		vertex["cd4.count.today"] = p->infectionParameters().cd4_count;
 		vertex["circum.status"] = p->isCircumcised();
 		vertex["role"] = p->role();
+
+		vertex["diagnosed"] = p->isDiagnosed();
+		const Diagnoser<GeometricDistribution>& diagnoser = p->diagnoser();
+		vertex["number.of.tests"] = diagnoser.testCount();
+		vertex["time.until.next.test"] = diagnoser.timeUntilNextTest(tick);
+		vertex["lag.bet.diagnosis.and.art.init"] = p->diagnosisARTLag();
+
 
 		if (p->isInfected()) {
 			vertex["infectivity"] = p->infectivity();
@@ -445,14 +452,14 @@ void Model::saveRNetwork() {
 	PersonToVAL p2val;
 
 	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
-	create_r_network(rnet, net, idx_map, p2val, MAIN_NETWORK_TYPE);
+	create_r_network(tick, rnet, net, idx_map, p2val, MAIN_NETWORK_TYPE);
 	std::string file_name = Parameters::instance()->getStringParameter(NET_SAVE_FILE);
 	as<Function>((*R)["nw_save"])(rnet, unique_file_name(get_net_out_filename(file_name)), tick);
 
 	if (Parameters::instance()->contains(CASUAL_NET_SAVE_FILE)) {
 		idx_map.clear();
 		List cas_net;
-		create_r_network(cas_net, net, idx_map, p2val, CASUAL_NETWORK_TYPE);
+		create_r_network(tick, cas_net, net, idx_map, p2val, CASUAL_NETWORK_TYPE);
 		file_name = Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
 		as<Function>((*R)["nw_save"])(cas_net, unique_file_name(get_net_out_filename(file_name)), tick);
 	}
