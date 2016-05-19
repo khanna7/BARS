@@ -18,7 +18,8 @@ CPP_SOURCE = Person.cpp \
 	FileOutput.cpp \
 	utils.cpp \
 	file_utils.cpp \
-	PersonDataRecorder.cpp
+	PersonDataRecorder.cpp \
+	GeometricDistribution.cpp
 	
 #	EventWriter.cpp \
 	

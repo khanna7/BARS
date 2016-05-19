@@ -7,6 +7,8 @@
 
 #include "TransmissionRunner.h"
 
+#include "Person.h"
+
 namespace TransModel {
 
 const int VERSATILE = 0;

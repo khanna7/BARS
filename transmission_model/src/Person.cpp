@@ -11,9 +11,9 @@ using namespace Rcpp;
 
 namespace TransModel {
 
-Person::Person(int id, float age, bool circum_status, int role) :
+Person::Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser) :
 		id_(id), role_(role), age_(age), circum_status_(circum_status),
-		infection_parameters_(), infectivity_(0), prep_(false), dead_(false) {
+		infection_parameters_(), infectivity_(0), prep_(false), dead_(false), diagnoser_(diagnoser) {
 }
 
 //Person::Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth) : net(network), id_(id) {
@@ -81,6 +81,10 @@ bool Person::deadOfAge(int max_age) {
 bool Person::deadOfInfection() {
 	return infection_parameters_.infection_status && !infection_parameters_.art_status &&
 			infection_parameters_.time_since_infection >= infection_parameters_.dur_inf_by_age;
+}
+
+bool Person::diagnose(double tick) {
+	return diagnoser_.test(tick, infection_parameters_);
 }
 
 } /* namespace TransModel */

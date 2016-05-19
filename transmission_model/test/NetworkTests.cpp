@@ -354,7 +354,7 @@ struct AgentCreator {
 			id(0) {
 	}
 
-	VertexPtr<Agent> operator()(List& val) {
+	VertexPtr<Agent> operator()(List& val, double tick) {
 		int age = as<int>(val["age"]);
 		return std::make_shared<Agent>(id++, age);
 	}

@@ -21,6 +21,7 @@
 #include "CD4Calculator.h"
 #include "ViralLoadCalculator.h"
 #include "ViralLoadSlopeCalculator.h"
+#include "PersonCreator.h"
 
 namespace TransModel {
 
@@ -34,9 +35,9 @@ private:
 	ViralLoadCalculator viral_load_calculator;
 	ViralLoadSlopeCalculator viral_load_slope_calculator;
 	unsigned int current_pop_size, previous_pop_size;
-	unsigned int max_id;
 	std::map<float, std::shared_ptr<Stage>> stage_map;
 	std::set<int> persons_to_log;
+	PersonCreator person_creator;
 
 	void runTransmission(double timestamp, float size_of_time_step);
 	bool dead(double tick, PersonPtr person, int max_survival);

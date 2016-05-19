@@ -5,27 +5,55 @@
  *      Author: nick
  */
 
+#include "Parameters.h"
+
 #include "PersonCreator.h"
+
+#include "Diagnoser.h"
+
 
 using namespace Rcpp;
 
 namespace TransModel {
 
-PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner) :
-		id(0), trans_runner_(trans_runner) {
+PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double daily_testing_prob, double detection_window) :
+		id(0), trans_runner_(trans_runner), dist{std::make_shared<GeometricDistribution>(daily_testing_prob, 1)}, detection_window_(detection_window) {
 }
 
 PersonCreator::~PersonCreator() {
 }
 
-PersonPtr PersonCreator::operator()(Rcpp::List& val) {
+int calculate_role() {
+	double insertive = Parameters::instance()->getDoubleParameter(PR_INSERTIVE);
+	double receptive = Parameters::instance()->getDoubleParameter(PR_RECEPTIVE) + insertive;
+
+	double draw = repast::Random::instance()->nextDouble();
+	if (draw <= insertive) {
+		return 0;
+	} else if (draw <= receptive) {
+		return 1;
+	} else {
+		return 2;
+	}
+}
+
+PersonPtr PersonCreator::operator()(double tick, float age) {
+	int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
+	Diagnoser<GeometricDistribution> diagnoser(tick, detection_window_, dist);
+	return std::make_shared<Person>(id++, age, status == 1, calculate_role(), diagnoser);
+}
+
+PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 	//std::cout << "------------" << std::endl;
 	//Rf_PrintValue(val);
 	float age = as<float>(val["age"]);
 	bool circum_status = as<bool>(val["circum.status"]);
 	int role = as<int>(val["role"]);
 
-	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role);
+	float next_test_at = tick + as<double>(val["time.until.next.test"]);
+	// float detection_window, float next_test_at, unsigned int test_count, std::shared_ptr<G> generator
+	Diagnoser<GeometricDistribution> diagnoser(detection_window_, next_test_at, as<unsigned int>(val["number.of.tests"]), dist);
+	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role, diagnoser);
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
 
 	bool infected = as<bool>(val["inf.status"]);

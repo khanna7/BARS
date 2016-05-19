@@ -10,6 +10,8 @@
 
 #include "Rcpp.h"
 #include "DiseaseParameters.h"
+#include "Diagnoser.h"
+#include "GeometricDistribution.h"
 
 namespace TransModel {
 
@@ -26,9 +28,10 @@ private:
 	InfectionParameters infection_parameters_;
 	float infectivity_;
 	bool prep_, dead_;
+	Diagnoser<GeometricDistribution> diagnoser_;
 
 public:
-	Person(int id, float age, bool circum_status, int role);
+	Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser);
 
 	virtual ~Person();
 
@@ -128,6 +131,12 @@ public:
 
 	bool isDead() const {
 		return dead_;
+	}
+
+	bool diagnose(double tick);
+
+	double timeUntilNextTest(double tick) {
+		return diagnoser_.timeUntilNextTest(tick);
 	}
 
 };

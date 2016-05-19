@@ -157,7 +157,7 @@ void initialize_network(List& rnet, Network<V>& net, F& vertex_creator, int edge
 	List val = as<List>(rnet["val"]);
 	for (auto& sexp : val) {
 		List v = as<List>(sexp);
-		VertexPtr<V> vp = vertex_creator(v);
+		VertexPtr<V> vp = vertex_creator(v, 0);
 		net.addVertex(vp);
 	}
 
