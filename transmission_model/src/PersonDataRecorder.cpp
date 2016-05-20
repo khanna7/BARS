@@ -11,7 +11,7 @@ namespace TransModel {
 
 const std::string PersonData::header("\"id\",\"time of entry\",\"time of death\",\"infection status\",\"time of infection\","
 		"\"art status\",\"time of art initiation\",\"time of art cessation\",\"prep status\",\"time of prep initiation\","
-		"\"time of prep cessation\"");
+		"\"time of prep cessation\",\"number of tests\"");
 
 PersonData::PersonData(PersonPtr p, double time_of_birth) :
 		id_(p->id()), birth_ts(time_of_birth), death_ts(-1), infection_ts(p->isInfected() ? p->infectionParameters().time_of_infection : -1),
@@ -19,12 +19,14 @@ PersonData::PersonData(PersonPtr p, double time_of_birth) :
 		art_stop_ts(-1),
 		prep_init_ts(p->isOnPrep() ? -1 : -1),
 		prep_stop_ts(-1),
-		infection_status(p->isInfected()), art_status(p->isOnART()), prep_status(p->isOnPrep()) {
+		infection_status(p->isInfected()), art_status(p->isOnART()), prep_status(p->isOnPrep()),
+				number_of_tests(p->diagnoser().testCount()) {
 }
 
 void PersonData::writeTo(FileOutput& out) {
 	out << id_ << "," << birth_ts << "," << death_ts << "," << infection_status << "," << infection_ts << "," << art_status
-			<< "," << art_init_ts << "," << art_stop_ts << "," << prep_status << "," << prep_init_ts << "," << prep_stop_ts << "\n";
+			<< "," << art_init_ts << "," << art_stop_ts << "," << prep_status << "," << prep_init_ts << "," << prep_stop_ts
+			<< "," << number_of_tests << "\n";
 }
 
 
@@ -38,10 +40,12 @@ PersonDataRecorder::~PersonDataRecorder() {
 }
 
 void PersonDataRecorder::recordARTInit(PersonPtr& p, double ts) {
+	data.at(p->id()).art_status = true;
 	data.at(p->id()).art_init_ts = ts;
 }
 
 void PersonDataRecorder::recordARTStop(PersonPtr& p, double ts) {
+	data.at(p->id()).art_status = false;
 	data.at(p->id()).art_stop_ts = ts;
 }
 
@@ -51,9 +55,14 @@ void PersonDataRecorder::recordInfection(PersonPtr& p, double ts) {
 	pd.infection_ts = ts;
 }
 
+void PersonDataRecorder::finalize(const PersonPtr& p) {
+	data.at(p->id()).number_of_tests = p->diagnoser().testCount();
+}
+
 void PersonDataRecorder::recordDeath(PersonPtr& p, double ts) {
 	PersonData& pd = data.at(p->id());
 	pd.death_ts = ts;
+	pd.number_of_tests = p->diagnoser().testCount();
 	writer.addOutput(pd);
 	data.erase(p->id());
 }

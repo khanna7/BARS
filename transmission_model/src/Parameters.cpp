@@ -65,6 +65,7 @@ const std::string CIRCUM_MULT = "circum.mult";
 const std::string CIRCUM_RATE = "circum.rate";
 const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
 const std::string DAILY_TESTING_PROB = "daily.testing.prob";
+const std::string GLOBAL_DIAGNOSIS_ART_LAG = "lag.bet.diagnosis.and.art.init";
 const std::string DETECTION_WINDOW = "detection.window";
 const std::string DEG_SEQ = "deg_seq";
 const std::string DUR_INF = "dur.inf";

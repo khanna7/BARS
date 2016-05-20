@@ -40,7 +40,10 @@ int calculate_role() {
 PersonPtr PersonCreator::operator()(double tick, float age) {
 	int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
 	Diagnoser<GeometricDistribution> diagnoser(tick, detection_window_, dist);
-	return std::make_shared<Person>(id++, age, status == 1, calculate_role(), diagnoser);
+	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(), diagnoser);
+	person->diagnosis_art_lag = Parameters::instance()->getFloatParameter(GLOBAL_DIAGNOSIS_ART_LAG);
+
+	return person;
 }
 
 PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {

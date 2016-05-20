@@ -92,12 +92,6 @@ struct PersonToVAL {
 	}
 };
 
-ARTScheduler* create_art_scheduler(double tick, float size_of_timestep) {
-	double art_delay = Parameters::instance()->getDoubleParameter(ART_INIT_TIME);
-	double art_at_tick = art_delay / size_of_timestep + tick;
-	return new ARTScheduler((float) art_at_tick);
-}
-
 shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float circ_mult = (float) Parameters::instance()->getDoubleParameter(CIRCUM_MULT);
 	float prep_mult = (float) Parameters::instance()->getDoubleParameter(PREP_MULT);
@@ -283,6 +277,11 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 }
 
 void Model::atEnd() {
+	PersonDataRecorder& pdr = Stats::instance()->personDataRecorder();
+	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+		pdr.finalize(*iter);
+	}
+
 	// forces stat writing via destructors
 	delete Stats::instance();
 }
@@ -350,10 +349,26 @@ void Model::step() {
 	stats->resetForNextTimeStep();
 }
 
+void schedule_art(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep) {
+	double art_at_tick = person->diagnosisARTLag() / size_of_timestep + tick;
+	ARTScheduler* scheduler = nullptr;
+	auto iter = art_map.find(art_at_tick);
+	if (iter == art_map.end()) {
+		scheduler = new ARTScheduler((float) art_at_tick);
+		RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick - 0.1,
+				repast::Schedule::FunctorPtr(scheduler));
+		art_map.emplace(art_at_tick, scheduler);
+	} else {
+		scheduler = iter->second;
+	}
+	scheduler->addPerson(person);
+}
+
 void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 	float sex_acts_per_timestep = Parameters::instance()->getFloatParameter(NUM_SEX_ACTS_PER_TIMESTEP);
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
+	map<double, ARTScheduler*> art_map;
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		PersonPtr person = (*iter);
 		// update viral load
@@ -381,6 +396,12 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 			stats->recordBiomarker(t, person);
 		}
 
+		if (!person->isDiagnosed()) {
+			if(person->diagnose(t)) {
+				schedule_art(person, art_map, t, size_of_timestep);
+			}
+		}
+
 		person->step(size_of_timestep);
 		if (dead(t, person, max_age)) {
 			iter = net.removeVertex(iter);
@@ -404,7 +425,6 @@ void Model::entries(double tick, float size_of_timestep) {
 		stats->currentCounts().entries = entries;
 		std::cout << "entries: " << entries << std::endl;
 
-		ARTScheduler* art_scheduler = create_art_scheduler(tick, size_of_timestep);
 		double infected_prob = Parameters::instance()->getDoubleParameter(INIT_HIV_PREV_ENTRIES);
 
 		for (int i = 0; i < entries; ++i) {
@@ -413,9 +433,6 @@ void Model::entries(double tick, float size_of_timestep) {
 				// as if infected at previous timestep
 				float infected_at = tick - (size_of_timestep * 1);
 				trans_runner->infect(p, infected_at);
-				if (p->isARTCovered()) {
-					art_scheduler->addPerson(p);
-				}
 				float viral_load = viral_load_calculator.calculateViralLoad(p->infectionParameters());
 				p->setViralLoad(viral_load);
 				// update cd4
@@ -427,9 +444,6 @@ void Model::entries(double tick, float size_of_timestep) {
 			net.addVertex(p);
 			Stats::instance()->personDataRecorder().initRecord(p, tick);
 		}
-
-		RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_scheduler->artAtTick() + 0.1,
-				repast::Schedule::FunctorPtr(art_scheduler));
 	}
 }
 
@@ -508,8 +522,6 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 		}
 	}
 
-	ARTScheduler* art_scheduler = create_art_scheduler(time_stamp, size_of_timestep);
-
 	Stats* stats = Stats::instance();
 	for (auto& person : infecteds) {
 		// if person has multiple partners who are infected,
@@ -517,16 +529,10 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 		// and so may appear more than once in the infecteds list
 		if (!person->isInfected()) {
 			trans_runner->infect(person, time_stamp);
-			if (person->isARTCovered()) {
-				art_scheduler->addPerson(person);
-			}
 			++stats->currentCounts().infected;
 			stats->personDataRecorder().recordInfection(person, time_stamp);
 		}
 	}
-
-	RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_scheduler->artAtTick() + 0.1,
-			repast::Schedule::FunctorPtr(art_scheduler));
 }
 
 } /* namespace TransModel */
