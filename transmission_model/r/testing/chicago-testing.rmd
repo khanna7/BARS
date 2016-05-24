@@ -2,6 +2,7 @@ BARS Transmission Model: Chicago
 ========================================================
 -- Aditya, Nick, Jonathan, and Nikki 
 
+
 Today, we will see results from the Chicago model, for a 25,000 day simulation (approx. `r round(25000/365)` years).
 
 The model includes: 
@@ -31,16 +32,17 @@ suppressPackageStartupMessages(library(dplyr))
 
 
 ```{r, echo=FALSE}
+sim_num <- 43
+
 ## data
-net <- readRDS("../../Release/output/main_network_25000.RDS") #main network at the end
-cas_net <- readRDS("../../Release/output/casual_network_25000.RDS")#casual network at the end
+net <- readRDS("../../Release/output/main_network_2500.RDS") #main network at the end
+cas_net <- readRDS("../../Release/output/casual_network_2500.RDS")#casual network at the end
 
-biom_data <- read.csv("../../Release/output/biomarker_log_40.csv")
-counts_data <- read.csv("../../Release/output/counts_40.csv")
-inf_event_data <- read.csv("../../Release/output/infection_events_40.csv")
-death_data <- read.csv("../../Release/output/death_events_40.csv")
-partnership_event_data <- read.csv("../../Release/output/partnership_events_40.csv")
-
+biom_data <- read.csv(paste0("../../Release/output/biomarker_log_", sim_num,".csv"))
+counts_data <- read.csv(paste0("../../Release/output/counts_", sim_num,".csv"))
+inf_event_data <- read.csv(paste0("../../Release/output/infection_events_", sim_num,".csv")) 
+death_data <- read.csv(paste0("../../Release/output/death_events_", sim_num,".csv")) 
+partnership_event_data <- read.csv(paste0("../../Release/output/partnership_events_", sim_num,".csv"))  
 input_parameter_data <- source("../common/chicago_parameters.R")
 ```
 
@@ -315,9 +317,9 @@ The ART initiation portion was simplified so that all infected's initate ART 1 y
    new <- biom_data[which(biom_data$p_id == infectee_uniq_biom_pid[1]),]
 
    if (length(infectee_uniq_biom_pid > n_to_follow)){
-     #infectee_uniq_biom_pid <- infectee_uniq_biom_pid[1:n_to_follow]#first 10
-     infectee_uniq_biom_pid <- sample(infectee_uniq_biom_pid, 
-                                      n_to_follow, replace=FALSE)# random 10
+     infectee_uniq_biom_pid <- infectee_uniq_biom_pid[1:n_to_follow]#first 10
+     #infectee_uniq_biom_pid <- sample(infectee_uniq_biom_pid, 
+                                      #n_to_follow, replace=FALSE)# random 10
    }
    
    for (i in 2:length(infectee_uniq_biom_pid)){
