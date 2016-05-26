@@ -10,7 +10,7 @@
 namespace TransModel {
 
 StatsBuilder::StatsBuilder() : counts_writer{nullptr}, pevent_writer{nullptr}, ievent_writer(nullptr),
-		biomarker_writer{nullptr}, pd_fname{} {
+		biomarker_writer{nullptr}, pd_fname{}, tevent_writer{nullptr} {
 }
 
 StatsBuilder::~StatsBuilder() {
@@ -42,18 +42,24 @@ StatsBuilder* StatsBuilder::deathEventWriter(const std::string& fname, unsigned 
 	return this;
 }
 
+StatsBuilder* StatsBuilder::testingEventWriter(const std::string& fname, unsigned int buffer) {
+	tevent_writer = std::make_shared<StatsWriter<TestingEvent>>(fname, TestingEvent::header, buffer);
+	return this;
+}
+
 StatsBuilder* StatsBuilder::personDataRecorder(const std::string& fname) {
 	pd_fname = fname;
 	return this;
 }
 
 void StatsBuilder::createStatsSingleton() {
-	if (counts_writer && pevent_writer && ievent_writer && biomarker_writer && death_writer && pd_fname.length() > 0) {
+	if (counts_writer && pevent_writer && ievent_writer && biomarker_writer && death_writer && tevent_writer &&
+			pd_fname.length() > 0) {
 		if (Stats::instance_ != nullptr) {
 			delete Stats::instance_;
 		}
 		Stats::instance_ = new Stats(counts_writer, pevent_writer, ievent_writer, biomarker_writer,
-				death_writer, pd_fname);
+				death_writer, pd_fname, tevent_writer);
 	} else {
 		throw std::domain_error("Stats must be fully initialized from StatsBuilder before being used.");
 	}

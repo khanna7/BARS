@@ -26,6 +26,7 @@ struct PersonData {
 	double art_init_ts, art_stop_ts, prep_init_ts, prep_stop_ts;
 	bool infection_status, art_status, prep_status;
 	unsigned int number_of_tests;
+	double time_since_last_test;
 
 	PersonData(PersonPtr p, double time_of_birth);
 	void writeTo(FileOutput& out);
@@ -49,7 +50,7 @@ public:
 	void recordARTStop(PersonPtr& p, double ts);
 	void recordInfection(PersonPtr& p, double ts);
 	void recordDeath(PersonPtr& p, double ts);
-	void finalize(const PersonPtr& p);
+	void finalize(const PersonPtr& p, double ts);
 
 };
 

@@ -191,6 +191,7 @@ void init_stats() {
 	builder.biomarkerWriter(Parameters::instance()->getStringParameter(BIOMARKER_FILE));
 	builder.deathEventWriter(Parameters::instance()->getStringParameter(DEATH_EVENT_FILE));
 	builder.personDataRecorder(Parameters::instance()->getStringParameter(PERSON_DATA_FILE));
+	builder.testingEventWriter(Parameters::instance()->getStringParameter(TESTING_EVENT_FILE));
 
 	builder.createStatsSingleton();
 }
@@ -277,9 +278,10 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 }
 
 void Model::atEnd() {
+	double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
 	PersonDataRecorder& pdr = Stats::instance()->personDataRecorder();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
-		pdr.finalize(*iter);
+		pdr.finalize(*iter, ts);
 	}
 
 	// forces stat writing via destructors

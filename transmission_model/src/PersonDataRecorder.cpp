@@ -11,7 +11,7 @@ namespace TransModel {
 
 const std::string PersonData::header("\"id\",\"time of entry\",\"time of death\",\"infection status\",\"time of infection\","
 		"\"art status\",\"time of art initiation\",\"time of art cessation\",\"prep status\",\"time of prep initiation\","
-		"\"time of prep cessation\",\"number of tests\"");
+		"\"time of prep cessation\",\"number of tests\",\"time since last test\"");
 
 PersonData::PersonData(PersonPtr p, double time_of_birth) :
 		id_(p->id()), birth_ts(time_of_birth), death_ts(-1), infection_ts(p->isInfected() ? p->infectionParameters().time_of_infection : -1),
@@ -20,13 +20,13 @@ PersonData::PersonData(PersonPtr p, double time_of_birth) :
 		prep_init_ts(p->isOnPrep() ? -1 : -1),
 		prep_stop_ts(-1),
 		infection_status(p->isInfected()), art_status(p->isOnART()), prep_status(p->isOnPrep()),
-				number_of_tests(p->diagnoser().testCount()) {
+				number_of_tests(p->diagnoser().testCount()), time_since_last_test{-1} {
 }
 
 void PersonData::writeTo(FileOutput& out) {
 	out << id_ << "," << birth_ts << "," << death_ts << "," << infection_status << "," << infection_ts << "," << art_status
 			<< "," << art_init_ts << "," << art_stop_ts << "," << prep_status << "," << prep_init_ts << "," << prep_stop_ts
-			<< "," << number_of_tests << "\n";
+			<< "," << number_of_tests << "," << time_since_last_test << "\n";
 }
 
 
@@ -55,14 +55,18 @@ void PersonDataRecorder::recordInfection(PersonPtr& p, double ts) {
 	pd.infection_ts = ts;
 }
 
-void PersonDataRecorder::finalize(const PersonPtr& p) {
+void PersonDataRecorder::finalize(const PersonPtr& p, double ts) {
 	data.at(p->id()).number_of_tests = p->diagnoser().testCount();
+	double lt =  p->diagnoser().lastTestAt();
+	data.at(p->id()).time_since_last_test = lt == -1.0 ? -1.0 : ts - lt;
 }
 
 void PersonDataRecorder::recordDeath(PersonPtr& p, double ts) {
 	PersonData& pd = data.at(p->id());
 	pd.death_ts = ts;
 	pd.number_of_tests = p->diagnoser().testCount();
+	double lt =  p->diagnoser().lastTestAt();
+	data.at(p->id()).time_since_last_test = lt == -1.0 ? -1.0 : ts - lt;
 	writer.addOutput(pd);
 	data.erase(p->id());
 }

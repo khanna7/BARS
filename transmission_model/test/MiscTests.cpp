@@ -13,6 +13,7 @@
 #include "RInstance.h"
 #include "utils.h"
 #include "Diagnoser.h"
+#include "StatsBuilder.h"
 
 using namespace TransModel;
 using namespace Rcpp;
@@ -39,7 +40,17 @@ struct MockGen {
 	}
 };
 
+
 TEST(DiagnoserTests, TestDiagnosis) {
+	StatsBuilder builder;
+	builder.countsWriter("/dev/null");
+	builder.partnershipEventWriter("/dev/null");
+	builder.infectionEventWriter("/dev/null");
+	builder.biomarkerWriter("/dev/null");
+	builder.deathEventWriter("/dev/null");
+	builder.personDataRecorder("/dev/null");
+	builder.testingEventWriter("/dev/null");
+	builder.createStatsSingleton();
 
 	std::shared_ptr<MockGen> gen = std::make_shared<MockGen>();
 	// window is 2, next_test at 5
@@ -47,36 +58,39 @@ TEST(DiagnoserTests, TestDiagnosis) {
 
 	ASSERT_EQ(5, diagnoser.timeUntilNextTest(0));
 	ASSERT_EQ(0, diagnoser.testCount());
+	ASSERT_EQ(-1, diagnoser.lastTestAt());
 
 	InfectionParameters infection_params;
 	infection_params.infection_status = false;
 	for (int i = 1; i < 5; ++i) {
-		ASSERT_FALSE(diagnoser.test(i, infection_params));
+		ASSERT_TRUE(diagnoser.test(i, infection_params) == Result::NO_TEST);
 		ASSERT_EQ(0, diagnoser.testCount());
 	}
 
 	// next test at 5 so increase test count, but
 	// diagnosis is false because status is false
-	ASSERT_FALSE(diagnoser.test(5, infection_params));
+	ASSERT_TRUE(diagnoser.test(5, infection_params) == Result::NEGATIVE);
+	ASSERT_EQ(5, diagnoser.lastTestAt());
 	ASSERT_EQ(1, diagnoser.testCount());
 
 	// next test should be at 8 (5 + 3).
 	for (int i = 1; i < 3; ++i) {
-		ASSERT_FALSE(diagnoser.test(5 + i, infection_params));
+		ASSERT_TRUE(diagnoser.test(5 + i, infection_params) == Result::NO_TEST);
 		ASSERT_EQ(1, diagnoser.testCount());
 	}
 
 	infection_params.infection_status = true;
 	infection_params.time_of_infection = 8;
 	// false because window not passed
-	ASSERT_FALSE(diagnoser.test(8, infection_params));
+	ASSERT_TRUE(diagnoser.test(8, infection_params)  == Result::NEGATIVE);
+	ASSERT_EQ(8, diagnoser.lastTestAt());
 	ASSERT_EQ(2, diagnoser.testCount());
 
 	// window passed but not time for next test
-	ASSERT_FALSE(diagnoser.test(10, infection_params));
+	ASSERT_EQ(Result::NO_TEST, diagnoser.test(10, infection_params));
 	ASSERT_EQ(2, diagnoser.testCount());
 
 	// time for next test and window has passed
-	ASSERT_TRUE(diagnoser.test(11, infection_params));
+	ASSERT_EQ(Result::POSITIVE, diagnoser.test(11, infection_params));
 	ASSERT_EQ(3, diagnoser.testCount());
 }
