@@ -136,8 +136,8 @@
     #####################
     ## Testing and diagnosis
     detection.window <- 22
-    mean.time.until.next.test <- 365
+    mean.time.until.next.test <- 365*2
     daily.testing.prob <- 1/mean.time.until.next.test
-    lag.bet.diagnosis.and.art.init <- 0
-      
+    lag.bet.diagnosis.and.art.init <- 30
+    non.testers.prop <- 0.10  
    
