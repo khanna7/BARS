@@ -115,11 +115,14 @@
 
     n0 %v% "cd4.count.today" <- cd4.count.today
 
+   ## non-testers
+   non.tester <- rbinom(n, 1, non.testers.prop)
+   testers <- which(non.tester == 0)
+   n0 %v% "non.testers" <- non.tester
+
    ## ART coverage 
-   art.covered <- rbinom(length(init.infected), 1,
-                         baseline.art.coverage.rate)
-   set.vertex.attribute(n0, "art.covered", art.covered,
-                        v=init.infected)
+   art.covered <- 1-non.tester
+   set.vertex.attribute(n0, "art.covered", art.covered)
 
    ## ART status
    art.status <- rep(NA, n) #everyone
@@ -276,6 +279,9 @@
       
       ## attribute: lag between diagnosis and ART initiation
       n0 %v% "lag.bet.diagnosis.and.art.init" <- lag.bet.diagnosis.and.art.init
+
+      ## attribute: non-test
+         ## defined above"
    #####################
    ## FIT MODEL
    fit <- ergm(formation.n0, 
