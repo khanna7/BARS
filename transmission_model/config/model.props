@@ -20,6 +20,7 @@ biomarker.number.of.persons.to.log = 100
 
 death.events.file = ./output/death_events.csv
 person.data.file = ./output/person_data.csv
+testing.events.file = ./output/testing_events.csv
 
 net.save.file = ./output/main_network.RDS
 casual.net.save.file = ./output/casual_network.RDS

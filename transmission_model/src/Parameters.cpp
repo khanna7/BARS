@@ -32,6 +32,7 @@ const std::string INFECTION_EVENTS_FILE =  "infection.events.file";
 const std::string BIOMARKER_FILE = "biomarker.log.file";
 const std::string BIOMARKER_LOG_COUNT = "biomarker.number.of.persons.to.log";
 const std::string DEATH_EVENT_FILE = "death.events.file";
+const std::string TESTING_EVENT_FILE = "testing.events.file";
 const std::string PERSON_DATA_FILE = "person.data.file";
 const std::string NET_SAVE_FILE = "net.save.file";
 const std::string CASUAL_NET_SAVE_FILE = "casual.net.save.file";

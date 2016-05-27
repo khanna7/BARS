@@ -6,6 +6,7 @@
  */
 
 #include "Person.h"
+#include "Stats.h"
 
 using namespace Rcpp;
 
@@ -84,7 +85,11 @@ bool Person::deadOfInfection() {
 }
 
 bool Person::diagnose(double tick) {
-	diagnosed_ = diagnoser_.test(tick, infection_parameters_);
+	Result result = diagnoser_.test(tick, infection_parameters_);
+	diagnosed_ = result == Result::POSITIVE;
+	if (result != Result::NO_TEST) {
+		Stats::instance()->recordTestingEvent(tick, id_, diagnosed_);
+	}
 	return diagnosed_;
 }
 

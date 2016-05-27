@@ -57,7 +57,7 @@ protected:
 		builder.biomarkerWriter("/dev/null");
 		builder.deathEventWriter("/dev/null");
 		builder.personDataRecorder("/dev/null");
-
+		builder.testingEventWriter("/dev/null");
 		builder.createStatsSingleton();
 	}
 
