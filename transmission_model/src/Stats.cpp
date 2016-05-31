@@ -12,7 +12,7 @@
 
 namespace TransModel {
 
-const std::string TestingEvent::header("\"tick\",\"p_id\", \"result\"");
+const std::string TestingEvent::header("\"tick\",\"p_id\",\"result\"");
 
 void TestingEvent::writeTo(FileOutput& out) {
 	out << tick << "," << p_id << "," << result << "\n";

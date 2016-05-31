@@ -54,11 +54,10 @@ struct PersonToVAL {
 		vertex["number.of.tests"] = diagnoser.testCount();
 		vertex["time.until.next.test"] = diagnoser.timeUntilNextTest(tick);
 		vertex["lag.bet.diagnosis.and.art.init"] = p->diagnosisARTLag();
-
+		vertex["non.testers"] = !(p->isTestable());
 
 		if (p->isInfected()) {
 			vertex["infectivity"] = p->infectivity();
-			vertex["art.covered"] = p->isARTCovered();
 			vertex["art.status"] = p->isOnART();
 			vertex["inf.status"] = p->isInfected();
 			vertex["time.since.infection"] = p->infectionParameters().time_since_infection;
@@ -173,10 +172,10 @@ void init_stage_map(map<float, shared_ptr<Stage>> &stage_map) {
 }
 
 void init_generators() {
-	float art_coverage_rate = Parameters::instance()->getDoubleParameter(BASELINE_ART_COVERAGE_RATE);
+	float non_tester_rate = Parameters::instance()->getDoubleParameter(NON_TESTERS_PROP);
 	BinomialGen coverage(repast::Random::instance()->engine(),
-			boost::random::binomial_distribution<>(1, art_coverage_rate));
-	Random::instance()->putGenerator(ART_COVERAGE_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(coverage));
+			boost::random::binomial_distribution<>(1, non_tester_rate));
+	Random::instance()->putGenerator(NON_TESTERS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(coverage));
 
 	float circum_rate = Parameters::instance()->getDoubleParameter(CIRCUM_RATE);
 	BinomialGen rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, circum_rate));
@@ -398,8 +397,8 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 			stats->recordBiomarker(t, person);
 		}
 
-		if (!person->isDiagnosed()) {
-			if(person->diagnose(t)) {
+		if (person->isTestable() && !person->isDiagnosed()) {
+			if (person->diagnose(t)) {
 				schedule_art(person, art_map, t, size_of_timestep);
 			}
 		}

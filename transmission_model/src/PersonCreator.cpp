@@ -42,6 +42,7 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 	Diagnoser<GeometricDistribution> diagnoser(tick, detection_window_, dist);
 	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(), diagnoser);
 	person->diagnosis_art_lag = Parameters::instance()->getFloatParameter(GLOBAL_DIAGNOSIS_ART_LAG);
+	person->testable_= ((int) repast::Random::instance()->getGenerator(NON_TESTERS_BINOMIAL)->next()) == 0;
 
 	return person;
 }
@@ -58,8 +59,10 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 	Diagnoser<GeometricDistribution> diagnoser(detection_window_, next_test_at, as<unsigned int>(val["number.of.tests"]), dist);
 	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role, diagnoser);
 	person->diagnosed_ = as<bool>(val["diagnosed"]);
+	person->testable_ = !(as<bool>(val["non.testers"]));
 	person->diagnosis_art_lag = as<float>(val["lag.bet.diagnosis.and.art.init"]);
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
+
 
 	bool infected = as<bool>(val["inf.status"]);
 	if (infected) {
@@ -69,7 +72,6 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 		person->infection_parameters_.age_at_infection = as<float>(val["age.at.infection"]);
 		person->infection_parameters_.dur_inf_by_age =
 				trans_runner_->durInfByAge(person->infection_parameters_.age_at_infection);
-		person->infection_parameters_.art_covered = as<bool>(val["art.covered"]);
 		person->infection_parameters_.art_status = as<bool>(val["art.status"]);
 		if (person->infection_parameters_.art_status) {
 			person->infection_parameters_.time_since_art_init = as<float>(val["time.since.art.initiation"]);
