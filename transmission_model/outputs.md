@@ -94,4 +94,15 @@ Person data recording collects the following attributes for each person in the m
   * 0: not on PrEP
   * 1: on PrEP
 * time of prep initiation: the timestep when the person went on PrEP. If never on PrEP, then -1.
-* time of prep cessation: the timestep when the person went off of PrEP. If never went of PrEP then -1.
+* time of prep cessation: the timestep when the person went off of PrEP. If never went off PrEP then -1.
+* number of tests: the number of diagnostic tests the person underwent
+* time since last test: the time since the person was last tested. If never tested, then -1.
+
+### Testing Events
+Testing events are recorded in the file defined by the *testing.events.file* property. Each time a 
+person is tested an event is recorded. The format is csv with one row per event.
+* tick: the time at which the testing occurred
+* p_id: the id of the person tested
+* result: the result of the test.
+  * 0: negative test
+  * 1: positive test

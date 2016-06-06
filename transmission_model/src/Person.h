@@ -27,7 +27,7 @@ private:
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
-	bool prep_, dead_, diagnosed_;
+	bool prep_, dead_, diagnosed_, testable_;
 	float diagnosis_art_lag;
 	Diagnoser<GeometricDistribution> diagnoser_;
 
@@ -75,10 +75,6 @@ public:
 		return infection_parameters_.infection_status;
 	}
 
-	bool isARTCovered() const {
-		return infection_parameters_.art_covered;
-	}
-
 	float infectivity() const {
 		return infectivity_;
 	}
@@ -111,11 +107,10 @@ public:
 	void putOnART(float time_stamp);
 
 	/**
-	 * Infects this Person and sets whether or not they will
-	 * be on ART after the delay, the duration of the infection,
+	 * Infects this Person and sets the duration of the infection,
 	 * and the time of infection.
 	 */
-	void infect(bool art_coverted, float duration_of_infection, float time);
+	void infect(float duration_of_infection, float time);
 
 	/**
 	 * Updates age, etc. of person., to be called each iteration of the model.
@@ -144,6 +139,10 @@ public:
 
 	bool isDiagnosed() const {
 		return diagnosed_;
+	}
+
+	bool isTestable() const {
+		return testable_;
 	}
 
 	bool diagnose(double tick);

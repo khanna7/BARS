@@ -32,7 +32,7 @@ suppressPackageStartupMessages(library(dplyr))
 
 
 ```{r, echo=FALSE}
-sim_num <- 43
+sim_num <- 44
 
 ## data
 net <- readRDS("../../Release/output/main_network_2500.RDS") #main network at the end
@@ -43,6 +43,9 @@ counts_data <- read.csv(paste0("../../Release/output/counts_", sim_num,".csv"))
 inf_event_data <- read.csv(paste0("../../Release/output/infection_events_", sim_num,".csv")) 
 death_data <- read.csv(paste0("../../Release/output/death_events_", sim_num,".csv")) 
 partnership_event_data <- read.csv(paste0("../../Release/output/partnership_events_", sim_num,".csv"))  
+
+person_data <- read.csv("../../Release/output/person_data_8.csv")
+
 input_parameter_data <- source("../common/chicago_parameters.R")
 ```
 
@@ -167,7 +170,8 @@ ggplot(main_deg_dist_data, aes(x=degree, y=value, fill=type))+
 
 # looking for mean partnership durations
 require(data.table)
-pt_data <- fread("../../Release/output/partnership_events_40.csv")
+pt_data <- fread(paste0("../../Release/output/partnership_events_", sim_num,".csv")) 
+#fread("../../Release/output/partnership_events_40.csv")
 pt_data_main <- pt_data[network_type == 0]
 
 # group by p1, p2
@@ -291,6 +295,30 @@ qplot(data=counts_data, x=time,
       geom="line")
 ```
 
+## Testing and Diagnosis
+
+```{r, echo=TRUE, results='show'}
+p_inf_status <- person_data$infection.status
+p_time_of_infection <- person_data$time.of.infection
+p_art_status <- person_data$art.status
+p_time_of_art_initiation <- person_data$time.of.art.initiation
+
+table(p_inf_status)
+table(p_art_status)
+
+xtabs(~factor(p_inf_status, exclude=NULL) + 
+        factor(p_art_status, exclude=NULL))
+
+summary(p_time_of_art_initiation - p_time_of_infection)
+neg_diff_art.init_inf <- neg.diff <- which(p_time_of_art_initiation - p_time_of_infection < 0)
+
+p_inf_status[neg_diff_art.init_inf]
+p_time_of_infection[neg_diff_art.init_inf]
+p_time_of_art_initiation[neg_diff_art.init_inf]
+summary(p_time_of_art_initiation)
+
+```
+
 ## ART metrics
 
 The ART initiation portion was simplified so that all infected's initate ART 1 year after seroconversion. At presetnt, the proportion of the infected on ART was
@@ -299,6 +327,7 @@ The ART initiation portion was simplified so that all infected's initate ART 1 y
   on.art <- which(net%v%"art.status" == 1)
   length(on.art)
   length(on.art)/length(infected)
+
 ```
 
 `r round(length(on.art)/length(infected), 2)`. The total proportion of all people in the population who were on ART is `r round(length(on.art)/length(infected)*prev, 2)`%.
