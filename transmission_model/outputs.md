@@ -95,3 +95,6 @@ Person data recording collects the following attributes for each person in the m
   * 1: on PrEP
 * time of prep initiation: the timestep when the person went on PrEP. If never on PrEP, then -1.
 * time of prep cessation: the timestep when the person went off of PrEP. If never went of PrEP then -1.
+* diagnosis status: whether or not the person has been diagnosed.
+  * 0: undiagnosed
+  * 1: diagnosed
