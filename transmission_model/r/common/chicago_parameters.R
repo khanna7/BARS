@@ -140,4 +140,9 @@
     daily.testing.prob <- 1/mean.time.until.next.test
     lag.bet.diagnosis.and.art.init <- 30
     non.testers.prop <- 0.25  
-   
+
+    #####################
+    ## PrEP
+    prep.use.rate <- 6/100
+    prep.transm.red <- 96/100
+
