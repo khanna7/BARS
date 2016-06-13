@@ -282,6 +282,14 @@
 
       ## attribute: non-test
          ## defined above"
+
+   ## PrEP
+      not.infected <- which(n0 %v% "inf.status" == 0)
+      prep.status <- rbinom(length(not.infected), 1, prep.use.rate)
+      set.vertex.attribute(n0, "prep.status", prep.status, v=not.infected)
+
+      table(n0%v%"prep.status")
+      table(n0%v%"prep.status")/sum(table(n0%v%"prep.status"))
    #####################
    ## FIT MODEL
    fit <- ergm(formation.n0, 
