@@ -97,6 +97,10 @@ Person data recording collects the following attributes for each person in the m
 * time of prep cessation: the timestep when the person went off of PrEP. If never went off PrEP then -1.
 * number of tests: the number of diagnostic tests the person underwent
 * time since last test: the time since the person was last tested. If never tested, then -1.
+* diagnosis status: whether or not the person has been diagnosed.
+  * 0: undiagnosed
+  * 1: diagnosed
+
 
 ### Testing Events
 Testing events are recorded in the file defined by the *testing.events.file* property. Each time a 
