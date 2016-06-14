@@ -55,6 +55,7 @@ struct PersonToVAL {
 		vertex["time.until.next.test"] = diagnoser.timeUntilNextTest(tick);
 		vertex["lag.bet.diagnosis.and.art.init"] = p->diagnosisARTLag();
 		vertex["non.testers"] = !(p->isTestable());
+		vertex["prep.status"] = p->isOnPrep();
 
 		if (p->isInfected()) {
 			vertex["infectivity"] = p->infectivity();
@@ -93,7 +94,7 @@ struct PersonToVAL {
 
 shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float circ_mult = (float) Parameters::instance()->getDoubleParameter(CIRCUM_MULT);
-	float prep_mult = (float) Parameters::instance()->getDoubleParameter(PREP_MULT);
+	float prep_mult = (float) Parameters::instance()->getDoubleParameter(PREP_TRANS_REDUCTION);
 
 //	string str_dur_inf = Parameters::instance()->getStringParameter(DUR_INF_BY_AGE);
 //	vector<string> tokens;
@@ -180,6 +181,11 @@ void init_generators() {
 	float circum_rate = Parameters::instance()->getDoubleParameter(CIRCUM_RATE);
 	BinomialGen rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, circum_rate));
 	Random::instance()->putGenerator(CIRCUM_STATUS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(rate));
+
+	float prep_rate = Parameters::instance()->getDoubleParameter(PREP_RATE);
+	BinomialGen p_rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, prep_rate));
+	Random::instance()->putGenerator(PREP_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(p_rate));
+
 }
 
 void init_stats() {

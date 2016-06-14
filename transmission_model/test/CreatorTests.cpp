@@ -37,6 +37,7 @@ TEST(CreatorTests, TestInfectedPersonCreationNoART) {
 	ASSERT_EQ(43, person->timeUntilNextTest(1));
 	ASSERT_EQ(30, person->diagnosisARTLag());
 	ASSERT_TRUE(person->isTestable());
+	ASSERT_FALSE(person->isOnPrep());
 
 	InfectionParameters params = person->infectionParameters();
 	ASSERT_FALSE(params.art_status);
@@ -70,6 +71,7 @@ TEST(CreatorTests, TestUninfectedPersonCreation) {
 	ASSERT_EQ(1, person->role());
 	ASSERT_NEAR(43.92679f, person->age(), 0.00001);
 	ASSERT_TRUE(person->isTestable());
+	ASSERT_TRUE(person->isOnPrep());
 
 	InfectionParameters params = person->infectionParameters();
 	ASSERT_FALSE(params.art_status);
@@ -109,6 +111,7 @@ TEST(CreatorTests, TestInfectedPersonCreationART) {
 	ASSERT_EQ(0, person->timeUntilNextTest(1));
 	ASSERT_EQ(30, person->diagnosisARTLag());
 	ASSERT_TRUE(person->isTestable());
+	ASSERT_FALSE(person->isOnPrep());
 
 	InfectionParameters params = person->infectionParameters();
 	ASSERT_TRUE(params.art_status);

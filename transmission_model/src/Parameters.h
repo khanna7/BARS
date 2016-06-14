@@ -77,6 +77,8 @@ extern const std::string PEAK_VIRAL_LOAD;
 extern const std::string PER_DAY_CD4_RECOVERY;
 extern const std::string PREG_MULT;
 extern const std::string PREG_SUSC_MULT;
+extern const std::string PREP_RATE;
+extern const std::string PREP_TRANS_REDUCTION;
 extern const std::string SET_POINT_VIRAL_LOAD;
 extern const std::string SIZE_OF_TIMESTEP;
 extern const std::string TIME_INFECTION_TO_LATE_STAGE;

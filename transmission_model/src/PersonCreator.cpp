@@ -43,6 +43,7 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(), diagnoser);
 	person->diagnosis_art_lag = Parameters::instance()->getFloatParameter(GLOBAL_DIAGNOSIS_ART_LAG);
 	person->testable_= ((int) repast::Random::instance()->getGenerator(NON_TESTERS_BINOMIAL)->next()) == 0;
+	person->prep_ = ((int) repast::Random::instance()->getGenerator(PREP_BINOMIAL)->next()) == 1;
 
 	return person;
 }
@@ -82,6 +83,9 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 		}
 
 		person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
+	} else {
+		//  the prep.status attribute only exists in uninfected persons in the R model
+		person->prep_ = as<bool>(val["prep.status"]);
 	}
 
 	return person;
