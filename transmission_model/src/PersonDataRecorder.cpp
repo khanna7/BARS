@@ -19,13 +19,14 @@ PersonData::PersonData(PersonPtr p, double time_of_birth) :
 		art_stop_ts(-1),
 		prep_init_ts(p->isOnPrep() ? -1 : -1),
 		prep_stop_ts(-1),
-		infection_status(p->isInfected()), art_status(p->isOnART()), prep_status(p->isOnPrep()), diagnosed(p->isDiagnosed()),
+		prep_status(p->prepStatus()),
+		infection_status(p->isInfected()), art_status(p->isOnART()), diagnosed(p->isDiagnosed()),
 				number_of_tests(p->diagnoser().testCount()), time_since_last_test{-1} {
 }
 
 void PersonData::writeTo(FileOutput& out) {
 	out << id_ << "," << birth_ts << "," << death_ts << "," << infection_status << "," << infection_ts << "," << art_status
-			<< "," << art_init_ts << "," << art_stop_ts << "," << prep_status << "," << prep_init_ts << "," << prep_stop_ts
+			<< "," << art_init_ts << "," << art_stop_ts << "," << static_cast<int>(prep_status) << "," << prep_init_ts << "," << prep_stop_ts
 			<< "," << number_of_tests << "," << time_since_last_test << "," << diagnosed << "\n";
 }
 
@@ -61,6 +62,7 @@ void PersonDataRecorder::finalize(const PersonPtr& p, double ts) {
 	double lt =  p->diagnoser().lastTestAt();
 	pd.time_since_last_test = lt == -1.0 ? -1.0 : ts - lt;
 	pd.diagnosed = p->isDiagnosed();
+	pd.prep_status = p->prepStatus();
 }
 
 void PersonDataRecorder::recordDeath(PersonPtr& p, double ts) {

@@ -14,7 +14,7 @@ namespace TransModel {
 
 Person::Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser) :
 		id_(id), role_(role), age_(age), circum_status_(circum_status),
-		infection_parameters_(), infectivity_(0), prep_(false), dead_(false), diagnosed_(false), testable_(false),
+		infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF), dead_(false), diagnosed_(false), testable_(false),
 		diagnosis_art_lag(0), diagnoser_(diagnoser) {
 }
 
@@ -89,6 +89,9 @@ bool Person::diagnose(double tick) {
 	diagnosed_ = result == Result::POSITIVE;
 	if (result != Result::NO_TEST) {
 		Stats::instance()->recordTestingEvent(tick, id_, diagnosed_);
+		if (diagnosed_ && prep_ == PrepStatus::ON) {
+			prep_ = PrepStatus::OFF_INFECTED;
+		}
 	}
 	return diagnosed_;
 }

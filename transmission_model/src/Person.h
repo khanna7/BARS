@@ -17,6 +17,8 @@ namespace TransModel {
 
 class PersonCreator;
 
+enum class PrepStatus { OFF, OFF_INFECTED, ON};
+
 class Person {
 
 private:
@@ -27,7 +29,8 @@ private:
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
-	bool prep_, dead_, diagnosed_, testable_;
+	PrepStatus prep_;
+	bool dead_, diagnosed_, testable_;
 	float diagnosis_art_lag;
 	Diagnoser<GeometricDistribution> diagnoser_;
 
@@ -56,6 +59,10 @@ public:
 	}
 
 	bool isOnPrep() const {
+		return prep_ == PrepStatus::ON;
+	}
+
+	PrepStatus prepStatus() const {
 		return prep_;
 	}
 

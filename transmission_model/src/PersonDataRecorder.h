@@ -24,7 +24,8 @@ struct PersonData {
 	int id_;
 	double birth_ts, death_ts, infection_ts;
 	double art_init_ts, art_stop_ts, prep_init_ts, prep_stop_ts;
-	bool infection_status, art_status, prep_status, diagnosed;
+	PrepStatus prep_status;
+	bool infection_status, art_status, diagnosed;
 	unsigned int number_of_tests;
 	double time_since_last_test;
 
