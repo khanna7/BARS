@@ -92,7 +92,8 @@ Person data recording collects the following attributes for each person in the m
 * time of art cessation: the timestamp when the person went off of ART. If never went off of ART then -1.
 * prep status: The PrEP status of the person at death or simulation end
   * 0: not on PrEP
-  * 1: on PrEP
+  * 1: not on PrEP after being on PrEP and then diagnosed as positive
+  * 2: on PrEP
 * time of prep initiation: the timestep when the person went on PrEP. If never on PrEP, then -1.
 * time of prep cessation: the timestep when the person went off of PrEP. If never went off PrEP then -1.
 * number of tests: the number of diagnostic tests the person underwent
