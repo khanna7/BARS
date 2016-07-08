@@ -145,4 +145,9 @@
     ## PrEP
     prep.use.rate <- 6/100
     prep.transm.red <- 96/100
+    
+#####################
+    ## Socioeconomic status
+    insurance.prop <- 
+    incarceration.prop <- 
 
