@@ -58,6 +58,8 @@ public:
 	std::ostream& operator<<(unsigned int val);
 	std::ostream& operator<<(int val);
 
+	std::ostream& ostream();
+
 	FileOutput(const std::string& filename);
 	virtual ~FileOutput();
 

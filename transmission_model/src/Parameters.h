@@ -180,11 +180,15 @@ public:
 	bool contains(const std::string& prop_name) const;
 
 private:
+	friend std::ostream& operator<< (std::ostream& stream, const Parameters* params);
+
 	static Parameters* instance_;
 	repast::Properties props_;
 
 	Parameters(repast::Properties& props);
 };
+
+std::ostream& operator<< (std::ostream& stream, const Parameters* params);
 
 } /* namespace mrsa */
 #endif /* PARAMETERS_H_ */

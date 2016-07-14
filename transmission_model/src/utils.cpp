@@ -95,5 +95,13 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 	}
 }
 
+std::string output_directory(Parameters* params) {
+	std::string out_dir = params->getStringParameter(OUTPUT_DIR);
+	if (params->contains(RUN_NUMBER)) {
+		out_dir += "_" + std::to_string(params->getIntParameter(RUN_NUMBER));
+	}
+	return out_dir;
+}
+
 }
 

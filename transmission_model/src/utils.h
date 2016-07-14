@@ -29,9 +29,17 @@ void param_string_to_R_vars(const std::string& param_string, std::shared_ptr<RIn
 
 
 /**
- *
+ * Initializes the parameters by sourcing the non-derived file, parsing the param string for
+ * parameter value pairs and setting those in the R environment, sourcing the derived R file, and
+ * then adding the values from the R environment to the specified Parameters object.
  */
 void init_parameters(const std::string& non_derived, const std::string& derived, const std::string& param_string, Parameters* params, std::shared_ptr<RInside> R);
+
+/**
+ * Retrieves the output directory from the specified Parameters object, appending
+ * the run number if that exists in the Parameters object.
+ */
+std::string output_directory(Parameters* params);
 
 }
 

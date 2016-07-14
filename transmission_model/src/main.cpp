@@ -8,6 +8,8 @@
 #include "Model.h"
 #include "Parameters.h"
 #include "utils.h"
+#include "file_utils.h"
+#include "FileOutput.h"
 
 using namespace Rcpp;
 using namespace TransModel;
@@ -51,6 +53,9 @@ void run(std::string propsFile, int argc, char** argv) {
 	}
 
 	TransModel::init_parameters(non_derived, derived, param_string, Parameters::instance(), R);
+	FileOutput out(unique_file_name(output_directory(Parameters::instance()) + "/parameters.txt"));
+	out.ostream() << Parameters::instance();
+	out.close();
 
 	init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE));
 

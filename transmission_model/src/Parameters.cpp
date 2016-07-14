@@ -110,6 +110,13 @@ const std::string PR_RECEPTIVE = "pr.receptive";
 
 Parameters* Parameters::instance_ = 0;
 
+std::ostream& operator<< (std::ostream& os, const Parameters* params) {
+	for (auto iter = params->props_.keys_begin(); iter != params->props_.keys_end(); ++iter) {
+		os << (*iter) << " : " << params->getStringParameter(*iter) << std::endl;
+	}
+	return os;
+}
+
 Parameters::Parameters(repast::Properties& props) :
 		props_(props)  {
 }

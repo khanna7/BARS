@@ -22,6 +22,7 @@
 #include "Stats.h"
 #include "StatsBuilder.h"
 #include "file_utils.h"
+#include "utils.h"
 //#include "EventWriter.h"
 
 using namespace Rcpp;
@@ -91,14 +92,6 @@ struct PersonToVAL {
 		}
 	}
 };
-
-std::string output_directory() {
-	std::string out_dir = Parameters::instance()->getStringParameter(OUTPUT_DIR);
-	if (Parameters::instance()->contains(RUN_NUMBER)) {
-		out_dir += "_" + std::to_string(Parameters::instance()->getIntParameter(RUN_NUMBER));
-	}
-	return out_dir;
-}
 
 shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float circ_mult = (float) Parameters::instance()->getDoubleParameter(CIRCUM_MULT);
@@ -197,7 +190,7 @@ void init_generators() {
 }
 
 void init_stats() {
-	StatsBuilder builder(output_directory());
+	StatsBuilder builder(output_directory(Parameters::instance()));
 	builder.countsWriter(Parameters::instance()->getStringParameter(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
 	builder.partnershipEventWriter(Parameters::instance()->getStringParameter(PARTNERSHIP_EVENTS_FILE));
 	builder.infectionEventWriter(Parameters::instance()->getStringParameter(INFECTION_EVENTS_FILE));
@@ -481,14 +474,14 @@ void Model::saveRNetwork() {
 
 	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
 	create_r_network(tick, rnet, net, idx_map, p2val, MAIN_NETWORK_TYPE);
-	std::string file_name = output_directory() + "/" + Parameters::instance()->getStringParameter(NET_SAVE_FILE);
+	std::string file_name = output_directory(Parameters::instance()) + "/" + Parameters::instance()->getStringParameter(NET_SAVE_FILE);
 	as<Function>((*R)["nw_save"])(rnet, unique_file_name(get_net_out_filename(file_name)), tick);
 
 	if (Parameters::instance()->contains(CASUAL_NET_SAVE_FILE)) {
 		idx_map.clear();
 		List cas_net;
 		create_r_network(tick, cas_net, net, idx_map, p2val, CASUAL_NETWORK_TYPE);
-		file_name =  output_directory() + "/" + Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
+		file_name =  output_directory(Parameters::instance()) + "/" + Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
 		as<Function>((*R)["nw_save"])(cas_net, unique_file_name(get_net_out_filename(file_name)), tick);
 	}
 }
