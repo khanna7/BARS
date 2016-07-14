@@ -29,7 +29,7 @@ extern const std::string COUNT_OVERLAPS;
 extern const std::string EVENT_FILE;
 extern const std::string EVENT_FILE_BUFFER_SIZE;
 
-extern const std::string PREP_MULT;
+//extern const std::string PREP_MULT;
 
 // generated from parameters.R
 extern const std::string ACUTE_LENGTH_MIN;
