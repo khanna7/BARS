@@ -9,46 +9,46 @@
 
 namespace TransModel {
 
-StatsBuilder::StatsBuilder() : counts_writer{nullptr}, pevent_writer{nullptr}, ievent_writer(nullptr),
-		biomarker_writer{nullptr}, pd_fname{}, tevent_writer{nullptr} {
+StatsBuilder::StatsBuilder(const std::string& out_dir) : counts_writer{nullptr}, pevent_writer{nullptr}, ievent_writer(nullptr),
+		biomarker_writer{nullptr}, pd_fname{}, tevent_writer{nullptr}, out_dir_{out_dir} {
 }
 
 StatsBuilder::~StatsBuilder() {
 }
 
 StatsBuilder* StatsBuilder::countsWriter(const std::string& fname, unsigned int buffer) {
-	counts_writer = std::make_shared<StatsWriter<Counts>>(fname, Counts::header, buffer);
+	counts_writer = std::make_shared<StatsWriter<Counts>>(out_dir_ + "/" + fname, Counts::header, buffer);
 	return this;
 
 }
 
 StatsBuilder* StatsBuilder::partnershipEventWriter(const std::string& fname, unsigned int buffer) {
-	pevent_writer = std::make_shared<StatsWriter<PartnershipEvent>>(fname, PartnershipEvent::header, buffer);
+	pevent_writer = std::make_shared<StatsWriter<PartnershipEvent>>(out_dir_ + "/" + fname, PartnershipEvent::header, buffer);
 	return this;
 }
 
 StatsBuilder* StatsBuilder::infectionEventWriter(const std::string& fname, unsigned int buffer) {
-	ievent_writer = std::make_shared<StatsWriter<InfectionEvent>>(fname, InfectionEvent::header, buffer);
+	ievent_writer = std::make_shared<StatsWriter<InfectionEvent>>(out_dir_ + "/" + fname, InfectionEvent::header, buffer);
 	return this;
 }
 
 StatsBuilder* StatsBuilder::biomarkerWriter(const std::string& fname, unsigned int buffer) {
-	biomarker_writer = std::make_shared<StatsWriter<Biomarker>>(fname, Biomarker::header, buffer);
+	biomarker_writer = std::make_shared<StatsWriter<Biomarker>>(out_dir_ + "/" + fname, Biomarker::header, buffer);
 	return this;
 }
 
 StatsBuilder* StatsBuilder::deathEventWriter(const std::string& fname, unsigned int buffer) {
-	death_writer = std::make_shared<StatsWriter<DeathEvent>>(fname, DeathEvent::header, buffer);
+	death_writer = std::make_shared<StatsWriter<DeathEvent>>(out_dir_ + "/" + fname, DeathEvent::header, buffer);
 	return this;
 }
 
 StatsBuilder* StatsBuilder::testingEventWriter(const std::string& fname, unsigned int buffer) {
-	tevent_writer = std::make_shared<StatsWriter<TestingEvent>>(fname, TestingEvent::header, buffer);
+	tevent_writer = std::make_shared<StatsWriter<TestingEvent>>(out_dir_ + "/" + fname, TestingEvent::header, buffer);
 	return this;
 }
 
 StatsBuilder* StatsBuilder::personDataRecorder(const std::string& fname) {
-	pd_fname = fname;
+	pd_fname = out_dir_ + "/" + fname;
 	return this;
 }
 

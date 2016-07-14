@@ -13,19 +13,20 @@ r.file = ../r/network_model/transmission_model.R
 #main.network.file = ../r/network_model/main_network.RDS
 #casual.network.file = ../r/network_model/casual_network.RDS
 
-per.tick.counts.output.file = ./output/counts.csv
-partnership.events.file = ./output/partnership_events.csv
-infection.events.file = ./output/infection_events.csv
+output.directory = ./output
+per.tick.counts.output.file = counts.csv
+partnership.events.file = partnership_events.csv
+infection.events.file = infection_events.csv
 
-biomarker.log.file = ./output/biomarker_log.csv
+biomarker.log.file = biomarker_log.csv
 biomarker.number.of.persons.to.log = 100
 
-death.events.file = ./output/death_events.csv
-person.data.file = ./output/person_data.csv
-testing.events.file = ./output/testing_events.csv
+death.events.file = death_events.csv
+person.data.file = person_data.csv
+testing.events.file = testing_events.csv
 
-net.save.file = ./output/main_network.RDS
-casual.net.save.file = ./output/casual_network.RDS
+net.save.file = main_network.RDS
+casual.net.save.file = casual_network.RDS
 
 save.network.at = end
 count.overlaps = true

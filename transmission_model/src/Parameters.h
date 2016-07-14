@@ -5,6 +5,8 @@
 
 namespace TransModel {
 
+extern const std::string RUN_NUMBER;
+
 extern const std::string NET_VAR;
 extern const std::string CASUAL_NET_VAR;
 
@@ -14,6 +16,7 @@ extern const std::string R_PARAMETERS_NON_DERIVED;
 extern const std::string R_FILE;
 extern const std::string MAIN_NETWORK_FILE;
 extern const std::string CASUAL_NETWORK_FILE;
+extern const std::string OUTPUT_DIR;
 extern const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE;
 extern const std::string PARTNERSHIP_EVENTS_FILE;
 extern const std::string INFECTION_EVENTS_FILE;

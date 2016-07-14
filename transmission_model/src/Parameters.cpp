@@ -15,9 +15,10 @@ using namespace repast;
 
 namespace TransModel {
 
+const std::string RUN_NUMBER = "run.num";
+
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";
-
 
 const std::string STOP_AT = "stop.at";
 const std::string R_PARAMETERS_DERIVED = "r.parameters.derived";
@@ -28,6 +29,7 @@ const std::string CASUAL_NETWORK_FILE = "casual.network.file";
 const std::string EVENT_FILE = "event.file";
 const std::string EVENT_FILE_BUFFER_SIZE = "event.file.buffer.size";
 const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE= "per.tick.counts.output.file";
+const std::string OUTPUT_DIR = "output.directory";
 const std::string PARTNERSHIP_EVENTS_FILE = "partnership.events.file";
 const std::string INFECTION_EVENTS_FILE =  "infection.events.file";
 const std::string BIOMARKER_FILE = "biomarker.log.file";
