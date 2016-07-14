@@ -21,11 +21,12 @@ namespace TransModel {
 
 /**
  * Parses a string into individual parameter key value pairs and then creates
- * the corresponding variables in R.
+ * the corresponding variables in R. Any non numeric parameters are added to
+ the params object.
  *
  * @param param_string a string with the format X=Y,...
  */
-void param_string_to_R_vars(const std::string& param_string, std::shared_ptr<RInside> R);
+void param_string_to_R_vars(const std::string& param_string, Parameters* params, std::shared_ptr<RInside> R);
 
 
 /**

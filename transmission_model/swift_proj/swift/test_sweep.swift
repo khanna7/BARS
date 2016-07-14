@@ -2,9 +2,9 @@ import io;
 import sys;
 import files;
 
-app (file out, file err) trans_model (file shfile, string model_dir, string props_file, string param_line)
+app (file out, file err) trans_model (file shfile, string m_dir, string p_file, string p_line)
 {
-    "bash" shfile model_dir props_file param_line @stdout=out @stderr=err;
+    "bash" shfile m_dir p_file p_line @stdout=out @stderr=err;
 }
 
 app (void o) make_dir(string dirname) {
