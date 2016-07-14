@@ -4,10 +4,17 @@
  *  Created on: Feb 16, 2016
  *      Author: nick
  */
+#include <exception>
+#include <map>
 
 #include "utils.h"
 
+#include "boost/tokenizer.hpp"
+#include "boost/algorithm/string.hpp"
+
 //#include "boost/algorithm/string.hpp"
+
+using namespace std;
 
 namespace TransModel {
 
@@ -15,10 +22,51 @@ const std::string ACUTE_LENGTH = "acute.length";
 const std::string CHRONIC_LENGTH = "chronic.length";
 const std::string LATE_LENGTH = "late.length";
 
-void add_from_R(const std::string& r_file, Parameters* params, std::shared_ptr<RInside> R) {
+void parse_parameters(std::map<string, double>& props, const std::string& param_string) {
 
-	std::string cmd = "source(file=\"" + r_file + "\")";
+	boost::char_separator<char> comma_sep(",");
+	boost::tokenizer<boost::char_separator<char> > comma_tok(param_string, comma_sep);
+
+	for (auto item : comma_tok) {
+		boost::trim(item);
+		size_t pos = item.find_first_of("=");
+		if (pos == std::string::npos) {
+			throw invalid_argument("Invalid parameter: " + item);
+		}
+
+		string key(item.substr(0, pos));
+		boost::trim(key);
+		if (key.length() == 0) {
+			throw invalid_argument("Invalid parameter: " + item);
+		}
+
+		string val(item.substr(pos + 1, item.length()));
+		boost::trim(val);
+		if (val.length() == 0) {
+			throw invalid_argument("Invalid parameter: " + item);
+		}
+		props.emplace(key, stod(val));
+	}
+}
+
+void param_string_to_R_vars(const std::string& param_string, std::shared_ptr<RInside> R) {
+	map<string, double> props;
+	parse_parameters(props, param_string);
+	for (auto item : props) {
+		(*R)[item.first] = item.second;
+	}
+}
+
+void init_parameters(const std::string& non_derived, const std::string& derived, const std::string& param_string, Parameters* params, std::shared_ptr<RInside> R) {
+
+	std::string cmd = "source(file=\"" + non_derived + "\")";
 	R->parseEvalQ(cmd);
+
+	param_string_to_R_vars(param_string, R);
+
+	cmd = "source(file=\"" + derived + "\")";
+	R->parseEvalQ(cmd);
+
 	SEXP result;
 	R->parseEval("ls()", result);
 

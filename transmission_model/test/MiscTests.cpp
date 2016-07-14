@@ -22,15 +22,30 @@ TEST(ParametersTests, TestCreateFromR) {
 	//RInstance::rptr
 	repast::Properties props("../test_data/test.props");
 	Parameters::initialize(props);
-	add_from_R("../test_data/parameters.R", Parameters::instance(), RInstance::rptr);
+	init_parameters("../test_data/parameters.R", "../test_data/params_derived.R", "", Parameters::instance(), RInstance::rptr);
 
 	Parameters* params = Parameters::instance();
 	ASSERT_EQ(1.11, params->getDoubleParameter(B3_FEMALE));
 	ASSERT_EQ(1, params->getIntParameter(ACUTE_LENGTH_MIN));
 	ASSERT_EQ(3.5f, params->getFloatParameter(STOP_AT));
+	ASSERT_EQ(40.5f, params->getDoubleParameter("mid.age"));
 
 	// make sure that R vectors of size > 1 are ignored
 	ASSERT_FALSE(params->contains("vector.param"));
+
+	RInstance::rptr->parseEvalQ("rm(list=ls())");
+	// override min and max age, so that derived mid.age should now be 6
+	std::string param_string("min.age=2,max.age=10");
+	init_parameters("../test_data/parameters.R", "../test_data/params_derived.R", param_string, Parameters::instance(), RInstance::rptr);
+	ASSERT_EQ(6.0, params->getDoubleParameter("mid.age"));
+}
+
+TEST(ParametersTests, TestParameterParsing) {
+	std::string params("run=1,num.foo=3.5,x.y.z=4.2");
+	TransModel::param_string_to_R_vars(params, RInstance::rptr);
+	ASSERT_EQ(1, as<int>((*RInstance::rptr)["run"]));
+	ASSERT_EQ(3.5, as<double>((*RInstance::rptr)["num.foo"]));
+	ASSERT_EQ(4.2, as<double>((*RInstance::rptr)["x.y.z"]));
 }
 
 struct MockGen {

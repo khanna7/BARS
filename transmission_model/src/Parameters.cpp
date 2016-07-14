@@ -20,7 +20,8 @@ const std::string CASUAL_NET_VAR = "casual.net.variable.name";
 
 
 const std::string STOP_AT = "stop.at";
-const std::string R_PARAMETERS_FILE = "r.parameters.file";
+const std::string R_PARAMETERS_DERIVED = "r.parameters.derived";
+const std::string R_PARAMETERS_NON_DERIVED = "r.parameters.non.derived";
 const std::string R_FILE = "r.file";
 const std::string MAIN_NETWORK_FILE = "main.network.file";
 const std::string CASUAL_NETWORK_FILE = "casual.network.file";

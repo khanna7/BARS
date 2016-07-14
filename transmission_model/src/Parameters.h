@@ -9,7 +9,8 @@ extern const std::string NET_VAR;
 extern const std::string CASUAL_NET_VAR;
 
 extern const std::string STOP_AT;
-extern const std::string R_PARAMETERS_FILE;
+extern const std::string R_PARAMETERS_DERIVED;
+extern const std::string R_PARAMETERS_NON_DERIVED;
 extern const std::string R_FILE;
 extern const std::string MAIN_NETWORK_FILE;
 extern const std::string CASUAL_NETWORK_FILE;

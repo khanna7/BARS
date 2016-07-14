@@ -3,7 +3,9 @@ stop.at = 2500
 net.variable.name = nw
 casual.net.variable.name = n_cas
 
-r.parameters.file = ../r/common/chicago_parameters.R
+r.parameters.non.derived = ../r/common/chi_params_nonderived.R
+r.parameters.derived = ../r/common/chi_params_derived.R
+
 r.file = ../r/network_model/transmission_model.R
 
 # if these properties are not commented out

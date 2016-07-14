@@ -19,13 +19,19 @@
 
 namespace TransModel {
 
+/**
+ * Parses a string into individual parameter key value pairs and then creates
+ * the corresponding variables in R.
+ *
+ * @param param_string a string with the format X=Y,...
+ */
+void param_string_to_R_vars(const std::string& param_string, std::shared_ptr<RInside> R);
+
 
 /**
- * Adds the variables in the specified r_file to the specified parameters as named
- * parameters. This should be run before any other R code as it sources the file
- * and calls ls() to get the variables.
+ *
  */
-void add_from_R(const std::string& r_file, Parameters* params, std::shared_ptr<RInside> R);
+void init_parameters(const std::string& non_derived, const std::string& derived, const std::string& param_string, Parameters* params, std::shared_ptr<RInside> R);
 
 }
 

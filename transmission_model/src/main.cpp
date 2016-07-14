@@ -24,9 +24,9 @@ void load_networks(std::shared_ptr<RInside>& R, const std::string& main_file, co
 }
 
 void usage() {
-	std::cerr << "usage: transmission_model repast_config model_config" << std::endl;
-	std::cerr << "  first string: string is the path to the Repast HPC \n\tconfiguration properties file" << std::endl;
-	std::cerr << "  second string: string is the path to the model properties file" << std::endl;
+	std::cerr << "usage: transmission_model model_config [parameter string]" << std::endl;
+	std::cerr << "  model_config: path to the model properties file" << std::endl;
+	std::cerr << "  parameter_string: optional string of parameters to override those in the non derived R parameters file" << std::endl;
 }
 
 void run(std::string propsFile, int argc, char** argv) {
@@ -38,12 +38,20 @@ void run(std::string propsFile, int argc, char** argv) {
 	}
 
 	repast::Properties props(propsFile, argc, argv);
-	//props.putProperty("random.seed", i);
 	repast::initializeRandom(props);
 	std::shared_ptr<RInside> R = std::make_shared<RInside>(argc, argv);
 
 	TransModel::Parameters::initialize(props);
-	TransModel::add_from_R(Parameters::instance()->getStringParameter(R_PARAMETERS_FILE), Parameters::instance(), R);
+	const std::string non_derived(Parameters::instance()->getStringParameter(R_PARAMETERS_NON_DERIVED));
+	const std::string derived(Parameters::instance()->getStringParameter(R_PARAMETERS_DERIVED));
+
+	std::string param_string;
+	if (argc == 3) {
+		param_string = argv[2];
+	}
+
+	TransModel::init_parameters(non_derived, derived, param_string, Parameters::instance(), R);
+
 	init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE));
 
 	std::string net_var = Parameters::instance()->getStringParameter(NET_VAR);
@@ -70,17 +78,16 @@ void run(std::string propsFile, int argc, char** argv) {
 int main(int argc, char *argv[]) {
 	boost::mpi::environment env(argc, argv);
 
-	if (argc < 3) {
+	if (argc < 2) {
 		usage();
 		return -1;
 	}
 
-	std::string config(argv[1]);
-	std::string props(argv[2]);
+	std::string props(argv[1]);
 
 	try {
 		boost::mpi::communicator world;
-		repast::RepastProcess::init(config);
+		repast::RepastProcess::init("");
 		run(props, argc, argv);
 	} catch (std::exception& ex) {
 		std::cerr << ex.what() << std::endl;
