@@ -28,15 +28,17 @@ void load_networks(std::shared_ptr<RInside>& R, const std::string& main_file, co
 void usage() {
 	std::cerr << "usage: transmission_model model_config [parameter string]" << std::endl;
 	std::cerr << "  model_config: path to the model properties file" << std::endl;
-	std::cerr << "  parameter_string: optional string of parameters to override those in the non derived R parameters file" << std::endl;
+	std::cerr
+			<< "  parameter_string: optional string of parameters to override those in the non derived R parameters file"
+			<< std::endl;
 }
 
 void run(std::string propsFile, int argc, char** argv) {
 	//boost::mpi::communicator comm;
 	//if (comm.rank() == 0) {
-		std::string time;
-		repast::timestamp(time);
-		std::cout << "Start Time: " << time << std::endl;
+	std::string time;
+	repast::timestamp(time);
+	std::cout << "Start Time: " << time << std::endl;
 	//}
 
 	repast::Properties props(propsFile, argc, argv);
@@ -74,14 +76,14 @@ void run(std::string propsFile, int argc, char** argv) {
 	repast::RepastProcess::instance()->getScheduleRunner().run();
 
 	//if (comm.rank() == 0) {
-		//std::string time;
-		repast::timestamp(time);
-		std::cout << "End Time: " << time << std::endl;
+	//std::string time;
+	repast::timestamp(time);
+	std::cout << "End Time: " << time << std::endl;
 	//}
 }
 
 int main(int argc, char *argv[]) {
-		boost::mpi::environment env(argc, argv);
+	boost::mpi::environment env(argc, argv);
 
 	if (argc < 2) {
 		usage();
