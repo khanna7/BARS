@@ -2,6 +2,8 @@ import io;
 import sys;
 import files;
 
+string tproot = getenv("T_PROJECT_ROOT");
+
 app (file out, file err) trans_model (file shfile, string m_dir, string p_file, string p_line)
 {
     "bash" shfile m_dir p_file p_line @stdout=out @stderr=err;
@@ -12,7 +14,7 @@ app (void o) make_dir(string dirname) {
 }
 
 
-file trans_model_sh = input("../scripts/trans_model.sh");
+file trans_model_sh = input(tproot + "/scripts/trans_model.sh");
 string model_dir = argv("md");
 string props_file = argv("props");
 
