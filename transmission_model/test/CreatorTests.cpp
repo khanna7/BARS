@@ -60,7 +60,7 @@ TEST(CreatorTests, TestUninfectedPersonCreation) {
 	List val = as<List>(rnet["val"]);
 	List p_list = as<List>(val[0]);
 	// make sure I have the right one
-	ASSERT_NEAR( 43.92679, as<double>(p_list["age"]), 0.00001);
+	ASSERT_NEAR(43.92679, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
 	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
@@ -145,14 +145,14 @@ TEST(CreatorTests, TestCreatorFromSavedNet) {
 
 void create_stats() {
 
-	StatsBuilder builder;
-	builder.countsWriter("/dev/null");
-	builder.partnershipEventWriter("/dev/null");
-	builder.infectionEventWriter("/dev/null");
-	builder.biomarkerWriter("/dev/null");
-	builder.deathEventWriter("/dev/null");
-	builder.personDataRecorder("/dev/null");
-	builder.testingEventWriter("/dev/null");
+	StatsBuilder builder("/dev");
+	builder.countsWriter("null");
+	builder.partnershipEventWriter("null");
+	builder.infectionEventWriter("null");
+	builder.biomarkerWriter("null");
+	builder.deathEventWriter("null");
+	builder.personDataRecorder("null");
+	builder.testingEventWriter("null");
 	builder.createStatsSingleton();
 }
 

@@ -50,14 +50,14 @@ protected:
 		std::string cmd = "source(file=\"../test_data/network_tests.R\")";
 		RInstance::rptr->parseEvalQ(cmd);
 
-		StatsBuilder builder;
-		builder.countsWriter("/dev/null");
-		builder.partnershipEventWriter("/dev/null");
-		builder.infectionEventWriter("/dev/null");
-		builder.biomarkerWriter("/dev/null");
-		builder.deathEventWriter("/dev/null");
-		builder.personDataRecorder("/dev/null");
-		builder.testingEventWriter("/dev/null");
+		StatsBuilder builder("/dev");
+		builder.countsWriter("null");
+		builder.partnershipEventWriter("null");
+		builder.infectionEventWriter("null");
+		builder.biomarkerWriter("null");
+		builder.deathEventWriter("null");
+		builder.personDataRecorder("null");
+		builder.testingEventWriter("null");
 		builder.createStatsSingleton();
 	}
 

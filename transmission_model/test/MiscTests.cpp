@@ -22,7 +22,8 @@ TEST(ParametersTests, TestCreateFromR) {
 	//RInstance::rptr
 	repast::Properties props("../test_data/test.props");
 	Parameters::initialize(props);
-	init_parameters("../test_data/parameters.R", "../test_data/params_derived.R", "", Parameters::instance(), RInstance::rptr);
+	init_parameters("../test_data/parameters.R", "../test_data/params_derived.R", "", Parameters::instance(),
+			RInstance::rptr);
 
 	Parameters* params = Parameters::instance();
 	ASSERT_EQ(1.11, params->getDoubleParameter(B3_FEMALE));
@@ -36,13 +37,16 @@ TEST(ParametersTests, TestCreateFromR) {
 	RInstance::rptr->parseEvalQ("rm(list=ls())");
 	// override min and max age, so that derived mid.age should now be 6
 	std::string param_string("min.age=2,max.age=10");
-	init_parameters("../test_data/parameters.R", "../test_data/params_derived.R", param_string, Parameters::instance(), RInstance::rptr);
+	init_parameters("../test_data/parameters.R", "../test_data/params_derived.R", param_string, Parameters::instance(),
+			RInstance::rptr);
 	ASSERT_EQ(6.0, params->getDoubleParameter("mid.age"));
 }
 
 TEST(ParametersTests, TestParameterParsing) {
 	std::string params("run=1,num.foo=3.5,x.y.z=4.2");
-	TransModel::param_string_to_R_vars(params, RInstance::rptr);
+	repast::Properties props("../test_data/test.props");
+	Parameters::initialize(props);
+	TransModel::param_string_to_R_vars(params, Parameters::instance(), RInstance::rptr);
 	ASSERT_EQ(1, as<int>((*RInstance::rptr)["run"]));
 	ASSERT_EQ(3.5, as<double>((*RInstance::rptr)["num.foo"]));
 	ASSERT_EQ(4.2, as<double>((*RInstance::rptr)["x.y.z"]));
@@ -55,16 +59,15 @@ struct MockGen {
 	}
 };
 
-
 TEST(DiagnoserTests, TestDiagnosis) {
-	StatsBuilder builder;
-	builder.countsWriter("/dev/null");
-	builder.partnershipEventWriter("/dev/null");
-	builder.infectionEventWriter("/dev/null");
-	builder.biomarkerWriter("/dev/null");
-	builder.deathEventWriter("/dev/null");
-	builder.personDataRecorder("/dev/null");
-	builder.testingEventWriter("/dev/null");
+	StatsBuilder builder("/dev");
+	builder.countsWriter("null");
+	builder.partnershipEventWriter("null");
+	builder.infectionEventWriter("null");
+	builder.biomarkerWriter("null");
+	builder.deathEventWriter("null");
+	builder.personDataRecorder("null");
+	builder.testingEventWriter("null");
 	builder.createStatsSingleton();
 
 	std::shared_ptr<MockGen> gen = std::make_shared<MockGen>();
@@ -97,7 +100,7 @@ TEST(DiagnoserTests, TestDiagnosis) {
 	infection_params.infection_status = true;
 	infection_params.time_of_infection = 8;
 	// false because window not passed
-	ASSERT_TRUE(diagnoser.test(8, infection_params)  == Result::NEGATIVE);
+	ASSERT_TRUE(diagnoser.test(8, infection_params) == Result::NEGATIVE);
 	ASSERT_EQ(8, diagnoser.lastTestAt());
 	ASSERT_EQ(2, diagnoser.testCount());
 
