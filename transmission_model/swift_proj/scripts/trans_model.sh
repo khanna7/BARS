@@ -9,4 +9,4 @@ param_line=$3
 echo "cding to $model_dir"
 cd $model_dir
 
-./transmission_model-0.0 $props_file $param_line
+mpirun -n 1 ./transmission_model-0.0 $props_file $param_line

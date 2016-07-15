@@ -25,7 +25,7 @@ foreach s,i in upf_lines {
   make_dir(out_dir) => {
     file out <out_dir + "/out.txt">;
     file err <out_dir + "/err.txt">;
-    string param_line = "run.number=%i,output.directory=%s,%s" % (i, base_out, s);
+    string param_line = "run=%i,output.directory=%s,%s" % (i, base_out, s);
     (out,err) = trans_model(trans_model_sh, model_dir, props_file, param_line);
   }
 }
