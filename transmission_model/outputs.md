@@ -1,4 +1,22 @@
 # Model Outputs
+
+The location of the model output (csv files etc.) is determined by the *output.directory" property in the model properties file. The individual output described below will be written into this directory using the file names specifed for each file. For example,
+
+```
+output.directory = /home/nick/Documents/BARS/output
+partnership.events.file = partnership_events.csv
+```
+will write the partnership event output data (see below) to a /home/nick/Documents/BARS/output/partnership_events.csv file.
+
+If the model input parameters include a *run* parameter then the run number will be appended to the *output.directory*. For example,
+
+```
+run = 1
+output.directory = /home/nick/Documents/BARS/output
+partnership.events.file = partnership_events.csv
+```
+will write the partnership event output data to a /home/nick/Documents/BARS/output_1/partnership_events.csv file. The expectation is that the mechanism that performs the model parameter exploration will pass a *run* parameter that identifies each model run and that the output of that run will be written into the appropriately named output directory.
+
 Note that where the output is written to a file, the model will not overwrite an existing file. It will create a new output file name by appending a number to the file in order to create a file that does not already exist. For example, if counts.csv, counts_1.csv, and counts_2.csv exist, and output is to be written to counts.csv, then the new output will be written to counts_3.csv.
 
 ### Per timestep aggregate data
