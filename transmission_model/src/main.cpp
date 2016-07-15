@@ -32,12 +32,12 @@ void usage() {
 }
 
 void run(std::string propsFile, int argc, char** argv) {
-	boost::mpi::communicator comm;
-	if (comm.rank() == 0) {
+	//boost::mpi::communicator comm;
+	//if (comm.rank() == 0) {
 		std::string time;
 		repast::timestamp(time);
 		std::cout << "Start Time: " << time << std::endl;
-	}
+	//}
 
 	repast::Properties props(propsFile, argc, argv);
 	repast::initializeRandom(props);
@@ -73,15 +73,15 @@ void run(std::string propsFile, int argc, char** argv) {
 	// now can run
 	repast::RepastProcess::instance()->getScheduleRunner().run();
 
-	if (comm.rank() == 0) {
-		std::string time;
+	//if (comm.rank() == 0) {
+		//std::string time;
 		repast::timestamp(time);
 		std::cout << "End Time: " << time << std::endl;
-	}
+	//}
 }
 
 int main(int argc, char *argv[]) {
-	boost::mpi::environment env(argc, argv);
+		boost::mpi::environment env(argc, argv);
 
 	if (argc < 2) {
 		usage();
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 	std::string props(argv[1]);
 
 	try {
-		boost::mpi::communicator world;
+		//boost::mpi::communicator world;
 		repast::RepastProcess::init("");
 		run(props, argc, argv);
 	} catch (std::exception& ex) {
