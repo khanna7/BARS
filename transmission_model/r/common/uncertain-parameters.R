@@ -2,7 +2,7 @@
 
 #####################
    ## Transmission Parameters
-   num.sex.acts.per.timestep <- 2.4*size.of.timestep/7 ##vary between 0.5 and 3
+   num.sex.acts.base <- 2.4 ##vary between 0.5 and 3
    ## acute, chornic, late multipliers: might also be varied, but i am not sure about the ranges
    
 #####################
