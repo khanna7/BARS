@@ -19,6 +19,9 @@ will write the partnership event output data to a /home/nick/Documents/BARS/outp
 
 Note that where the output is written to a file, the model will not overwrite an existing file. It will create a new output file name by appending a number to the file in order to create a file that does not already exist. For example, if counts.csv, counts_1.csv, and counts_2.csv exist, and output is to be written to counts.csv, then the new output will be written to counts_3.csv.
 
+### parameters.txt
+Parameters.txt contains the parameter values for a model run. It is written out immediately after all the [model inputs](inputs.md) have been loaded. 
+
 ### Per timestep aggregate data
 The aggregate data consist of various aggregate per time step stats (e.g. the total number of persons infected during a timestep). These are recorded in the file defined by *per.tick.counts.output.file* in the model properties file. The format is csv with each row recording the stats for that timestep. The columns are:
 * tick: the timestep at which the stats were generated
