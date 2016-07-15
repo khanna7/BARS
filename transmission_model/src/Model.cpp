@@ -22,6 +22,7 @@
 #include "Stats.h"
 #include "StatsBuilder.h"
 #include "file_utils.h"
+#include "utils.h"
 //#include "EventWriter.h"
 
 using namespace Rcpp;
@@ -34,7 +35,7 @@ namespace TransModel {
 
 struct PersonToVALForSimulate {
 
-	void operator()(const PersonPtr& p, List& vertex) const {
+	void operator()(const PersonPtr& p, List& vertex, double tick) const {
 		vertex["role"] = p->role();
 		vertex["inf.status"] = p->isInfected();
 	}
@@ -42,16 +43,23 @@ struct PersonToVALForSimulate {
 
 struct PersonToVAL {
 
-	void operator()(const PersonPtr& p, List& vertex) const {
+	void operator()(const PersonPtr& p, List& vertex, double tick) const {
 		vertex[C_ID] = p->id();
 		vertex["age"] = p->age();
 		vertex["cd4.count.today"] = p->infectionParameters().cd4_count;
 		vertex["circum.status"] = p->isCircumcised();
 		vertex["role"] = p->role();
 
+		vertex["diagnosed"] = p->isDiagnosed();
+		const Diagnoser<GeometricDistribution>& diagnoser = p->diagnoser();
+		vertex["number.of.tests"] = diagnoser.testCount();
+		vertex["time.until.next.test"] = diagnoser.timeUntilNextTest(tick);
+		vertex["lag.bet.diagnosis.and.art.init"] = p->diagnosisARTLag();
+		vertex["non.testers"] = !(p->isTestable());
+		vertex["prep.status"] = p->isOnPrep();
+
 		if (p->isInfected()) {
 			vertex["infectivity"] = p->infectivity();
-			vertex["art.covered"] = p->isARTCovered();
 			vertex["art.status"] = p->isOnART();
 			vertex["inf.status"] = p->isInfected();
 			vertex["time.since.infection"] = p->infectionParameters().time_since_infection;
@@ -85,15 +93,9 @@ struct PersonToVAL {
 	}
 };
 
-ARTScheduler* create_art_scheduler(double tick, float size_of_timestep) {
-	double art_delay = Parameters::instance()->getDoubleParameter(ART_INIT_TIME);
-	double art_at_tick = art_delay / size_of_timestep + tick;
-	return new ARTScheduler((float) art_at_tick);
-}
-
 shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float circ_mult = (float) Parameters::instance()->getDoubleParameter(CIRCUM_MULT);
-	float prep_mult = (float) Parameters::instance()->getDoubleParameter(PREP_MULT);
+	float prep_mult = (float) Parameters::instance()->getDoubleParameter(PREP_TRANS_REDUCTION);
 
 //	string str_dur_inf = Parameters::instance()->getStringParameter(DUR_INF_BY_AGE);
 //	vector<string> tokens;
@@ -106,20 +108,6 @@ shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float duration = Parameters::instance()->getFloatParameter(DUR_INF_BY_AGE);
 	vector<float> dur_inf_by_age(4, duration);
 	return make_shared<TransmissionRunner>(circ_mult, prep_mult, dur_inf_by_age);
-}
-
-int calculate_role() {
-	double insertive = Parameters::instance()->getDoubleParameter(PR_INSERTIVE);
-	double receptive = Parameters::instance()->getDoubleParameter(PR_RECEPTIVE) + insertive;
-
-	double draw = Random::instance()->nextDouble();
-	if (draw <= insertive) {
-		return 0;
-	} else if (draw <= receptive) {
-		return 1;
-	} else {
-		return 2;
-	}
 }
 
 CD4Calculator create_CD4Calculator() {
@@ -186,24 +174,30 @@ void init_stage_map(map<float, shared_ptr<Stage>> &stage_map) {
 }
 
 void init_generators() {
-	float art_coverage_rate = Parameters::instance()->getDoubleParameter(BASELINE_ART_COVERAGE_RATE);
+	float non_tester_rate = Parameters::instance()->getDoubleParameter(NON_TESTERS_PROP);
 	BinomialGen coverage(repast::Random::instance()->engine(),
-			boost::random::binomial_distribution<>(1, art_coverage_rate));
-	Random::instance()->putGenerator(ART_COVERAGE_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(coverage));
+			boost::random::binomial_distribution<>(1, non_tester_rate));
+	Random::instance()->putGenerator(NON_TESTERS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(coverage));
 
 	float circum_rate = Parameters::instance()->getDoubleParameter(CIRCUM_RATE);
 	BinomialGen rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, circum_rate));
 	Random::instance()->putGenerator(CIRCUM_STATUS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(rate));
+
+	float prep_rate = Parameters::instance()->getDoubleParameter(PREP_RATE);
+	BinomialGen p_rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, prep_rate));
+	Random::instance()->putGenerator(PREP_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(p_rate));
+
 }
 
 void init_stats() {
-	StatsBuilder builder;
+	StatsBuilder builder(output_directory(Parameters::instance()));
 	builder.countsWriter(Parameters::instance()->getStringParameter(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
 	builder.partnershipEventWriter(Parameters::instance()->getStringParameter(PARTNERSHIP_EVENTS_FILE));
 	builder.infectionEventWriter(Parameters::instance()->getStringParameter(INFECTION_EVENTS_FILE));
 	builder.biomarkerWriter(Parameters::instance()->getStringParameter(BIOMARKER_FILE));
 	builder.deathEventWriter(Parameters::instance()->getStringParameter(DEATH_EVENT_FILE));
 	builder.personDataRecorder(Parameters::instance()->getStringParameter(PERSON_DATA_FILE));
+	builder.testingEventWriter(Parameters::instance()->getStringParameter(TESTING_EVENT_FILE));
 
 	builder.createStatsSingleton();
 }
@@ -249,13 +243,14 @@ void init_biomarker_logging(Network<Person>& net, std::set<int>& ids_to_log) {
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
-				0 }, previous_pop_size { 0 }, max_id { 0 }, stage_map { }, persons_to_log { } {
+				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { },
+				person_creator{trans_runner, Parameters::instance()->getDoubleParameter(DAILY_TESTING_PROB),
+					Parameters::instance()->getDoubleParameter(DETECTION_WINDOW)} {
 
 	// get initial stats
 	init_stats();
 
 	List rnet = as<List>((*R)[net_var]);
-	PersonCreator person_creator(trans_runner);
 	initialize_network(rnet, net, person_creator, MAIN_NETWORK_TYPE);
 	rnet = as<List>((*R)[cas_net_var]);
 	initialize_edges(rnet, net, CASUAL_NETWORK_TYPE);
@@ -264,7 +259,6 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	init_network_save(this);
 
 	current_pop_size = net.vertexCount();
-	max_id = net.vertexCount();
 
 	init_biomarker_logging(net, persons_to_log);
 	Stats* stats = TransModel::Stats::instance();
@@ -290,6 +284,12 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 }
 
 void Model::atEnd() {
+	double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
+	PersonDataRecorder& pdr = Stats::instance()->personDataRecorder();
+	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+		pdr.finalize(*iter, ts);
+	}
+
 	// forces stat writing via destructors
 	delete Stats::instance();
 }
@@ -357,10 +357,26 @@ void Model::step() {
 	stats->resetForNextTimeStep();
 }
 
+void schedule_art(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep) {
+	double art_at_tick = person->diagnosisARTLag() / size_of_timestep + tick;
+	ARTScheduler* scheduler = nullptr;
+	auto iter = art_map.find(art_at_tick);
+	if (iter == art_map.end()) {
+		scheduler = new ARTScheduler((float) art_at_tick);
+		RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick - 0.1,
+				repast::Schedule::FunctorPtr(scheduler));
+		art_map.emplace(art_at_tick, scheduler);
+	} else {
+		scheduler = iter->second;
+	}
+	scheduler->addPerson(person);
+}
+
 void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 	float sex_acts_per_timestep = Parameters::instance()->getFloatParameter(NUM_SEX_ACTS_PER_TIMESTEP);
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
+	map<double, ARTScheduler*> art_map;
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		PersonPtr person = (*iter);
 		// update viral load
@@ -388,6 +404,12 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 			stats->recordBiomarker(t, person);
 		}
 
+		if (person->isTestable() && !person->isDiagnosed()) {
+			if (person->diagnose(t)) {
+				schedule_art(person, art_map, t, size_of_timestep);
+			}
+		}
+
 		person->step(size_of_timestep);
 		if (dead(t, person, max_age)) {
 			iter = net.removeVertex(iter);
@@ -411,19 +433,14 @@ void Model::entries(double tick, float size_of_timestep) {
 		stats->currentCounts().entries = entries;
 		std::cout << "entries: " << entries << std::endl;
 
-		ARTScheduler* art_scheduler = create_art_scheduler(tick, size_of_timestep);
 		double infected_prob = Parameters::instance()->getDoubleParameter(INIT_HIV_PREV_ENTRIES);
 
 		for (int i = 0; i < entries; ++i) {
-			int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
-			VertexPtr<Person> p = make_shared<Person>(max_id, min_age, status == 1, calculate_role());
+			VertexPtr<Person> p = person_creator(tick, min_age);
 			if (Random::instance()->nextDouble() <= infected_prob) {
 				// as if infected at previous timestep
 				float infected_at = tick - (size_of_timestep * 1);
 				trans_runner->infect(p, infected_at);
-				if (p->isARTCovered()) {
-					art_scheduler->addPerson(p);
-				}
 				float viral_load = viral_load_calculator.calculateViralLoad(p->infectionParameters());
 				p->setViralLoad(viral_load);
 				// update cd4
@@ -433,12 +450,8 @@ void Model::entries(double tick, float size_of_timestep) {
 				stats->recordInfectionEvent(infected_at, p);
 			}
 			net.addVertex(p);
-			++max_id;
 			Stats::instance()->personDataRecorder().initRecord(p, tick);
 		}
-
-		RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_scheduler->artAtTick() + 0.1,
-				repast::Schedule::FunctorPtr(art_scheduler));
 	}
 }
 
@@ -452,7 +465,6 @@ std::string get_net_out_filename(const std::string& file_name) {
 	fs::path newName(filepath.parent_path() / ss.str());
 
 	return newName.string();
-
 }
 
 void Model::saveRNetwork() {
@@ -461,15 +473,15 @@ void Model::saveRNetwork() {
 	PersonToVAL p2val;
 
 	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
-	create_r_network(rnet, net, idx_map, p2val, MAIN_NETWORK_TYPE);
-	std::string file_name = Parameters::instance()->getStringParameter(NET_SAVE_FILE);
+	create_r_network(tick, rnet, net, idx_map, p2val, MAIN_NETWORK_TYPE);
+	std::string file_name = output_directory(Parameters::instance()) + "/" + Parameters::instance()->getStringParameter(NET_SAVE_FILE);
 	as<Function>((*R)["nw_save"])(rnet, unique_file_name(get_net_out_filename(file_name)), tick);
 
 	if (Parameters::instance()->contains(CASUAL_NET_SAVE_FILE)) {
 		idx_map.clear();
 		List cas_net;
-		create_r_network(cas_net, net, idx_map, p2val, CASUAL_NETWORK_TYPE);
-		file_name = Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
+		create_r_network(tick, cas_net, net, idx_map, p2val, CASUAL_NETWORK_TYPE);
+		file_name =  output_directory(Parameters::instance()) + "/" + Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
 		as<Function>((*R)["nw_save"])(cas_net, unique_file_name(get_net_out_filename(file_name)), tick);
 	}
 }
@@ -517,8 +529,6 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 		}
 	}
 
-	ARTScheduler* art_scheduler = create_art_scheduler(time_stamp, size_of_timestep);
-
 	Stats* stats = Stats::instance();
 	for (auto& person : infecteds) {
 		// if person has multiple partners who are infected,
@@ -526,16 +536,10 @@ void Model::runTransmission(double time_stamp, float size_of_timestep) {
 		// and so may appear more than once in the infecteds list
 		if (!person->isInfected()) {
 			trans_runner->infect(person, time_stamp);
-			if (person->isARTCovered()) {
-				art_scheduler->addPerson(person);
-			}
 			++stats->currentCounts().infected;
 			stats->personDataRecorder().recordInfection(person, time_stamp);
 		}
 	}
-
-	RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_scheduler->artAtTick() + 0.1,
-			repast::Schedule::FunctorPtr(art_scheduler));
 }
 
 } /* namespace TransModel */

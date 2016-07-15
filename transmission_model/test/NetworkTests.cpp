@@ -50,14 +50,14 @@ protected:
 		std::string cmd = "source(file=\"../test_data/network_tests.R\")";
 		RInstance::rptr->parseEvalQ(cmd);
 
-		StatsBuilder builder;
-		builder.countsWriter("/dev/null");
-		builder.partnershipEventWriter("/dev/null");
-		builder.infectionEventWriter("/dev/null");
-		builder.biomarkerWriter("/dev/null");
-		builder.deathEventWriter("/dev/null");
-		builder.personDataRecorder("/dev/null");
-
+		StatsBuilder builder("/dev");
+		builder.countsWriter("null");
+		builder.partnershipEventWriter("null");
+		builder.infectionEventWriter("null");
+		builder.biomarkerWriter("null");
+		builder.deathEventWriter("null");
+		builder.personDataRecorder("null");
+		builder.testingEventWriter("null");
 		builder.createStatsSingleton();
 	}
 
@@ -354,7 +354,7 @@ struct AgentCreator {
 			id(0) {
 	}
 
-	VertexPtr<Agent> operator()(List& val) {
+	VertexPtr<Agent> operator()(List& val, double tick) {
 		int age = as<int>(val["age"]);
 		return std::make_shared<Agent>(id++, age);
 	}
@@ -362,7 +362,7 @@ struct AgentCreator {
 
 struct AgeSetter {
 
-	void operator()(const VertexPtr<Agent>& agent, List vertex) const {
+	void operator()(const VertexPtr<Agent>& agent, List vertex, double time) const {
 		vertex["age"] = agent->age();
 	}
 
@@ -388,7 +388,7 @@ TEST_F(NetworkTests, CreateRNetTests) {
 	List rnet;
 	map<unsigned int, unsigned int> idx_map;
 	AgeSetter setter;
-	create_r_network(rnet, net, idx_map, setter, 0);
+	create_r_network(1, rnet, net, idx_map, setter, 0);
 	ASSERT_EQ(4, idx_map.size());
 	// exp is vertex id
 	ASSERT_EQ(0, idx_map.at(1));

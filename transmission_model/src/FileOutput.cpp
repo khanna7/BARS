@@ -73,6 +73,13 @@ FileOutput::~FileOutput() {
 	close();
 }
 
+std::ostream& FileOutput::ostream() {
+	if (!open) {
+		throw std::logic_error("Cannot write to closed FileOutput");
+	}
+	return out;
+}
+
 std::ostream& FileOutput::operator<<(const std::string& val) {
 	if (open) {
 		out << val;

@@ -6,14 +6,16 @@
  */
 
 #include "Person.h"
+#include "Stats.h"
 
 using namespace Rcpp;
 
 namespace TransModel {
 
-Person::Person(int id, float age, bool circum_status, int role) :
+Person::Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser) :
 		id_(id), role_(role), age_(age), circum_status_(circum_status),
-		infection_parameters_(), infectivity_(0), prep_(false), dead_(false) {
+		infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF), dead_(false), diagnosed_(false), testable_(false),
+		diagnosis_art_lag(0), diagnoser_(diagnoser) {
 }
 
 //Person::Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth) : net(network), id_(id) {
@@ -25,8 +27,7 @@ Person::Person(int id, float age, bool circum_status, int role) :
 Person::~Person() {
 }
 
-void Person::infect(bool art_covered, float duration_of_infection, float time) {
-	infection_parameters_.art_covered = art_covered;
+void Person::infect(float duration_of_infection, float time) {
 	infection_parameters_.dur_inf_by_age = duration_of_infection;
 	infection_parameters_.infection_status = true;
 	infection_parameters_.time_since_infection = 0;
@@ -81,6 +82,22 @@ bool Person::deadOfAge(int max_age) {
 bool Person::deadOfInfection() {
 	return infection_parameters_.infection_status && !infection_parameters_.art_status &&
 			infection_parameters_.time_since_infection >= infection_parameters_.dur_inf_by_age;
+}
+
+bool Person::diagnose(double tick) {
+	Result result = diagnoser_.test(tick, infection_parameters_);
+	diagnosed_ = result == Result::POSITIVE;
+	if (result != Result::NO_TEST) {
+		Stats::instance()->recordTestingEvent(tick, id_, diagnosed_);
+		if (diagnosed_ && prep_ == PrepStatus::ON) {
+			prep_ = PrepStatus::OFF_INFECTED;
+		}
+	}
+	return diagnosed_;
+}
+
+double Person::timeUntilNextTest(double tick) const {
+	return diagnosed_ ? 0 : diagnoser_.timeUntilNextTest(tick);
 }
 
 } /* namespace TransModel */

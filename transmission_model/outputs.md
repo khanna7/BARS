@@ -1,5 +1,26 @@
 # Model Outputs
+
+The location of the model output (csv files etc.) is determined by the *output.directory* property in the model properties file. The individual output described below will be written into this directory using the file names specifed for each file. For example,
+
+```
+output.directory = /home/nick/Documents/BARS/output
+partnership.events.file = partnership_events.csv
+```
+will write the partnership event output data (see below) to a /home/nick/Documents/BARS/output/partnership_events.csv file.
+
+If the model input parameters include a *run* parameter then the run number will be appended to the *output.directory*. For example,
+
+```
+run = 1
+output.directory = /home/nick/Documents/BARS/output
+partnership.events.file = partnership_events.csv
+```
+will write the partnership event output data to a /home/nick/Documents/BARS/output_1/partnership_events.csv file. The expectation is that the mechanism that performs the model parameter exploration will pass a *run* parameter that identifies each model run and that the output of that run will be written into the appropriately named output directory.
+
 Note that where the output is written to a file, the model will not overwrite an existing file. It will create a new output file name by appending a number to the file in order to create a file that does not already exist. For example, if counts.csv, counts_1.csv, and counts_2.csv exist, and output is to be written to counts.csv, then the new output will be written to counts_3.csv.
+
+### parameters.txt
+Parameters.txt contains the parameter values for a model run. It is written out immediately after all the [model inputs](inputs.md) have been loaded. 
 
 ### Per timestep aggregate data
 The aggregate data consist of various aggregate per time step stats (e.g. the total number of persons infected during a timestep). These are recorded in the file defined by *per.tick.counts.output.file* in the model properties file. The format is csv with each row recording the stats for that timestep. The columns are:
@@ -92,9 +113,22 @@ Person data recording collects the following attributes for each person in the m
 * time of art cessation: the timestamp when the person went off of ART. If never went off of ART then -1.
 * prep status: The PrEP status of the person at death or simulation end
   * 0: not on PrEP
-  * 1: on PrEP
+  * 1: not on PrEP after being on PrEP and then diagnosed as positive
+  * 2: on PrEP
 * time of prep initiation: the timestep when the person went on PrEP. If never on PrEP, then -1.
-* time of prep cessation: the timestep when the person went off of PrEP. If never went of PrEP then -1.
+* time of prep cessation: the timestep when the person went off of PrEP. If never went off PrEP then -1.
+* number of tests: the number of diagnostic tests the person underwent
+* time since last test: the time since the person was last tested. If never tested, then -1.
 * diagnosis status: whether or not the person has been diagnosed.
   * 0: undiagnosed
   * 1: diagnosed
+
+### Testing Events
+Testing events are recorded in the file defined by the *testing.events.file* property. Each time a 
+person is tested an event is recorded. The format is csv with one row per event.
+* tick: the time at which the testing occurred
+* p_id: the id of the person tested
+* result: the result of the test.
+  * 0: negative test
+  * 1: positive test
+

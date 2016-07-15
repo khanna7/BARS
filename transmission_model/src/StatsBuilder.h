@@ -24,9 +24,11 @@ private:
 	std::shared_ptr<StatsWriter<Biomarker>> biomarker_writer;
 	std::shared_ptr<StatsWriter<DeathEvent>> death_writer;
 	std::string pd_fname;
+	std::shared_ptr<StatsWriter<TestingEvent>> tevent_writer;
+	std::string out_dir_;
 
 public:
-	StatsBuilder();
+	StatsBuilder(const std::string& out_dir);
 	virtual ~StatsBuilder();
 
 	StatsBuilder* countsWriter(const std::string& fname, unsigned int buffer = 1000);
@@ -34,6 +36,7 @@ public:
 	StatsBuilder* infectionEventWriter(const std::string& fname, unsigned int buffer = 1000);
 	StatsBuilder* biomarkerWriter(const std::string& fname, unsigned int buffer = 1000);
 	StatsBuilder* deathEventWriter(const std::string& fname, unsigned int buffer = 1000);
+	StatsBuilder* testingEventWriter(const std::string& fname, unsigned int buffer = 1000);
 	StatsBuilder* personDataRecorder(const std::string& fname);
 
 

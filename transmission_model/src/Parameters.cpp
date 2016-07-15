@@ -15,30 +15,34 @@ using namespace repast;
 
 namespace TransModel {
 
+const std::string RUN_NUMBER = "run";
+
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";
 
-
 const std::string STOP_AT = "stop.at";
-const std::string R_PARAMETERS_FILE = "r.parameters.file";
+const std::string R_PARAMETERS_DERIVED = "r.parameters.derived";
+const std::string R_PARAMETERS_NON_DERIVED = "r.parameters.non.derived";
 const std::string R_FILE = "r.file";
 const std::string MAIN_NETWORK_FILE = "main.network.file";
 const std::string CASUAL_NETWORK_FILE = "casual.network.file";
 const std::string EVENT_FILE = "event.file";
 const std::string EVENT_FILE_BUFFER_SIZE = "event.file.buffer.size";
 const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE= "per.tick.counts.output.file";
+const std::string OUTPUT_DIR = "output.directory";
 const std::string PARTNERSHIP_EVENTS_FILE = "partnership.events.file";
 const std::string INFECTION_EVENTS_FILE =  "infection.events.file";
 const std::string BIOMARKER_FILE = "biomarker.log.file";
 const std::string BIOMARKER_LOG_COUNT = "biomarker.number.of.persons.to.log";
 const std::string DEATH_EVENT_FILE = "death.events.file";
+const std::string TESTING_EVENT_FILE = "testing.events.file";
 const std::string PERSON_DATA_FILE = "person.data.file";
 const std::string NET_SAVE_FILE = "net.save.file";
 const std::string CASUAL_NET_SAVE_FILE = "casual.net.save.file";
 const std::string NET_SAVE_AT = "save.network.at";
 const std::string COUNT_OVERLAPS = "count.overlaps";
 
-const std::string PREP_MULT = "prep.mult";
+//const std::string PREP_MULT = "prep.mult";
 
 // generated from parameters.R
 const std::string ACUTE_LENGTH_MIN = "acute.length.min";
@@ -55,7 +59,6 @@ const std::string B6_AGE_15TO29 = "b6.age.15to29";
 const std::string B6_AGE_30TO39 = "b6.age.30to39";
 const std::string B6_AGE_40TO49 = "b6.age.40to49";
 const std::string B6_AGE_50ORMORE = "b6.age.50ormore";
-const std::string BASELINE_ART_COVERAGE_RATE = "baseline.art.coverage.rate";
 const std::string CD4_AT_INFECTION_MALE = "cd4.at.infection.male";
 const std::string CD4_REC_PER_TIMESTEP = "cd4.rec.per.timestep";
 const std::string CD4_RECOVERY_TIME = "cd4.recovery.time";
@@ -64,6 +67,9 @@ const std::string CHRONIC_LENGTH_MAX = "chronic.length.max";
 const std::string CIRCUM_MULT = "circum.mult";
 const std::string CIRCUM_RATE = "circum.rate";
 const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
+const std::string DAILY_TESTING_PROB = "daily.testing.prob";
+const std::string GLOBAL_DIAGNOSIS_ART_LAG = "lag.bet.diagnosis.and.art.init";
+const std::string DETECTION_WINDOW = "detection.window";
 const std::string DEG_SEQ = "deg_seq";
 const std::string DUR_INF = "dur.inf";
 const std::string DURATION = "duration";
@@ -79,11 +85,14 @@ const std::string LATE_STAGE_VIRAL_LOAD = "late.stage.viral.load";
 const std::string MAX_AGE = "max.age";
 const std::string MIN_AGE = "min.age";
 const std::string MIN_CHRONIC_INFECTIVITY_UNADJ = "min.chronic.infectivity.unadj";
+const std::string NON_TESTERS_PROP = "non.testers.prop";
 const std::string NUM_SEX_ACTS_PER_TIMESTEP = "num.sex.acts.per.timestep";
 const std::string PEAK_VIRAL_LOAD = "peak.viral.load";
 const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
 const std::string PREG_MULT = "preg.mult";
 const std::string PREG_SUSC_MULT = "preg.susc.mult";
+const std::string PREP_RATE = "prep.use.rate";
+const std::string PREP_TRANS_REDUCTION = "prep.transm.red";
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
 const std::string TIME_INFECTION_TO_LATE_STAGE = "time.infection.to.late.stage";
@@ -100,6 +109,13 @@ const std::string PR_INSERTIVE = "pr.insertive";
 const std::string PR_RECEPTIVE = "pr.receptive";
 
 Parameters* Parameters::instance_ = 0;
+
+std::ostream& operator<< (std::ostream& os, const Parameters* params) {
+	for (auto iter = params->props_.keys_begin(); iter != params->props_.keys_end(); ++iter) {
+		os << (*iter) << " : " << params->getStringParameter(*iter) << std::endl;
+	}
+	return os;
+}
 
 Parameters::Parameters(repast::Properties& props) :
 		props_(props)  {

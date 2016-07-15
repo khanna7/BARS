@@ -133,5 +133,21 @@
       pr_versatile_casual <- 1 - (pr_insertive_casual + pr_receptive_casual)
       ## serosorting
    
-      
-   
+    #####################
+    ## Testing and diagnosis
+    detection.window <- 22
+    mean.time.until.next.test <- 365*2
+    daily.testing.prob <- 1/mean.time.until.next.test
+    lag.bet.diagnosis.and.art.init <- 30
+    non.testers.prop <- 0.25  
+
+    #####################
+    ## PrEP
+    prep.use.rate <- 6/100
+    prep.transm.red <- 96/100
+    
+#####################
+    ## Socioeconomic status
+    insurance.prop <- 
+    incarceration.prop <- 
+

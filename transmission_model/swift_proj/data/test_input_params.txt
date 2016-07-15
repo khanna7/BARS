@@ -1,0 +1,6 @@
+stop.at=10,non.testers.prop=0.1
+stop.at=10,non.testers.prop=0.15
+stop.at=10,non.testers.prop=0.2
+stop.at=10,non.testers.prop=0.25
+stop.at=10,non.testers.prop=0.3
+stop.at=10,non.testers.prop=0.35

@@ -1,10 +1,26 @@
 BARS Transmission Model: Chicago 
 ========================================================
--- Aditya, Nikki, Nick, and Jonathan 
+-- Aditya, Nick, Jonathan, and Nikki 
 
-Chicago model: with main and casual partnerships
 
-```{r}
+Today, we will see results from the Chicago model, for a 25,000 day simulation (approx. `r round(25000/365)` years).
+
+The model includes: 
+
+  * Demography: Arrivals, departures, aging;
+  * Biology: Individual-level CD4 and viral load trajectories, with and without ART; 
+  * Treatment: Current implementation of ART initiation is simplistic, we are working on more realisic model (details follow); 
+  * Sexual behavior and networks: Including main and casual partnerships, and concurrency, duration and density for each partnership type.
+
+Currently, we are modeling a testing-and-diagnosis piece. The implementation for the starting network is complete. Temporal simulation of testing and diagnosis is in progress. More details are [here](https://github.com/khanna7/BARS/blob/testing-and-diagnosis/transmission_model/r/modeling-testing-and-diagnosis.md).
+
+Following this step, we will include PrEP.
+
+Other points for discussion: Lag time between diagnosis and ART initiation; ART/PrEP cessation; mixing parameters; matching simulated and empirical age structure.
+
+Below, is an "interrogation" of the model, to demonstrate its various features.
+
+```{r, echo=FALSE}
 rm(list=ls())
 ## libraries
 suppressPackageStartupMessages(library(network))
@@ -13,29 +29,33 @@ suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(dplyr))
 ```
-and read in the various datasets that are generated:
 
-```{r}
+
+```{r, echo=FALSE}
+sim_num <- 44
+
 ## data
-net <- readRDS("../../Release/output/main_network_15000.RDS") #main network at the end
-cas_net <- readRDS("../../Release/output/main_network_15000.RDS")#casual network at the end
+net <- readRDS("../../Release/output/main_network_2500.RDS") #main network at the end
+cas_net <- readRDS("../../Release/output/casual_network_2500.RDS")#casual network at the end
 
-biom_data <- read.csv("../../Release/output/biomarker_log_36.csv")
-counts_data <- read.csv("../../Release/output/counts_36.csv")
-inf_event_data <- read.csv("../../Release/output/infection_events_36.csv")
-death_data <- read.csv("../../Release/output/death_events_36.csv")
-partnership_event_data <- read.csv("../../Release/output/partnership_events_36.csv")
+biom_data <- read.csv(paste0("../../Release/output/biomarker_log_", sim_num,".csv"))
+counts_data <- read.csv(paste0("../../Release/output/counts_", sim_num,".csv"))
+inf_event_data <- read.csv(paste0("../../Release/output/infection_events_", sim_num,".csv")) 
+death_data <- read.csv(paste0("../../Release/output/death_events_", sim_num,".csv")) 
+partnership_event_data <- read.csv(paste0("../../Release/output/partnership_events_", sim_num,".csv"))  
+
+person_data <- read.csv("../../Release/output/person_data_8.csv")
 
 input_parameter_data <- source("../common/chicago_parameters.R")
 ```
 
-These datasets include the sexual network at the 10,000th (i.e. last) time step, biomarker data with detailed trajectories, infection, death and partnership events, and counts of various quantities at each time step.
+These datasets include the sexual network at the last time step, biomarker data with detailed trajectories, infection, death and partnership events, and counts of various quantities at each time step.
 
 # Results
 ## Demography
 We first compute the annual growth rate.  
 
-```{r, results='show'}
+```{r, echo=FALSE, results='hide'}
   final.vcount <- network.size(net)
   init.vcount <- 5000
   
@@ -57,15 +77,15 @@ plot(
 ```
 
 ## Prevalence
-   The overall prevalence was 
-   ```{r, results='show'}
+    
+   ```{r, echo=FALSE, results='hide'}
    infected <- which(net %v% "inf.status" == 1)
    prev <- length(infected)/final.vcount*100
    prev
    ```
-  about `r round(prev, 1)`%.  The prevalence over time is shown below.
+  The overall prevalence at the end of the simulation was about `r round(prev, 1)`%.  HIV prevalence as a function of time is shown below.
   
-   ```{r, results='show'}
+   ```{r, echo=FALSE, results='show'}
    counts_data <- counts_data[-1,]
    ggplot(counts_data/365, aes(x=time, y=(vertex_count-uninfected)/vertex_count))+
          geom_line()+
@@ -74,8 +94,11 @@ plot(
          xlab("Time (years)")
    ```
    
-## Incidence
-   ```{r, results='asis', echo=FALSE}
+## Incidence  
+
+The annual incidence rates over the course of the simulation are shown below.
+
+   ```{r, results='hide', echo=FALSE}
    new_inf_per_timestep <- counts_data$infected_via_transmission[-1] 
                                                       #ignore 1st timepoint
    susc_per_timestep <- (counts_data$uninfected[-1] - counts_data$entries[-1])
@@ -99,8 +122,7 @@ plot(
      ```
 
   
-  The mean annual incidence is `r round(summ_inc_per_timestep[4]*365*100, 2)`%, and the annual incidence rates over the course of the simulation are shown above.
-  
+  The mean annual incidence, averaged over the length of the simulation, is `r round(summ_inc_per_timestep[4]*365*100, 2)`%.   
   
 ## Sexual Networks
 
@@ -110,7 +132,7 @@ plot(
 The target main mean degree is `r round(nedges*2/n, 2)` and a plot of the simulated mean
 degree, over the course of the simulation, is below.
 
-```{r, echo=FALSE, show='asis'}
+```{r, echo=FALSE, show='hide'}
    #counts_data <- rbind(counts_data, nedges)
    #type <- c(rep("simulated", (nrow(counts_data)-1)), rep("target", 1))
    #counts_data <- as.data.frame(cbind(counts_data, type))
@@ -123,10 +145,12 @@ degree, over the course of the simulation, is below.
 
 #### Degree distribution.
 The simulated and target momentary degree distributions are below.
-```{r, echo=FALSE, results='show'}
-sim_deg_dist <- degreedist(net)
+```{r, echo=FALSE, results='hide'}
+sim_deg_dist_num <- degreedist(net)
+sim_deg_dist <- sim_deg_dist_num/final.vcount
 names(sim_deg_dist) <- c("0", "1", "2")
-target_deg_dist <- deg_seq
+target_deg_dist_num <- deg_seq
+target_deg_dist <- target_deg_dist_num/init.vcount
 names(target_deg_dist) <- c("0", "1", "2")
 
 main_deg_dist_data <- cbind(t(sim_deg_dist[1:3]), t(target_deg_dist))
@@ -136,38 +160,48 @@ colnames(main_deg_dist_data) <- c("ID", "degree", "value", "type")
 
 ggplot(main_deg_dist_data, aes(x=degree, y=value, fill=type))+
   geom_bar(position="dodge", stat="identity")+
-  ylab("Number of Agents")
+  ylab("Proportion of Agents")
 
 ```
 
 #### Partnership duration.
-```{r}
-main_partnerships <- partnership_event_data[which(partnership_event_data$network_type == 0),]
-dim(main_partnerships)
+```{r, echo=FALSE, results='hide'}
+## (fast method from jonathan)
 
-dis_main_ptshps <- distinct(select(main_partnerships, p1, p2))
-sim_dur_form_dissolved <- NULL
+# looking for mean partnership durations
+require(data.table)
+pt_data <- fread(paste0("../../Release/output/partnership_events_", sim_num,".csv")) 
+#fread("../../Release/output/partnership_events_40.csv")
+pt_data_main <- pt_data[network_type == 0]
 
-for (i in 1:nrow(dis_main_ptshps)){
-  occur <- 
-    intersect(which(main_partnerships$p1 == dis_main_ptshps$p1[i]),
-            which(main_partnerships$p2 == dis_main_ptshps$p2[i])
-            )
-  
-  if (length(occur) == 2){
-    
-    duration_new <- main_partnerships$tick[max(occur)] - main_partnerships$tick[min(occur)]
-    
-    sim_dur_form_dissolved <- c(sim_dur_form_dissolved, duration_new)
-  
-    }
+# group by p1, p2
+pt_data_main[,.(counts = .N),by=.(p1,p2),][,unique(counts)] # 1 2 4 3
+pt_data_main[,.(counts = .N),by=.(p1,p2),][,.N,by=counts]
 
-  }
+# counts     N
+# 1:      1  5501
+# 2:      2 21833
+# 3:      4    10
+# 4:      3     1
 
-main_sim_duration_form_dissolved <- sim_dur_form_dissolved
-summary(main_sim_duration_form_dissolved)
-hist(main_sim_duration_form_dissolved)
+# so focus on just 2 is justified
+    ## (old DONOTUSE: res <- pt_data_main[,.(tick, counts = .N),by=.(p1,p2),][counts == 2,abs(diff(tick))])
+
+res <- pt_data_main[,.(tick, counts = .N),by=.(p1,p2),][counts == 2,.(dur = abs(diff(tick))), by=.(p1,p2)][,dur]
+
+summary(res)
+
+res_dt <- as.data.frame(res)
+  qplot(res, geom="histogram", binwidth=100, 
+       col=I("red"), 
+       alpha=I(.2))
+
+sum.res <- summary(res)
+
 ```
+
+The target mean duration is `r duration`. In the simulated data above,
+the interquartile range is `r as.numeric(sum.res[c(2,5)])`.  
 
 ### Casual Partnerships
 
@@ -187,9 +221,11 @@ degree, over the course of the simulation, is below.
 The simulated and target momentary degree distributions are below.
 
 ```{r, echo=FALSE, results='show'}
-sim_deg_dist <- degreedist(cas_net)
+sim_deg_dist_num <- degreedist(cas_net)
+sim_deg_dist <- sim_deg_dist_num/final.vcount
 names(sim_deg_dist) <- c("0", "1", "2")
-target_deg_dist <- cas_deg_seq
+target_deg_dist_num <- cas_deg_seq
+target_deg_dist <- target_deg_dist_num/init.vcount
 names(target_deg_dist) <- c("0", "1", "2")
 
 casual_deg_dist_data <- cbind(t(sim_deg_dist[1:3]), t(target_deg_dist[1:3]))
@@ -199,38 +235,35 @@ colnames(casual_deg_dist_data) <- c("ID", "degree", "value", "type")
 
 ggplot(casual_deg_dist_data, aes(x=degree, y=value, fill=type))+
   geom_bar(position="dodge", stat="identity")+
-  ylab("Number of Agents")
+  ylab("Proportion of Agents")
 
 ```
 
 #### Partnership duration.
 ```{r, echo=TRUE, results='show'}
-casual_partnerships <- partnership_event_data[which(partnership_event_data$network_type == 1),]
-dim(casual_partnerships)
+pt_data_casual <- pt_data[network_type == 1]
 
-dis_casual_ptshps <- distinct(select(casual_partnerships, p1, p2))
-sim_dur_form_dissolved <- NULL
+# group by p1, p2
+pt_data_casual[,.(counts = .N),by=.(p1,p2),][,unique(counts)] # 1 2 4 3
+pt_data_casual[,.(counts = .N),by=.(p1,p2),][,.N,by=counts]
 
-for (i in 1:nrow(dis_casual_ptshps)){
-  occur <- 
-    intersect(which(casual_partnerships$p1 == dis_casual_ptshps$p1[i]),
-            which(casual_partnerships$p2 == dis_casual_ptshps$p2[i])
-            )
-  
-  if (length(occur) == 2){
-    
-    duration_new <- casual_partnerships$tick[max(occur)] - casual_partnerships$tick[min(occur)]
-    
-    sim_dur_form_dissolved <- c(sim_dur_form_dissolved, duration_new)
-  
-    }
+# so focus on just 2 is justified
+    ## (old DONOTUSE: res <- pt_data_casual[,.(tick, counts = .N),by=.(p1,p2),][counts == 2,abs(diff(tick))])
 
-  }
+res <- pt_data_casual[,.(tick, counts = .N),by=.(p1,p2),][counts == 2,.(dur = abs(diff(tick))), by=.(p1,p2)][,dur]
 
-casual_sim_duration_form_dissolved <- sim_dur_form_dissolved
-summary(casual_sim_duration_form_dissolved)
-hist(casual_sim_duration_form_dissolved)
+summary(res)
+
+res_dt <- as.data.frame(res)
+  qplot(res, geom="histogram", binwidth=100, 
+       col=I("red"), 
+       alpha=I(.2))
+
+sum.res <- summary(res)
 ```
+
+The target mean duration is `r dur_cas`. In the simulated data above,
+the interquartile range is `r as.numeric(sum.res[c(2,5)])`.  
 
 ### Overlap between main and casual partnerships.
 ```{r, echo=FALSE, results='show'}
@@ -262,6 +295,30 @@ qplot(data=counts_data, x=time,
       geom="line")
 ```
 
+## Testing and Diagnosis
+
+```{r, echo=TRUE, results='show'}
+p_inf_status <- person_data$infection.status
+p_time_of_infection <- person_data$time.of.infection
+p_art_status <- person_data$art.status
+p_time_of_art_initiation <- person_data$time.of.art.initiation
+
+table(p_inf_status)
+table(p_art_status)
+
+xtabs(~factor(p_inf_status, exclude=NULL) + 
+        factor(p_art_status, exclude=NULL))
+
+summary(p_time_of_art_initiation - p_time_of_infection)
+neg_diff_art.init_inf <- neg.diff <- which(p_time_of_art_initiation - p_time_of_infection < 0)
+
+p_inf_status[neg_diff_art.init_inf]
+p_time_of_infection[neg_diff_art.init_inf]
+p_time_of_art_initiation[neg_diff_art.init_inf]
+summary(p_time_of_art_initiation)
+
+```
+
 ## ART metrics
 
 The ART initiation portion was simplified so that all infected's initate ART 1 year after seroconversion. At presetnt, the proportion of the infected on ART was
@@ -270,13 +327,14 @@ The ART initiation portion was simplified so that all infected's initate ART 1 y
   on.art <- which(net%v%"art.status" == 1)
   length(on.art)
   length(on.art)/length(infected)
+
 ```
 
 `r round(length(on.art)/length(infected), 2)`. The total proportion of all people in the population who were on ART is `r round(length(on.art)/length(infected)*prev, 2)`%.
 
 ## Biomarkers
 
-Example CD4 and viral load trajectories for one person are below.
+
 
 ```{r, results='asis'}
    ## Selected upto n.to.follow infecteds at random
@@ -288,7 +346,9 @@ Example CD4 and viral load trajectories for one person are below.
    new <- biom_data[which(biom_data$p_id == infectee_uniq_biom_pid[1]),]
 
    if (length(infectee_uniq_biom_pid > n_to_follow)){
-     infectee_uniq_biom_pid <- infectee_uniq_biom_pid[1:n_to_follow]
+     infectee_uniq_biom_pid <- infectee_uniq_biom_pid[1:n_to_follow]#first 10
+     #infectee_uniq_biom_pid <- sample(infectee_uniq_biom_pid, 
+                                      #n_to_follow, replace=FALSE)# random 10
    }
    
    for (i in 2:length(infectee_uniq_biom_pid)){
@@ -299,15 +359,17 @@ Example CD4 and viral load trajectories for one person are below.
    new$p_id <- as.character(new$p_id)
 
    par(mfrow=c(2,1))
-   ggplot(new, aes(x=tick, y=viral_load, color=p_id))+
-          geom_line()
-   ggplot(new, aes(x=tick, y=cd4_count, color=p_id))+
-          geom_line()
+   ggplot(new, aes(x=tick/365, y=viral_load, color=p_id))+
+          geom_line()+xlab("year")
+   ggplot(new, aes(x=tick/365, y=cd4_count, color=p_id))+
+          geom_line()+xlab("year")
 
 ```
 
-We see that this person's CD4 count and viral loads remain flat until timetep `r min(which(new$viral_load > 0)) - 1`, at which time he gets infected. His CD4 count starts to decline linearly, and his viral load undergoes the specified trajectory (i.e. quick initial rise during acute infection, decline to a stable state during chronic infection). At time 
-`r min(which(new$art_status > 0))`, he goes on ART, and correspondingly, his CD4 count starts to rise, and viral load starts to decline. At time `r max(new$tick)`, he leaves the simulation on account of his death.
+Example CD4 and viral load trajectories for `r n_to_follow` randomly selected, HIV-infected individuals are shown above. Individuals on ART are identifiable as those whose CD4 counts start to recover after decreasing initially; individuals who do not go on ART do experience a monotonic decrease.
+
 
 # Conclusion
-As we add realistic empirical parameters for various remaining portions, in particular the behavior and ART/PrEP modules, our model will become more finely calibrated.
+The features we have in the model appear to work well so far. We are in the process of adding more (as mentioned above), and continuing to monitor emergent trends in the behavior of key parameters and outcomes. 
+
+Suggestions welcome! 

@@ -5,20 +5,25 @@
 
 namespace TransModel {
 
+extern const std::string RUN_NUMBER;
+
 extern const std::string NET_VAR;
 extern const std::string CASUAL_NET_VAR;
 
 extern const std::string STOP_AT;
-extern const std::string R_PARAMETERS_FILE;
+extern const std::string R_PARAMETERS_DERIVED;
+extern const std::string R_PARAMETERS_NON_DERIVED;
 extern const std::string R_FILE;
 extern const std::string MAIN_NETWORK_FILE;
 extern const std::string CASUAL_NETWORK_FILE;
+extern const std::string OUTPUT_DIR;
 extern const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE;
 extern const std::string PARTNERSHIP_EVENTS_FILE;
 extern const std::string INFECTION_EVENTS_FILE;
 extern const std::string BIOMARKER_FILE;
 extern const std::string BIOMARKER_LOG_COUNT;
 extern const std::string DEATH_EVENT_FILE;
+extern const std::string TESTING_EVENT_FILE;
 extern const std::string PERSON_DATA_FILE;
 extern const std::string NET_SAVE_FILE;
 extern const std::string CASUAL_NET_SAVE_FILE;
@@ -28,7 +33,7 @@ extern const std::string COUNT_OVERLAPS;
 extern const std::string EVENT_FILE;
 extern const std::string EVENT_FILE_BUFFER_SIZE;
 
-extern const std::string PREP_MULT;
+//extern const std::string PREP_MULT;
 
 // generated from parameters.R
 extern const std::string ACUTE_LENGTH_MIN;
@@ -45,7 +50,6 @@ extern const std::string B6_AGE_15TO29;
 extern const std::string B6_AGE_30TO39;
 extern const std::string B6_AGE_40TO49;
 extern const std::string B6_AGE_50ORMORE;
-extern const std::string BASELINE_ART_COVERAGE_RATE;
 extern const std::string CD4_AT_INFECTION_MALE;
 extern const std::string CD4_REC_PER_TIMESTEP;
 extern const std::string CD4_RECOVERY_TIME;
@@ -54,6 +58,9 @@ extern const std::string CHRONIC_LENGTH_MAX;
 extern const std::string CIRCUM_MULT;
 extern const std::string CIRCUM_RATE;
 extern const std::string DAILY_ENTRY_RATE;
+extern const std::string DAILY_TESTING_PROB;
+extern const std::string GLOBAL_DIAGNOSIS_ART_LAG;
+extern const std::string DETECTION_WINDOW;
 extern const std::string DUR_INF;
 extern const std::string DURATION;
 extern const std::string DURATION_OF_INFECTION;
@@ -68,11 +75,14 @@ extern const std::string LATE_STAGE_VIRAL_LOAD;
 extern const std::string MAX_AGE;
 extern const std::string MIN_AGE;
 extern const std::string MIN_CHRONIC_INFECTIVITY_UNADJ;
+extern const std::string NON_TESTERS_PROP;
 extern const std::string NUM_SEX_ACTS_PER_TIMESTEP;
 extern const std::string PEAK_VIRAL_LOAD;
 extern const std::string PER_DAY_CD4_RECOVERY;
 extern const std::string PREG_MULT;
 extern const std::string PREG_SUSC_MULT;
+extern const std::string PREP_RATE;
+extern const std::string PREP_TRANS_REDUCTION;
 extern const std::string SET_POINT_VIRAL_LOAD;
 extern const std::string SIZE_OF_TIMESTEP;
 extern const std::string TIME_INFECTION_TO_LATE_STAGE;
@@ -170,11 +180,15 @@ public:
 	bool contains(const std::string& prop_name) const;
 
 private:
+	friend std::ostream& operator<< (std::ostream& stream, const Parameters* params);
+
 	static Parameters* instance_;
 	repast::Properties props_;
 
 	Parameters(repast::Properties& props);
 };
+
+std::ostream& operator<< (std::ostream& stream, const Parameters* params);
 
 } /* namespace mrsa */
 #endif /* PARAMETERS_H_ */

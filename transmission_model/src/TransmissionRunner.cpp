@@ -7,6 +7,8 @@
 
 #include "TransmissionRunner.h"
 
+#include "Person.h"
+
 namespace TransModel {
 
 const int VERSATILE = 0;
@@ -52,9 +54,8 @@ float TransmissionRunner::durInfByAge(float age) {
 }
 
 void TransmissionRunner::infect(PersonPtr infectee, float time) {
-	int draw = (int) repast::Random::instance()->getGenerator(ART_COVERAGE_BINOMIAL)->next();
 	float dur_inf = durInfByAge(infectee->age());
-	infectee->infect(draw == 1, dur_inf, time);
+	infectee->infect(dur_inf, time);
 }
 
 } /* namespace TransModel */

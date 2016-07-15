@@ -10,10 +10,14 @@
 
 #include "Rcpp.h"
 #include "DiseaseParameters.h"
+#include "Diagnoser.h"
+#include "GeometricDistribution.h"
 
 namespace TransModel {
 
 class PersonCreator;
+
+enum class PrepStatus { OFF, OFF_INFECTED, ON};
 
 class Person {
 
@@ -25,10 +29,13 @@ private:
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
-	bool prep_, dead_;
+	PrepStatus prep_;
+	bool dead_, diagnosed_, testable_;
+	float diagnosis_art_lag;
+	Diagnoser<GeometricDistribution> diagnoser_;
 
 public:
-	Person(int id, float age, bool circum_status, int role);
+	Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser);
 
 	virtual ~Person();
 
@@ -52,6 +59,10 @@ public:
 	}
 
 	bool isOnPrep() const {
+		return prep_ == PrepStatus::ON;
+	}
+
+	PrepStatus prepStatus() const {
 		return prep_;
 	}
 
@@ -71,16 +82,20 @@ public:
 		return infection_parameters_.infection_status;
 	}
 
-	bool isARTCovered() const {
-		return infection_parameters_.art_covered;
-	}
-
 	float infectivity() const {
 		return infectivity_;
 	}
 
 	float timeSinceInfection() const {
 		return infection_parameters_.time_since_infection;
+	}
+
+	float diagnosisARTLag() const {
+		return diagnosis_art_lag;
+	}
+
+	const Diagnoser<GeometricDistribution> diagnoser() const {
+		return diagnoser_;
 	}
 
 	void setViralLoad(float viral_load);
@@ -99,11 +114,10 @@ public:
 	void putOnART(float time_stamp);
 
 	/**
-	 * Infects this Person and sets whether or not they will
-	 * be on ART after the delay, the duration of the infection,
+	 * Infects this Person and sets the duration of the infection,
 	 * and the time of infection.
 	 */
-	void infect(bool art_coverted, float duration_of_infection, float time);
+	void infect(float duration_of_infection, float time);
 
 	/**
 	 * Updates age, etc. of person., to be called each iteration of the model.
@@ -129,6 +143,18 @@ public:
 	bool isDead() const {
 		return dead_;
 	}
+
+	bool isDiagnosed() const {
+		return diagnosed_;
+	}
+
+	bool isTestable() const {
+		return testable_;
+	}
+
+	bool diagnose(double tick);
+
+	double timeUntilNextTest(double tick) const;
 
 };
 
