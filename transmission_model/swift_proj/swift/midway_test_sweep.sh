@@ -3,7 +3,7 @@ export QUEUE=sandyb
 export WALLTIME=00:10:00
 export PROCS=8
 export PPN=8
-export TURBINE_JOBNAME="transmission_model_XX"
+export TURBINE_JOBNAME="tm_XX"
 
 THIS=$( dirname $0 )
 export T_PROJECT_ROOT=$( cd $THIS/.. ; /bin/pwd )
