@@ -6,4 +6,4 @@ export PPN=8
 
 export T_PROJECT_ROOT=$PWD/..
 
-swift-t -m slurm -n 1 -p test_sweep.swift -f=$PWD/../data/test_input_params.txt -md=$PWD/../../Release -props=$PWD/../../config/model.props
+swift-t -m slurm -p test_sweep.swift -f=$PWD/../data/test_input_params.txt -md=$PWD/../../Release -props=$PWD/../../config/model.props
