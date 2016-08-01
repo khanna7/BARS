@@ -17,7 +17,7 @@ app (void o) make_dir(string dirname) {
 file trans_model_sh = input(tproot + "/scripts/trans_model.sh");
 string model_dir = argv("md");
 string props_file = argv("props");
-string exp = input(argv("exp"));
+string exp = argv("exp");
 
 file upf = input(argv("f"));
 string upf_lines[] = file_lines(upf);
