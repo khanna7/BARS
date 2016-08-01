@@ -17,12 +17,13 @@ app (void o) make_dir(string dirname) {
 file trans_model_sh = input(tproot + "/scripts/trans_model.sh");
 string model_dir = argv("md");
 string props_file = argv("props");
+string exp = input(argv("exp"));
 
 file upf = input(argv("f"));
 string upf_lines[] = file_lines(upf);
 
 foreach s,i in upf_lines {
-  string base_out = "%s/out/output" % model_dir;
+  string base_out = "%s/out_%s/output" % (model_dir, exp);
   string out_dir = "%s_%i" % (base_out, i);
   make_dir(out_dir) => {
     file out <out_dir + "/out.txt">;
