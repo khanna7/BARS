@@ -163,23 +163,26 @@ The annual incidence rates over the course of the simulation are shown below.
                                          ceiling(seq_along(i)/365))
                                          )
 
-     mean_inc_per_year <- unlist(lapply(inc_per_year, mean))*365
+     #mean_inc_per_year <- unlist(lapply(inc_per_year, mean))*365
      list_mean_inc_per_year <- lapply(inc_per_year, function (i) lapply(i, mean))
      summ_inc_across_sim <- summary(unlist(list_mean_inc_per_year))*365*100
      
-       annual_inc_data <- cbind(1:length(mean_inc_per_year), (mean_inc_per_year))
-        annual_inc_data <- as.data.frame(annual_inc_data)                                
-        colnames(annual_inc_data) <- c("year", "ann_inc_pp_py")
+     list_mean_inc_per_year_df <-   do.call("rbind", lapply(list_mean_inc_per_year, as.data.frame))
+     colnames(list_mean_inc_per_year_df) <- as.numeric(1:69)
+     list_mean_inc_per_year_df <- melt(list_mean_inc_per_year_df)
+     list_mean_inc_per_year_df$sim_num <- as.factor(1:5)
 
-        ggplot(annual_inc_data, aes(year, ann_inc_pp_py*100))+
-         geom_line()+xlab("Year")+ylab("Incidence Rate (per 100 person years)")+
-         scale_y_continuous(limits=c(0,12))
-     
+     list_mean_inc_per_year_df[] <- lapply(list_mean_inc_per_year_df, as.numeric)
+     ggplot(list_mean_inc_per_year_df, aes(x=variable, y=value*365*100, color=as.factor(sim_num)))+geom_line()
+
+
+     #annual_inc_data <- cbind(1:length(mean_inc_per_year), (mean_inc_per_year))
+     #annual_inc_data <- as.data.frame(annual_inc_data)                                
+     #colnames(annual_inc_data) <- c("year", "ann_inc_pp_py")
+
      ```
 
   
-  The mean annual incidence, averaged over the length of the simulation, 
-is `r round(summ_inc_per_timestep[4]*365*100, 2)`%.   
   
 ## Sexual Networks
 
