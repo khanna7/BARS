@@ -39,7 +39,7 @@ private:
 	std::set<int> persons_to_log;
 	PersonCreator person_creator;
 
-	void runTransmission(double timestamp, float size_of_time_step);
+	void runTransmission(double timestamp);
 	bool dead(double tick, PersonPtr person, int max_survival);
 	void entries(double tick, float size_of_time_step);
 	void deactivateEdges(int id, double time);
