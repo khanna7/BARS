@@ -243,9 +243,9 @@ void init_biomarker_logging(Network<Person>& net, std::set<int>& ids_to_log) {
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
-				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { },
-				person_creator{trans_runner, Parameters::instance()->getDoubleParameter(DAILY_TESTING_PROB),
-					Parameters::instance()->getDoubleParameter(DETECTION_WINDOW)} {
+				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
+				Parameters::instance()->getDoubleParameter(DAILY_TESTING_PROB),
+				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) } {
 
 	// get initial stats
 	init_stats();
@@ -342,7 +342,7 @@ void Model::step() {
 		stats->currentCounts().overlaps = -1;
 	}
 	entries(t, size_of_timestep);
-	runTransmission(t, size_of_timestep);
+	runTransmission(t);
 	updateVitals(t, size_of_timestep, max_survival);
 	previous_pop_size = current_pop_size;
 	current_pop_size = net.vertexCount();
@@ -373,7 +373,6 @@ void schedule_art(PersonPtr person, std::map<double, ARTScheduler*>& art_map, do
 }
 
 void Model::updateVitals(double t, float size_of_timestep, int max_age) {
-	float sex_acts_per_timestep = Parameters::instance()->getFloatParameter(NUM_SEX_ACTS_PER_TIMESTEP);
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
 	map<double, ARTScheduler*> art_map;
@@ -394,7 +393,7 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 
 			// select stage, and use it
 			float infectivity = stage_map.upper_bound(person->timeSinceInfection())->second->calculateInfectivity(
-					person->infectionParameters(), sex_acts_per_timestep);
+					person->infectionParameters());
 			person->setInfectivity(infectivity);
 		} else {
 			++stats->currentCounts().uninfected;
@@ -474,14 +473,16 @@ void Model::saveRNetwork() {
 
 	long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
 	create_r_network(tick, rnet, net, idx_map, p2val, MAIN_NETWORK_TYPE);
-	std::string file_name = output_directory(Parameters::instance()) + "/" + Parameters::instance()->getStringParameter(NET_SAVE_FILE);
+	std::string file_name = output_directory(Parameters::instance()) + "/"
+			+ Parameters::instance()->getStringParameter(NET_SAVE_FILE);
 	as<Function>((*R)["nw_save"])(rnet, unique_file_name(get_net_out_filename(file_name)), tick);
 
 	if (Parameters::instance()->contains(CASUAL_NET_SAVE_FILE)) {
 		idx_map.clear();
 		List cas_net;
 		create_r_network(tick, cas_net, net, idx_map, p2val, CASUAL_NETWORK_TYPE);
-		file_name =  output_directory(Parameters::instance()) + "/" + Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
+		file_name = output_directory(Parameters::instance()) + "/"
+				+ Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
 		as<Function>((*R)["nw_save"])(cas_net, unique_file_name(get_net_out_filename(file_name)), tick);
 	}
 }
@@ -511,20 +512,27 @@ bool Model::dead(double tick, PersonPtr person, int max_age) {
 	return died;
 }
 
-void Model::runTransmission(double time_stamp, float size_of_timestep) {
+void Model::runTransmission(double time_stamp) {
 	vector<PersonPtr> infecteds;
+	//  (2.4/7) * (n/2e)
+	double node_count = net.vertexCount();
+	double edge_count = net.edgeCount();
+	double sex_acts_per_time_step = Parameters::instance()->getDoubleParameter(NUM_SEX_ACTS_PER_TIMESTEP);
+	double prob = sex_acts_per_time_step * (node_count / 2 * edge_count);
 	for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
-		PersonPtr out_p = (*iter)->v1();
-		PersonPtr in_p = (*iter)->v2();
-		if (out_p->isInfected() && !in_p->isInfected()) {
-			if (trans_runner->determineInfection(out_p, in_p)) {
-				infecteds.push_back(in_p);
-				Stats::instance()->recordInfectionEvent(time_stamp, out_p, in_p, false, (*iter)->type());
-			}
-		} else if (!out_p->isInfected() && in_p->isInfected()) {
-			if (trans_runner->determineInfection(in_p, out_p)) {
-				infecteds.push_back(out_p);
-				Stats::instance()->recordInfectionEvent(time_stamp, in_p, out_p, false, (*iter)->type());
+		if (Random::instance()->nextDouble() <= prob) {
+			PersonPtr out_p = (*iter)->v1();
+			PersonPtr in_p = (*iter)->v2();
+			if (out_p->isInfected() && !in_p->isInfected()) {
+				if (trans_runner->determineInfection(out_p, in_p)) {
+					infecteds.push_back(in_p);
+					Stats::instance()->recordInfectionEvent(time_stamp, out_p, in_p, false, (*iter)->type());
+				}
+			} else if (!out_p->isInfected() && in_p->isInfected()) {
+				if (trans_runner->determineInfection(in_p, out_p)) {
+					infecteds.push_back(out_p);
+					Stats::instance()->recordInfectionEvent(time_stamp, in_p, out_p, false, (*iter)->type());
+				}
 			}
 		}
 	}
