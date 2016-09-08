@@ -62,7 +62,7 @@
    
    #####################
    ## Transmission Parameters
-   num.sex.acts.per.timestep <- num.sex.acts.base*size.of.timestep/7
+   num.sex.acts.per.timestep <- num.sex.acts.base*size.of.timestep/7 * size.of.timestep
    
    ## relationship between viral load and chronic infectivity (hughes et al.)
    
