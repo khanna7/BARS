@@ -251,19 +251,18 @@ TEST(InfectivityTests, TestChronic) {
 	inf_params.viral_load = 1;
 	inf_params.art_status = false;
 	float exp = 0;
-	float actual = stage.calculateInfectivity(inf_params, 3);
+	float actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 
 	inf_params.viral_load = 2;
-	exp = 1 - std::pow((1 - baseline), 3);
-	actual = stage.calculateInfectivity(inf_params, 3);
+	exp = baseline;
+	actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 
 	inf_params.viral_load = 2.5;
 	inf_params.art_status = true;
 	exp = baseline * std::pow(2.89, 2.5 - 2);
-	exp = 1 - std::pow((1 - exp), 3);
-	actual = stage.calculateInfectivity(inf_params, 3);
+	actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 
 }
@@ -281,20 +280,18 @@ TEST(InfectivityTests, TestAcute) {
 	inf_params.art_status = false;
 
 	float exp = 0;
-	float actual = stage.calculateInfectivity(inf_params, 3);
+	float actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 
 	exp = baseline * multiplier;
-	exp = 1 - std::pow((1 - exp), 3);
 	inf_params.viral_load = 2;
-	actual = stage.calculateInfectivity(inf_params, 3);
+	actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 
 	exp = baseline * std::pow(2.89, 2.5 - 2) * multiplier;
-	exp = 1 - std::pow((1 - exp), 3);
 	inf_params.viral_load = 2.5f;
 	inf_params.art_status = true;
-	actual = stage.calculateInfectivity(inf_params, 3);
+	actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 }
 
@@ -311,32 +308,28 @@ TEST(InfectivityTests, TestLate) {
 	float exp = 0;
 	inf_params.viral_load = 1;
 	inf_params.art_status = false;
-	float actual = stage.calculateInfectivity(inf_params, 3);
+	float actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 
 	inf_params.viral_load = 2;
 	exp = baseline * multiplier;
-	exp = 1 - std::pow((1 - exp), 3);
-	actual = stage.calculateInfectivity(inf_params, 3);
+	actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 
 	inf_params.art_status = true;
 	exp = baseline;
-	exp = 1 - std::pow((1 - exp), 3);
-	actual = stage.calculateInfectivity(inf_params, 3);
+	actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 
 	inf_params.viral_load = 2.5;
 	inf_params.art_status = false;
 	exp = baseline * std::pow(2.89, 2.5 - 2) * multiplier;
-	exp = 1 - std::pow((1 - exp), 3);
-	actual = stage.calculateInfectivity(inf_params, 3);
+	actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 
 	inf_params.art_status = true;
 	exp = baseline * std::pow(2.89, 2.5 - 2);
-	exp = 1 - std::pow((1 - exp), 3);
-	actual = stage.calculateInfectivity(inf_params, 3);
+	actual = stage.calculateInfectivity(inf_params);
 	ASSERT_EQ(exp, actual);
 }
 

@@ -9,9 +9,9 @@
 
 namespace TransModel {
 
-const std::string PersonData::header("\"id\",\"time of entry\",\"time of death\",\"infection status\",\"time of infection\","
-		"\"art status\",\"time of art initiation\",\"time of art cessation\",\"prep status\",\"time of prep initiation\","
-		"\"time of prep cessation\",\"number of tests\",\"time since last test\",\"diagnosis status\"");
+const std::string PersonData::header("id,time_of_entry,time_of_death,infection_status,time_of_infection,"
+		"art_status,time_of_art_initiation,time_of_art_cessation,prep_status,time_of_prep_initiation,"
+		"time_of_prep_cessation,number_of_tests,time_since_last_test,diagnosis_status");
 
 PersonData::PersonData(PersonPtr p, double time_of_birth) :
 		id_(p->id()), birth_ts(time_of_birth), death_ts(-1), infection_ts(p->isInfected() ? p->infectionParameters().time_of_infection : -1),
