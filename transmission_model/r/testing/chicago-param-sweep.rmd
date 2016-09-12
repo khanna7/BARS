@@ -1,7 +1,4 @@
 
-nfected_data <- lapply(person_data, function(i)
-                           i[`time of infection` == 1]
-                          )
 ```{r, echo=FALSE}
 rm(list=ls())
 
@@ -33,7 +30,7 @@ dirs <- lapply(dir_nums, function (i) paste0(location, "/output_", i))
 
    cas_nets <- lapply(dirs, function (i) 
                         readRDS(paste0(i, "/main_network_", ntimesteps, ".RDS"))
-                       ) #casual
+                       )
 
    biom_data <- lapply(dirs, function (i) 
                              fread(paste0(i, "/biomarker_log.csv"))
@@ -94,95 +91,80 @@ plot(
 ## Prevalence
     
    ```{r, echo=FALSE, results='hide'}
+
    alive_person_data <- lapply(person_data, function (i)
                                i[`time of death` == -1]
                                )
-   
+
    final_popsize <- lapply(alive_person_data, nrow)
-   
+
    infected_data <- lapply(alive_person_data, function(i)
                           i[`infection status` == 1]
                           )
    n_infected_end <- lapply(infected_data, nrow)
-   
+
    prev <- unlist(n_infected_end)/unlist(final_popsize)
-
-  ```
-
-  The mean overall prevalence at the end of the simulation was about 
-`r round(mean(prev), 1)*100`%.  
-HIV prevalence as a function of time is shown below.
+   
+   ```
+  The overall prevalence at the end of the simulation was about `r round(prev, 1)`%.  HIV prevalence as a function of time is shown below.
   
-   ```{r, echo=FALSE, results='show'}
-
-   counts_data <- lapply(counts_data, function(i)
+  ```{r, echo=FALSE}
+     counts_data <- lapply(counts_data, function(i)
                                             i[-1,]
                          ) 
-  
-   counts_data_df <- do.call("rbind", lapply(counts_data, as.data.frame))
-   sim_num <- ((1:nrow(counts_data_df)) %/% (25001))+1
-   sim_num <- as.factor(sim_num)
-   counts_data_df$sim_num <- sim_num
-          
 
-   ggplot(counts_data_df, 
-         aes(x=time/365, 
+     counts_data_df <- do.call("rbind", lapply(counts_data, as.data.frame))
+     sim_num <- ((1:nrow(counts_data_df)) %/% (25001))+1
+     sim_num <- as.factor(sim_num)
+     counts_data_df$sim_num <- sim_num
+
+     ggplot(counts_data_df, 
+          aes(x=time/365, 
              y=(vertex_count-uninfected)/vertex_count,
              color=sim_num))+
          geom_line()+
          scale_y_continuous(limits=c(0,1))+
          ylab("Prevalence")+
          xlab("Time (years)")
-   ```
+  ```
    
 ## Incidence  
 
 The annual incidence rates over the course of the simulation are shown below.
 
    ```{r, results='hide', echo=FALSE}
-   #new_inf_per_timestep <- counts_data$infected_via_transmission[-1] 
-                                                      #ignore 1st timepoint
-   #susc_per_timestep <- (counts_data$uninfected[-1] - counts_data$entries[-1])
-                                                      #ignore 1st timepoint
-
-   inc_per_timestep <- lapply(counts_data, function (i)
+  
+      inc_per_timestep <- lapply(counts_data, function (i)
                                            (i$infected_via_transmission)/
                                            (i$uninfected - i$entries)
                                            )
 
-  #summ_inc_per_timestep <- (summary(new_inf_per_timestep/susc_per_timestep))
-   summ_inc_per_timestep <- lapply(inc_per_timestep, summary)
-    
-     #inc_per_timestep <- new_inf_per_timestep/susc_per_timestep
-     #inc_per_year <- split(inc_per_timestep, 
-     #                       ceiling(seq_along(inc_per_timestep)/365)
-     #                       )
-     inc_per_year <- lapply(inc_per_timestep, 
+      summ_inc_per_timestep <- lapply(inc_per_timestep, summary)
+     
+      inc_per_year <- lapply(inc_per_timestep, 
                                          function(i)
                                          split(i, 
                                          ceiling(seq_along(i)/365))
                                          )
 
-     #mean_inc_per_year <- unlist(lapply(inc_per_year, mean))*365
-     list_mean_inc_per_year <- lapply(inc_per_year, function (i) lapply(i, mean))
-     summ_inc_across_sim <- summary(unlist(list_mean_inc_per_year))*365*100
+      list_mean_inc_per_year <- lapply(inc_per_year, function (i) lapply(i, mean))
+      summ_inc_across_sim <- summary(unlist(list_mean_inc_per_year))*365*100
+
+      list_mean_inc_per_year_df <-   do.call("rbind", lapply(list_mean_inc_per_year, 
+                                            as.data.frame))
+      colnames(list_mean_inc_per_year_df) <- as.numeric(1:69)
+      list_mean_inc_per_year_df <- melt(list_mean_inc_per_year_df)
+      list_mean_inc_per_year_df$sim_num <- as.factor(1:5)
+
+      list_mean_inc_per_year_df[] <- lapply(list_mean_inc_per_year_df, as.numeric)
+      
+      ggplot(list_mean_inc_per_year_df, 
+             aes(x=variable, y=value*365*100, color=as.factor(sim_num)))+geom_line()
      
-     list_mean_inc_per_year_df <-   do.call("rbind", lapply(list_mean_inc_per_year, as.data.frame))
-     colnames(list_mean_inc_per_year_df) <- as.numeric(1:69)
-     list_mean_inc_per_year_df <- melt(list_mean_inc_per_year_df)
-     list_mean_inc_per_year_df$sim_num <- as.factor(1:5)
-
-     list_mean_inc_per_year_df[] <- lapply(list_mean_inc_per_year_df, as.numeric)
-     ggplot(list_mean_inc_per_year_df, aes(x=variable, y=value*365*100, color=as.factor(sim_num)))+geom_line()
-
-
-     #annual_inc_data <- cbind(1:length(mean_inc_per_year), (mean_inc_per_year))
-     #annual_inc_data <- as.data.frame(annual_inc_data)                                
-     #colnames(annual_inc_data) <- c("year", "ann_inc_pp_py")
-
-     ```
+   ```
 
   
+  The mean annual incidence, averaged over the length of the simulation, is `r round(summ_inc_per_timestep[4]*365*100, 2)`%.   
   
 ## Sexual Networks
 
