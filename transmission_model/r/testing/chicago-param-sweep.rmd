@@ -9,7 +9,7 @@ suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(data.table))
-
+suppressPackageStartupMessages(library(plyr))
 ```
 
 
@@ -305,7 +305,7 @@ degree, over the course of the simulations, is below.
    class(casual_deg_dist_data$mean) <- "numeric"
 
    ggplot(casual_deg_dist_data, aes(x=degree, y=mean, fill=type))+
-    geom_bar(position="dodge", stat="identity")
+    geom_bar(position="dodge", stat="identity")+
     ylab("Proportion of Agents")+
     xlab("Degree")
 
