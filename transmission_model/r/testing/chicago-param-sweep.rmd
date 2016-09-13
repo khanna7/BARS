@@ -165,7 +165,7 @@ The annual incidence rates over the course of the simulation are shown below.
    
 ### Main Partnerships
 
-    #### Mean degree. 
+#### Mean degree. 
 The target main mean degree is `r round(nedges*2/n, 2)` and a plot of the simulated mean
 degree, over the course of the simulations, is below.
 
@@ -184,7 +184,7 @@ degree, over the course of the simulations, is below.
   
 ```
 
-   #### Degree Distribution
+#### Degree Distribution
 
 ```{r, echo=FALSE, show='hide'}
    sim_deg_dist_in_num <- lapply(main_nets, degreedist)
@@ -229,10 +229,6 @@ pt_main_counts_n <- lapply(pt_data_main,
                            function (i)
                            i[,.(counts = .N),by=.(p1,p2),][,.N,by=counts]
                            )
-# group by p1, p2
-pt_data_main[,.(counts = .N),by=.(p1,p2),][,unique(counts)] # 1 2 4 3
-pt_data_main[,.(counts = .N),by=.(p1,p2),][,.N,by=counts]
-
 # counts     N
 # 1:      1  5501
 # 2:      2 21833
@@ -254,5 +250,63 @@ res_dt <- as.data.frame(unlist(res_list))
        alpha=I(.2))
 
 sum.res <- summary(unlist(res_list))
+
+```
+
+### Casual Partnerships
+
+#### Mean degree. 
+The target main mean degree is `r round(cas_n_edges*2/n, 2)` and a plot of the simulated mean
+degree, over the course of the simulations, is below.
+
+```{r, echo=FALSE, show='hide'}
+   #counts_data <- rbind(counts_data, nedges)
+   #type <- c(rep("simulated", (nrow(counts_data)-1)), rep("target", 1))
+   #counts_data <- as.data.frame(cbind(counts_data, type))
+   
+  ggplot(counts_data_df)+
+        geom_line(aes(x=time/365, y=casual_edge_count*2/vertex_count, col=sim_num))+
+        geom_line(aes(x=time/365, y=cas_n_edges*2/n))+
+        ylab("Mean degree (casual)")+
+        xlab("Time (years)")
+  
+```
+
+
+```{r, echo=FALSE, show='hide'}
+   sim_cas_deg_dist_in_num <- lapply(cas_nets, degreedist)
+   sim_cas_deg_dist_prop <- lapply(dir_nums, 
+                               function (i) 
+                               unlist(sim_cas_deg_dist_in_num[i])/unlist(final.vcount[i]))
+   sim_cas_deg_dist_prop_df <- do.call("rbind.fill", 
+                                        lapply(sim_cas_deg_dist_prop, as.data.frame))
+
+    
+   cas_n_deg <- unlist(lapply(sim_cas_deg_dist_prop, length))
+   pholder <- list()
+   list_cas_degs <- lapply(dir_nums, function (i) pholder[[i]] <- (0:(cas_n_deg[[i]] - 1)))
+   sim_cas_deg_dist_prop_df$degree <- as.character(unlist(list_cas_degs))
+
+   sim_cas_deg_mean <- aggregate(sim_cas_deg_dist_prop_df[,1], 
+                                list(sim_cas_deg_dist_prop_df$degree), mean)
+   colnames(sim_cas_deg_mean) <- c("degree", "mean")
+   
+   names(cas_deg_seq) <- as.character(0:(length(cas_deg_seq)-1))
+   target_deg_dist_prop <- as.data.frame(cbind(names(cas_deg_seq),
+                                         cas_deg_seq/init.vcount)
+                                         )
+   colnames(target_deg_dist_prop) <- colnames(sim_cas_deg_mean)
+
+   casual_deg_dist_data <- rbind(sim_cas_deg_mean, target_deg_dist_prop)
+   casual_deg_dist_data$type <- c(rep("mean_of_sim", nrow(sim_cas_deg_mean)), 
+                                      rep("target", nrow(target_deg_dist_prop)))
+   #casual_deg_dist_data_df <- as.data.frame(casual_deg_dist_data)
+   
+   class(casual_deg_dist_data$mean) <- "numeric"
+
+   ggplot(casual_deg_dist_data, aes(x=degree, y=mean, fill=type))+
+    geom_bar(position="dodge", stat="identity")
+    ylab("Proportion of Agents")+
+    xlab("Degree")
 
 ```
