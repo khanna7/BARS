@@ -38,6 +38,7 @@ struct PersonToVALForSimulate {
 	void operator()(const PersonPtr& p, List& vertex, double tick) const {
 		vertex["role"] = p->role();
 		vertex["inf.status"] = p->isInfected();
+		vertex["diagnosed"] = p->isDiagnosed();
 	}
 };
 
