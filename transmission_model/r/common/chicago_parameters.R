@@ -148,6 +148,6 @@
     
 #####################
     ## Socioeconomic status
-    insurance.prop <- 
-    incarceration.prop <- 
+    #insurance.prop <- 
+    #incarceration.prop <- 
 
