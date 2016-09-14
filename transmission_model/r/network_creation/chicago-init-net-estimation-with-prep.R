@@ -11,15 +11,18 @@
    library(networkDynamic)
    library(tergm)
 
-   source("../common/chicago_parameters.R")
+   source("../common/chi_params_nonderived.R")
+   source("../common/chi_params_derived.R")
    source("common-functions.R")
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:1)
+   formation <- ~edges+degree(0:1)+
+                  nodematch("role", keep=c(1,2))+
+                  nodemix("diagnosed", base=c(1,3))
 
    dissolution <- ~offset(edges)
    theta.diss <- log(duration-1)
-   target.stats <- c(nedges, deg_seq[1:2]
+   target.stats <- c(nedges, deg_seq[1:2], 0, 0.12*nedges
                      )
 
    constraints <- ~.
