@@ -519,9 +519,12 @@ void Model::runTransmission(double time_stamp) {
 	double node_count = net.vertexCount();
 	double edge_count = net.edgeCount();
 	double sex_acts_per_time_step = Parameters::instance()->getDoubleParameter(NUM_SEX_ACTS_PER_TIMESTEP);
-	double prob = sex_acts_per_time_step * (node_count / 2 * edge_count);
+	double prob = sex_acts_per_time_step * (node_count / (2 * edge_count));
+	//std::cout << sex_acts_per_time_step << ", " << node_count << ", " << edge_count << ", " << prob << std::endl;
+	Stats* stats = Stats::instance();
 	for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
 		if (Random::instance()->nextDouble() <= prob) {
+			++stats->currentCounts().sex_acts;
 			PersonPtr out_p = (*iter)->v1();
 			PersonPtr in_p = (*iter)->v2();
 			if (out_p->isInfected() && !in_p->isInfected()) {
@@ -538,7 +541,8 @@ void Model::runTransmission(double time_stamp) {
 		}
 	}
 
-	Stats* stats = Stats::instance();
+
+
 	for (auto& person : infecteds) {
 		// if person has multiple partners who are infected,
 		// person gets multiple chances to become infected from them
