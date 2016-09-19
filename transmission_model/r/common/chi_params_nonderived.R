@@ -117,8 +117,8 @@
     
 #####################
     ## Socioeconomic status
-    insurance.prop <- 
-    incarceration.prop <- 
+    ##insurance.prop <- 
+    ##incarceration.prop <- 
 
 ######
     num.sex.acts.base <- 2.4
