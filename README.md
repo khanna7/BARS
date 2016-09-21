@@ -6,28 +6,9 @@ e-mail at <akhanna@medicine.bsd.uchicago.edu>
 
 ## Lead Authors        
 
-   ===== ========= =====
-   Table Headings  Here
-   ----- --------- -----
-   Sub   Headings  Too
-   ===== ========= =====
-   column spanning no
-   --------------- -----
-   cell  cell      row
-   column spanning spans
-   =============== =====
-
-
-
-
-
-
-
-
-
-
-
-
+   [Aditya Khanna](https://github.com/khanna7), University of Chicago
+   [Nicholson Collier](https://github.com/ncollier), Argonne National Laboratory
+   [Jonathan Ozik](https://github.com/jozik), Argonne National Laboratory
 
 ## Funding
 This work is supported by NIH R01 DA 039 934.
