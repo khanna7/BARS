@@ -78,8 +78,10 @@
    prop.partially.adherent <- 1 - (prop.never.adherent+prop.always.adherent) #derived param, should be moved there
    
    prob.art_adher.for.partial <- 0.5 #probability that a partially adherent individual will take their medication over the next `window.length`
+   
    #####################
    ## Transmission Parameters
+   ## Additional multiplier information: http://www.hiv.va.gov/provider/manual-primary-care/prevention-for-positives-table3.asp
    acute.mult <- 4.98
    late.mult <- 3.49
    preg.mult <- 2.5 ## check
