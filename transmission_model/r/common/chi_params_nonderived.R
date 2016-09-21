@@ -120,5 +120,13 @@
     ##insurance.prop <- 
     ##incarceration.prop <- 
 
-######
-    num.sex.acts.base <- 2.4
+######################
+    ## Sexual Behavior
+    num.sex.acts.base <- 2.4 #condomless
+    num.sex.acts.base.w.condom <- 5
+    prop.steady.sex.acts <- 0.10 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
+    prop.casual.sex.acts <- 0.10 #same as above, but for casual
+    prop.steady.sex.acts.w.condom <- 0.2
+    prop.casual.sex.acts.wo.condom <- 0.8
+    inf.red.w.condom <- 0.80
+    
