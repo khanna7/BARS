@@ -71,7 +71,13 @@
    art.init.time <- 365 # currently set to one year, make more complex later
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month
    
-
+   ## ART adherence
+   window.length <- 3*30 #3 month window over which consistency in behavior is maintained
+   prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+   prop.always.adherent <- 0.1
+   prop.partially.adherent <- 1 - (prop.never.adherent+prop.always.adherent) #derived param, should be moved there
+   
+   prob.art_adher.for.partial <- 0.5 #probability that a partially adherent individual will take their medication over the next `window.length`
    #####################
    ## Transmission Parameters
    acute.mult <- 4.98
@@ -104,12 +110,19 @@
       ## serosorting
    
     #####################
-    ## Testing and diagnosis
+    ## Testing, diagnosis and linkage-to-care
     detection.window <- 22
     mean.time.until.next.test <- 365*2
-    lag.bet.diagnosis.and.art.init <- 30
+    #lag.bet.diagnosis.and.art.init <- 30
     non.testers.prop <- 0.25  
 
+    diag.init.2m <- 0.25
+    diag.init.2to4m <- 0.1
+    diag.init.4to6m <- 0.1
+    diag.init.6to8m <- 0.1
+    diag.init.8to10m <- 0.1
+    diag.init.10to12m <- 0.25
+    diag.never.init <- 0.1
     #####################
     ## PrEP
     prep.use.rate <- 6/100
