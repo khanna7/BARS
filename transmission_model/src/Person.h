@@ -31,7 +31,6 @@ private:
 	float infectivity_;
 	PrepStatus prep_;
 	bool dead_, diagnosed_, testable_;
-	float diagnosis_art_lag;
 	Diagnoser<GeometricDistribution> diagnoser_;
 
 public:
@@ -88,10 +87,6 @@ public:
 
 	float timeSinceInfection() const {
 		return infection_parameters_.time_since_infection;
-	}
-
-	float diagnosisARTLag() const {
-		return diagnosis_art_lag;
 	}
 
 	const Diagnoser<GeometricDistribution> diagnoser() const {

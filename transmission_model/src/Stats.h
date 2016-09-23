@@ -92,7 +92,9 @@ struct Counts {
 	double tick;
 	unsigned int main_edge_count, casual_edge_count, size, infected, infected_at_entry, uninfected,
 	entries, age_deaths, infection_deaths;
-	int overlaps, sex_acts;
+	int overlaps;
+	unsigned int sex_acts, casual_sex_acts, casual_sex_with_condom, casual_sex_without_condom;
+	unsigned int steady_sex_acts, steady_sex_with_condom, steady_sex_without_condom;
 
 	Counts();
 	void reset();

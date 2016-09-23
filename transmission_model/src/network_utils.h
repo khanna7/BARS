@@ -105,10 +105,10 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 	std::map<unsigned int, unsigned int> idx_map;
 
 	List rnet;
-	create_r_network(time, rnet, net, idx_map, attributes_setter, MAIN_NETWORK_TYPE);
+	create_r_network(time, rnet, net, idx_map, attributes_setter, STEADY_NETWORK_TYPE);
 	//Rf_PrintValue(rnet);
 	SEXP changes = as<Function>((*R)["nw_simulate"])(rnet, time);
-	reset_network_edges(changes, net, idx_map, time, MAIN_NETWORK_TYPE);
+	reset_network_edges(changes, net, idx_map, time, STEADY_NETWORK_TYPE);
 
 	List cas_net;
 	idx_map.clear();

@@ -31,10 +31,18 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * infected_via_transmission: the number of persons infected via transmission at that timestep
 * infected_at_entry: the number of persons who were infected when entering the model
 * uninfected: the number of uninfected persons at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
-* main_edge_count: the number of edges in the main network in the model at the end of the timestep
-* casual_edge_count: the number of edges in the casual network in the model at the end of the timestep
+* steady_edge_count: the number of edges in the steady partner network in the model at the end of the timestep
+* casual_edge_count: the number of edges in the casual partner network in the model at the end of the timestep
 * vertex_count: the total number of vertices at the end of the timestep. This takes into account adding entries and subtracting deaths.
-* overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false. 
+* overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false.
+* sex_acts: the number of sex acts that occured at that timestep.
+* casual_sex_acts: the number of sex acts that occurred between casual partners.
+* casual_sex_acts_with_condom: the number of casual sex acts in which a condom was used.
+* casual_sex_acts_without_condom: the number of casual sex acts in which a condom was not used.
+* steady_sex_acts: the number of sex acts that occurred between steady partners.
+* steady_sex_acts_with_condom: the number of steady sex acts in which a condom was used.
+* steady_sex_acts_without_condom: the number of steady sex acts in which a condom was not used.
+
 
 ### Partnership Events
 Partnership events are recorded in the file defined by *partnership.events.file* in the model properties file. The format is csv with each row recording an event. The columns are:

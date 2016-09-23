@@ -15,24 +15,28 @@ const int VERSATILE = 0;
 const int INSERTIVE = 1;
 const int RECEPTIVE = 2;
 
-TransmissionRunner::TransmissionRunner(float circumcision_multiplier, float prep_multiplier,
+TransmissionRunner::TransmissionRunner(float circumcision_multiplier, float prep_multiplier, float condom_multiplier,
 		std::vector<float>& given_dur_inf_by_age) :
-		circumcision_multiplier_(circumcision_multiplier), prep_multiplier_(prep_multiplier), dur_inf_by_age(
-				given_dur_inf_by_age) {
+		circumcision_multiplier_(circumcision_multiplier), prep_multiplier_(prep_multiplier), condom_multiplier_(condom_multiplier),
+		dur_inf_by_age(given_dur_inf_by_age) {
 }
 
 TransmissionRunner::~TransmissionRunner() {
 }
 
-bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infectee) {
+bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infectee, bool condom_used) {
 	float infectivity = infector->infectivity();
+
+	if (condom_used) {
+		infectivity *= condom_multiplier_;
+	}
 
 	if (infectee->isOnPrep()) {
 		infectivity *= prep_multiplier_;
 	}
 
 	if (infectee->isCircumcised() && (infectee->role() == INSERTIVE || infectee->role() == VERSATILE)
-			&& infector->role() == RECEPTIVE) {
+			&& infector->role() == RECEPTIVE && !condom_used) {
 		infectivity *= circumcision_multiplier_;
 	}
 

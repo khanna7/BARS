@@ -19,7 +19,8 @@ CPP_SOURCE = Person.cpp \
 	utils.cpp \
 	file_utils.cpp \
 	PersonDataRecorder.cpp \
-	GeometricDistribution.cpp
+	GeometricDistribution.cpp \
+	ARTInitLagCalculator.cpp
 	
 #	EventWriter.cpp \
 	

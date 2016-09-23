@@ -68,7 +68,6 @@ const std::string CIRCUM_MULT = "circum.mult";
 const std::string CIRCUM_RATE = "circum.rate";
 const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
 const std::string DAILY_TESTING_PROB = "daily.testing.prob";
-const std::string GLOBAL_DIAGNOSIS_ART_LAG = "lag.bet.diagnosis.and.art.init";
 const std::string DETECTION_WINDOW = "detection.window";
 const std::string DEG_SEQ = "deg_seq";
 const std::string DUR_INF = "dur.inf";
@@ -107,6 +106,20 @@ const std::string UNTREATED_CD4_PERSTEP_DECLINE = "untreated.cd4.perstep.decline
 
 const std::string PR_INSERTIVE = "pr.insertive";
 const std::string PR_RECEPTIVE = "pr.receptive";
+
+const std::string PROP_STEADY_SEX_ACTS = "prop.steady.sex.acts";
+const std::string PROP_CASUAL_SEX_ACTS = "prop.casual.sex.acts";
+const std::string PROP_STEADY_SEX_ACTS_CONDOM = "prop.steady.sex.acts.w.condom";
+const std::string PROP_CASUAL_SEX_ACTS_CONDOM = "prop.casual.sex.acts.w.condom";
+const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
+
+const std::string DIAG_INIT_2M = "diag.init.2m";
+const std::string DIAG_INIT_2TO4M = "diag.init.2to4m";
+const std::string DIAG_INIT_4TO6M ="diag.init.4to6m";
+const std::string DIAG_INIT_6TO8M = "diag.init.6to8m";
+const std::string DIAG_INIT_8TO10M = "diag.init.8to10m";
+const std::string DIAG_INIT_10TO12M = "diag.init.10to12m";
+const std::string DIAG_NEVER_INIT = "diag.never.init";
 
 Parameters* Parameters::instance_ = 0;
 

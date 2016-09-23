@@ -55,23 +55,30 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 
 const std::string Counts::header(
 		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"infected_at_entry\",\"uninfected\","
-				"\"main_edge_count\",\"casual_edge_count\",\"vertex_count\",\"overlaps\",\"sex_acts\"");
+		"\"steady_edge_count\",\"casual_edge_count\",\"vertex_count\",\"overlaps\",\"sex_acts\",\"casual_sex_acts\",\"casual_sex_with_condom\","
+		"\"casual_sex_without_condom\",\"steady_sex_acts\",\"steady_sex_with_condom\",\"steady_sex_without_condom\"");
 
 void Counts::writeTo(FileOutput& out) {
 	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << infected << ","
 			<< infected_at_entry << "," << uninfected << "," << main_edge_count << "," << casual_edge_count << ","
-			<< size << "," << overlaps << "," << sex_acts << "\n";
+			<< size << "," << overlaps << "," << sex_acts << "," << casual_sex_acts << "," << casual_sex_with_condom
+			<< "," << casual_sex_without_condom << "," << steady_sex_acts << "," << steady_sex_with_condom << ","
+			<< steady_sex_without_condom  <<"\n";
 }
 
 Counts::Counts() :
 		tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, size { 0 }, infected { 0 }, infected_at_entry { 0 }, uninfected {
-				0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, overlaps { 0 }, sex_acts { 0 } {
+				0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, overlaps { 0 }, sex_acts { 0 },
+				casual_sex_acts{0}, casual_sex_with_condom{0}, casual_sex_without_condom{0},
+				steady_sex_acts{0}, steady_sex_with_condom{0}, steady_sex_without_condom {0}
+{
 }
 
 void Counts::reset() {
 	tick = 0;
 	main_edge_count = casual_edge_count = size = infected = entries = age_deaths = uninfected = infection_deaths =
-			infected_at_entry = 0, sex_acts = 0;
+			infected_at_entry = 0, sex_acts = 0, casual_sex_acts = 0, casual_sex_with_condom = 0, casual_sex_without_condom = 0,
+			steady_sex_acts = 0, steady_sex_with_condom = 0, steady_sex_without_condom  = 0;
 	overlaps = 0;
 }
 

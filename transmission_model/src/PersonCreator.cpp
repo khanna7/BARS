@@ -41,7 +41,6 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 	int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
 	Diagnoser<GeometricDistribution> diagnoser(tick, detection_window_, dist);
 	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(), diagnoser);
-	person->diagnosis_art_lag = Parameters::instance()->getFloatParameter(GLOBAL_DIAGNOSIS_ART_LAG);
 	person->testable_= ((int) repast::Random::instance()->getGenerator(NON_TESTERS_BINOMIAL)->next()) == 0;
 	person->prep_ = ((int) repast::Random::instance()->getGenerator(PREP_BINOMIAL)->next()) == 1 ? PrepStatus::ON : PrepStatus::OFF;
 
@@ -61,7 +60,6 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role, diagnoser);
 	person->diagnosed_ = as<bool>(val["diagnosed"]);
 	person->testable_ = !(as<bool>(val["non.testers"]));
-	person->diagnosis_art_lag = as<float>(val["lag.bet.diagnosis.and.art.init"]);
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
 
 

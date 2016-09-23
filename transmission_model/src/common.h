@@ -29,7 +29,7 @@ const std::string DAILY_TESTING_GEOM = "daily.testing.geom";
 
 const std::string C_ID = "c.id";
 
-const int MAIN_NETWORK_TYPE = 0;
+const int STEADY_NETWORK_TYPE = 0;
 const int CASUAL_NETWORK_TYPE = 1;
 
 
