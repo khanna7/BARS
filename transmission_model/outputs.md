@@ -117,8 +117,8 @@ Person data recording collects the following attributes for each person in the m
 * art status: The ART status of the person at death or simulation end.
   * 0: not on ART
   * 1: on ART
-* time of art initiation: the timestamp when the person when on ART. If never on ART then -1.
-* time of art cessation: the timestamp when the person went off of ART. If never went off of ART then -1.
+* time of art initiation: the timestamp when the person last went on ART. If never on ART then -1. All the ART events, not just the final one, can be seen in the ART events file.
+* time of art cessation: the timestamp when the person last went off of ART. If never went off of ART then -1. All the ART events, not just the final one, can be seen in the ART events file.
 * prep status: The PrEP status of the person at death or simulation end
   * 0: not on PrEP
   * 1: not on PrEP after being on PrEP and then diagnosed as positive
@@ -130,6 +130,14 @@ Person data recording collects the following attributes for each person in the m
 * diagnosis status: whether or not the person has been diagnosed.
   * 0: undiagnosed
   * 1: diagnosed
+* init_art_lag: the time lag between being diagnosed and going on ART. If never on ART, then -1. If diagnosis status is 1, and this is -1 then the person is in the never going on ART category.
+* adherence_category: the person's adherence category.
+  * 0: Never going on ART
+  * 1: Always on ART
+  * 2: ART adherence is re-evalatuted at some parameterized interval.
+  * 3: None of the above. Person is either not infected, or not yet diagnosed, and so ART adherence doesn't apply.
+* adhered_interval_count: the number of intervals during which a partially adherent person is on ART.
+* non_adhered_interval_count: the number of intervals during which a partially adherent person is not on ART.
 
 ### Testing Events
 Testing events are recorded in the file defined by the *testing.events.file* property. Each time a 
@@ -139,4 +147,12 @@ person is tested an event is recorded. The format is csv with one row per event.
 * result: the result of the test.
   * 0: negative test
   * 1: positive test
+  
+### ART Events
+When a person goes on or off ART, that event is recorded in the art events file. The file is defined by the *art.events.file* property. The format is csv with one row per event.
+* tick: the time at which the event occurred
+* p_id: the id of the person who went on or off ART
+* event_type: the event type (on or off ART).
+  * 0: off of ART
+  * 1: on ART
 
