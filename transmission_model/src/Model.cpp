@@ -23,6 +23,9 @@
 #include "StatsBuilder.h"
 #include "file_utils.h"
 #include "utils.h"
+#include "art_functions.h"
+
+
 //#include "EventWriter.h"
 
 using namespace Rcpp;
@@ -76,6 +79,8 @@ struct PersonToVAL {
 			vertex["age.at.infection"] = NA_REAL;
 			vertex["viral.load.today"] = 0;
 		}
+
+		vertex["adherence.category"] = static_cast<int>(p->adherence());
 
 		if (p->isOnART()) {
 			vertex["time.since.art.initiation"] = p->infectionParameters().time_since_art_init;
@@ -187,7 +192,6 @@ void init_generators() {
 	float prep_rate = Parameters::instance()->getDoubleParameter(PREP_RATE);
 	BinomialGen p_rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, prep_rate));
 	Random::instance()->putGenerator(PREP_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(p_rate));
-
 }
 
 void init_stats() {
@@ -199,6 +203,7 @@ void init_stats() {
 	builder.deathEventWriter(Parameters::instance()->getStringParameter(DEATH_EVENT_FILE));
 	builder.personDataRecorder(Parameters::instance()->getStringParameter(PERSON_DATA_FILE));
 	builder.testingEventWriter(Parameters::instance()->getStringParameter(TESTING_EVENT_FILE));
+	builder.artEventWriter(Parameters::instance()->getStringParameter(ART_EVENT_FILE));
 
 	builder.createStatsSingleton();
 }
@@ -383,8 +388,9 @@ void Model::step() {
 	stats->resetForNextTimeStep();
 }
 
-void Model::scheduleART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep) {
+void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep) {
 	double lag = art_lag_calculator->calculateLag(size_of_timestep);
+	Stats::instance()->personDataRecorder().recordInitialARTLag(person, lag);
 	if (lag != NEVER_INIT_ART) {
 		double art_at_tick = lag + tick;
 		ARTScheduler* scheduler = nullptr;
@@ -398,6 +404,8 @@ void Model::scheduleART(PersonPtr person, std::map<double, ARTScheduler*>& art_m
 			scheduler = iter->second;
 		}
 		scheduler->addPerson(person);
+
+		initialize_adherence(person, art_at_tick);
 	}
 }
 
@@ -434,7 +442,7 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 
 		if (person->isTestable() && !person->isDiagnosed()) {
 			if (person->diagnose(t)) {
-				scheduleART(person, art_map, t, size_of_timestep);
+				schedulePostDiagnosisART(person, art_map, t, size_of_timestep);
 			}
 		}
 

@@ -12,6 +12,12 @@
 
 namespace TransModel {
 
+const std::string ARTEvent::header("\"tick\",\"p_id\",\"event_type\"");
+
+void ARTEvent::writeTo(FileOutput& out) {
+	out << tick << "," << p_id << "," << (int)type << "\n";
+}
+
 const std::string TestingEvent::header("\"tick\",\"p_id\",\"result\"");
 
 void TestingEvent::writeTo(FileOutput& out) {
@@ -85,11 +91,11 @@ void Counts::reset() {
 Stats* Stats::instance_ = nullptr;
 
 Stats::Stats(std::shared_ptr<StatsWriter<Counts>> counts, std::shared_ptr<StatsWriter<PartnershipEvent>> pevents,
-		std::shared_ptr<StatsWriter<InfectionEvent>> ievent, std::shared_ptr<StatsWriter<Biomarker>> bio_writer,
+		std::shared_ptr<StatsWriter<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriter<Biomarker>> bio_writer,
 		std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer, const std::string& person_data_fname,
-		std::shared_ptr<StatsWriter<TestingEvent>> testing_event_writer) :
-		counts_writer { counts }, current_counts { }, pevent_writer { pevents }, ievent_writer { ievent }, biomarker_writer {
-				bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer},
+		std::shared_ptr<StatsWriter<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriter<ARTEvent>> art_writer) :
+		counts_writer { counts }, current_counts { }, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
+				bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer}, art_event_writer {art_writer},
 				pd_recorder{person_data_fname, 1000}
 			 {
 }
@@ -100,6 +106,10 @@ Stats::~Stats() {
 void Stats::resetForNextTimeStep() {
 	counts_writer->addOutput(current_counts);
 	current_counts.reset();
+}
+
+void Stats::recordARTEvent(double time, int p_id, bool onART) {
+	art_event_writer->addOutput(ARTEvent{time, p_id, onART});
 }
 
 void Stats::recordPartnershipEvent(double t, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type) {

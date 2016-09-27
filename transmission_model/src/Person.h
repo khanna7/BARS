@@ -12,6 +12,7 @@
 #include "DiseaseParameters.h"
 #include "Diagnoser.h"
 #include "GeometricDistribution.h"
+#include "AdherenceCategory.h"
 
 namespace TransModel {
 
@@ -32,6 +33,7 @@ private:
 	PrepStatus prep_;
 	bool dead_, diagnosed_, testable_;
 	Diagnoser<GeometricDistribution> diagnoser_;
+	AdherenceCategory adherence_;
 
 public:
 	Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser);
@@ -93,6 +95,14 @@ public:
 		return diagnoser_;
 	}
 
+	void setAdherence(AdherenceCategory category) {
+		adherence_ = category;
+	}
+
+	AdherenceCategory adherence() const {
+		return adherence_;
+	}
+
 	void setViralLoad(float viral_load);
 
 	void setCD4Count(float cd4_count);
@@ -104,9 +114,15 @@ public:
 	void setAge(float age);
 
 	/**
-	 * Puts this Person on ART with the specified time stamp.
+	 * Puts this Person on ART with the specified time stamp,
+	 * setting the art status to true.
 	 */
-	void putOnART(float time_stamp);
+	void goOnART(float time_stamp);
+
+	/**
+	 * Takes this person off ART, setting the art status to false.
+	 */
+	void goOffART();
 
 	/**
 	 * Infects this Person and sets the duration of the infection,

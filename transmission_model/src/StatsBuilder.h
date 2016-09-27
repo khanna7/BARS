@@ -25,6 +25,7 @@ private:
 	std::shared_ptr<StatsWriter<DeathEvent>> death_writer;
 	std::string pd_fname;
 	std::shared_ptr<StatsWriter<TestingEvent>> tevent_writer;
+	std::shared_ptr<StatsWriter<ARTEvent>> art_event_writer;
 	std::string out_dir_;
 
 public:
@@ -38,6 +39,7 @@ public:
 	StatsBuilder* deathEventWriter(const std::string& fname, unsigned int buffer = 1000);
 	StatsBuilder* testingEventWriter(const std::string& fname, unsigned int buffer = 1000);
 	StatsBuilder* personDataRecorder(const std::string& fname);
+	StatsBuilder* artEventWriter(const std::string& fname,  unsigned int buffer = 1000);
 
 
 	void createStatsSingleton();
