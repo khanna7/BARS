@@ -130,7 +130,7 @@ Person data recording collects the following attributes for each person in the m
 * diagnosis status: whether or not the person has been diagnosed.
   * 0: undiagnosed
   * 1: diagnosed
-* init_art_lag: the time lag between being diagnosed and going on ART. If never on ART, then -1. If diagnosis status is 1, and this is -1 then the person is in the never going on ART category.
+* init_art_lag: the time lag between being diagnosed and going on ART. If never on ART, then -1. If diagnosis status is 1, and this is -999999 then the person is in the never going on ART.
 * adherence_category: the person's adherence category.
   * 0: Never going on ART
   * 1: Always on ART
