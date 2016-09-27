@@ -57,7 +57,7 @@ private:
 	void countOverlap();
 
 	void initParamsForTransmission(int type, double& prob, bool& condom_used);
-	void scheduleART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep);
+	void schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep);
 
 public:
 	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);

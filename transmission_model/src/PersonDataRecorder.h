@@ -28,6 +28,9 @@ struct PersonData {
 	bool infection_status, art_status, diagnosed;
 	unsigned int number_of_tests;
 	double time_since_last_test;
+	int adherence_category;
+	unsigned int adhered_interval_count, non_adhered_interval_count;
+	double init_art_lag;
 
 	PersonData(PersonPtr p, double time_of_birth);
 	void writeTo(FileOutput& out);
@@ -47,10 +50,13 @@ public:
 	virtual ~PersonDataRecorder();
 
 	void initRecord(PersonPtr& person, double time_of_entry);
-	void recordARTInit(PersonPtr& p, double ts);
+	void recordARTStart(PersonPtr& p, double ts);
 	void recordARTStop(PersonPtr& p, double ts);
 	void recordInfection(PersonPtr& p, double ts);
 	void recordDeath(PersonPtr& p, double ts);
+	void recordInitialARTLag(PersonPtr& p, double lag);
+	void incrementNonAdheredIntervals(PersonPtr& p);
+	void incrementAdheredIntervals(PersonPtr& p);
 	void finalize(const PersonPtr& p, double ts);
 
 };

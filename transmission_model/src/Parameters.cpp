@@ -36,6 +36,7 @@ const std::string BIOMARKER_FILE = "biomarker.log.file";
 const std::string BIOMARKER_LOG_COUNT = "biomarker.number.of.persons.to.log";
 const std::string DEATH_EVENT_FILE = "death.events.file";
 const std::string TESTING_EVENT_FILE = "testing.events.file";
+const std::string ART_EVENT_FILE = "art.events.file";
 const std::string PERSON_DATA_FILE = "person.data.file";
 const std::string NET_SAVE_FILE = "net.save.file";
 const std::string CASUAL_NET_SAVE_FILE = "casual.net.save.file";
@@ -120,6 +121,13 @@ const std::string DIAG_INIT_6TO8M = "diag.init.6to8m";
 const std::string DIAG_INIT_8TO10M = "diag.init.8to10m";
 const std::string DIAG_INIT_10TO12M = "diag.init.10to12m";
 const std::string DIAG_NEVER_INIT = "diag.never.init";
+
+
+const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
+const std::string PROP_NEVER_ADHERENT = "prop.never.adherent";
+const std::string PROP_ALWAYS_ADHERENT = "prop.always.adherent";
+const std::string PROP_PARTIALLY_ADHERENT = "prop.partially.adherent";
+const std::string PROB_ART_ADHER_FOR_PARTIAL = "prob.art_adher.for.partial";
 
 Parameters* Parameters::instance_ = 0;
 
