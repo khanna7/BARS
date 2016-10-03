@@ -19,7 +19,7 @@ The population is initialized within `r/`, and dynamically simulated through tim
    
    * Khanna AS, Roberts ST, Cassels S, et al. Estimating PMTCT's Impact on Heterosexual HIV Transmission: A Mathematical Modeling Analysis. PLoS One. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/26262889)
    
-   * Khanna A, Goodreau SM, Wohlfeiler D, et al. Individualized diagnosis interventions can add significant effectiveness in reducing human immunodeficiency virus incidence among men who have sex with men: insights from Southern California. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/25453725)_
+   * Khanna A, Goodreau SM, Wohlfeiler D, et al. Individualized diagnosis interventions can add significant effectiveness in reducing human immunodeficiency virus incidence among men who have sex with men: insights from Southern California. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/25453725)
 
 ## Lead Authors        
 
