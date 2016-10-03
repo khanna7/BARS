@@ -13,8 +13,10 @@ e-mail at <akhanna@medicine.bsd.uchicago.edu>.
      
 The population is initialized within `r/`, and dynamically simulated through time using the Repast toolkit. The R package [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) is used to integrate the two frameworks. Automated parameter sweeping procedures are created using the  [Swift/T](http://swift-lang.org/Swift-T/) parallel scripting language and are implemented to enable efficient model exploration and calibration.
 
-## Selected References
-   
+## Selected References   
+
+   * Collier N, North M. Parallel agent-based simulation with Repast for High Performance Computing. SIMULATION: Transactions of The Society for Modeling and Simulation International. 2012. [LINK](http://sim.sagepub.com/content/89/10/1215)  
+
    * Khanna AS, Roberts ST, Cassels S, et al. Estimating PMTCT's Impact on Heterosexual HIV Transmission: A Mathematical Modeling Analysis. PLoS One. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/26262889)
    
    * Khanna A, Goodreau SM, Wohlfeiler D, et al. Individualized diagnosis interventions can add significant effectiveness in reducing human immunodeficiency virus incidence among men who have sex with men: insights from Southern California. Ann Epidemiol. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/25453725)   
