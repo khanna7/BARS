@@ -31,10 +31,18 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * infected_via_transmission: the number of persons infected via transmission at that timestep
 * infected_at_entry: the number of persons who were infected when entering the model
 * uninfected: the number of uninfected persons at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
-* main_edge_count: the number of edges in the main network in the model at the end of the timestep
-* casual_edge_count: the number of edges in the casual network in the model at the end of the timestep
+* steady_edge_count: the number of edges in the steady partner network in the model at the end of the timestep
+* casual_edge_count: the number of edges in the casual partner network in the model at the end of the timestep
 * vertex_count: the total number of vertices at the end of the timestep. This takes into account adding entries and subtracting deaths.
-* overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false. 
+* overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false.
+* sex_acts: the number of sex acts that occured at that timestep.
+* casual_sex_acts: the number of sex acts that occurred between casual partners.
+* casual_sex_acts_with_condom: the number of casual sex acts in which a condom was used.
+* casual_sex_acts_without_condom: the number of casual sex acts in which a condom was not used.
+* steady_sex_acts: the number of sex acts that occurred between steady partners.
+* steady_sex_acts_with_condom: the number of steady sex acts in which a condom was used.
+* steady_sex_acts_without_condom: the number of steady sex acts in which a condom was not used.
+
 
 ### Partnership Events
 Partnership events are recorded in the file defined by *partnership.events.file* in the model properties file. The format is csv with each row recording an event. The columns are:
@@ -109,8 +117,8 @@ Person data recording collects the following attributes for each person in the m
 * art status: The ART status of the person at death or simulation end.
   * 0: not on ART
   * 1: on ART
-* time of art initiation: the timestamp when the person when on ART. If never on ART then -1.
-* time of art cessation: the timestamp when the person went off of ART. If never went off of ART then -1.
+* time of art initiation: the timestamp when the person last went on ART. If never on ART then -1. All the ART events, not just the final one, can be seen in the ART events file.
+* time of art cessation: the timestamp when the person last went off of ART. If never went off of ART then -1. All the ART events, not just the final one, can be seen in the ART events file.
 * prep status: The PrEP status of the person at death or simulation end
   * 0: not on PrEP
   * 1: not on PrEP after being on PrEP and then diagnosed as positive
@@ -122,6 +130,14 @@ Person data recording collects the following attributes for each person in the m
 * diagnosis status: whether or not the person has been diagnosed.
   * 0: undiagnosed
   * 1: diagnosed
+* init_art_lag: the time lag between being diagnosed and going on ART. If never on ART, then -1. If diagnosis status is 1, and this is -999999 then the person is in the never going on ART.
+* adherence_category: the person's adherence category.
+  * 0: Never going on ART
+  * 1: Always on ART
+  * 2: ART adherence is re-evalatuted at some parameterized interval.
+  * 3: None of the above. Person is either not infected, or not yet diagnosed, and so ART adherence doesn't apply.
+* adhered_interval_count: the number of intervals during which a partially adherent person is on ART.
+* non_adhered_interval_count: the number of intervals during which a partially adherent person is not on ART.
 
 ### Testing Events
 Testing events are recorded in the file defined by the *testing.events.file* property. Each time a 
@@ -131,4 +147,12 @@ person is tested an event is recorded. The format is csv with one row per event.
 * result: the result of the test.
   * 0: negative test
   * 1: positive test
+  
+### ART Events
+When a person goes on or off ART, that event is recorded in the art events file. The file is defined by the *art.events.file* property. The format is csv with one row per event.
+* tick: the time at which the event occurred
+* p_id: the id of the person who went on or off ART
+* event_type: the event type (on or off ART).
+  * 0: off of ART
+  * 1: on ART
 

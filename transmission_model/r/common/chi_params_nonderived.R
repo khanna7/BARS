@@ -71,9 +71,16 @@
    art.init.time <- 365 # currently set to one year, make more complex later
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month
    
-
+   ## ART adherence
+   partial.art_adher.window.length <- 3*30 #3 month window over which consistency in behavior is maintained
+   prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+   prop.always.adherent <- 0.1
+   
+   prob.art_adher.for.partial <- 0.5 #probability that a partially adherent individual will take their medication over the next `window.length`
+   
    #####################
    ## Transmission Parameters
+   ## Additional multiplier information: http://www.hiv.va.gov/provider/manual-primary-care/prevention-for-positives-table3.asp
    acute.mult <- 4.98
    late.mult <- 3.49
    preg.mult <- 2.5 ## check
@@ -104,12 +111,19 @@
       ## serosorting
    
     #####################
-    ## Testing and diagnosis
+    ## Testing, diagnosis and linkage-to-care
     detection.window <- 22
     mean.time.until.next.test <- 365*2
-    lag.bet.diagnosis.and.art.init <- 30
+    #lag.bet.diagnosis.and.art.init <- 30
     non.testers.prop <- 0.25  
 
+    diag.init.2m <- 0.25
+    diag.init.2to4m <- 0.1
+    diag.init.4to6m <- 0.1
+    diag.init.6to8m <- 0.1
+    diag.init.8to10m <- 0.1
+    diag.init.10to12m <- 0.25
+    diag.never.init <- 0.1
     #####################
     ## PrEP
     prep.use.rate <- 6/100
@@ -120,5 +134,13 @@
     ##insurance.prop <- 
     ##incarceration.prop <- 
 
-######
-    num.sex.acts.base <- 2.4
+######################
+    ## Sexual Behavior
+    num.sex.acts.base <- 2.4 #condomless
+    num.sex.acts.base.w.condom <- 5
+    prop.steady.sex.acts <- 0.10 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
+    prop.casual.sex.acts <- 0.10 #same as above, but for casual
+    prop.steady.sex.acts.w.condom <- 0.2
+    prop.casual.sex.acts.w.condom <- 0.8
+    inf.red.w.condom <- 0.80
+    

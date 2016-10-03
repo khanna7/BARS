@@ -18,6 +18,18 @@
 
 namespace TransModel {
 
+struct ARTEvent {
+
+	static const std::string header;
+
+	double tick;
+	int p_id;
+	// false is off art, true is on art
+	bool type;
+
+	void writeTo(FileOutput& out);
+};
+
 struct TestingEvent {
 
 	static const std::string header;
@@ -92,7 +104,9 @@ struct Counts {
 	double tick;
 	unsigned int main_edge_count, casual_edge_count, size, infected, infected_at_entry, uninfected,
 	entries, age_deaths, infection_deaths;
-	int overlaps, sex_acts;
+	int overlaps;
+	unsigned int sex_acts, casual_sex_acts, casual_sex_with_condom, casual_sex_without_condom;
+	unsigned int steady_sex_acts, steady_sex_with_condom, steady_sex_without_condom;
 
 	Counts();
 	void reset();
@@ -110,6 +124,7 @@ private:
 	std::shared_ptr<StatsWriter<Biomarker>> biomarker_writer;
 	std::shared_ptr<StatsWriter<DeathEvent>> death_writer;
 	std::shared_ptr<StatsWriter<TestingEvent>> tevent_writer;
+	std::shared_ptr<StatsWriter<ARTEvent>> art_event_writer;
 
 	PersonDataRecorder pd_recorder;
 
@@ -119,7 +134,7 @@ private:
 	Stats(std::shared_ptr<StatsWriter<Counts>> counts, std::shared_ptr<StatsWriter<PartnershipEvent>> pevents,
 			std::shared_ptr<StatsWriter<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriter<Biomarker>> bio_writer,
 			std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer, const std::string& person_data_fname,
-			std::shared_ptr<StatsWriter<TestingEvent>> testing_event_writer);
+			std::shared_ptr<StatsWriter<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriter<ARTEvent>> art_event_writer);
 
 public:
 	virtual ~Stats();
@@ -148,6 +163,7 @@ public:
 	void recordBiomarker(double time, const PersonPtr& person);
 	void recordDeathEvent(double time, const PersonPtr& person, const std::string& cause);
 	void recordTestingEvent(double time, int p_id, bool result);
+	void recordARTEvent(double time, int p_id, bool onART);
 };
 
 } /* namespace TransModel */

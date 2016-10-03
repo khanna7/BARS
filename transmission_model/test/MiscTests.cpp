@@ -14,9 +14,114 @@
 #include "utils.h"
 #include "Diagnoser.h"
 #include "StatsBuilder.h"
+#include "ARTInitLagCalculator.h"
 
 using namespace TransModel;
 using namespace Rcpp;
+
+TEST(ARTInitTests, TestCreator) {
+	ARTInitCalculatorCreator creator;
+	try {
+		creator.createCalculator();
+		FAIL();
+	} catch (...) {
+	}
+
+	try {
+		creator.diagInit2m(3);
+		creator.diagInit2to4m(0);
+		creator.diagInit4to6m(0);
+		creator.diagInit6to8m(0);
+		creator.diagInit8to10m(0);
+		creator.diagInit10to12m(0);
+		creator.diagNeverInit(0);
+		creator.createCalculator();
+		FAIL();
+	} catch (...) {
+	}
+
+	try {
+		creator.diagInit2m(.2);
+		creator.diagInit2to4m(.2);
+		creator.diagInit4to6m(.2);
+		creator.diagInit6to8m(.2);
+		creator.diagInit8to10m(.2);
+		creator.diagInit10to12m(0);
+		creator.diagNeverInit(0);
+		creator.createCalculator();
+	} catch (...) {
+		FAIL();
+	}
+}
+
+void init_creator(ARTInitCalculatorCreator& creator) {
+	creator.diagInit2m(0);
+	creator.diagInit2to4m(0);
+	creator.diagInit4to6m(0);
+	creator.diagInit6to8m(0);
+	creator.diagInit8to10m(0);
+	creator.diagInit10to12m(0);
+	creator.diagNeverInit(0);
+}
+
+void test_calc(std::shared_ptr<ARTInitLagCalculator> calc, double min, double max) {
+	min *=30;
+	max *=30;
+	for (int i = 0; i < 1000; ++i) {
+		double val = calc->calculateLag(1);
+		ASSERT_GE(val, min);
+		ASSERT_LE(val, max);
+
+		val = calc->calculateLag(2);
+		ASSERT_GE(val, min / 2.0);
+		ASSERT_LE(val, max / 2.0);
+	}
+}
+
+TEST(ARTInitTests, TestLagCalculator) {
+	repast::Random::initialize(1);
+	ARTInitCalculatorCreator creator;
+	init_creator(creator);
+
+	creator.diagInit2m(1);
+	std::shared_ptr<ARTInitLagCalculator> calc = creator.createCalculator();
+	test_calc(calc, 0, 2);
+	creator.diagInit2m(0);
+
+	creator.diagInit2to4m(1);
+	calc = creator.createCalculator();
+	test_calc(calc, 2, 4);
+	creator.diagInit2to4m(0);
+
+	creator.diagInit4to6m(1);
+	calc = creator.createCalculator();
+	test_calc(calc, 4, 6);
+	creator.diagInit4to6m(0);
+
+	creator.diagInit6to8m(1);
+	calc = creator.createCalculator();
+	test_calc(calc, 6, 8);
+	creator.diagInit6to8m(0);
+
+	creator.diagInit8to10m(1);
+	calc = creator.createCalculator();
+	test_calc(calc, 8, 10);
+	creator.diagInit8to10m(0);
+
+	creator.diagInit10to12m(1);
+	calc = creator.createCalculator();
+	test_calc(calc, 10, 12);
+	creator.diagInit10to12m(0);
+
+	creator.diagNeverInit(1);
+	calc = creator.createCalculator();
+	for (int i = 0; i < 1000; ++i) {
+		double val = calc->calculateLag(1);
+		ASSERT_EQ(NEVER_INIT_ART, val);
+		val = calc->calculateLag(2);
+		ASSERT_EQ(NEVER_INIT_ART, val);
+	}
+}
 
 TEST(ParametersTests, TestCreateFromR) {
 	//RInstance::rptr

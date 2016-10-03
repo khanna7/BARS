@@ -15,7 +15,7 @@ namespace TransModel {
 Person::Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser) :
 		id_(id), role_(role), age_(age), circum_status_(circum_status),
 		infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF), dead_(false), diagnosed_(false), testable_(false),
-		diagnosis_art_lag(0), diagnoser_(diagnoser) {
+		diagnoser_(diagnoser), adherence_{AdherenceCategory::NA} {
 }
 
 //Person::Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth) : net(network), id_(id) {
@@ -56,7 +56,11 @@ void Person::setInfectivity(float infectivity) {
 	infectivity_ = infectivity;
 }
 
-void Person::putOnART(float time_stamp) {
+void Person::goOffART() {
+	infection_parameters_.art_status = false;
+}
+
+void Person::goOnART(float time_stamp) {
 	infection_parameters_.art_status = true;
 	infection_parameters_.time_since_art_init = 0;
 	infection_parameters_.time_of_art_init = time_stamp;

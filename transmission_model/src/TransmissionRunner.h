@@ -19,13 +19,13 @@ namespace TransModel {
 class TransmissionRunner {
 
 private:
-	float circumcision_multiplier_, prep_multiplier_;
+	float circumcision_multiplier_, prep_multiplier_, condom_multiplier_;
 	std::vector<float> dur_inf_by_age;
 
 
 
 public:
-	TransmissionRunner(float circumcision_multiplier, float prep_multiplier,
+	TransmissionRunner(float circumcision_multiplier, float prep_multiplier, float condom_multiplier,
 			std::vector<float>& given_dur_inf_by_age);
 	virtual ~TransmissionRunner();
 
@@ -38,7 +38,7 @@ public:
 	 * @param infector the infected person
 	 * @param infectee the uninfected partner
 	 */
-	bool determineInfection(PersonPtr& infector, PersonPtr& infectee);
+	bool determineInfection(PersonPtr& infector, PersonPtr& infectee, bool condom_used);
 
 	/**
 	 * Sets the infection flag, time of infection etc on the specified person and

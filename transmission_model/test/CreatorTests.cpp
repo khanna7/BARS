@@ -25,7 +25,7 @@ TEST(CreatorTests, TestInfectedPersonCreationNoART) {
 	ASSERT_NEAR(61.87456, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
 	PersonCreator creator(runner, 0.5, 1);
 	PersonPtr person = creator(p_list, 1);
 	ASSERT_FALSE(person->isCircumcised());
@@ -35,7 +35,6 @@ TEST(CreatorTests, TestInfectedPersonCreationNoART) {
 	ASSERT_FALSE(person->isDiagnosed());
 	// created at tick 1 so 43 from tick 1
 	ASSERT_EQ(43, person->timeUntilNextTest(1));
-	ASSERT_EQ(30, person->diagnosisARTLag());
 	ASSERT_TRUE(person->isTestable());
 	ASSERT_FALSE(person->isOnPrep());
 
@@ -63,7 +62,7 @@ TEST(CreatorTests, TestUninfectedPersonCreation) {
 	ASSERT_NEAR(43.92679, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
 	PersonCreator creator(runner, 0.5, 1);
 	PersonPtr person = creator(p_list, 1);
 	ASSERT_FALSE(person->isCircumcised());
@@ -98,7 +97,7 @@ TEST(CreatorTests, TestInfectedPersonCreationART) {
 	ASSERT_NEAR(17.89907, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
 	PersonCreator creator(runner, 0.5, 1);
 	PersonPtr person = creator(p_list, 1);
 	ASSERT_FALSE(person->isCircumcised());
@@ -109,7 +108,6 @@ TEST(CreatorTests, TestInfectedPersonCreationART) {
 	ASSERT_TRUE(person->isDiagnosed());
 	// should always be 0 for diagnosed person
 	ASSERT_EQ(0, person->timeUntilNextTest(1));
-	ASSERT_EQ(30, person->diagnosisARTLag());
 	ASSERT_TRUE(person->isTestable());
 	ASSERT_FALSE(person->isOnPrep());
 
@@ -132,7 +130,7 @@ TEST(CreatorTests, TestCreatorFromSavedNet) {
 	RInstance::rptr->parseEvalQ(cmd);
 	List rnet = as<List>((*RInstance::rptr)["nw.test"]);
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
 	PersonCreator creator(runner, 0.5, 1);
 	List val = as<List>(rnet["val"]);
 
@@ -167,7 +165,7 @@ TEST(CreatorTests, TestDiagnosis) {
 	p_list["lag.bet.diagnosis.and.art.init"] = 0;
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, dur_inf);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
 
 	// detection window = 10
 	PersonCreator creator(runner, 0.5, 10);

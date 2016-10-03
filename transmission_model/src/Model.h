@@ -22,8 +22,15 @@
 #include "ViralLoadCalculator.h"
 #include "ViralLoadSlopeCalculator.h"
 #include "PersonCreator.h"
+#include "ARTInitLagCalculator.h"
+#include "ARTScheduler.h"
 
 namespace TransModel {
+
+struct TransmissionParameters {
+	double prop_steady_sex_acts, prop_casual_sex_acts;
+	double prop_steady_condom, prop_casual_condom;
+};
 
 class Model {
 
@@ -38,6 +45,8 @@ private:
 	std::map<float, std::shared_ptr<Stage>> stage_map;
 	std::set<int> persons_to_log;
 	PersonCreator person_creator;
+	TransmissionParameters trans_params;
+	std::shared_ptr<ARTInitLagCalculator> art_lag_calculator;
 
 	void runTransmission(double timestamp);
 	bool dead(double tick, PersonPtr person, int max_survival);
@@ -46,6 +55,9 @@ private:
 	void updateVitals(double time, float size_of_time_step, int max_survival);
 	void updateThetaForm(const std::string& var_name);
 	void countOverlap();
+
+	void initParamsForTransmission(int type, double& prob, bool& condom_used);
+	void schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep);
 
 public:
 	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);

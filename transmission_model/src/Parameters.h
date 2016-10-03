@@ -24,6 +24,7 @@ extern const std::string BIOMARKER_FILE;
 extern const std::string BIOMARKER_LOG_COUNT;
 extern const std::string DEATH_EVENT_FILE;
 extern const std::string TESTING_EVENT_FILE;
+extern const std::string ART_EVENT_FILE;
 extern const std::string PERSON_DATA_FILE;
 extern const std::string NET_SAVE_FILE;
 extern const std::string CASUAL_NET_SAVE_FILE;
@@ -59,7 +60,6 @@ extern const std::string CIRCUM_MULT;
 extern const std::string CIRCUM_RATE;
 extern const std::string DAILY_ENTRY_RATE;
 extern const std::string DAILY_TESTING_PROB;
-extern const std::string GLOBAL_DIAGNOSIS_ART_LAG;
 extern const std::string DETECTION_WINDOW;
 extern const std::string DUR_INF;
 extern const std::string DURATION;
@@ -97,6 +97,26 @@ extern const std::string UNTREATED_CD4_PERSTEP_DECLINE;
 
 extern const std::string PR_INSERTIVE;
 extern const std::string PR_RECEPTIVE;
+
+extern const std::string PROP_STEADY_SEX_ACTS;
+extern const std::string PROP_CASUAL_SEX_ACTS;
+extern const std::string PROP_STEADY_SEX_ACTS_CONDOM;
+extern const std::string PROP_CASUAL_SEX_ACTS_CONDOM;
+extern const std::string INFECTIVITY_REDUCTION_CONDOM;
+
+extern const std::string DIAG_INIT_2M ;
+extern const std::string DIAG_INIT_2TO4M;
+extern const std::string DIAG_INIT_4TO6M;
+extern const std::string DIAG_INIT_6TO8M;
+extern const std::string DIAG_INIT_8TO10M;
+extern const std::string DIAG_INIT_10TO12M;
+extern const std::string DIAG_NEVER_INIT;
+
+extern const std::string PROP_PARTIALLY_ADHERENT;
+extern const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH ;
+extern const std::string PROP_NEVER_ADHERENT;
+extern const std::string PROP_ALWAYS_ADHERENT;
+extern const std::string PROB_ART_ADHER_FOR_PARTIAL;
 
 /**
  * Parameters singleton that contains the model properties.

@@ -36,6 +36,7 @@ const std::string BIOMARKER_FILE = "biomarker.log.file";
 const std::string BIOMARKER_LOG_COUNT = "biomarker.number.of.persons.to.log";
 const std::string DEATH_EVENT_FILE = "death.events.file";
 const std::string TESTING_EVENT_FILE = "testing.events.file";
+const std::string ART_EVENT_FILE = "art.events.file";
 const std::string PERSON_DATA_FILE = "person.data.file";
 const std::string NET_SAVE_FILE = "net.save.file";
 const std::string CASUAL_NET_SAVE_FILE = "casual.net.save.file";
@@ -68,7 +69,6 @@ const std::string CIRCUM_MULT = "circum.mult";
 const std::string CIRCUM_RATE = "circum.rate";
 const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
 const std::string DAILY_TESTING_PROB = "daily.testing.prob";
-const std::string GLOBAL_DIAGNOSIS_ART_LAG = "lag.bet.diagnosis.and.art.init";
 const std::string DETECTION_WINDOW = "detection.window";
 const std::string DEG_SEQ = "deg_seq";
 const std::string DUR_INF = "dur.inf";
@@ -107,6 +107,27 @@ const std::string UNTREATED_CD4_PERSTEP_DECLINE = "untreated.cd4.perstep.decline
 
 const std::string PR_INSERTIVE = "pr.insertive";
 const std::string PR_RECEPTIVE = "pr.receptive";
+
+const std::string PROP_STEADY_SEX_ACTS = "prop.steady.sex.acts";
+const std::string PROP_CASUAL_SEX_ACTS = "prop.casual.sex.acts";
+const std::string PROP_STEADY_SEX_ACTS_CONDOM = "prop.steady.sex.acts.w.condom";
+const std::string PROP_CASUAL_SEX_ACTS_CONDOM = "prop.casual.sex.acts.w.condom";
+const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
+
+const std::string DIAG_INIT_2M = "diag.init.2m";
+const std::string DIAG_INIT_2TO4M = "diag.init.2to4m";
+const std::string DIAG_INIT_4TO6M ="diag.init.4to6m";
+const std::string DIAG_INIT_6TO8M = "diag.init.6to8m";
+const std::string DIAG_INIT_8TO10M = "diag.init.8to10m";
+const std::string DIAG_INIT_10TO12M = "diag.init.10to12m";
+const std::string DIAG_NEVER_INIT = "diag.never.init";
+
+
+const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
+const std::string PROP_NEVER_ADHERENT = "prop.never.adherent";
+const std::string PROP_ALWAYS_ADHERENT = "prop.always.adherent";
+const std::string PROP_PARTIALLY_ADHERENT = "prop.partially.adherent";
+const std::string PROB_ART_ADHER_FOR_PARTIAL = "prob.art_adher.for.partial";
 
 Parameters* Parameters::instance_ = 0;
 

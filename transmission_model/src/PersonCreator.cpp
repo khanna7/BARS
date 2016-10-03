@@ -8,8 +8,8 @@
 #include "Parameters.h"
 
 #include "PersonCreator.h"
-
 #include "Diagnoser.h"
+#include "art_functions.h"
 
 
 using namespace Rcpp;
@@ -41,7 +41,6 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 	int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
 	Diagnoser<GeometricDistribution> diagnoser(tick, detection_window_, dist);
 	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(), diagnoser);
-	person->diagnosis_art_lag = Parameters::instance()->getFloatParameter(GLOBAL_DIAGNOSIS_ART_LAG);
 	person->testable_= ((int) repast::Random::instance()->getGenerator(NON_TESTERS_BINOMIAL)->next()) == 0;
 	person->prep_ = ((int) repast::Random::instance()->getGenerator(PREP_BINOMIAL)->next()) == 1 ? PrepStatus::ON : PrepStatus::OFF;
 
@@ -61,9 +60,7 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role, diagnoser);
 	person->diagnosed_ = as<bool>(val["diagnosed"]);
 	person->testable_ = !(as<bool>(val["non.testers"]));
-	person->diagnosis_art_lag = as<float>(val["lag.bet.diagnosis.and.art.init"]);
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
-
 
 	bool infected = as<bool>(val["inf.status"]);
 	if (infected) {
@@ -80,6 +77,18 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 			person->infection_parameters_.vl_art_traj_slope = as<float>(val["vl.art.traj.slope"]);
 			person->infection_parameters_.cd4_at_art_init = as<float>(val["cd4.at.art.initiation"]);
 			person->infection_parameters_.vl_at_art_init = as<float>(val["vl.at.art.initiation"]);
+
+			if (val.containsElementNamed("adherence.category")) {
+				person->setAdherence(static_cast<AdherenceCategory>(as<int>(val["adherence.category"])));
+				if (person->adherence() == AdherenceCategory::PARTIAL) {
+					schedule_adherence(person, tick);
+				}
+			} else {
+				initialize_adherence(person, tick);
+				if (person->adherence() == AdherenceCategory::NEVER) {
+					person->infection_parameters_.art_status = false;
+				}
+			}
 		}
 
 		person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
