@@ -14,12 +14,14 @@ e-mail at <akhanna@medicine.bsd.uchicago.edu>.
 The population is initialized within `r/`, and dynamically simulated through time using the Repast toolkit. The R package [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) is used to integrate the two frameworks. Automated parameter sweeping procedures are created using the  [Swift/T](http://swift-lang.org/Swift-T/) parallel scripting language and are implemented to enable efficient model exploration and calibration.
 
 ## Selected References
-
-   * Schneider JA, Kozloski M, Michaels S, et al. Criminal justice involvement history is associated with better HIV care continuum metrics among a population-based sample of young black men who have sex with men. AIDS. 2016. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/27662544)  
    
    * Khanna AS, Roberts ST, Cassels S, et al. Estimating PMTCT's Impact on Heterosexual HIV Transmission: A Mathematical Modeling Analysis. PLoS One. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/26262889)
    
-   * Khanna A, Goodreau SM, Wohlfeiler D, et al. Individualized diagnosis interventions can add significant effectiveness in reducing human immunodeficiency virus incidence among men who have sex with men: insights from Southern California. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/25453725)
+   * Khanna A, Goodreau SM, Wohlfeiler D, et al. Individualized diagnosis interventions can add significant effectiveness in reducing human immunodeficiency virus incidence among men who have sex with men: insights from Southern California. Ann Epidemiol. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/25453725)   
+   
+   * Macal CM, North MJ, Collier N, et al. Modeling the transmission of community-associated methicillin-resistant Staphylococcus aureus: a dynamic agent-based simulation. J Transl Med. 2014. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/24886400)
+   
+   * Schneider JA, Kozloski M, Michaels S, et al. Criminal justice involvement history is associated with better HIV care continuum metrics among a population-based sample of young black men who have sex with men. AIDS. 2016. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/27662544) 
 
 ## Lead Authors        
 
