@@ -11,7 +11,7 @@ e-mail at <akhanna@medicine.bsd.uchicago.edu>.
    * The agent-based modeling suite, derived from the [Repast HPC toolkit](https://repast.github.io/repast_hpc.html), included in `transmission_model/src/`, and,
    * The the dynamic network modeling tools, derived from the [statnet](http://www.statnet.org/) project, included in `transmission_model/r/`.  
      
-The population is initialized within `r/`, and dynamically simulated through time using the Repast toolkit. The Rpackage [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) is used to integrate the two frameworks. Automated parameter sweeping procedures, derived from [swift-t](http://swift-lang.org/Swift-T/). are implemented to enable efficient model calibration. 
+The population is initialized within `r/`, and dynamically simulated through time using the Repast toolkit. The R package [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) is used to integrate the two frameworks. Automated parameter sweeping procedures are created using the  [swift/T](http://swift-lang.org/Swift-T/) parallel scripting language and are implemented to enable efficient model exploration and calibration.
    
 ## Lead Authors        
 
