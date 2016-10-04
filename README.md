@@ -36,11 +36,12 @@ The population is initialized in the R code in the `r/` directory, and dynamical
    [Aditya Khanna](https://github.com/khanna7), University of Chicago    
    [Nicholson Collier](https://github.com/ncollier), Argonne National Laboratory    
    [Jonathan Ozik](https://github.com/jozik), Argonne National Laboratory   
+    
+   for the BARS Study Team     
    
    You can contact the authors via
 e-mail at <akhanna@medicine.bsd.uchicago.edu>. 
-   
-   for the BARS Study Team       
+  
 
 ### Funding
 This work is supported by NIH R01 DA 039 934.
