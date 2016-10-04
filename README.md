@@ -14,10 +14,10 @@ The latest version of the code for the project can be found in the `Development`
    Data and code are in the `transmission_model` directory. 
    The code is divided into two parts: 
    
-   * The agent-based modeling suite, derived from the [Repast HPC toolkit](https://repast.github.io/repast_hpc.html), included in `transmission_model/src/`, and,
-   * The the dynamic network modeling tools, derived from the [statnet](http://www.statnet.org/) project, included in `transmission_model/r/`.  
+   * The agent-based modeling suite, written in C++ using the [Repast HPC toolkit](https://repast.github.io/repast_hpc.html), included in `transmission_model/src/`, and,
+   * The dynamic network modeling tools, using the [statnet](http://www.statnet.org/) toolkit, included in `transmission_model/r/`.  
      
-The population is initialized within `r/`, and dynamically simulated through time using the Repast toolkit. The R package [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) is used to integrate the two frameworks. Automated parameter sweeping procedures are created using the  [Swift/T](http://swift-lang.org/Swift-T/) parallel scripting language and are implemented to enable efficient model exploration and calibration.
+The population is initialized in the R code in the `r/` directory, and dynamically simulated through time in the C++ code. The R package [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) is used to integrate the two frameworks. Automated parameter sweeping procedures are created using the  [Swift/T](http://swift-lang.org/Swift-T/) parallel scripting language and are implemented to enable efficient model exploration and calibration.
 
 ### Selected References   
 
