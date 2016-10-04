@@ -23,7 +23,7 @@ The population is initialized in the R code in the `r/` directory, and dynamical
 
 * Schneider JA, Kozloski M, Michaels S, et al. Criminal justice involvement history is associated with better HIV care continuum metrics among a population-based sample of young black men who have sex with men. AIDS. 2016. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/27662544) 
 
-* Ozik, J, Collier, NT, and Wozniak, JM. 2015. "Many Resident Task Computing in Support of Dynamic Ensemble Computations." In 8th Workshop on Many-Task Computing on Clouds, Grids, and Supercomputers Proceedings. Austin, Texas. [LINK](http://datasys.cs.iit.edu/events/MTAGS15/program.html).
+* Ozik, J, Collier, NT, and Wozniak, JM. 2015. "Many Resident Task Computing in Support of Dynamic Ensemble Computations." In 8th Workshop on Many-Task Computing on Clouds, Grids, and Supercomputers Proceedings. Austin, Texas. [LINK](http://datasys.cs.iit.edu/events/MTAGS15/program.html)
 
 * Khanna AS, Roberts ST, Cassels S, et al. Estimating PMTCT's Impact on Heterosexual HIV Transmission: A Mathematical Modeling Analysis. PLoS One. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/26262889)
    
