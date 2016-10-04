@@ -23,15 +23,15 @@ The population is initialized in the R code in the `r/` directory, and dynamical
 
 * Schneider JA, Kozloski M, Michaels S, et al. Criminal justice involvement history is associated with better HIV care continuum metrics among a population-based sample of young black men who have sex with men. AIDS. 2016. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/27662544) 
 
-   * Ozik, J, Collier, NT, and Wozniak, JM. 2015. "Many Resident Task Computing in Support of Dynamic Ensemble Computations." In 8th Workshop on Many-Task Computing on Clouds, Grids, and Supercomputers Proceedings. Austin, Texas. [LINK](http://datasys.cs.iit.edu/events/MTAGS15/program.html).
+* Ozik, J, Collier, NT, and Wozniak, JM. 2015. "Many Resident Task Computing in Support of Dynamic Ensemble Computations." In 8th Workshop on Many-Task Computing on Clouds, Grids, and Supercomputers Proceedings. Austin, Texas. [LINK](http://datasys.cs.iit.edu/events/MTAGS15/program.html).
 
-   * Khanna AS, Roberts ST, Cassels S, et al. Estimating PMTCT's Impact on Heterosexual HIV Transmission: A Mathematical Modeling Analysis. PLoS One. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/26262889)
+* Khanna AS, Roberts ST, Cassels S, et al. Estimating PMTCT's Impact on Heterosexual HIV Transmission: A Mathematical Modeling Analysis. PLoS One. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/26262889)
    
-   * Khanna A, Goodreau SM, Wohlfeiler D, et al. Individualized diagnosis interventions can add significant effectiveness in reducing human immunodeficiency virus incidence among men who have sex with men: insights from Southern California. Ann Epidemiol. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/25453725)   
+* Khanna A, Goodreau SM, Wohlfeiler D, et al. Individualized diagnosis interventions can add significant effectiveness in reducing human immunodeficiency virus incidence among men who have sex with men: insights from Southern California. Ann Epidemiol. 2015. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/25453725)   
    
-   * Macal CM, North MJ, Collier N, et al. Modeling the transmission of community-associated methicillin-resistant Staphylococcus aureus: a dynamic agent-based simulation. J Transl Med. 2014. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/24886400)
+* Macal CM, North MJ, Collier N, et al. Modeling the transmission of community-associated methicillin-resistant Staphylococcus aureus: a dynamic agent-based simulation. J Transl Med. 2014. [LINK](https://www.ncbi.nlm.nih.gov/pubmed/24886400)
 
-    * Collier N, North M. Parallel agent-based simulation with Repast for High Performance Computing. SIMULATION: Transactions of The Society for Modeling and Simulation International. 2012. [LINK](http://sim.sagepub.com/content/89/10/1215)  
+* Collier N, North M. Parallel agent-based simulation with Repast for High Performance Computing. SIMULATION: Transactions of The Society for Modeling and Simulation International. 2012. [LINK](http://sim.sagepub.com/content/89/10/1215)  
    
 
    
