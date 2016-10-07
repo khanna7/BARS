@@ -85,7 +85,7 @@ void run(std::string propsFile, int argc, char** argv) {
 int main(int argc, char *argv[]) {
 	boost::mpi::environment env(argc, argv);
 
-	if (argc < 2) {
+	if (argc != 2) {
 		usage();
 		return -1;
 	}
