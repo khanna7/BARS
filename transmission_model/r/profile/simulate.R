@@ -8,11 +8,46 @@ suppressMessages(library(profvis))
 
 #suppressMessages(library(parallel))
 load(file="../network_model/cas_net.RData")
+is.new <- F
+my.network.update<-function(nw, newmatrix, matrix.type=NULL, output="network", ignore.nattr=c("bipartite","directed","hyper","loops","mnext","multiple","n"), ignore.vattr=c()){			
+  is.new <<- T
+  unw <- network.initialize(n=network.size(nw), directed = is.directed(nw), hyper = is.hyper(nw), loops = has.loops(nw),			
+                            multiple = is.multiplex(nw), bipartite = nw %n% "bipartite")			
+  for(a in setdiff(list.network.attributes(nw),ignore.nattr)) unw <- set.network.attribute(unw, a, get.network.attribute(nw, a, unlist=FALSE))			
+  # for(a in setdiff(list.vertex.attributes(nw),ignore.vattr)) unw <- set.vertex.attribute(unw, a, get.vertex.attribute(nw, a, unlist=FALSE))
+  # new code
+  attribs <- setdiff(list.vertex.attributes(nw),ignore.vattr)
+  va <- lapply(attribs, function(x) {
+    get.vertex.attribute(n0, x, unlist=FALSE)
+  })
+  unw <- set.vertex.attribute(unw, attribs, va)
+  ### end 
+  
+  if(is.null(matrix.type)){			
+    warning("Don't leave matrix type to chance! Pass matrix.type to network.update!")			
+    matrix.type <- which.matrix.type(newmatrix)			
+    if(nrow(newmatrix)==0){matrix.type <- "edgelist"}			
+  }			
+  
+  if(matrix.type=="adjacency" && all(newmatrix%in%c(0,1))){			
+    unw[,] <- newmatrix			
+  }else if(matrix.type=="edgelist" && !is.null(newmatrix) && nrow(newmatrix)>0){			
+    add.edges(unw,tail=newmatrix[,1],head=newmatrix[,2])			
+  }			
+  if(!is.null(output) && output=="edgelist.compressed") 			
+  {unw <- as.edgelist.compressed(unw)}			
+  unw			
+}
+
+
+unlockBinding("network.update", getNamespace("ergm"))
+assign("network.update", my.network.update, getNamespace("ergm"))
+lockBinding("network.update",  getNamespace("ergm"))
 
 time1 <- 1
 time2 <- time1+0
 
-profvis({
+p <-profvis({
   for (time in time1:time2){
     
     net <- simulate(net,
@@ -40,7 +75,9 @@ profvis({
     
     cat("Entering transmission step at time", time,
         "of", time2, "\n")
+    cat(is.new)
     
   }
-}
-)
+})
+
+print(p)
