@@ -1,5 +1,6 @@
 #include <memory>
 #include <vector>
+#include <iostream>
 
 #include "repast_hpc/initialize_random.h"
 #include "repast_hpc/RepastProcess.h"
@@ -10,6 +11,12 @@
 #include "utils.h"
 #include "file_utils.h"
 #include "FileOutput.h"
+
+#define PROFILING
+
+#ifdef PROFILING
+	#include "boost/timer/timer.hpp"
+#endif
 
 using namespace Rcpp;
 using namespace TransModel;
@@ -34,12 +41,21 @@ void usage() {
 }
 
 void run(std::string propsFile, int argc, char** argv) {
+	// pause for selecting process in profiler
+	//std::cout << "enter to continue" << std::endl;
+	//getchar();
+
 	//boost::mpi::communicator comm;
 	//if (comm.rank() == 0) {
 	std::string time;
 	repast::timestamp(time);
 	std::cout << "Start Time: " << time << std::endl;
 	//}
+
+#ifdef PROFILING
+	boost::timer::cpu_timer timer;
+	timer.start();
+#endif
 
 	repast::Properties props(propsFile, argc, argv);
 	repast::initializeRandom(props);
@@ -72,8 +88,21 @@ void run(std::string propsFile, int argc, char** argv) {
 
 	// constructor should schedule the step method
 	TransModel::Model model(R, net_var, cas_net_var);
-	// now can run
+
+#ifdef PROFILING
+	timer.stop();
+	std::cout << "Initialization Time: " << timer.format(6, "%t") << std::endl;
+#endif
+
+#ifdef PROFILING
+	timer.start();
+#endif
 	repast::RepastProcess::instance()->getScheduleRunner().run();
+
+#ifdef PROFILING
+	timer.stop();
+	std::cout << "Run Time: " << timer.format(6, "%t") << std::endl;
+#endif
 
 	//if (comm.rank() == 0) {
 	//std::string time;

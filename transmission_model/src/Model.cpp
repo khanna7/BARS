@@ -365,7 +365,8 @@ void Model::step() {
 	float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
 	float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
 
-	std::cout << " ---- " << t << " ---- " << std::endl;
+	if ((int)t % 100 == 0)
+		std::cout << " ---- " << t << " ---- " << std::endl;
 	simulate(R, net, p2val, t);
 	if (Parameters::instance()->getBooleanParameter(COUNT_OVERLAPS)) {
 		countOverlap();
@@ -378,7 +379,7 @@ void Model::step() {
 	previous_pop_size = current_pop_size;
 	current_pop_size = net.vertexCount();
 
-	std::cout << "pop sizes: " << previous_pop_size << ", " << current_pop_size << std::endl;
+	//std::cout << "pop sizes: " << previous_pop_size << ", " << current_pop_size << std::endl;
 	updateThetaForm("theta.form");
 	updateThetaForm("theta.form_cas");
 
@@ -467,7 +468,7 @@ void Model::entries(double tick, float size_of_timestep) {
 		int entries = (int) gen.next();
 		Stats* stats = Stats::instance();
 		stats->currentCounts().entries = entries;
-		std::cout << "entries: " << entries << std::endl;
+		//std::cout << "entries: " << entries << std::endl;
 
 		double infected_prob = Parameters::instance()->getDoubleParameter(INIT_HIV_PREV_ENTRIES);
 
