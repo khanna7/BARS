@@ -42,8 +42,8 @@ void usage() {
 
 void run(std::string propsFile, int argc, char** argv) {
 	// pause for selecting process in profiler
-	//std::cout << "enter to continue" << std::endl;
-	//getchar();
+	// std::cout << "enter to continue" << std::endl;
+	// getchar();
 
 	//boost::mpi::communicator comm;
 	//if (comm.rank() == 0) {

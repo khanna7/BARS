@@ -106,7 +106,10 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 
 	List rnet;
 	create_r_network(time, rnet, net, idx_map, attributes_setter, STEADY_NETWORK_TYPE);
+
 	//Rf_PrintValue(rnet);
+	//as<Function>((*R)["nw_save"])(rnet, "network_for_profiling.rds", 1);
+
 	SEXP changes = as<Function>((*R)["nw_simulate"])(rnet, time);
 	reset_network_edges(changes, net, idx_map, time, STEADY_NETWORK_TYPE);
 

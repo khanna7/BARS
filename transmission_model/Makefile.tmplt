@@ -30,7 +30,7 @@ HDF5_LIBS = -l hdf5_cpp -l hdf5
 
 BOOST_INCLUDE = /usr/local/include
 BOOST_LIB_DIR = /usr/local/lib
-BOOST_LIBS = -lboost_mpi-mt -lboost_system-mt -lboost_filesystem-mt -boost_serialization-mt
+BOOST_LIBS = -lboost_mpi-mt -lboost_system-mt -lboost_filesystem-mt -boost_serialization-mt -lboost_timer-mt
 
 NET_CDF_LIB_DIR = 
 NET_CDF_LIB =
