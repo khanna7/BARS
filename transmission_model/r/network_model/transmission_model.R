@@ -59,7 +59,7 @@ dissolution <- dissolution
 
 nw_simulate <-
 
-  function(net, time) {
+  function(net_for_sim, time) {
 
     #print("sim start")
 
@@ -77,9 +77,12 @@ nw_simulate <-
 
     
 
-    class(net) <- "network"
+    class(net_for_sim) <- "network"
+    
+    #cpp_net <<- net_for_sim
+    #save.image(file="./for_profiling.RData")
 
-    changes <- simulate(net,
+    changes <- simulate(net_for_sim,
 
                    formation = formation, 
 
