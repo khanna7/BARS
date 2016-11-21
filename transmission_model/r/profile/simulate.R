@@ -71,7 +71,7 @@ nw_simulate <-
         
         control = control.simulate.network(),
         
-        time.slices = 1
+        time.slices = 500
     )
     changes
   }
