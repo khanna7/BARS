@@ -18,7 +18,7 @@ stergm_lite_sim <- function(net) {
                    coef.form=theta.form, coef.diss=theta.diss, constraints=constraints)
   el <- as.edgelist(net)
   attributes(el)$vnames <- NULL
-  changes <- simulate_network(p, el, coef.form=theta.form, coef.diss=theta.diss, save.changes=T)
+  z <- simulate_network(p, el, coef.form=theta.form, coef.diss=theta.diss, save.changes=T)
 }
 
 time1 <- 1
@@ -26,7 +26,7 @@ time2 <- time1+100
 
 prof <-profvis({
   for (time in time1:time2){
-    ch <- stergm_lite_sim(cpp_net)
+    new_el <- stergm_lite_sim(cpp_net)
   }
 })
 print(prof)
