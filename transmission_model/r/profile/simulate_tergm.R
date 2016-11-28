@@ -16,6 +16,8 @@ load(file="./for_profiling.RData")
   time1 <- 1
   time2 <- time1+100
   new_el_time <- list(time1:time2)
+  
+  a <- proc.time()
 
   for (time in time1:time2){
     new_el_time[[time]] <- simulate(net,
@@ -35,11 +37,13 @@ load(file="./for_profiling.RData")
         time.start = time,
         
         control = control.simulate.network()
+                                                
 	
 	)
-        
+    net <- new_el_time[[time]]    
   }
 
+  print(proc.time() - a)
 save.image("tergm_profile.RData")
 
 
