@@ -31,10 +31,14 @@ time2 <- time1+100
 ##})
 ##print(prof)
 
+  a <- proc.time()
   new_el_time <- list(time1:time2)
   for (time in time1:time2){
     new_el_time[[time]] <- stergm_lite_sim(cpp_net)
+    cpp_net <- as.network(new_el_time[[time]], directed=FALSE)
   }
+
+print(proc.time() - a)
 
 save.image("tergmlite_profile.RData")
 
