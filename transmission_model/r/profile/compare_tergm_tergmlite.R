@@ -16,9 +16,9 @@ rm(list=ls())
   load("tergmlite_profile.RData")
   tergmlite_out <- new_el_time
   tergmlite_nets <- lapply(new_el_time, as.network)
-  tergmlite_mean_degs <- 2*unlist(lapply(tergmlite_nets, network.edgecount))/
-                                unlist(lapply(tergmlite_nets, network.size))
-  summary(tergmlite_mean_degs)
+  tergmlite_nedges <- lapply(new_el_time, nrow)
+  tergmlite_mean_degs <- summary(unlist(tergmlite_nedges))
+  tergmlite_mean_degs*2/5000
 
 
   
