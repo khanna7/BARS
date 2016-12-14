@@ -123,6 +123,8 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 template<typename V>
 void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map,
 		double time, int edge_type) {
+	// changes is a matrix with columns: "tail", "head", "to".
+	// to  == 1 if tie is formed, otherwise 0
 	NumericMatrix matrix = as<NumericMatrix>(changes);
 
 	int added = 0;

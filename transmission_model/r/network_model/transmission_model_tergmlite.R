@@ -19,6 +19,7 @@ nw_simulate <- function(net_for_sim) {
   el <- as.edgelist(net)
   attributes(el)$vnames <- NULL
   z <- simulate_network(p, el, coef.form=theta.form, coef.diss=theta.diss, save.changes=T)
+  return(attr(z, 'changes'))
 }
 
 n_cas <- cas_fit$network
@@ -32,6 +33,7 @@ n_cas_simulate <- function(cas_net, time) {
   el <- as.edgelist(net)
   attributes(el)$vnames <- NULL
   z <- simulate_network(p, el, coef.form=theta.form, coef.diss=theta.diss, save.changes=T)
+  return(attr(z, 'changes'))
 }
 
 nw_save <- function(net, fname, tick) {
