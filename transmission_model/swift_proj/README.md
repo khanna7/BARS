@@ -1,34 +1,19 @@
-EMEWS project template
+Swift Sweep Transmission Model Runs
 -----------------------
 
-You have just created an EMEWS project. Consisting of the following
-directories.
+Files under `swift_proj`
 
-```
-swift_project\
-  data\
-  ext\
-  etc\
-  python\
-    test\
-  R\
-    test\
-  scripts\
-  swift\
-  README.md
-```
-The directories are intended to contain the following:
+ * `data/test_input_params.txt` - sample input parameters to sweep over
+ * `scripts/trans_model.sh` - the bash script file that actually runs the model. The model.props file and the executable
+ to use can be set in here.
+ * `swift/run_trans_model_sweep.sh` - bash script used to launch swift. The number of processes to use, walltime, and
+ processes per node (PPN) can be set in here.
+ * `swift/trans_model_sweep.swift` - the swift script that peforms the sweep.
 
- * `data` - model input etc. data
- * `etc` - additional code used by EMEWS
- * `ext` - swift-t extensions such as eqpy, eqr
- * `python` - python code (e.g. model exploration algorithms written in python)
- * `python\test` - tests of the python code
- * `R` - R code (e.g. model exploration algorithms written R)
- * `R\test` - tests of the R code
- * `scripts` - any necessary scripts (e.g. scripts to launch a model), excluding
-    scripts used to run the workflow.
- * `swift` - swift code
+To run:
 
-Use the subtemplates to customize this structure for particular types of
-workflows. These are: sweep, eqpy, and eqr.
+`cd swift_proj/swift`
+`./run_trans_model_sweep.sh X` where X is the name of an "experiment directory". For example `./run_trans_model_sweep.sh test1` will create a `swift_proj/experiments/test1` directory and run the required number of runs from within that directory. Each model run has its own instance directory where its output is generated. For example, `swift_proj/experiments/test1/instance_1`, `swift_proj/experiments/test1/instance_2`, and so on.
+
+Note that `stop.at` is currently set in the model properties file as specified in `scripts/trans_model.sh`.
+
