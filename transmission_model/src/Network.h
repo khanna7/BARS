@@ -250,6 +250,7 @@ bool Network<V>::removeEdge(unsigned int v1_idx, unsigned int v2_idx, int type) 
 			return true;
 		}
 	}
+
 	return false;
 }
 

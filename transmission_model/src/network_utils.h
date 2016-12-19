@@ -110,13 +110,13 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 	//Rf_PrintValue(rnet);
 	//as<Function>((*R)["nw_save"])(rnet, "network_for_profiling.rds", 1);
 
-	SEXP changes = as<Function>((*R)["nw_simulate"])(rnet, time);
+	SEXP changes = as<Function>((*R)["nw_simulate"])(rnet);
 	reset_network_edges(changes, net, idx_map, time, STEADY_NETWORK_TYPE);
 
 	List cas_net;
 	idx_map.clear();
 	create_r_network(time, cas_net, net, idx_map, attributes_setter, CASUAL_NETWORK_TYPE);
-	changes = as<Function>((*R)["n_cas_simulate"])(cas_net, time);
+	changes = as<Function>((*R)["n_cas_simulate"])(cas_net);
 	reset_network_edges(changes, net, idx_map, time, CASUAL_NETWORK_TYPE);
 }
 
@@ -130,9 +130,9 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 	int added = 0;
 	int removed = 0;
 	for (int r = 0, n = matrix.rows(); r < n; ++r) {
-		int in = idx_map.at(matrix(r, 1));
-		int out = idx_map.at(matrix(r, 2));
-		int to = matrix(r, 3);
+		int in = idx_map.at(matrix(r, 0));
+		int out = idx_map.at(matrix(r, 1));
+		int to = matrix(r, 2);
 		if (to) {
 			net.addEdge(out, in, edge_type);
 			++added;
@@ -140,6 +140,10 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 		} else {
 			bool res = net.removeEdge(out, in, edge_type);
 			if (!res) {
+				if (net.hasEdge(in, out, edge_type) || net.hasEdge(out, in, edge_type)) {
+					std::cout << "has edge" << std::endl;
+				}
+				std::cout << "At: " << time << ", "<< edge_type << ": " << out << ", " << in << std::endl;
 				throw std::domain_error("Updating from tergm changes: trying to remove an edge that doesn't exist");
 			}
 			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::ENDED, edge_type);
