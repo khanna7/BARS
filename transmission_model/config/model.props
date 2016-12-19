@@ -6,7 +6,7 @@ casual.net.variable.name = n_cas
 r.parameters.non.derived = ../r/common/chi_params_nonderived.R
 r.parameters.derived = ../r/common/chi_params_derived.R
 
-r.file = ../r/network_model/transmission_model.R
+r.file = ../r/network_model/transmission_model_tergmlite.R
 
 # if these properties are not commented out
 # then these networks will replace existing ones
