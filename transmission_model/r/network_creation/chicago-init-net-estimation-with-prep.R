@@ -16,15 +16,15 @@
    source("common-functions.R")
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:1)+
-                  nodematch("role", keep=c(1,2))+
-                  nodemix("diagnosed", base=c(1,3))
+   formation <- ~edges+degree(0:1)## +
+                  ## nodematch("role", keep=c(1,2))+
+                  ## nodemix("diagnosed", base=c(1,3))
 
    dissolution <- ~offset(edges)
    theta.diss <- log(duration-1)
-   target.stats <- c(nedges, deg_seq[1:2], 0, 0.12*nedges
-                     )
-
+   #target.stats <- c(nedges, deg_seq[1:2], 0, 0.12*nedges
+                     #)
+   target.stats <- c(nedges, deg_seq[1:2])
    constraints <- ~.
 
    formation.n0 <- update.formula(formation, n0~.)
@@ -281,7 +281,7 @@
       set.vertex.attribute(n0, "time.until.next.test", time.until.next.test)
       
       ## attribute: lag between diagnosis and ART initiation
-      n0 %v% "lag.bet.diagnosis.and.art.init" <- lag.bet.diagnosis.and.art.init
+      #n0 %v% "lag.bet.diagnosis.and.art.init" <- lag.bet.diagnosis.and.art.init
 
       ## attribute: non-test
          ## defined above"
