@@ -21,3 +21,8 @@ where X is the name of an "experiment directory". For example `./run_trans_model
 
 Note that `stop.at` is currently set in the model properties file as specified in `scripts/trans_model.sh`.
 
+To run without swift:
+
+```  
+mpirun -n 1 ./transmission_model-0.5 ../config/swift_test.props
+```  
