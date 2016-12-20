@@ -24,5 +24,5 @@ Note that `stop.at` is currently set in the model properties file as specified i
 To run without swift:
 
 ```  
-mpirun -n 1 ./transmission_model-0.5 ../config/swift_test.props
+mpirun -n 1 ./transmission_model-0.5 ../config/model.props
 ```  
