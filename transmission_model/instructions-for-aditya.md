@@ -10,6 +10,7 @@
 
 * The following modules need to be loaded in order for it to work
 
+   `module load mvapich2/2.0` 
    `module load R`  
    `module load netcdf/4.2`  
    `module load gcc/4.8`
