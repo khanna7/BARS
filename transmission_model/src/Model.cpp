@@ -38,16 +38,23 @@ namespace TransModel {
 
 struct PersonToVALForSimulate {
 
-	void operator()(const PersonPtr& p, List& vertex, double tick) const {
-		vertex["role"] = p->role();
-		vertex["inf.status"] = p->isInfected();
-		vertex["diagnosed"] = p->isDiagnosed();
+	List operator()(const PersonPtr& v, int idx, double tick) const {
+		return List::create(Named("na") = false,
+				Named("vertex_names") = idx,
+				Named("role") = v->role(),
+				Named("inf.status") = v->isInfected(),
+				Named("diagnosed") = v->isDiagnosed());
 	}
 };
 
 struct PersonToVAL {
 
-	void operator()(const PersonPtr& p, List& vertex, double tick) const {
+	List operator()(const PersonPtr& p, int idx, double tick) const {
+		List vertex = List::create();
+
+		vertex["na"] = false,
+		vertex["vertex_names"] = idx;
+
 		vertex[C_ID] = p->id();
 		vertex["age"] = p->age();
 		vertex["cd4.count.today"] = p->infectionParameters().cd4_count;
@@ -95,6 +102,8 @@ struct PersonToVAL {
 			vertex["cd4.at.art.initiation"] = NA_REAL;
 			vertex["vl.at.art.initiation"] = NA_REAL;
 		}
+
+		return vertex;
 	}
 };
 

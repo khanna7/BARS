@@ -44,16 +44,12 @@ void create_r_network(double tick, List& rnet, Network<V>& net, std::map<unsigne
 
 	int idx = 1;
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
-		List vlist;
 		VertexPtr<V> v = (*iter);
 		idx_to_v_map.emplace(idx, v->id());
 		v_to_idx_map.emplace(v->id(), idx);
-		vlist["na"] = false;
-		vlist["vertex.names"] = idx;
-		attributes_setter(v, vlist, tick);
 
 		int c_index = idx - 1;
-		val[c_index] = vlist;
+		val[c_index] = attributes_setter(v, idx, tick);
 
 		unsigned int in_count = net.inEdgeCount(v, edge_type);
 		iel[c_index] = IntegerVector(in_count);
@@ -63,6 +59,7 @@ void create_r_network(double tick, List& rnet, Network<V>& net, std::map<unsigne
 
 		++idx;
 	}
+
 	rnet["val"] = val;
 
 	List mel(net.edgeCount(edge_type));
@@ -71,15 +68,11 @@ void create_r_network(double tick, List& rnet, Network<V>& net, std::map<unsigne
 	for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
 		EdgePtr<V> edge = (*iter);
 		if (edge->type() == edge_type) {
-			List eal;
-			List atl;
-			atl["na"] = false;
-			eal["atl"] = atl;
 			unsigned int in_idx = v_to_idx_map.at(edge->v2()->id());
 			unsigned int out_idx = v_to_idx_map.at(edge->v1()->id());
-			eal["inl"] = in_idx;
-			eal["outl"] = out_idx;
-			mel(eidx - 1) = eal;
+			mel(eidx - 1) = List::create(Named("atl") = List::create(Named("na") = false),
+					Named("inl") = in_idx,
+					Named("outl") = out_idx);
 
 			int idx = iel_idx_map[edge->v2()->id()];
 			as<IntegerVector>(iel[in_idx - 1])(idx) = eidx;
