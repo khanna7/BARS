@@ -126,7 +126,7 @@
     diag.never.init <- 0.1
     #####################
     ## PrEP
-    prep.use.rate <- 6/100
+    prep.bl.use.prop <- 10/100
     prep.transm.red <- 96/100
     
 #####################
