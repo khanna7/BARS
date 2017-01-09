@@ -7,6 +7,7 @@
 #include <exception>
 #include <map>
 
+#include "repast_hpc/Random.h"
 #include "utils.h"
 
 #include "boost/tokenizer.hpp"
@@ -75,6 +76,9 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 	param_string_to_R_vars(param_string, params, R);
 
 	cmd = "source(file=\"" + derived + "\")";
+	R->parseEvalQ(cmd);
+
+	cmd = "set.seed(" + std::to_string(repast::Random::instance()->seed()) + ")";
 	R->parseEvalQ(cmd);
 
 	SEXP result;

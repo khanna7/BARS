@@ -1,3 +1,5 @@
+global.random.seed=42
+
 stop.at = 25000
 
 net.variable.name = nw
