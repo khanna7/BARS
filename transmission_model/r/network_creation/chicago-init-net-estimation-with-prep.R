@@ -293,6 +293,20 @@
 
       table(n0%v%"prep.status")
       table(n0%v%"prep.status")/sum(table(n0%v%"prep.status"))
+
+      ## assign time for stoppage
+      n0%v%"time.till.prep.cessation" <- NA
+      on.prep <- which(n0%v%"prep.status" == 1)
+      set.vertex.attribute(n0, "time.of.prep.cessation",
+                           rgeom(1, prep.daily.stop.prob),
+                           v=on.prep)
+
+      set.vertex.attribute(n0, "time.of.prep.initiation",
+                           0,
+                           v=on.prep
+                           )
+      n0%v%"time.of.prep.cessation" <- 0 + n0%v%"time.till.prep.cessation"
+
    #####################
    ## FIT MODEL
    fit <- ergm(formation.n0, 
