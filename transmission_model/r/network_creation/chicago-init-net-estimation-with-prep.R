@@ -288,7 +288,7 @@
 
    ## PrEP
       not.infected <- which(n0 %v% "inf.status" == 0)
-      prep.status <- rbinom(length(not.infected), 1, prep.use.rate)
+      prep.status <- rbinom(length(not.infected), 1, prep.bl.use.prop)
       set.vertex.attribute(n0, "prep.status", prep.status, v=not.infected)
 
       table(n0%v%"prep.status")
