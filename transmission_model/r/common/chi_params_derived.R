@@ -62,7 +62,7 @@
    
    #####################
    ## PrEP
-   
+   prep.daily.stop.prob <- 1/prep.mean.days.usage
    #####################
    ## Transmission Parameters
    num.sex.acts.per.timestep <- num.sex.acts.base*size.of.timestep/7

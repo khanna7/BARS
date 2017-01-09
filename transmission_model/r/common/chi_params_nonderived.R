@@ -128,7 +128,8 @@
     ## PrEP
     prep.bl.use.prop <- 10/100
     prep.transm.red <- 96/100
-    
+    prep.mean.days.usage <- 180
+
 #####################
     ## Socioeconomic status
     ##insurance.prop <- 
