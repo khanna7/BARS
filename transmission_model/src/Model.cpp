@@ -23,6 +23,7 @@
 #include "StatsBuilder.h"
 #include "file_utils.h"
 #include "utils.h"
+#include "PrepCessationEvent.h"
 #include "art_functions.h"
 
 
@@ -67,6 +68,10 @@ struct PersonToVAL {
 		vertex["time.until.next.test"] = diagnoser.timeUntilNextTest(tick);
 		vertex["non.testers"] = !(p->isTestable());
 		vertex["prep.status"] = p->isOnPrep();
+		if (p->isOnPrep()) {
+			vertex["time.of.prep.cessation"] = p->prepParameters().stopTime();
+			vertex["time.of.prep.initiation"] = p->prepParameters().startTime();
+		}
 
 		if (p->isInfected()) {
 			vertex["infectivity"] = p->infectivity();
@@ -106,6 +111,7 @@ struct PersonToVAL {
 		return vertex;
 	}
 };
+
 
 shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float circ_mult = (float) Parameters::instance()->getDoubleParameter(CIRCUM_MULT);
@@ -197,10 +203,6 @@ void init_generators() {
 	float circum_rate = Parameters::instance()->getDoubleParameter(CIRCUM_RATE);
 	BinomialGen rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, circum_rate));
 	Random::instance()->putGenerator(CIRCUM_STATUS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(rate));
-
-	float prep_rate = Parameters::instance()->getDoubleParameter(PREP_RATE);
-	BinomialGen p_rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, prep_rate));
-	Random::instance()->putGenerator(PREP_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(p_rate));
 }
 
 void init_stats() {
@@ -213,6 +215,7 @@ void init_stats() {
 	builder.personDataRecorder(Parameters::instance()->getStringParameter(PERSON_DATA_FILE));
 	builder.testingEventWriter(Parameters::instance()->getStringParameter(TESTING_EVENT_FILE));
 	builder.artEventWriter(Parameters::instance()->getStringParameter(ART_EVENT_FILE));
+	builder.prepEventWriter(Parameters::instance()->getStringParameter(PREP_EVENT_FILE));
 
 	builder.createStatsSingleton();
 }
@@ -277,13 +280,19 @@ std::shared_ptr<ARTInitLagCalculator> create_art_lag_calc() {
 	return creator.createCalculator();
 }
 
+std::shared_ptr<GeometricDistribution> create_cessation_generator() {
+	double prob = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
+	// 1.1 so at least a day on prep, and .1 so after step loop.
+	return std::make_shared<GeometricDistribution>(prob, 1.1);
+}
+
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DAILY_TESTING_PROB),
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) },
-				trans_params{}, art_lag_calculator{create_art_lag_calc()}
+				trans_params{}, art_lag_calculator{create_art_lag_calc()}, cessation_generator{create_cessation_generator()}
 {
 
 	// get initial stats
@@ -316,11 +325,27 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 
 	init_generators();
 
+
 	ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
 	runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
-
 	runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::atEnd)));
+
+	initPrepCessation();
+}
+
+void Model::initPrepCessation() {
+	ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
+	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+		PersonPtr person = *iter;
+		if (person->isOnPrep()) {
+			double stop_time = person->prepParameters().stopTime();
+			runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
+			double start_time = person->prepParameters().startTime();
+			Stats::instance()->recordPREPEvent(start_time, person->id(), static_cast<int>(PrepStatus::ON));
+			Stats::instance()->personDataRecorder().recordPREPStart(person->id(), start_time);
+		}
+	}
 }
 
 void Model::atEnd() {
@@ -419,10 +444,27 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
 	}
 }
 
+// ASSUMES PERSON IS UNINFECTED
+void Model::updatePREPUse(double tick, double prob, PersonPtr person) {
+	if (!person->isOnPrep() && Random::instance()->nextDouble() <= prob) {
+		ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
+		double stop_time = tick + cessation_generator->next();
+		person->goOnPrep(tick, stop_time);
+		Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
+		Stats::instance()->personDataRecorder().recordPREPStart(person->id(), tick);
+		runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
+	}
+}
+
 void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
 	map<double, ARTScheduler*> art_map;
+
+	double p = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
+	double k = Parameters::instance()->getDoubleParameter(PREP_USE_PROP);
+	double on_prep_prob = (p * k) / (1 - k);
+
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		PersonPtr person = (*iter);
 		// update viral load
@@ -444,6 +486,7 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 			person->setInfectivity(infectivity);
 		} else {
 			++stats->currentCounts().uninfected;
+			updatePREPUse(t, on_prep_prob, person);
 		}
 
 		if (persons_to_log.find(person->id()) != persons_to_log.end()) {

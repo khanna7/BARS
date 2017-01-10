@@ -42,7 +42,6 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 	Diagnoser<GeometricDistribution> diagnoser(tick, detection_window_, dist);
 	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(), diagnoser);
 	person->testable_= ((int) repast::Random::instance()->getGenerator(NON_TESTERS_BINOMIAL)->next()) == 0;
-	person->prep_ = ((int) repast::Random::instance()->getGenerator(PREP_BINOMIAL)->next()) == 1 ? PrepStatus::ON : PrepStatus::OFF;
 
 	return person;
 }
@@ -94,7 +93,10 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 		person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
 	} else {
 		//  the prep.status attribute only exists in uninfected persons in the R model
-		person->prep_ = as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF;
+		PrepParameters prep(as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF, as<double>(val["time.of.prep.initiation"]),
+				// add 1 so they spend at least a day on prep and .1 so occurs after main loop
+				as<double>(val["time.of.prep.cessation"]) + 1.1);
+		person->prep_ = prep;
 	}
 
 	return person;

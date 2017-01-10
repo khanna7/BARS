@@ -13,12 +13,11 @@
 #include "Diagnoser.h"
 #include "GeometricDistribution.h"
 #include "AdherenceCategory.h"
+#include "PrepParameters.h"
 
 namespace TransModel {
 
 class PersonCreator;
-
-enum class PrepStatus { OFF, OFF_INFECTED, ON};
 
 class Person {
 
@@ -30,7 +29,7 @@ private:
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
-	PrepStatus prep_;
+	PrepParameters prep_;
 	bool dead_, diagnosed_, testable_;
 	Diagnoser<GeometricDistribution> diagnoser_;
 	AdherenceCategory adherence_;
@@ -60,11 +59,11 @@ public:
 	}
 
 	bool isOnPrep() const {
-		return prep_ == PrepStatus::ON;
+		return prep_.status() == PrepStatus::ON;
 	}
 
-	PrepStatus prepStatus() const {
-		return prep_;
+	const PrepStatus prepStatus() const {
+		return prep_.status();
 	}
 
 	const InfectionParameters& infectionParameters() const {
@@ -125,6 +124,16 @@ public:
 	void goOffART();
 
 	/**
+	 * Takes this person off of PreP
+	 */
+	void goOffPrep();
+
+	/**
+	 * Puts this person on Prep
+	 */
+	void goOnPrep(double start_time, double end_time);
+
+	/**
 	 * Infects this Person and sets the duration of the infection,
 	 * and the time of infection.
 	 */
@@ -161,6 +170,10 @@ public:
 
 	bool isTestable() const {
 		return testable_;
+	}
+
+	const PrepParameters prepParameters() const {
+		return prep_;
 	}
 
 	bool diagnose(double tick);

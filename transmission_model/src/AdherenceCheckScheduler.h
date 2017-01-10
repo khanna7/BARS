@@ -11,7 +11,6 @@
 #include <memory>
 
 #include "repast_hpc/Schedule.h"
-
 #include "Person.h"
 
 namespace TransModel {

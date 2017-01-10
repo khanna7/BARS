@@ -10,7 +10,7 @@
 namespace TransModel {
 
 StatsBuilder::StatsBuilder(const std::string& out_dir) : counts_writer{nullptr}, pevent_writer{nullptr}, ievent_writer(nullptr),
-		biomarker_writer{nullptr}, pd_fname{}, tevent_writer{nullptr}, art_event_writer{nullptr}, out_dir_{out_dir} {
+		biomarker_writer{nullptr}, pd_fname{}, tevent_writer{nullptr}, art_event_writer{nullptr}, prep_event_writer{nullptr}, out_dir_{out_dir} {
 }
 
 StatsBuilder::~StatsBuilder() {
@@ -20,6 +20,12 @@ StatsBuilder* StatsBuilder::artEventWriter(const std::string& fname, unsigned in
 	art_event_writer = std::make_shared<StatsWriter<ARTEvent>>(out_dir_ + "/" + fname, ARTEvent::header, buffer);
 	return this;
 }
+
+StatsBuilder* StatsBuilder::prepEventWriter(const std::string& fname, unsigned int buffer) {
+	prep_event_writer = std::make_shared<StatsWriter<PREPEvent>>(out_dir_ + "/" + fname, PREPEvent::header, buffer);
+	return this;
+}
+
 
 StatsBuilder* StatsBuilder::countsWriter(const std::string& fname, unsigned int buffer) {
 	counts_writer = std::make_shared<StatsWriter<Counts>>(out_dir_ + "/" + fname, Counts::header, buffer);
@@ -57,13 +63,13 @@ StatsBuilder* StatsBuilder::personDataRecorder(const std::string& fname) {
 }
 
 void StatsBuilder::createStatsSingleton() {
-	if (counts_writer && pevent_writer && ievent_writer && biomarker_writer && death_writer && tevent_writer && art_event_writer &&
+	if (counts_writer && pevent_writer && ievent_writer && biomarker_writer && death_writer && tevent_writer && art_event_writer && prep_event_writer &&
 			pd_fname.length() > 0) {
 		if (Stats::instance_ != nullptr) {
 			delete Stats::instance_;
 		}
 		Stats::instance_ = new Stats(counts_writer, pevent_writer, ievent_writer, biomarker_writer,
-				death_writer, pd_fname, tevent_writer, art_event_writer);
+				death_writer, pd_fname, tevent_writer, art_event_writer, prep_event_writer);
 	} else {
 		throw std::domain_error("Stats must be fully initialized from StatsBuilder before being used.");
 	}

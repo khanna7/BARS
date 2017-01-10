@@ -52,6 +52,8 @@ public:
 	void initRecord(PersonPtr& person, double time_of_entry);
 	void recordARTStart(PersonPtr& p, double ts);
 	void recordARTStop(PersonPtr& p, double ts);
+	void recordPREPStart(int id, double ts);
+	void recordPREPStop(int id, double ts, PrepStatus status);
 	void recordInfection(PersonPtr& p, double ts);
 	void recordDeath(PersonPtr& p, double ts);
 	void recordInitialARTLag(PersonPtr& p, double lag);

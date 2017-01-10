@@ -23,7 +23,9 @@ CPP_SOURCE = Person.cpp \
 	ARTInitLagCalculator.cpp \
 	AdherenceCategorySelector.cpp \
 	AdherenceCheckScheduler.cpp \
-	art_functions.cpp
+	art_functions.cpp \
+	PrepParameters.cpp \
+	PrepCessationEvent.cpp 
 	
 #	EventWriter.cpp \
 	

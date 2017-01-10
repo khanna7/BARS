@@ -55,6 +55,16 @@ void PersonDataRecorder::recordARTStop(PersonPtr& p, double ts) {
 	data.at(p->id()).art_stop_ts = ts;
 }
 
+void PersonDataRecorder::recordPREPStart(int id, double ts) {
+	data.at(id).prep_status = PrepStatus::ON;
+	data.at(id).prep_init_ts = ts;
+}
+
+void PersonDataRecorder::recordPREPStop(int id, double ts, PrepStatus status) {
+	data.at(id).prep_status = status;
+	data.at(id).prep_stop_ts = ts;
+}
+
 void PersonDataRecorder::recordInfection(PersonPtr& p, double ts) {
 	PersonData& pd = data.at(p->id());
 	pd.infection_status = true;

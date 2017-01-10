@@ -14,7 +14,7 @@ namespace TransModel {
 
 Person::Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser) :
 		id_(id), role_(role), age_(age), circum_status_(circum_status),
-		infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF), dead_(false), diagnosed_(false), testable_(false),
+		infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false), testable_(false),
 		diagnoser_(diagnoser), adherence_{AdherenceCategory::NA} {
 }
 
@@ -68,6 +68,15 @@ void Person::goOnART(float time_stamp) {
 	infection_parameters_.vl_at_art_init = infection_parameters_.viral_load;
 }
 
+
+void Person::goOffPrep() {
+	prep_.off();
+}
+
+void Person::goOnPrep(double start_time, double stop_time) {
+	prep_.on(start_time, stop_time);
+}
+
 void Person::step(float size_of_timestep) {
 	age_ += size_of_timestep / 365;
 	if (infection_parameters_.infection_status) {
@@ -93,8 +102,10 @@ bool Person::diagnose(double tick) {
 	diagnosed_ = result == Result::POSITIVE;
 	if (result != Result::NO_TEST) {
 		Stats::instance()->recordTestingEvent(tick, id_, diagnosed_);
-		if (diagnosed_ && prep_ == PrepStatus::ON) {
-			prep_ = PrepStatus::OFF_INFECTED;
+		if (diagnosed_ && prep_.status() == PrepStatus::ON) {
+			prep_.offInfected();
+			Stats::instance()->recordPREPEvent(tick, id(), static_cast<int>(PrepStatus::OFF_INFECTED));
+			Stats::instance()->personDataRecorder().recordPREPStop(id(), tick, PrepStatus::OFF_INFECTED);
 		}
 	}
 	return diagnosed_;

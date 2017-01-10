@@ -30,6 +30,18 @@ struct ARTEvent {
 	void writeTo(FileOutput& out);
 };
 
+struct PREPEvent {
+
+	static const std::string header;
+
+	double tick;
+	int p_id;
+	// 0 is off prep, 1 is off because infected, 2 is on
+	int type;
+
+	void writeTo(FileOutput& out);
+};
+
 struct TestingEvent {
 
 	static const std::string header;
@@ -125,6 +137,7 @@ private:
 	std::shared_ptr<StatsWriter<DeathEvent>> death_writer;
 	std::shared_ptr<StatsWriter<TestingEvent>> tevent_writer;
 	std::shared_ptr<StatsWriter<ARTEvent>> art_event_writer;
+	std::shared_ptr<StatsWriter<PREPEvent>> prep_event_writer;
 
 	PersonDataRecorder pd_recorder;
 
@@ -134,7 +147,8 @@ private:
 	Stats(std::shared_ptr<StatsWriter<Counts>> counts, std::shared_ptr<StatsWriter<PartnershipEvent>> pevents,
 			std::shared_ptr<StatsWriter<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriter<Biomarker>> bio_writer,
 			std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer, const std::string& person_data_fname,
-			std::shared_ptr<StatsWriter<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriter<ARTEvent>> art_event_writer);
+			std::shared_ptr<StatsWriter<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriter<ARTEvent>> art_event_writer,
+			std::shared_ptr<StatsWriter<PREPEvent>> prep_event_writer);
 
 public:
 	virtual ~Stats();
@@ -164,6 +178,7 @@ public:
 	void recordDeathEvent(double time, const PersonPtr& person, const std::string& cause);
 	void recordTestingEvent(double time, int p_id, bool result);
 	void recordARTEvent(double time, int p_id, bool onART);
+	void recordPREPEvent(double time, int p_id, int type);
 };
 
 } /* namespace TransModel */

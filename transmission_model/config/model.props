@@ -27,6 +27,7 @@ death.events.file = death_events.csv
 person.data.file = person_data.csv
 testing.events.file = testing_events.csv
 art.events.file = art_events.csv
+prep.events.file = prep_events.csv
 
 net.save.file = main_network.RDS
 casual.net.save.file = casual_network.RDS
