@@ -137,12 +137,70 @@
 
 ######################
     ## Sexual Behavior
-    num.sex.acts.base <- 2.4 #condomless
-    num.sex.acts.base.w.condom <- 5
+    num.sex.acts.base <- 2.4
     prop.steady.sex.acts <- 0.10 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
                                  #same as freq.of.sex parameter in data table
     prop.casual.sex.acts <- 0.10 #same as above, but for casual
-    prop.steady.sex.acts.w.condom <- 0.2
-    prop.casual.sex.acts.w.condom <- 0.8
     inf.red.w.condom <- 0.80
     
+# sd -- sero-discordant
+# each partnership falls in one of these buckets with
+# specified probability
+    sd.steady.never.use.condoms <- 0.261627907
+    sd.steady.rarely.use.condoms <- 0.046511628
+    sd.steady.sometimes.use.condoms <- 0.081395349
+    sd.steady.usually.use.condoms <- 0.087209302
+    sd.steady.always.use.condoms <- 0.523255814
+
+    sd.casual.never.use.condoms <- 0.281420765
+    sd.casual.rarely.use.condoms <- 0.013661202
+    sd.casual.sometimes.use.condoms <- 0.043715847
+    sd.casual.usually.use.condoms <- 0.054644809
+    sd.casual.always.use.condoms <- 0.606557377
+
+	### probability that the partnership in the specified bucket
+	### will use a condom.
+	sd.steady.never.use.condoms.prob <- 0
+	sd.steady.rarely.use.condoms.prob <- 0.25
+	sd.steady.sometimes.use.condoms.prob <- 0.5
+	sd.steady.usually.use.condoms.prob <- 0.75
+	sd.steady.always.use.condoms.prob <- 1
+	
+	sd.casual.never.use.condoms.prob <- 0
+	sd.casual.rarely.use.condoms.prob <- 0.25
+	sd.casual.sometimes.use.condoms.prob <- 0.5
+	sd.casual.usually.use.condoms.prob <- 0.75
+	sd.casual.always.use.condoms.prob <- 1
+	
+	# sc sero-concordant
+	sc.steady.never.use.condoms <- 0.399082569
+	sc.steady.rarely.use.condoms <- 0.073394495
+	sc.steady.sometimes.use.condoms <- 0.133027523
+	sc.steady.usually.use.condoms <- 0.055045872
+	sc.steady.always.use.condoms <- 0.339449541
+	
+	sc.casual.never.use.condoms <- 0.401330377
+	sc.casual.rarely.use.condoms <- 0.019955654
+	sc.casual.sometimes.use.condoms <- 0.053215078
+	sc.casual.usually.use.condoms <- 0.033259424
+	sc.casual.always.use.condoms <- 0.492239468
+	
+	### probability that the partnership in the specified bucket
+	### will use a condom.
+	sc.steady.never.use.condoms.prob <- 0
+	sc.steady.rarely.use.condoms.prob <- 0.25
+	sc.steady.sometimes.use.condoms.prob <- 0.5
+	sc.steady.usually.use.condoms.prob <- 0.75
+	sc.steady.always.use.condoms.prob <- 1
+	
+	sc.casual.never.use.condoms.prob <- 0
+	sc.casual.rarely.use.condoms.prob <- 0.25
+	sc.casual.sometimes.use.condoms.prob <- 0.5
+	sc.casual.usually.use.condoms.prob <- 0.75
+	sc.casual.always.use.condoms.prob <- 1
+
+
+
+
+
+

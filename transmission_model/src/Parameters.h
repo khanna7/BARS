@@ -102,8 +102,6 @@ extern const std::string PR_RECEPTIVE;
 
 extern const std::string PROP_STEADY_SEX_ACTS;
 extern const std::string PROP_CASUAL_SEX_ACTS;
-extern const std::string PROP_STEADY_SEX_ACTS_CONDOM;
-extern const std::string PROP_CASUAL_SEX_ACTS_CONDOM;
 extern const std::string INFECTIVITY_REDUCTION_CONDOM;
 
 extern const std::string DIAG_INIT_2M ;
@@ -119,6 +117,54 @@ extern const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH ;
 extern const std::string PROP_NEVER_ADHERENT;
 extern const std::string PROP_ALWAYS_ADHERENT;
 extern const std::string PROB_ART_ADHER_FOR_PARTIAL;
+
+extern const std::string SD_STEADY_NEVER_USE_CONDOMS;
+extern const std::string SD_STEADY_RARELY_USE_CONDOMS;
+extern const std::string SD_STEADY_SOMETIMES_USE_CONDOMS;
+extern const std::string SD_STEADY_USUALLY_USE_CONDOMS;
+extern const std::string SD_STEADY_ALWAYS_USE_CONDOMS;
+
+extern const std::string SD_CASUAL_NEVER_USE_CONDOMS;
+extern const std::string SD_CASUAL_RARELY_USE_CONDOMS;
+extern const std::string SD_CASUAL_SOMETIMES_USE_CONDOMS;
+extern const std::string SD_CASUAL_USUALLY_USE_CONDOMS;
+extern const std::string SD_CASUAL_ALWAYS_USE_CONDOMS;
+
+extern const std::string SC_STEADY_NEVER_USE_CONDOMS;
+extern const std::string SC_STEADY_RARELY_USE_CONDOMS;
+extern const std::string SC_STEADY_SOMETIMES_USE_CONDOMS;
+extern const std::string SC_STEADY_USUALLY_USE_CONDOMS;
+extern const std::string SC_STEADY_ALWAYS_USE_CONDOMS;
+
+extern const std::string SC_CASUAL_NEVER_USE_CONDOMS;
+extern const std::string SC_CASUAL_RARELY_USE_CONDOMS;
+extern const std::string SC_CASUAL_SOMETIMES_USE_CONDOMS;
+extern const std::string SC_CASUAL_USUALLY_USE_CONDOMS;
+extern const std::string SC_CASUAL_ALWAYS_USE_CONDOMS;
+
+extern const std::string SD_STEADY_NEVER_USE_CONDOMS_PROB;
+extern const std::string SD_STEADY_RARELY_USE_CONDOMS_PROB;
+extern const std::string SD_STEADY_SOMETIMES_USE_CONDOMS_PROB;
+extern const std::string SD_STEADY_USUALLY_USE_CONDOMS_PROB;
+extern const std::string SD_STEADY_ALWAYS_USE_CONDOMS_PROB;
+
+extern const std::string SD_CASUAL_NEVER_USE_CONDOMS_PROB;
+extern const std::string SD_CASUAL_RARELY_USE_CONDOMS_PROB;
+extern const std::string SD_CASUAL_SOMETIMES_USE_CONDOMS_PROB;
+extern const std::string SD_CASUAL_USUALLY_USE_CONDOMS_PROB;
+extern const std::string SD_CASUAL_ALWAYS_USE_CONDOMS_PROB;
+
+extern const std::string SC_STEADY_NEVER_USE_CONDOMS_PROB;
+extern const std::string SC_STEADY_RARELY_USE_CONDOMS_PROB;
+extern const std::string SC_STEADY_SOMETIMES_USE_CONDOMS_PROB;
+extern const std::string SC_STEADY_USUALLY_USE_CONDOMS_PROB;
+extern const std::string SC_STEADY_ALWAYS_USE_CONDOMS_PROB;
+
+extern const std::string SC_CASUAL_NEVER_USE_CONDOMS_PROB;
+extern const std::string SC_CASUAL_RARELY_USE_CONDOMS_PROB;
+extern const std::string SC_CASUAL_SOMETIMES_USE_CONDOMS_PROB;
+extern const std::string SC_CASUAL_USUALLY_USE_CONDOMS_PROB;
+extern const std::string SC_CASUAL_ALWAYS_USE_CONDOMS_PROB;
 
 /**
  * Parameters singleton that contains the model properties.

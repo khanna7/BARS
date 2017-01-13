@@ -16,9 +16,6 @@
 
 namespace TransModel {
 
-// TODO create different event structs and an EventDataSet that wraps a
-// hdf5 DataSet for each different kind of event
-
 struct Event {
 
 	double tick;

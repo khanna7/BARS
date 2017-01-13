@@ -24,12 +24,12 @@
 #include "PersonCreator.h"
 #include "ARTInitLagCalculator.h"
 #include "ARTScheduler.h"
+#include "CondomUseAssigner.h"
 
 namespace TransModel {
 
 struct TransmissionParameters {
 	double prop_steady_sex_acts, prop_casual_sex_acts;
-	double prop_steady_condom, prop_casual_condom;
 };
 
 class Model {
@@ -48,6 +48,7 @@ private:
 	TransmissionParameters trans_params;
 	std::shared_ptr<ARTInitLagCalculator> art_lag_calculator;
 	std::shared_ptr<GeometricDistribution> cessation_generator;
+	CondomUseAssigner condom_assigner;
 
 	void runTransmission(double timestamp);
 	bool dead(double tick, PersonPtr person, int max_survival);
@@ -57,7 +58,7 @@ private:
 	void updateThetaForm(const std::string& var_name);
 	void countOverlap();
 
-	void initParamsForTransmission(int type, double& prob, bool& condom_used);
+	bool hasSex(int type);
 	void schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep);
 
 	/**

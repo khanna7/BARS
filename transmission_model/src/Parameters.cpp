@@ -112,8 +112,6 @@ const std::string PR_RECEPTIVE = "pr.receptive";
 
 const std::string PROP_STEADY_SEX_ACTS = "prop.steady.sex.acts";
 const std::string PROP_CASUAL_SEX_ACTS = "prop.casual.sex.acts";
-const std::string PROP_STEADY_SEX_ACTS_CONDOM = "prop.steady.sex.acts.w.condom";
-const std::string PROP_CASUAL_SEX_ACTS_CONDOM = "prop.casual.sex.acts.w.condom";
 const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
 
 const std::string DIAG_INIT_2M = "diag.init.2m";
@@ -130,6 +128,55 @@ const std::string PROP_NEVER_ADHERENT = "prop.never.adherent";
 const std::string PROP_ALWAYS_ADHERENT = "prop.always.adherent";
 const std::string PROP_PARTIALLY_ADHERENT = "prop.partially.adherent";
 const std::string PROB_ART_ADHER_FOR_PARTIAL = "prob.art_adher.for.partial";
+
+const std::string SD_STEADY_NEVER_USE_CONDOMS = "sd.steady.never.use.condoms";
+const std::string SD_STEADY_RARELY_USE_CONDOMS = "sd.steady.rarely.use.condoms";
+const std::string SD_STEADY_SOMETIMES_USE_CONDOMS ="sd.steady.sometimes.use.condoms";
+const std::string SD_STEADY_USUALLY_USE_CONDOMS = "sd.steady.usually.use.condoms";
+const std::string SD_STEADY_ALWAYS_USE_CONDOMS = "sd.steady.always.use.condoms";
+
+const std::string SD_CASUAL_NEVER_USE_CONDOMS = "sd.casual.never.use.condoms";
+const std::string SD_CASUAL_RARELY_USE_CONDOMS = "sd.casual.rarely.use.condoms";
+const std::string SD_CASUAL_SOMETIMES_USE_CONDOMS = "sd.casual.sometimes.use.condoms";
+const std::string SD_CASUAL_USUALLY_USE_CONDOMS = "sd.casual.usually.use.condoms";
+const std::string SD_CASUAL_ALWAYS_USE_CONDOMS = "sd.casual.always.use.condoms";
+
+const std::string SC_STEADY_NEVER_USE_CONDOMS = "sc.steady.never.use.condoms";
+const std::string SC_STEADY_RARELY_USE_CONDOMS = "sc.steady.rarely.use.condoms";
+const std::string SC_STEADY_SOMETIMES_USE_CONDOMS ="sc.steady.sometimes.use.condoms";
+const std::string SC_STEADY_USUALLY_USE_CONDOMS = "sc.steady.usually.use.condoms";
+const std::string SC_STEADY_ALWAYS_USE_CONDOMS = "sc.steady.always.use.condoms";
+
+const std::string SC_CASUAL_NEVER_USE_CONDOMS = "sc.casual.never.use.condoms";
+const std::string SC_CASUAL_RARELY_USE_CONDOMS = "sc.casual.rarely.use.condoms";
+const std::string SC_CASUAL_SOMETIMES_USE_CONDOMS = "sc.casual.sometimes.use.condoms";
+const std::string SC_CASUAL_USUALLY_USE_CONDOMS = "sc.casual.usually.use.condoms";
+const std::string SC_CASUAL_ALWAYS_USE_CONDOMS = "sc.casual.always.use.condoms";
+
+const std::string SD_STEADY_NEVER_USE_CONDOMS_PROB = "sd.steady.never.use.condoms.prob";
+const std::string SD_STEADY_RARELY_USE_CONDOMS_PROB = "sd.steady.rarely.use.condoms.prob";
+const std::string SD_STEADY_SOMETIMES_USE_CONDOMS_PROB ="sd.steady.sometimes.use.condoms.prob";
+const std::string SD_STEADY_USUALLY_USE_CONDOMS_PROB = "sd.steady.usually.use.condoms.prob";
+const std::string SD_STEADY_ALWAYS_USE_CONDOMS_PROB = "sd.steady.always.use.condoms.prob";
+
+const std::string SD_CASUAL_NEVER_USE_CONDOMS_PROB = "sd.casual.never.use.condoms.prob";
+const std::string SD_CASUAL_RARELY_USE_CONDOMS_PROB = "sd.casual.rarely.use.condoms.prob";
+const std::string SD_CASUAL_SOMETIMES_USE_CONDOMS_PROB = "sd.casual.sometimes.use.condoms.prob";
+const std::string SD_CASUAL_USUALLY_USE_CONDOMS_PROB = "sd.casual.usually.use.condoms.prob";
+const std::string SD_CASUAL_ALWAYS_USE_CONDOMS_PROB = "sd.casual.always.use.condoms.prob";
+
+const std::string SC_STEADY_NEVER_USE_CONDOMS_PROB = "sc.steady.never.use.condoms.prob";
+const std::string SC_STEADY_RARELY_USE_CONDOMS_PROB = "sc.steady.rarely.use.condoms.prob";
+const std::string SC_STEADY_SOMETIMES_USE_CONDOMS_PROB ="sc.steady.sometimes.use.condoms.prob";
+const std::string SC_STEADY_USUALLY_USE_CONDOMS_PROB = "sc.steady.usually.use.condoms.prob";
+const std::string SC_STEADY_ALWAYS_USE_CONDOMS_PROB = "sc.steady.always.use.condoms.prob";
+
+const std::string SC_CASUAL_NEVER_USE_CONDOMS_PROB = "sc.casual.never.use.condoms.prob";
+const std::string SC_CASUAL_RARELY_USE_CONDOMS_PROB = "sc.casual.rarely.use.condoms.prob";
+const std::string SC_CASUAL_SOMETIMES_USE_CONDOMS_PROB = "sc.casual.sometimes.use.condoms.prob";
+const std::string SC_CASUAL_USUALLY_USE_CONDOMS_PROB = "sc.casual.usually.use.condoms.prob";
+const std::string SC_CASUAL_ALWAYS_USE_CONDOMS_PROB = "sc.casual.always.use.condoms.prob";
+
 
 Parameters* Parameters::instance_ = 0;
 

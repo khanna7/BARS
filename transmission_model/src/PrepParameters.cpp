@@ -13,9 +13,7 @@ PrepParameters::PrepParameters(PrepStatus status, double start_time, double stop
 		stop_time_(stop_time){
 }
 
-PrepParameters::~PrepParameters() {
-	// TODO Auto-generated destructor stub
-}
+PrepParameters::~PrepParameters() {}
 
 void PrepParameters::on(double start_time, double stop_time) {
 		status_ = PrepStatus::ON;

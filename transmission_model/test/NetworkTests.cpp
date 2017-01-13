@@ -40,6 +40,16 @@ public:
 	}
 };
 
+class Assigner  {
+
+public:
+	Assigner() {}
+	virtual ~Assigner() {}
+
+	void initEdge(std::shared_ptr<Edge<Agent>> edge) {}
+};
+
+
 typedef std::shared_ptr<Agent> AgentPtr;
 
 class NetworkTests: public ::testing::Test {
@@ -58,6 +68,8 @@ protected:
 		builder.deathEventWriter("null");
 		builder.personDataRecorder("null");
 		builder.testingEventWriter("null");
+		builder.prepEventWriter("null");
+		builder.artEventWriter("null");
 		builder.createStatsSingleton();
 	}
 
@@ -139,6 +151,37 @@ TEST_F(NetworkTests, TestAdds) {
 	ASSERT_FALSE(net.hasEdge(two, three, 0));
 	ASSERT_TRUE(net.hasEdge(two, three, 10));
 	ASSERT_FALSE(net.hasEdge(three, two, 10));
+}
+
+TEST_F(NetworkTests, TestEdgeGet) {
+	Network<Agent> net(false);
+
+	AgentPtr one = std::make_shared<Agent>(1, 1);
+	AgentPtr two = std::make_shared<Agent>(2, 1);
+	AgentPtr three = std::make_shared<Agent>(3, 1);
+	AgentPtr four = std::make_shared<Agent>(4, 1);
+
+	net.addVertex(one);
+	net.addEdge(three, one);
+	net.addEdge(one, two, 13);
+	net.addEdge(one, four);
+	net.addEdge(three, four, 12);
+
+	std::vector<EdgePtr<Agent>> vec;
+	net.getEdges(one, vec);
+
+	ASSERT_EQ(3, vec.size());
+	EdgePtr<Agent> edge = vec[0];
+	ASSERT_EQ(3, edge->v1()->id());
+	ASSERT_EQ(1, edge->v2()->id());
+
+	edge = vec[1];
+	ASSERT_EQ(1, edge->v1()->id());
+	ASSERT_EQ(2, edge->v2()->id());
+
+	edge = vec[2];
+	ASSERT_EQ(1, edge->v1()->id());
+	ASSERT_EQ(4, edge->v2()->id());
 }
 
 TEST_F(NetworkTests, TestRemoves) {
@@ -362,17 +405,22 @@ struct AgentCreator {
 
 struct AgeSetter {
 
-	void operator()(const VertexPtr<Agent>& agent, List vertex, double time) const {
+	List operator()(const VertexPtr<Agent>& agent, int idx, double time) const {
+		List vertex = List::create();
+		vertex["na"] = false;
+		vertex["vertex_names"] = idx;
 		vertex["age"] = agent->age();
-	}
 
+		return vertex;
+	}
 };
 
 TEST_F(NetworkTests, CreateRNetTests) {
 	Network<Agent> net(false);
 	List init_net = as<List>((*RInstance::rptr)["sn"]);
 	AgentCreator creator;
-	initialize_network(init_net, net, creator, 1);
+	Assigner assigner;
+	initialize_network(init_net, net, creator, assigner, 1);
 
 	auto iter = net.verticesBegin();
 	++iter;
@@ -402,7 +450,8 @@ TEST_F(NetworkTests, CreateRNetTests) {
 	SEXP changes = f();
 
 	ASSERT_EQ(2, net.edgeCount());
-	reset_network_edges(changes, net, idx_map, 1, 0);
+
+	reset_network_edges(changes, net, idx_map, 1, assigner, 0);
 	// still 2 because we deleted one and added one
 	// in the try.net.func call
 	ASSERT_EQ(2, net.edgeCount());
@@ -422,7 +471,8 @@ TEST_F(NetworkTests, InitNetTest) {
 	Network<Agent> net(false);
 	List rnet = as<List>((*RInstance::rptr)["sn"]);
 	AgentCreator creator;
-	initialize_network(rnet, net, creator, 1);
+	Assigner assigner;
+	initialize_network(rnet, net, creator,assigner, 1);
 
 	ASSERT_EQ(4, net.vertexCount());
 	auto iter = net.verticesBegin();
@@ -465,7 +515,7 @@ TEST_F(NetworkTests, InitNetTest) {
 	ASSERT_EQ(1, edge->type());
 
 	rnet = as<List>((*RInstance::rptr)["sn.1"]);
-	initialize_edges(rnet, net, 2);
+	initialize_edges(rnet, net, assigner, 2);
 
 	ASSERT_EQ(5, net.edgeCount());
 	eiter = net.edgesBegin();

@@ -25,6 +25,9 @@
 #include "utils.h"
 #include "PrepCessationEvent.h"
 #include "art_functions.h"
+#include "CondomUseAssigner.h"
+
+#include "debug_utils.h"
 
 
 //#include "EventWriter.h"
@@ -262,8 +265,6 @@ void init_trans_params(TransmissionParameters& params) {
 	double size_of_time_step = Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP);
 	params.prop_steady_sex_acts = Parameters::instance()->getDoubleParameter(PROP_STEADY_SEX_ACTS) * size_of_time_step;
 	params.prop_casual_sex_acts = Parameters::instance()->getDoubleParameter(PROP_CASUAL_SEX_ACTS) * size_of_time_step;
-	params.prop_steady_condom = Parameters::instance()->getDoubleParameter(PROP_STEADY_SEX_ACTS_CONDOM);
-	params.prop_casual_condom = Parameters::instance()->getDoubleParameter(PROP_CASUAL_SEX_ACTS_CONDOM);
 }
 
 std::shared_ptr<ARTInitLagCalculator> create_art_lag_calc() {
@@ -286,13 +287,49 @@ std::shared_ptr<GeometricDistribution> create_cessation_generator() {
 	return std::make_shared<GeometricDistribution>(prob, 1.1);
 }
 
+void add_condom_use_prob(CondomUseAssignerFactory& factory, PartnershipType ptype, int network_type, const std::string& category_param, const std::string& use_param) {
+	double cat_prob = Parameters::instance()->getDoubleParameter(category_param);
+	double use_prob = Parameters::instance()->getDoubleParameter(use_param);
+	factory.addProbability(ptype, network_type, cat_prob, use_prob);
+}
+
+CondomUseAssigner create_condom_use_assigner() {
+	CondomUseAssignerFactory factory;
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_NEVER_USE_CONDOMS, SD_STEADY_NEVER_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_RARELY_USE_CONDOMS, SD_STEADY_RARELY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_SOMETIMES_USE_CONDOMS, SD_STEADY_SOMETIMES_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_USUALLY_USE_CONDOMS, SD_STEADY_USUALLY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_ALWAYS_USE_CONDOMS, SD_STEADY_ALWAYS_USE_CONDOMS_PROB);
+
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_NEVER_USE_CONDOMS, SD_CASUAL_NEVER_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_RARELY_USE_CONDOMS, SD_CASUAL_RARELY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_SOMETIMES_USE_CONDOMS, SD_CASUAL_SOMETIMES_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_USUALLY_USE_CONDOMS, SD_CASUAL_USUALLY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_ALWAYS_USE_CONDOMS, SD_CASUAL_ALWAYS_USE_CONDOMS_PROB);
+
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_NEVER_USE_CONDOMS, SC_STEADY_NEVER_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_RARELY_USE_CONDOMS, SC_STEADY_RARELY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_SOMETIMES_USE_CONDOMS, SC_STEADY_SOMETIMES_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_USUALLY_USE_CONDOMS, SC_STEADY_USUALLY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_ALWAYS_USE_CONDOMS, SC_STEADY_ALWAYS_USE_CONDOMS_PROB);
+
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_NEVER_USE_CONDOMS, SC_CASUAL_NEVER_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_RARELY_USE_CONDOMS, SC_CASUAL_RARELY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_SOMETIMES_USE_CONDOMS, SC_CASUAL_SOMETIMES_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_USUALLY_USE_CONDOMS, SC_CASUAL_USUALLY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_ALWAYS_USE_CONDOMS, SC_CASUAL_ALWAYS_USE_CONDOMS_PROB);
+
+	return factory.createAssigner();
+}
+
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DAILY_TESTING_PROB),
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) },
-				trans_params{}, art_lag_calculator{create_art_lag_calc()}, cessation_generator{create_cessation_generator()}
+				trans_params{}, art_lag_calculator{create_art_lag_calc()}, cessation_generator{create_cessation_generator()},
+				condom_assigner{create_condom_use_assigner()}
 {
 
 	// get initial stats
@@ -300,9 +337,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	init_trans_params(trans_params);
 
 	List rnet = as<List>((*R)[net_var]);
-	initialize_network(rnet, net, person_creator, STEADY_NETWORK_TYPE);
+	initialize_network(rnet, net, person_creator, condom_assigner, STEADY_NETWORK_TYPE);
 	rnet = as<List>((*R)[cas_net_var]);
-	initialize_edges(rnet, net, CASUAL_NETWORK_TYPE);
+	initialize_edges(rnet, net, condom_assigner, CASUAL_NETWORK_TYPE);
 
 	init_stage_map(stage_map);
 	init_network_save(this);
@@ -325,13 +362,14 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 
 	init_generators();
 
-
 	ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
 	runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
 	runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::atEnd)));
 
 	initPrepCessation();
+
+	//write_edges(net, "./edges_at_1.csv");
 }
 
 void Model::initPrepCessation() {
@@ -357,6 +395,8 @@ void Model::atEnd() {
 
 	// forces stat writing via destructors
 	delete Stats::instance();
+
+	//write_edges(net, "./edges_at_end.csv");
 }
 
 Model::~Model() {
@@ -401,7 +441,7 @@ void Model::step() {
 
 	if ((int)t % 100 == 0)
 		std::cout << " ---- " << t << " ---- " << std::endl;
-	simulate(R, net, p2val, t);
+	simulate(R, net, p2val, condom_assigner, t);
 	if (Parameters::instance()->getBooleanParameter(COUNT_OVERLAPS)) {
 		countOverlap();
 	} else {
@@ -602,33 +642,49 @@ bool Model::dead(double tick, PersonPtr person, int max_age) {
 	return died;
 }
 
-void Model::initParamsForTransmission(int edge_type, double& prob, bool& condom_used) {
+bool Model::hasSex(int edge_type) {
+	double prob;
 	if (edge_type == STEADY_NETWORK_TYPE) {
 		prob = trans_params.prop_steady_sex_acts;
-		condom_used = Random::instance()->nextDouble() <= trans_params.prop_steady_condom;
-
 	} else {
 		prob = trans_params.prop_casual_sex_acts;
-		condom_used = Random::instance()->nextDouble() <= trans_params.prop_casual_condom;
 	}
+
+	return Random::instance()->nextDouble() <= prob;
 }
 
-void record_sex_act(int edge_type, bool condom_used, Stats* stats) {
+void record_sex_act(int edge_type, bool condom_used, bool discordant, Stats* stats) {
 	++stats->currentCounts().sex_acts;
 	if (edge_type == STEADY_NETWORK_TYPE) {
 
 		++stats->currentCounts().steady_sex_acts;
 		if (condom_used) {
-			++stats->currentCounts().steady_sex_with_condom;
+			if (discordant) {
+				++stats->currentCounts().sd_steady_sex_with_condom;
+			} else {
+				++stats->currentCounts().sc_steady_sex_with_condom;
+			}
 		} else {
-			++stats->currentCounts().steady_sex_without_condom;
+			if (discordant) {
+				++stats->currentCounts().sd_steady_sex_without_condom;
+			} else {
+				++stats->currentCounts().sc_steady_sex_without_condom;
+			}
 		}
 	} else {
 		++stats->currentCounts().casual_sex_acts;
 		if (condom_used) {
-			++stats->currentCounts().casual_sex_with_condom;
+			if (discordant) {
+				++stats->currentCounts().sd_casual_sex_with_condom;
+			} else {
+				++stats->currentCounts().sc_casual_sex_with_condom;
+			}
 		} else {
-			++stats->currentCounts().casual_sex_without_condom;
+			if (discordant) {
+				++stats->currentCounts().sd_casual_sex_without_condom;
+			} else {
+				++stats->currentCounts().sc_casual_sex_without_condom;
+			}
 		}
 	}
 }
@@ -640,29 +696,30 @@ void Model::runTransmission(double time_stamp) {
 	Stats* stats = Stats::instance();
 	for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
 		int type = (*iter)->type();
-		double prob = 0;
-		bool condom_used = false;
-		initParamsForTransmission(type, prob, condom_used);
-
-		if (Random::instance()->nextDouble() <= prob) {
-			record_sex_act(type, condom_used, stats);
+		if (hasSex(type)) {
+			bool condom_used = (*iter)->useCondom(Random::instance()->nextDouble());
+			bool discordant = false;
 			PersonPtr out_p = (*iter)->v1();
 			PersonPtr in_p = (*iter)->v2();
 			if (out_p->isInfected() && !in_p->isInfected()) {
+				discordant = true;
+
 				if (trans_runner->determineInfection(out_p, in_p, condom_used)) {
 					infecteds.push_back(in_p);
 					Stats::instance()->recordInfectionEvent(time_stamp, out_p, in_p, false, (*iter)->type());
 				}
 			} else if (!out_p->isInfected() && in_p->isInfected()) {
+				discordant = true;
+
 				if (trans_runner->determineInfection(in_p, out_p, condom_used)) {
 					infecteds.push_back(out_p);
 					Stats::instance()->recordInfectionEvent(time_stamp, in_p, out_p, false, (*iter)->type());
 				}
 			}
+
+			record_sex_act(type, condom_used, discordant, stats);
 		}
 	}
-
-
 
 	for (auto& person : infecteds) {
 		// if person has multiple partners who are infected,
@@ -672,6 +729,12 @@ void Model::runTransmission(double time_stamp) {
 			trans_runner->infect(person, time_stamp);
 			++stats->currentCounts().infected;
 			stats->personDataRecorder().recordInfection(person, time_stamp);
+
+			vector<EdgePtr<Person>> edges;
+			net.getEdges(person, edges);
+			for (EdgePtr<Person> ptr : edges) {
+				condom_assigner.initEdge(ptr);
+			}
 		}
 	}
 }

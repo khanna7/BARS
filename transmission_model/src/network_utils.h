@@ -15,6 +15,7 @@
 
 #include "Network.h"
 #include "Stats.h"
+#include "CondomUseAssigner.h"
 
 using namespace Rcpp;
 
@@ -93,7 +94,7 @@ void create_r_network(double tick, List& rnet, Network<V>& net, std::map<unsigne
 }
 
 template<typename V, typename F>
-void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_setter, double time) {
+void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_setter, CondomUseAssigner& assigner, double time) {
 	// rn vertex to n vertex
 	std::map<unsigned int, unsigned int> idx_map;
 
@@ -104,18 +105,18 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 	//as<Function>((*R)["nw_save"])(rnet, "network_for_profiling.rds", 1);
 
 	SEXP changes = as<Function>((*R)["nw_simulate"])(rnet);
-	reset_network_edges(changes, net, idx_map, time, STEADY_NETWORK_TYPE);
+	reset_network_edges(changes, net, idx_map, time, assigner, STEADY_NETWORK_TYPE);
 
 	List cas_net;
 	idx_map.clear();
 	create_r_network(time, cas_net, net, idx_map, attributes_setter, CASUAL_NETWORK_TYPE);
 	changes = as<Function>((*R)["n_cas_simulate"])(cas_net);
-	reset_network_edges(changes, net, idx_map, time, CASUAL_NETWORK_TYPE);
+	reset_network_edges(changes, net, idx_map, time, assigner, CASUAL_NETWORK_TYPE);
 }
 
-template<typename V>
+template<typename V, typename EdgeInit>
 void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map,
-		double time, int edge_type) {
+		double time, EdgeInit& edge_initializer, int edge_type) {
 	// changes is a matrix with columns: "tail", "head", "to".
 	// to  == 1 if tie is formed, otherwise 0
 	NumericMatrix matrix = as<NumericMatrix>(changes);
@@ -127,7 +128,8 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 		int out = idx_map.at(matrix(r, 1));
 		int to = matrix(r, 2);
 		if (to) {
-			net.addEdge(out, in, edge_type);
+			EdgePtr<V> ep = net.addEdge(out, in, edge_type);
+			edge_initializer.initEdge(ep);
 			++added;
 			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::STARTED, edge_type);
 		} else {
@@ -152,8 +154,8 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
  * Initializes specified network from the rnet. Each entry in the
  * rnet's val becomes a Vertex, and the appropriate edges are created.
  */
-template<typename V, typename F>
-void initialize_network(List& rnet, Network<V>& net, F& vertex_creator, int edge_type = 0) {
+template<typename V, typename F, typename EdgeInit>
+void initialize_network(List& rnet, Network<V>& net, F& vertex_creator, EdgeInit& edge_initializer, int edge_type = 0) {
 	if (net.vertexCount() != 0)
 		throw std::invalid_argument("Cannot initialize network: network is not empty");
 	List val = as<List>(rnet["val"]);
@@ -166,19 +168,21 @@ void initialize_network(List& rnet, Network<V>& net, F& vertex_creator, int edge
 	List mel = as<List>(rnet["mel"]);
 	for (auto& sexp : mel) {
 		List edge = as<List>(sexp);
-		net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, edge_type);
+		EdgePtr<V> ep = net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, edge_type);
+		edge_initializer.initEdge(ep);
 	}
 }
 
 /**
  * Adds the edges in the r network to the Network net.
  */
-template<typename V>
-void initialize_edges(List& rnet, Network<V>& net, int edge_type) {
+template<typename V, typename EdgeInit>
+void initialize_edges(List& rnet, Network<V>& net, EdgeInit& edge_initializer, int edge_type) {
 	List mel = as<List>(rnet["mel"]);
 	for (auto& sexp : mel) {
 		List edge = as<List>(sexp);
-		net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, edge_type);
+		EdgePtr<V> ep = net.addEdge(as<int>(edge["outl"]) - 1, as<int>(edge["inl"]) - 1, edge_type);
+		edge_initializer.initEdge(ep);
 	}
 }
 

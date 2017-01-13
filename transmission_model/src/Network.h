@@ -10,6 +10,8 @@
 
 #include <map>
 #include <set>
+#include <vector>
+#include <string>
 
 #include "boost/iterator/transform_iterator.hpp"
 
@@ -109,6 +111,12 @@ public:
 	}
 
 	/**
+	 * Gets all the edges in which that specified vertex participates and put them
+	 * the specified vector.
+	 */
+	void getEdges(const VertexPtr<V>& vert, std::vector<EdgePtr<V>>& vec);
+
+	/**
 	 * Gets the number of edges into the specified vertex.
 	 */
 	unsigned int inEdgeCount(const VertexPtr<V>& vert);
@@ -166,6 +174,23 @@ template<typename V>
 VertexIter<V> Network<V>::verticesEnd() {
 	GetVal<VertexPtr<V>> gv;
 	return VertexIter<V>(vertices.end(), gv);
+}
+
+template<typename V>
+void Network<V>::getEdges(const VertexPtr<V>& vertex, std::vector<EdgePtr<V>>& vec) {
+	auto iiter = iel.find(vertex->id());
+	if (iiter != iel.end()) {
+		for (auto edge_idx : iiter->second.edge_idxs) {
+			vec.push_back(edges[edge_idx]);
+		}
+	}
+
+	auto oiter = oel.find(vertex->id());
+	if (oiter != oel.end()) {
+		for (auto edge_idx : oiter->second.edge_idxs) {
+			vec.push_back(edges[edge_idx]);
+		}
+	}
 }
 
 template<typename V>
