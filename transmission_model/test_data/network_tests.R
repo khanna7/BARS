@@ -18,8 +18,8 @@ try.net.func <- function() {
   # 2 and 4
   # !!! if vertex removed on C++ side, these indices may 
   # not match those above !!!
-  data <- c(1, 4, 1, 0, 1, 4, 2, 1)
+  data <- c(4, 1, 0, 4, 2, 1)
   m <- matrix(data, nrow=2, byrow=T)
-  colnames(m) <- c("time", "tail", "head", "to")
+  colnames(m) <- c("tail", "head", "to")
   m
 }

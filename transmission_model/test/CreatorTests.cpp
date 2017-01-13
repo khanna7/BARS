@@ -7,15 +7,60 @@
 
 #include "gtest/gtest.h"
 
+#include "repast_hpc/RepastProcess.h"
+
+#include "Parameters.h"
 #include "PersonCreator.h"
 #include "RInstance.h"
 #include "TransmissionRunner.h"
 #include "StatsBuilder.h"
+#include "utils.h"
 
 using namespace TransModel;
 using namespace Rcpp;
 
-TEST(CreatorTests, TestInfectedPersonCreationNoART) {
+class CreatorTests: public ::testing::Test {
+
+protected:
+
+	CreatorTests() {
+
+		StatsBuilder builder("/dev");
+		builder.countsWriter("null");
+		builder.partnershipEventWriter("null");
+		builder.infectionEventWriter("null");
+		builder.biomarkerWriter("null");
+		builder.deathEventWriter("null");
+		builder.personDataRecorder("null");
+		builder.testingEventWriter("null");
+		builder.prepEventWriter("null");
+		builder.artEventWriter("null");
+		builder.createStatsSingleton();
+
+		repast::Properties props("../test_data/test.props");
+		Parameters::initialize(props);
+		init_parameters("../test_data/parameters.R", "../test_data/params_derived.R", "", Parameters::instance(),
+					RInstance::rptr);
+
+		repast::Random::initialize(1);
+		repast::RepastProcess::init("");
+
+		float non_tester_rate = Parameters::instance()->getDoubleParameter(NON_TESTERS_PROP);
+		BinomialGen coverage(repast::Random::instance()->engine(),
+				boost::random::binomial_distribution<>(1, non_tester_rate));
+		repast::Random::instance()->putGenerator(NON_TESTERS_BINOMIAL, new repast::DefaultNumberGenerator<BinomialGen>(coverage));
+
+		float circum_rate = Parameters::instance()->getDoubleParameter(CIRCUM_RATE);
+		BinomialGen rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, circum_rate));
+		repast::Random::instance()->putGenerator(CIRCUM_STATUS_BINOMIAL, new repast::DefaultNumberGenerator<BinomialGen>(rate));
+
+	}
+
+	virtual ~CreatorTests() {
+	}
+};
+
+TEST_F(CreatorTests, TestInfectedPersonCreationNoART) {
 	std::string cmd = "load(file=\"../test_data/initialized-model.RData\")";
 	RInstance::rptr->parseEvalQ(cmd);
 	List rnet = as<List>((*RInstance::rptr)["n0"]);
@@ -52,7 +97,7 @@ TEST(CreatorTests, TestInfectedPersonCreationNoART) {
 	ASSERT_TRUE(isnan(params.cd4_at_art_init));
 }
 
-TEST(CreatorTests, TestUninfectedPersonCreation) {
+TEST_F(CreatorTests, TestUninfectedPersonCreation) {
 	std::string cmd = "load(file=\"../test_data/initialized-model.RData\")";
 	RInstance::rptr->parseEvalQ(cmd);
 	List rnet = as<List>((*RInstance::rptr)["n0"]);
@@ -87,7 +132,12 @@ TEST(CreatorTests, TestUninfectedPersonCreation) {
 	ASSERT_TRUE(isnan(params.cd4_at_art_init));
 }
 
-TEST(CreatorTests, TestInfectedPersonCreationART) {
+TEST_F(CreatorTests, TestInfectedPersonCreationART) {
+	repast::Properties props("../test_data/test.props");
+	Parameters::initialize(props);
+	init_parameters("../test_data/parameters.R", "../test_data/params_derived.R", "", Parameters::instance(),
+				RInstance::rptr);
+
 	std::string cmd = "load(file=\"../test_data/initialized-model.RData\")";
 	RInstance::rptr->parseEvalQ(cmd);
 	List rnet = as<List>((*RInstance::rptr)["n0"]);
@@ -125,10 +175,10 @@ TEST(CreatorTests, TestInfectedPersonCreationART) {
 	ASSERT_FLOAT_EQ(0, params.cd4_at_art_init);
 }
 
-TEST(CreatorTests, TestCreatorFromSavedNet) {
+TEST_F(CreatorTests, TestCreatorFromSavedNet) {
 	std::string cmd = "nw.test <- readRDS(file=\"../test_data/network.RDS\")";
 	RInstance::rptr->parseEvalQ(cmd);
-	List rnet = as<List>((*RInstance::rptr)["nw.test"]);
+	List rnet = as<List>((*RInstance::rptr)["n0"]);
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
 	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
 	PersonCreator creator(runner, 0.5, 1);
@@ -141,21 +191,7 @@ TEST(CreatorTests, TestCreatorFromSavedNet) {
 	}
 }
 
-void create_stats() {
-
-	StatsBuilder builder("/dev");
-	builder.countsWriter("null");
-	builder.partnershipEventWriter("null");
-	builder.infectionEventWriter("null");
-	builder.biomarkerWriter("null");
-	builder.deathEventWriter("null");
-	builder.personDataRecorder("null");
-	builder.testingEventWriter("null");
-	builder.createStatsSingleton();
-}
-
-TEST(CreatorTests, TestDiagnosis) {
-	create_stats();
+TEST_F(CreatorTests, TestDiagnosis) {
 	std::string cmd = "load(file=\"../test_data/initialized-model.RData\")";
 	RInstance::rptr->parseEvalQ(cmd);
 	List rnet = as<List>((*RInstance::rptr)["n0"]);
@@ -175,14 +211,16 @@ TEST(CreatorTests, TestDiagnosis) {
 	float next_test_at = tick + as<double>(p_list["time.until.next.test"]);
 	ASSERT_EQ(528 + tick, next_test_at);
 	person->infect(50, tick);
-	// person should diagnose true at next_text_at, detection window is 10 which is long
-	// before next_test_at
+//	// person should diagnose true at next_text_at, detection window is 10 which is long
+//	// before next_test_at
+	Stats::instance()->personDataRecorder().initRecord(person, 0);
 	ASSERT_FALSE(person->diagnose(100));
 	ASSERT_FALSE(person->diagnose(next_test_at - 1));
 	ASSERT_TRUE(person->diagnose(next_test_at));
 
 	p_list["time.until.next.test"] = 5;
 	PersonPtr p2 = creator(p_list, tick);
+	Stats::instance()->personDataRecorder().initRecord(p2, 0);
 	p2->infect(50, tick);
 	ASSERT_EQ(4, p2->timeUntilNextTest(3));
 	// test should be false at next_test_at (7)

@@ -134,17 +134,17 @@ TEST(ParametersTests, TestCreateFromR) {
 	ASSERT_EQ(1.11, params->getDoubleParameter(B3_FEMALE));
 	ASSERT_EQ(1, params->getIntParameter(ACUTE_LENGTH_MIN));
 	ASSERT_EQ(3.5f, params->getFloatParameter(STOP_AT));
-	ASSERT_EQ(40.5f, params->getDoubleParameter("mid.age"));
+	ASSERT_NEAR(1 / 180.0, params->getDoubleParameter("prep.daily.stop.prob"), 0.001);
 
 	// make sure that R vectors of size > 1 are ignored
 	ASSERT_FALSE(params->contains("vector.param"));
 
 	RInstance::rptr->parseEvalQ("rm(list=ls())");
-	// override min and max age, so that derived mid.age should now be 6
-	std::string param_string("min.age=2,max.age=10");
+	// prep.mean.days.usage so now 1/90
+	std::string param_string("prep.mean.days.usage=90");
 	init_parameters("../test_data/parameters.R", "../test_data/params_derived.R", param_string, Parameters::instance(),
 			RInstance::rptr);
-	ASSERT_EQ(6.0, params->getDoubleParameter("mid.age"));
+	ASSERT_NEAR(1 / 90.0, params->getDoubleParameter("prep.daily.stop.prob"), 0.001);
 }
 
 TEST(ParametersTests, TestParameterParsing) {
@@ -173,6 +173,8 @@ TEST(DiagnoserTests, TestDiagnosis) {
 	builder.deathEventWriter("null");
 	builder.personDataRecorder("null");
 	builder.testingEventWriter("null");
+	builder.prepEventWriter("null");
+	builder.artEventWriter("null");
 	builder.createStatsSingleton();
 
 	std::shared_ptr<MockGen> gen = std::make_shared<MockGen>();
