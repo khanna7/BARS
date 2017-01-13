@@ -37,11 +37,15 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false.
 * sex_acts: the number of sex acts that occured at that timestep.
 * casual_sex_acts: the number of sex acts that occurred between casual partners.
-* casual_sex_acts_with_condom: the number of casual sex acts in which a condom was used.
-* casual_sex_acts_without_condom: the number of casual sex acts in which a condom was not used.
+* sd_casual_sex_with_condom: the number of sex acts between sero-discordant casual partners in which a condom was used.
+* sd_casual_sex_without_condom: the number of sex acts between sero-discordant casual partners in which a condom was not used.
+* sc_casual_sex_with_condom: the number of sex acts between sero-concordant casual partners in which a condom was used.
+* sc_casual_sex_without_condom: the number of sex acts between sero-concordant casual partners in which a condom was not used.
 * steady_sex_acts: the number of sex acts that occurred between steady partners.
-* steady_sex_acts_with_condom: the number of steady sex acts in which a condom was used.
-* steady_sex_acts_without_condom: the number of steady sex acts in which a condom was not used.
+* sd_steady_sex_with_condom: the number of sex acts between sero-discordant steady partners in which a condom was used.
+* sd_steady_sex_without_condom: the number of sex acts between sero-discordant steady partners in which a condom was not used.
+* sc_steady_sex_with_condom: the number of sex acts between sero-concordant steady partners in which a condom was used.
+* sc_steady_sex_without_condom: the number of sex acts between sero-concordant steady partners in which a condom was not used.
 
 
 ### Partnership Events
@@ -155,4 +159,13 @@ When a person goes on or off ART, that event is recorded in the art events file.
 * event_type: the event type (on or off ART).
   * 0: off of ART
   * 1: on ART
+
+### PrEP Events
+When a person goes on or off PrEP, that event is recorded in the PrEP events file. The file is defined by the *prep.events.file* propery. The format is is csv with one row per event.
+* tick: the time at which the event occurred.
+* p_id: the id of the person who when on or off PrEP.
+* event_type: the type of PrEP event.
+ * 0: off of PrEP
+ * 1: off of PrEP because person has been diagnosed as infected
+ * 2: on PrEP
 
