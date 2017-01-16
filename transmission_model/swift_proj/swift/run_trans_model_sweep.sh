@@ -33,7 +33,7 @@ export PROCS=8
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if the MACHINE variable (see below) is not set.
 export QUEUE=sandyb
-export WALLTIME=00:10:00
+export WALLTIME=10:00:00
 export PPN=8
 export TURBINE_JOBNAME="${EXPID}_job"
 
