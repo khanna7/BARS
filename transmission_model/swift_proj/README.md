@@ -19,7 +19,10 @@ cd swift_proj/swift
 
 where X is the name of an "experiment directory". For example `./run_trans_model_sweep.sh test1` will create a `swift_proj/experiments/test1` directory and run the required number of runs from within that directory. Each model run has its own instance directory where its output is generated. For example, `swift_proj/experiments/test1/instance_1`, `swift_proj/experiments/test1/instance_2`, and so on.
 
-Note that `stop.at` is currently set in the model properties file as specified in `scripts/trans_model.sh`.
+Note that `stop.at` is currently set in the model properties file as specified in `scripts/trans_model.sh`. (Though it will be overwritten if specified under in the matrix of parameters to be varied.)
+
+If an indexing error appears, you may need to recompile the main and casual networks.
+
 
 To run without swift:
 
