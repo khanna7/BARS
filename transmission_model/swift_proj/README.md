@@ -26,3 +26,4 @@ To run without swift:
 ```  
 mpirun -n 1 ./transmission_model-0.5 ../config/model.props
 ```  
+Copy excutable from `/home/ntcollie/src/BARS/transmission_model/Release/transmission_model-0.0` to `../Release` directory
