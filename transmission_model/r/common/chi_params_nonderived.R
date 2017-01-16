@@ -72,10 +72,12 @@
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month
    
    ## ART adherence
-   partial.art_adher.window.length <- 3*30 #3 month window over which consistency in behavior is maintained
+   partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained
    prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   prop.always.adherent <- 0.1
-   
+   prop.always.adherent <- 0.46
+   prop.part.plus.adherent <- 0.28
+   prop.part.neg.adherent <- 0.30
+
    prob.art_adher.for.partial <- 0.5 #probability that a partially adherent individual will take their medication over the next `window.length`
    
    #####################
