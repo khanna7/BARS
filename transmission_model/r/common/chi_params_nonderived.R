@@ -118,13 +118,13 @@
     #lag.bet.diagnosis.and.art.init <- 30
     non.testers.prop <- 0.06
 
-    diag.init.2m <- 0.25
-    diag.init.2to4m <- 0.1
-    diag.init.4to6m <- 0.1
-    diag.init.6to8m <- 0.1
-    diag.init.8to10m <- 0.1
-    diag.init.10to12m <- 0.25
-    diag.never.init <- 0.1
+    diag.init.2m <- 0.54
+    diag.init.2to4m <- 0.09
+    diag.init.4to6m <- 0.076
+    diag.init.6to8m <- 0.015
+    diag.init.8to10m <- 0.15
+    diag.init.10to12m <- 0.015
+    diag.never.init <- 0.23 #means greater than one year
     #####################
     ## PrEP
     prep.bl.use.prop <- 10/100
