@@ -138,10 +138,10 @@
 
 ######################
     ## Sexual Behavior
-    num.sex.acts.base <- 2.4
-    prop.steady.sex.acts <- 0.10 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
+    #num.sex.acts.base <- 2.4
+    prop.steady.sex.acts <- 0.093 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
                                  #same as freq.of.sex parameter in data table
-    prop.casual.sex.acts <- 0.10 #same as above, but for casual
+    prop.casual.sex.acts <- 0.053 #same as above, but for casual
     inf.red.w.condom <- 0.80
     
 # sd -- sero-discordant
