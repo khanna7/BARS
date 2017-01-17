@@ -37,7 +37,7 @@
    
    #####################
    ## BIOLOGICAL
-   circum.rate <- 0.10
+   circum.rate <- 0.90 #in accordance with Atlanta data from Jenness (2016)
    init.hiv.prev <- 0.10
    init.hiv.prev.for.entries <- 0.01/100 # probability that an entering person will have HIV
 
@@ -104,7 +104,7 @@
    ## Additional multiplier information: http://www.hiv.va.gov/provider/manual-primary-care/prevention-for-positives-table3.asp
    acute.mult <- 4.98
    late.mult <- 3.49
-   circum.mult <- 0.60 ## check
+   circum.mult <- 0.40 ## 40% is the multiplier. Circumcised insertive men are 0.60 times as infectious
    acute.mult.holling <- 26
    late.mult.holling <- 7
    min.chronic.infectivity.unadj <- 0.000497/2.89 
