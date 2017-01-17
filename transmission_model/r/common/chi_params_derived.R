@@ -15,9 +15,6 @@
        #almost equal between susc-susc and inf-inf 
    
    #####################
-   ## TIMESTEP
-
-   #####################
    ## DEMOGRAPHIC
    given.dur.inf.by.age <- 10*365/size.of.timestep #(not age-specific yet)  
    daily.entry.rate <- 0.00008
