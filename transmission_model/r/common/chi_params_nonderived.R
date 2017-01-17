@@ -140,9 +140,10 @@
     diag.init.2to4m <- 0.09
     diag.init.4to6m <- 0.076
     diag.init.6to8m <- 0.015
-    diag.init.8to10m <- 0.15
+    diag.init.8to10m <- 0.015
     diag.init.10to12m <- 0.015
-    diag.never.init <- 0.23 #means greater than one year
+    diag.never.init <- 1 - (diag.init.2m + diag.init.2to4m + diag.init.4to6m + diag.init.6to8m + diag.init.8to10m + diag.init.10to12m) #means greater than one year
+   
     #####################
     ## PrEP
     prep.bl.use.prop <- 10/100
