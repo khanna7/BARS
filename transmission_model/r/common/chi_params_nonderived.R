@@ -46,6 +46,19 @@
    late.length <- 3551:(3551+728)
    duration.of.infection <- max(late.length)
 
+   ## (viral load)
+   time.infection.to.peak.viremia <- 45
+   time.infection.to.peak.viral.load <- time.infection.to.peak.viremia
+   peak.viral.load <- 6.17
+   time.infection.to.viral.set.point <- 90
+   set.point.viral.load <- 4.2
+   time.infection.to.late.stage <- 90+3550+1
+   dur.inf <- duration.of.infection
+   late.stage.viral.load <- 5.05 ## (max?)
+
+   time.to.full.supp <- 4*30/size.of.timestep ## 4 months
+   undetectable.vl <- log(50, base=10)
+
    uninfected.cd4.level <- 518 #(might draw uniformly from a range)
 
    ## (to compute cd4 in infected but ART-naive)
