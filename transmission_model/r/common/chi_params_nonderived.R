@@ -132,7 +132,7 @@
     #####################
     ## Testing, diagnosis and linkage-to-care
     detection.window <- 22
-    mean.time.until.next.test <- 365*2
+    mean.time.until.next.test <- 365*1
     #lag.bet.diagnosis.and.art.init <- 30
     non.testers.prop <- 0.06
 
