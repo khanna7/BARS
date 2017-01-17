@@ -25,13 +25,6 @@
    #####################
    ## BIOLOGICAL
 
-  ## (time of infection)
-  acute.length <- 1:floor(121/size.of.timestep) ## in daily time units
-  chronic.length <- ceiling(121/size.of.timestep):
-                    floor(1877/size.of.timestep)
-  late.length <- ceiling(1877/size.of.timestep):
-                    floor(3300/size.of.timestep)
-
   ## (cd4 decline)
   untreated.cd4.perstep.decline <- untreated.cd4.daily.decline*
                                    size.of.timestep
