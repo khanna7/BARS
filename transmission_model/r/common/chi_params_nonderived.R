@@ -85,9 +85,7 @@
    ## Additional multiplier information: http://www.hiv.va.gov/provider/manual-primary-care/prevention-for-positives-table3.asp
    acute.mult <- 4.98
    late.mult <- 3.49
-   preg.mult <- 2.5 ## check
    circum.mult <- 0.60 ## check
-   preg.susc.mult <- 1.7
    acute.mult.holling <- 26
    late.mult.holling <- 7
    min.chronic.infectivity.unadj <- 0.000497/2.89 
