@@ -116,7 +116,7 @@
     detection.window <- 22
     mean.time.until.next.test <- 365*2
     #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop <- 0.25  
+    non.testers.prop <- 0.06
 
     diag.init.2m <- 0.25
     diag.init.2to4m <- 0.1
