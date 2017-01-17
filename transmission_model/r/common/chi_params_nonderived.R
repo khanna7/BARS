@@ -40,7 +40,12 @@
    circum.rate <- 0.10
    init.hiv.prev <- 0.10
    init.hiv.prev.for.entries <- 0.01/100 # probability that an entering person will have HIV
-   duration.of.infection <- 3300
+
+   acute.length <- 1:90 ## in daily time units
+   chronic.length <- 91:3550
+   late.length <- 3551:(3551+728)
+   duration.of.infection <- max(late.length)
+
    uninfected.cd4.level <- 518 #(might draw uniformly from a range)
 
    ## (to compute cd4 in infected but ART-naive)
