@@ -6,7 +6,7 @@ Files under `swift_proj`
  * `data/test_input_params.txt` - sample input parameters to sweep over
  * `scripts/trans_model.sh` - the bash script file that actually runs the model. The model.props file and the executable
  to use can be set in here.
- * `swift/run_trans_model_sweep.sh` - bash script used to launch swift. The number of processes to use, walltime, and
+ * `swift/run_trans_model_sweep.sh` - bash script used to launch swift. The file containing the matrix of parameters that need to be swept over, the number of processes to use, walltime, and
  processes per node (PPN) can be set in here.
  * `swift/trans_model_sweep.swift` - the swift script that peforms the sweep.
 
