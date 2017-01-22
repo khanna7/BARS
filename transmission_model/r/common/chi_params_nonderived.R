@@ -107,8 +107,9 @@
    circum.mult <- 0.40 ## 40% is the multiplier. Circumcised insertive men are 0.60 times as infectious
    acute.mult.holling <- 26
    late.mult.holling <- 7
-   min.chronic.infectivity.unadj <- 0.000497/2.89 
-   
+   #min.chronic.infectivity.unadj <- 0.000497/2.89 
+   min.chronic.infectivity.unadj <- (0.00898+0.003379)/2 #jenness et al.
+
    ## relationship between viral load and chronic infectivity (hughes et al.)
    
    #####################
