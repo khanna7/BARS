@@ -30,7 +30,7 @@
    ## DEMOGRAPHIC
    min.age <- 16
    max.age <- 65
-   daily.entry.rate <- 0.00008
+   daily.entry.rate <- 0.00008*10
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
@@ -39,7 +39,7 @@
    ## BIOLOGICAL
    circum.rate <- 0.90 #in accordance with Atlanta data from Jenness (2016)
    init.hiv.prev <- 0.10
-   init.hiv.prev.for.entries <- 0.01/100 # probability that an entering person will have HIV
+   init.hiv.prev.for.entries <- 0.001/100 # probability that an entering person will have HIV
 
    acute.length <- 1:90 ## in daily time units
    chronic.length <- 91:3550
