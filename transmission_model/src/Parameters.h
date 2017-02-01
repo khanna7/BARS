@@ -104,13 +104,7 @@ extern const std::string PROP_STEADY_SEX_ACTS;
 extern const std::string PROP_CASUAL_SEX_ACTS;
 extern const std::string INFECTIVITY_REDUCTION_CONDOM;
 
-extern const std::string DIAG_INIT_2M ;
-extern const std::string DIAG_INIT_2TO4M;
-extern const std::string DIAG_INIT_4TO6M;
-extern const std::string DIAG_INIT_6TO8M;
-extern const std::string DIAG_INIT_8TO10M;
-extern const std::string DIAG_INIT_10TO12M;
-extern const std::string DIAG_NEVER_INIT;
+extern const std::string ART_LAG_PREFIX;
 
 extern const std::string PROP_PARTIALLY_ADHERENT;
 extern const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH ;
@@ -213,6 +207,12 @@ public:
 	 * @return the named parameter as a double.
 	 */
 	double getDoubleParameter(const std::string& prop_name) const;
+
+	/**
+	 * Gets all the parmaeter keys that start with the specified prefix.
+	 *
+	 */
+	void getKeys(const std::string& starts_with, std::vector<std::string>& keys);
 
 	/**
 	 * Puts the named parameter into this Parameters object.

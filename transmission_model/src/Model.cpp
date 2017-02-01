@@ -267,17 +267,13 @@ void init_trans_params(TransmissionParameters& params) {
 	params.prop_casual_sex_acts = Parameters::instance()->getDoubleParameter(PROP_CASUAL_SEX_ACTS) * size_of_time_step;
 }
 
-std::shared_ptr<ARTInitLagCalculator> create_art_lag_calc() {
-
-	ARTInitCalculatorCreator creator;
-	creator.diagInit2m(Parameters::instance()->getDoubleParameter(DIAG_INIT_2M));
-	creator.diagInit2to4m(Parameters::instance()->getDoubleParameter(DIAG_INIT_2TO4M));
-	creator.diagInit4to6m(Parameters::instance()->getDoubleParameter(DIAG_INIT_4TO6M));
-	creator.diagInit6to8m(Parameters::instance()->getDoubleParameter(DIAG_INIT_6TO8M));
-	creator.diagInit8to10m(Parameters::instance()->getDoubleParameter(DIAG_INIT_8TO10M));
-	creator.diagInit10to12m(Parameters::instance()->getDoubleParameter(DIAG_INIT_10TO12M));
-	creator.diagNeverInit(Parameters::instance()->getDoubleParameter(DIAG_NEVER_INIT));
-
+std::shared_ptr<DayRangeCalculator> create_art_lag_calc() {
+	DayRangeCalculatorCreator creator;
+	vector<string> lag_keys;
+	Parameters::instance()->getKeys(ART_LAG_PREFIX, lag_keys);
+	for (auto& key : lag_keys) {
+		creator.addBin(Parameters::instance()->getStringParameter(key));
+	}
 	return creator.createCalculator();
 }
 
@@ -466,22 +462,21 @@ void Model::step() {
 void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep) {
 	double lag = art_lag_calculator->calculateLag(size_of_timestep);
 	Stats::instance()->personDataRecorder().recordInitialARTLag(person, lag);
-	if (lag != NEVER_INIT_ART) {
-		double art_at_tick = lag + tick;
-		ARTScheduler* scheduler = nullptr;
-		auto iter = art_map.find(art_at_tick);
-		if (iter == art_map.end()) {
-			scheduler = new ARTScheduler((float) art_at_tick);
-			RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick - 0.1,
-					repast::Schedule::FunctorPtr(scheduler));
-			art_map.emplace(art_at_tick, scheduler);
-		} else {
-			scheduler = iter->second;
-		}
-		scheduler->addPerson(person);
 
-		initialize_adherence(person, art_at_tick);
+	double art_at_tick = lag + tick;
+	ARTScheduler* scheduler = nullptr;
+	auto iter = art_map.find(art_at_tick);
+	if (iter == art_map.end()) {
+		scheduler = new ARTScheduler((float) art_at_tick);
+		RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick - 0.1,
+				repast::Schedule::FunctorPtr(scheduler));
+		art_map.emplace(art_at_tick, scheduler);
+	} else {
+		scheduler = iter->second;
 	}
+	scheduler->addPerson(person);
+
+	initialize_adherence(person, art_at_tick);
 }
 
 // ASSUMES PERSON IS UNINFECTED

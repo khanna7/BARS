@@ -116,16 +116,19 @@
     ## Testing, diagnosis and linkage-to-care
     detection.window <- 22
     mean.time.until.next.test <- 365*2
-    #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop <- 0.25  
-
-    diag.init.2m <- 0.25
-    diag.init.2to4m <- 0.1
-    diag.init.4to6m <- 0.1
-    diag.init.6to8m <- 0.1
-    diag.init.8to10m <- 0.1
-    diag.init.10to12m <- 0.25
-    diag.never.init <- 0.1
+    non.testers.prop <- 0.25
+    
+    # lag between diagnosis and ART init
+    # format is probability, min range val - max range val
+    # range is in days
+    art.init.lag.1 <- ".167142,1-7"  
+    art.init.lag.2 <- ".298142,7-30"  
+    art.init.lag.3 <- ".160142,30-90"  
+    art.init.lag.4 <- ".092142,90-180"  
+    art.init.lag.5 <- ".129142,180-365"  
+    art.init.lag.6 <- ".084142,365-730"
+    art.init.lag.7 <- ".069142,1825-1825"
+   
     #####################
     ## PrEP
     prep.bl.use.prop <- 10/100

@@ -15,112 +15,95 @@
 #include "Diagnoser.h"
 #include "StatsBuilder.h"
 #include "ARTInitLagCalculator.h"
+#include "DayRangeCalculator.h"
 
 using namespace TransModel;
 using namespace Rcpp;
 
-TEST(ARTInitTests, TestCreator) {
-	ARTInitCalculatorCreator creator;
+TEST(DayRangeCalcTests, TestCreator) {
+	DayRangeCalculatorCreator creator;
+
 	try {
+		creator.createCalculator();
+		FAIL();
+	} catch (...) {}
+
+	creator.clear();
+	try {
+		creator.addBin(".16,1-7");
 		creator.createCalculator();
 		FAIL();
 	} catch (...) {
 	}
 
-	try {
-		creator.diagInit2m(3);
-		creator.diagInit2to4m(0);
-		creator.diagInit4to6m(0);
-		creator.diagInit6to8m(0);
-		creator.diagInit8to10m(0);
-		creator.diagInit10to12m(0);
-		creator.diagNeverInit(0);
-		creator.createCalculator();
-		FAIL();
-	} catch (...) {
-	}
+	creator.clear();
+	creator.addBin(".16,1-7");
+	creator.addBin(".34,7-30");
+	creator.addBin(".5,5-5");
+	creator.createCalculator();
 
-	try {
-		creator.diagInit2m(.2);
-		creator.diagInit2to4m(.2);
-		creator.diagInit4to6m(.2);
-		creator.diagInit6to8m(.2);
-		creator.diagInit8to10m(.2);
-		creator.diagInit10to12m(0);
-		creator.diagNeverInit(0);
-		creator.createCalculator();
-	} catch (...) {
-		FAIL();
-	}
 }
 
-void init_creator(ARTInitCalculatorCreator& creator) {
-	creator.diagInit2m(0);
-	creator.diagInit2to4m(0);
-	creator.diagInit4to6m(0);
-	creator.diagInit6to8m(0);
-	creator.diagInit8to10m(0);
-	creator.diagInit10to12m(0);
-	creator.diagNeverInit(0);
-}
-
-void test_calc(std::shared_ptr<ARTInitLagCalculator> calc, double min, double max) {
-	min *=30;
-	max *=30;
+void test_calc(std::shared_ptr<DayRangeCalculator> calc, double min, double max) {
 	for (int i = 0; i < 1000; ++i) {
-		double val = calc->calculateLag(1);
+		double val = calc->calculateLag(1.0f);
 		ASSERT_GE(val, min);
 		ASSERT_LE(val, max);
 
-		val = calc->calculateLag(2);
+		val = calc->calculateLag(2.0f);
 		ASSERT_GE(val, min / 2.0);
 		ASSERT_LE(val, max / 2.0);
 	}
 }
 
-TEST(ARTInitTests, TestLagCalculator) {
-	repast::Random::initialize(1);
-	ARTInitCalculatorCreator creator;
-	init_creator(creator);
-
-	creator.diagInit2m(1);
-	std::shared_ptr<ARTInitLagCalculator> calc = creator.createCalculator();
-	test_calc(calc, 0, 2);
-	creator.diagInit2m(0);
-
-	creator.diagInit2to4m(1);
-	calc = creator.createCalculator();
-	test_calc(calc, 2, 4);
-	creator.diagInit2to4m(0);
-
-	creator.diagInit4to6m(1);
-	calc = creator.createCalculator();
-	test_calc(calc, 4, 6);
-	creator.diagInit4to6m(0);
-
-	creator.diagInit6to8m(1);
-	calc = creator.createCalculator();
-	test_calc(calc, 6, 8);
-	creator.diagInit6to8m(0);
-
-	creator.diagInit8to10m(1);
-	calc = creator.createCalculator();
-	test_calc(calc, 8, 10);
-	creator.diagInit8to10m(0);
-
-	creator.diagInit10to12m(1);
-	calc = creator.createCalculator();
-	test_calc(calc, 10, 12);
-	creator.diagInit10to12m(0);
-
-	creator.diagNeverInit(1);
-	calc = creator.createCalculator();
+void test_calc(std::shared_ptr<DayRangeCalculator> calc, double min, double max, double min2, double max2) {
+	int c1 = 0, c2 = 0;
 	for (int i = 0; i < 1000; ++i) {
-		double val = calc->calculateLag(1);
-		ASSERT_EQ(NEVER_INIT_ART, val);
-		val = calc->calculateLag(2);
-		ASSERT_EQ(NEVER_INIT_ART, val);
+		double val = calc->calculateLag(1.0f);
+		if (val <= max && val >= min) {
+			++c1;
+		} else if (val <= max2 && val >= min2) {
+			++c2;
+		}
 	}
+
+	ASSERT_EQ(1000, c1 + c2);
+	ASSERT_GE(c1, 450);
+	ASSERT_GE(c2, 450);
+	ASSERT_LE(c1, 550);
+	ASSERT_LE(c2, 550);
+}
+
+TEST(DayRangeCalcTests, TestLagCalculator) {
+	repast::Random::initialize(1);
+	DayRangeCalculatorCreator creator;
+
+	creator.addBin("1,1-7");
+	creator.addBin("0,7-30");
+	creator.addBin("0,5-5");
+	std::shared_ptr<DayRangeCalculator> calc = creator.createCalculator();
+	test_calc(calc, 1, 7);
+	creator.clear();
+
+	creator.addBin("0,1-7");
+	creator.addBin("1,7-30");
+	creator.addBin("0,5-5");
+	calc = creator.createCalculator();
+	test_calc(calc, 7, 30);
+	creator.clear();
+
+	creator.addBin("0,1-7");
+	creator.addBin("0,7-30");
+	creator.addBin("1,5-5");
+	calc = creator.createCalculator();
+	test_calc(calc, 5, 5);
+	creator.clear();
+
+	creator.addBin("0,1-7");
+	creator.addBin("0.5,7-30");
+	creator.addBin("0.5,5-5");
+	calc = creator.createCalculator();
+	test_calc(calc, 5, 5, 7, 30);
 }
 
 TEST(ParametersTests, TestCreateFromR) {

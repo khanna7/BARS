@@ -20,7 +20,7 @@ CPP_SOURCE = Person.cpp \
 	file_utils.cpp \
 	PersonDataRecorder.cpp \
 	GeometricDistribution.cpp \
-	ARTInitLagCalculator.cpp \
+	DayRangeCalculator.cpp \
 	AdherenceCategorySelector.cpp \
 	AdherenceCheckScheduler.cpp \
 	art_functions.cpp \

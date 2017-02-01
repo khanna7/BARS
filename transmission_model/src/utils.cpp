@@ -91,7 +91,7 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 		//boost::to_upper(upper_name);
 		//boost::replace_all(upper_name, ".", "_");
 		SEXP val((*R)[name]);
-		//std::cout << name << ": " << TYPEOF(val) <<  std::endl;
+		// std::cout << name << ": " << TYPEOF(val) <<  std::endl;
 		if (TYPEOF(val) == REALSXP) {
 			Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(val);
 			if (v.size() == 1) {
@@ -105,6 +105,8 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 			params->putParameter(name + ".max", (double)vec[vec.size() - 1]);
 			//std::cout << "extern const std::string " << upper_name << "_MIN;" << std::endl; //<< " = \"" << name << ".min" << "\";" << std::endl;
 			//std::cout << "extern const std::string " << upper_name << "_MAX;" << std::endl; //<< " = \"" << name << ".max" << "\";" << std::endl;
+		} else if (TYPEOF(val) == STRSXP) {
+			params->putParameter(name, Rcpp::as<std::string>(val));
 		}
 	}
 }

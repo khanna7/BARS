@@ -5,6 +5,8 @@
  *      Author: nick
  */
 
+#include "boost/algorithm/string.hpp"
+
 #include "repast_hpc/Utilities.h"
 #include "repast_hpc/Properties.h"
 
@@ -114,13 +116,7 @@ const std::string PROP_STEADY_SEX_ACTS = "prop.steady.sex.acts";
 const std::string PROP_CASUAL_SEX_ACTS = "prop.casual.sex.acts";
 const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
 
-const std::string DIAG_INIT_2M = "diag.init.2m";
-const std::string DIAG_INIT_2TO4M = "diag.init.2to4m";
-const std::string DIAG_INIT_4TO6M ="diag.init.4to6m";
-const std::string DIAG_INIT_6TO8M = "diag.init.6to8m";
-const std::string DIAG_INIT_8TO10M = "diag.init.8to10m";
-const std::string DIAG_INIT_10TO12M = "diag.init.10to12m";
-const std::string DIAG_NEVER_INIT = "diag.never.init";
+const std::string ART_LAG_PREFIX = "art.init.lag";
 
 
 const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
@@ -231,6 +227,15 @@ float Parameters::getFloatParameter(const std::string& prop_name) const {
 
 double Parameters::getDoubleParameter(const std::string& prop_name) const {
 	return strToDouble(getStringParameter(prop_name));
+}
+
+void Parameters::getKeys(const std::string& starts_with, std::vector<std::string>& keys) {
+	for (auto iter = props_.keys_begin(); iter != props_.keys_end(); ++iter) {
+		// std::cout << (*iter) << std::endl;
+		if (boost::starts_with(*iter, starts_with)) {
+			keys.push_back(*iter);
+		}
+	}
 }
 
 void Parameters::putParameter(const std::string& key, bool value) {
