@@ -30,17 +30,35 @@
    ## DEMOGRAPHIC
    min.age <- 16
    max.age <- 65
-   daily.entry.rate <- 0.00008
+   daily.entry.rate <- 0.00008*10
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
    
    #####################
    ## BIOLOGICAL
-   circum.rate <- 0.10
+   circum.rate <- 0.90 #in accordance with Atlanta data from Jenness (2016)
    init.hiv.prev <- 0.10
-   init.hiv.prev.for.entries <- 0.01/100 # probability that an entering person will have HIV
-   duration.of.infection <- 3300
+   init.hiv.prev.for.entries <- 0.001/100 # probability that an entering person will have HIV
+
+   acute.length <- 1:90 ## in daily time units
+   chronic.length <- 91:3550
+   late.length <- 3551:(3551+728)
+   duration.of.infection <- max(late.length)
+
+   ## (viral load)
+   time.infection.to.peak.viremia <- 45
+   time.infection.to.peak.viral.load <- time.infection.to.peak.viremia
+   peak.viral.load <- 6.17
+   time.infection.to.viral.set.point <- 90
+   set.point.viral.load <- 4.2
+   time.infection.to.late.stage <- 90+3550+1
+   dur.inf <- duration.of.infection
+   late.stage.viral.load <- 5.05 ## (max?)
+
+   time.to.full.supp <- 4*30/size.of.timestep ## 4 months
+   undetectable.vl <- log(50, base=10)
+
    uninfected.cd4.level <- 518 #(might draw uniformly from a range)
 
    ## (to compute cd4 in infected but ART-naive)
@@ -74,9 +92,10 @@
    ## ART adherence
    partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained
    prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   prop.always.adherent <- 0.46
    prop.part.plus.adherent <- 0.28
    prop.part.neg.adherent <- 0.30
+
+   prop.always.adherent <- 1 - (prop.never.adherent+prop.part.plus.adherent+prop.part.neg.adherent)
 
    prob.art_adher.for.partial <- 0.5 #probability that a partially adherent individual will take their medication over the next `window.length`
    
@@ -85,13 +104,12 @@
    ## Additional multiplier information: http://www.hiv.va.gov/provider/manual-primary-care/prevention-for-positives-table3.asp
    acute.mult <- 4.98
    late.mult <- 3.49
-   preg.mult <- 2.5 ## check
-   circum.mult <- 0.60 ## check
-   preg.susc.mult <- 1.7
+   circum.mult <- 0.40 ## 40% is the multiplier. Circumcised insertive men are 0.60 times as infectious
    acute.mult.holling <- 26
    late.mult.holling <- 7
-   min.chronic.infectivity.unadj <- 0.000497/2.89 
-   
+   #min.chronic.infectivity.unadj <- 0.000497/2.89 
+   min.chronic.infectivity.unadj <- (0.00898+0.003379)/2 #jenness et al.
+
    ## relationship between viral load and chronic infectivity (hughes et al.)
    
    #####################
@@ -115,6 +133,7 @@
     #####################
     ## Testing, diagnosis and linkage-to-care
     detection.window <- 22
+<<<<<<< .merge_file_lrkswV
     mean.time.until.next.test <- 365*2
     non.testers.prop <- 0.25
     
@@ -128,6 +147,19 @@
     art.init.lag.5 <- ".129142,180-365"  
     art.init.lag.6 <- ".084142,365-730"
     art.init.lag.7 <- ".069142,1825-1825"
+=======
+    mean.time.until.next.test <- 365*1
+    #lag.bet.diagnosis.and.art.init <- 30
+    non.testers.prop <- 0.06
+
+    diag.init.2m <- 0.54
+    diag.init.2to4m <- 0.09
+    diag.init.4to6m <- 0.076
+    diag.init.6to8m <- 0.015
+    diag.init.8to10m <- 0.015
+    diag.init.10to12m <- 0.015
+    diag.never.init <- 1 - (diag.init.2m + diag.init.2to4m + diag.init.4to6m + diag.init.6to8m + diag.init.8to10m + diag.init.10to12m) #means greater than one year
+>>>>>>> .merge_file_P5rGWR
    
     #####################
     ## PrEP
@@ -142,10 +174,10 @@
 
 ######################
     ## Sexual Behavior
-    num.sex.acts.base <- 2.4
-    prop.steady.sex.acts <- 0.10 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
+    #num.sex.acts.base <- 2.4
+    prop.steady.sex.acts <- 0.093 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
                                  #same as freq.of.sex parameter in data table
-    prop.casual.sex.acts <- 0.10 #same as above, but for casual
+    prop.casual.sex.acts <- 0.053 #same as above, but for casual
     inf.red.w.condom <- 0.80
     
 # sd -- sero-discordant
