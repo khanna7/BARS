@@ -20,6 +20,10 @@
      pr_receptive_main <- 20/100
        #28/35 partnerships match on infection status, 
        #almost equal between susc-susc and inf-inf 
+
+     ## agemixing
+     absdiff.sqrtage.main <- 0.38
+     absdiff.sqrtage.casual <- 0.43
    
 
    #####################
