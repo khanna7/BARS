@@ -16,8 +16,8 @@
      duration <- (562+1260)/2
       
      ## role
-     pr.insertive <- 20.9/100
-     pr.receptive <- 24.2/100
+     pr_insertive_main <- 15/100
+     pr_receptive_main <- 20/100
        #28/35 partnerships match on infection status, 
        #almost equal between susc-susc and inf-inf 
    
@@ -113,7 +113,7 @@
    ## relationship between viral load and chronic infectivity (hughes et al.)
    
    #####################
-   ## Casual (steady)
+   ## Casual (non-main)
       ## duration
       dur_cas <- (214 + 456)/2
       ##degree 
