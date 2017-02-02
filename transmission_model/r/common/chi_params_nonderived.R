@@ -3,7 +3,7 @@
    
    #####################
    ## NETWORK (steady)
-     n <- 5000
+     n <- 10000
 
    ## empirical edegree information
      ## 0 main partnerships = 56.6% of men
@@ -33,7 +33,7 @@
    #####################
    ## DEMOGRAPHIC
    min.age <- 18
-   max.age <- 35
+   max.age <- 34
    daily.entry.rate <- 0.00008*10
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
