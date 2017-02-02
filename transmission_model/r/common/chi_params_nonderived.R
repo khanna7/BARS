@@ -111,7 +111,12 @@
    min.chronic.infectivity.unadj <- (0.00898+0.003379)/2 #jenness et al.
 
    ## relationship between viral load and chronic infectivity (hughes et al.)
-   
+      ## each log increment in viral load corresponds to a 2.89-fold increase in infectivity
+      inf.inc.log.vl <- 2.89
+
+   ## insertive partner transmission rel. to receptive partner
+      inf.trans.mult <- 2
+
    #####################
    ## Casual (non-main)
       ## duration
