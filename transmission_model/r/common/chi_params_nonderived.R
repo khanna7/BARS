@@ -115,7 +115,7 @@
       inf.inc.log.vl <- 2.89
 
    ## insertive partner transmission rel. to receptive partner
-      inf.trans.mult <- 2
+      inf.part.insertive.mult <- 2
 
    #####################
    ## Casual (non-main)
