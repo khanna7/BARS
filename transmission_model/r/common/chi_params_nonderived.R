@@ -32,8 +32,8 @@
  
    #####################
    ## DEMOGRAPHIC
-   min.age <- 16
-   max.age <- 65
+   min.age <- 18
+   max.age <- 35
    daily.entry.rate <- 0.00008*10
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
