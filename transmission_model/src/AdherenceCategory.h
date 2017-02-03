@@ -10,7 +10,14 @@
 
 namespace TransModel {
 
-enum class AdherenceCategory {NEVER, ALWAYS, PARTIAL, NA};
+enum class AdherenceCategory {NEVER, ALWAYS, PARTIAL_PLUS, PARTIAL_MINUS, NA};
+
+struct AdherenceData {
+	double probability;
+	AdherenceCategory category;
+
+	AdherenceData(double prob, AdherenceCategory cat) : probability{prob}, category{cat} {}
+};
 
 } /* namespace TransModel */
 

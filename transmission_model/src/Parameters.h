@@ -106,11 +106,16 @@ extern const std::string INFECTIVITY_REDUCTION_CONDOM;
 
 extern const std::string ART_LAG_PREFIX;
 
-extern const std::string PROP_PARTIALLY_ADHERENT;
-extern const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH ;
+extern const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH;
 extern const std::string PROP_NEVER_ADHERENT;
 extern const std::string PROP_ALWAYS_ADHERENT;
-extern const std::string PROB_ART_ADHER_FOR_PARTIAL;
+extern const std::string PROP_PARTIAL_POS_ADHERENT;
+extern const std::string PROP_PARTIAL_NEG_ADHERENT;
+
+extern const std::string ALWAYS_ADHERENT_PROB;
+extern const std::string NEVER_ADHERENT_PROB;
+extern const std::string PARTIAL_POS_ADHERENT_PROB;
+extern const std::string PARTIAL_NEG_ADHERENT_PROB;
 
 extern const std::string SD_STEADY_NEVER_USE_CONDOMS;
 extern const std::string SD_STEADY_RARELY_USE_CONDOMS;

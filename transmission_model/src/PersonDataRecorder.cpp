@@ -78,7 +78,7 @@ void PersonDataRecorder::finalize(const PersonPtr& p, double ts) {
 	pd.time_since_last_test = lt == -1.0 ? -1.0 : ts - lt;
 	pd.diagnosed = p->isDiagnosed();
 	pd.prep_status = p->prepStatus();
-	pd.adherence_category = static_cast<int>(p->adherence());
+	pd.adherence_category = static_cast<int>(p->adherence().category);
 }
 
 void PersonDataRecorder::recordDeath(PersonPtr& p, double ts) {

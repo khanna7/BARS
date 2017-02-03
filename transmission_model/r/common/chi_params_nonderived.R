@@ -96,8 +96,11 @@
    prop.part.neg.adherent <- 0.30
 
    prop.always.adherent <- 1 - (prop.never.adherent+prop.part.plus.adherent+prop.part.neg.adherent)
-
-   prob.art_adher.for.partial <- 0.5 #probability that a partially adherent individual will take their medication over the next `window.length`
+   
+ 	always.adherent.probability <- 0.95
+	never.adherent.probability <- 0.05
+	partial.pos.adherent.probability <- 0.66
+	partial.neg.adherent.probability <- 0.33
    
    #####################
    ## Transmission Parameters

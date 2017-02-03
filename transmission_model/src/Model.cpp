@@ -95,7 +95,7 @@ struct PersonToVAL {
 			vertex["viral.load.today"] = 0;
 		}
 
-		vertex["adherence.category"] = static_cast<int>(p->adherence());
+		vertex["adherence.category"] = static_cast<int>(p->adherence().category);
 
 		if (p->isOnART()) {
 			vertex["time.since.art.initiation"] = p->infectionParameters().time_since_art_init;
@@ -475,8 +475,6 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
 		scheduler = iter->second;
 	}
 	scheduler->addPerson(person);
-
-	initialize_adherence(person, art_at_tick);
 }
 
 // ASSUMES PERSON IS UNINFECTED

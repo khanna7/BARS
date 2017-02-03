@@ -11,8 +11,11 @@
 #include <memory>
 
 #include "Person.h"
+#include "AdherenceCategory.h"
 
 namespace TransModel {
+
+void initialize_adherence(std::shared_ptr<Person> person, double tick, AdherenceCategory category);
 
 void initialize_adherence(std::shared_ptr<Person> person, double first_art_at_tick);
 

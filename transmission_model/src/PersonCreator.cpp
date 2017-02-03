@@ -78,15 +78,9 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 			person->infection_parameters_.vl_at_art_init = as<float>(val["vl.at.art.initiation"]);
 
 			if (val.containsElementNamed("adherence.category")) {
-				person->setAdherence(static_cast<AdherenceCategory>(as<int>(val["adherence.category"])));
-				if (person->adherence() == AdherenceCategory::PARTIAL) {
-					schedule_adherence(person, tick);
-				}
+				initialize_adherence(person, tick, static_cast<AdherenceCategory>(as<int>(val["adherence.category"])));
 			} else {
 				initialize_adherence(person, tick);
-				if (person->adherence() == AdherenceCategory::NEVER) {
-					person->infection_parameters_.art_status = false;
-				}
 			}
 		}
 

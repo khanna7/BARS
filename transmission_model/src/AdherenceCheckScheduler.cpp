@@ -22,9 +22,7 @@ AdherenceCheckScheduler::~AdherenceCheckScheduler() {
 
 void AdherenceCheckScheduler::operator()() {
 	if (!person_->isDead()) {
-		double prob = Parameters::instance()->getDoubleParameter(PROB_ART_ADHER_FOR_PARTIAL);
-		bool go_on_art = repast::Random::instance()->nextDouble() <= prob;
-
+		bool go_on_art = repast::Random::instance()->nextDouble() <= (person_->adherence().probability);
 		if (person_->isOnART() && !go_on_art) {
 			// go off art when already on
 			person_->goOffART();
@@ -40,7 +38,7 @@ void AdherenceCheckScheduler::operator()() {
 
 		double adherence_check_at = timestamp_
 				+ Parameters::instance()->getDoubleParameter(PARTIAL_ART_ADHER_WINDOW_LENGTH);
-		repast::RepastProcess::instance()->getScheduleRunner().scheduleEvent(adherence_check_at,
+		repast::RepastProcess::instance()->getScheduleRunner().scheduleEvent(adherence_check_at - 0.1,
 				repast::Schedule::FunctorPtr(new AdherenceCheckScheduler(person_, adherence_check_at)));
 	}
 }

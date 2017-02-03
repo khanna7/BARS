@@ -12,26 +12,18 @@
 
 #include "repast_hpc/Random.h"
 
+#include "ProbDist.h"
+
 namespace TransModel {
 
 class DayRangeBin {
 public:
-	DayRangeBin(double prob, double min, double max);
+	DayRangeBin(double min, double max);
 	~DayRangeBin();
 
 	double calculateLag(float size_of_timestep);
-
-	double probability() const {
-		return prob_;
-	}
-
-	void setProbability(double val) {
-		prob_ = val;
-	}
-
 private:
 
-	double prob_;
 	repast::IntUniformGenerator gen;
 };
 
@@ -42,9 +34,8 @@ class DayRangeCalculator {
 private:
 	friend class DayRangeCalculatorCreator;
 
-	std::vector<DayRangeBin> bins_;
-
-	DayRangeCalculator(std::vector<DayRangeBin>& bins);
+	ProbDist<DayRangeBin> dist;
+	DayRangeCalculator(ProbDist<DayRangeBin> prob_dist);
 
 public:
 	virtual ~DayRangeCalculator();
@@ -55,7 +46,7 @@ public:
 class DayRangeCalculatorCreator {
 
 private:
-	std::vector<DayRangeBin> bins;
+	ProbDistCreator<DayRangeBin> pd_creator;
 
 public:
 	DayRangeCalculatorCreator();
@@ -66,7 +57,7 @@ public:
 	std::shared_ptr<DayRangeCalculator> createCalculator();
 
 	void clear() {
-		bins.clear();
+		pd_creator.clear();
 	}
 };
 

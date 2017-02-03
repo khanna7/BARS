@@ -118,12 +118,17 @@ const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
 
 const std::string ART_LAG_PREFIX = "art.init.lag";
 
-
 const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
 const std::string PROP_NEVER_ADHERENT = "prop.never.adherent";
 const std::string PROP_ALWAYS_ADHERENT = "prop.always.adherent";
-const std::string PROP_PARTIALLY_ADHERENT = "prop.partially.adherent";
-const std::string PROB_ART_ADHER_FOR_PARTIAL = "prob.art_adher.for.partial";
+const std::string PROP_PARTIAL_POS_ADHERENT = "prop.part.plus.adherent";
+const std::string PROP_PARTIAL_NEG_ADHERENT = "prop.part.neg.adherent";
+
+const std::string ALWAYS_ADHERENT_PROB = "always.adherent.probability";
+const std::string NEVER_ADHERENT_PROB = "never.adherent.probability";
+const std::string PARTIAL_POS_ADHERENT_PROB = "partial.pos.adherent.probability";
+const std::string PARTIAL_NEG_ADHERENT_PROB = "partial.neg.adherent.probability";
+
 
 const std::string SD_STEADY_NEVER_USE_CONDOMS = "sd.steady.never.use.condoms";
 const std::string SD_STEADY_RARELY_USE_CONDOMS = "sd.steady.rarely.use.condoms";

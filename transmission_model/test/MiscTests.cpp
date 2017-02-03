@@ -14,7 +14,6 @@
 #include "utils.h"
 #include "Diagnoser.h"
 #include "StatsBuilder.h"
-#include "ARTInitLagCalculator.h"
 #include "DayRangeCalculator.h"
 
 using namespace TransModel;

@@ -15,8 +15,6 @@ namespace TransModel {
 
 using namespace std;
 
-const double EPSILON = .00001;
-
 void tokenize(const string& str, const string& separator, vector<string>& tokens) {
 	boost::char_separator<char> sep{separator.c_str()};
 	boost::tokenizer<boost::char_separator<char>> tok(str, sep);
@@ -26,7 +24,7 @@ void tokenize(const string& str, const string& separator, vector<string>& tokens
 }
 
 
-DayRangeBin::DayRangeBin(double prob, double min, double max) : prob_(prob), gen(repast::Random::instance()->createUniIntGenerator(min, max)) {}
+DayRangeBin::DayRangeBin(double min, double max) : gen(repast::Random::instance()->createUniIntGenerator(min, max)) {}
 DayRangeBin::~DayRangeBin() {}
 
 double DayRangeBin::calculateLag(float size_of_timestep) {
@@ -34,7 +32,7 @@ double DayRangeBin::calculateLag(float size_of_timestep) {
 }
 
 
-DayRangeCalculatorCreator::DayRangeCalculatorCreator() : bins{} {}
+DayRangeCalculatorCreator::DayRangeCalculatorCreator() : pd_creator{} {}
 
 DayRangeCalculatorCreator::~DayRangeCalculatorCreator() {
 
@@ -70,27 +68,15 @@ void DayRangeCalculatorCreator::addBin(const std::string& bin_definition) {
 	// std::cout << "adding bin " << prob << ", " << min << " - " << max << std::endl;
 
 	if (prob != 0) {
-		bins.push_back(DayRangeBin(prob, min, max));
+		pd_creator.addItem(prob, make_shared<DayRangeBin>(min, max));
 	}
 }
 
 std::shared_ptr<DayRangeCalculator> DayRangeCalculatorCreator::createCalculator() {
-	double sum = 0;
-	for (auto& bin : bins) {
-		sum += bin.probability();
-		bin.setProbability(sum);
-	}
-
-	if (sum < 1.0 - EPSILON || sum > 1.0 + EPSILON) {
-		std::cout << sum << std::endl;
-		throw std::domain_error("Invalid value used to initialize DayRangeCalculator. Sum of values must equal 1.");
-	}
-	bins[bins.size() -1].setProbability(1.0);
-
-	return shared_ptr<DayRangeCalculator>(new DayRangeCalculator(bins));
+	return shared_ptr<DayRangeCalculator>(new DayRangeCalculator(pd_creator.createProbDist()));
 }
 
-DayRangeCalculator::DayRangeCalculator(std::vector<DayRangeBin>& bins) : bins_(bins) {
+DayRangeCalculator::DayRangeCalculator(ProbDist<DayRangeBin> prob_dist) : dist(prob_dist) {
 
 }
 
@@ -98,12 +84,7 @@ DayRangeCalculator::~DayRangeCalculator() {}
 
 double DayRangeCalculator::calculateLag(float size_of_timestep) {
 	double prob = repast::Random::instance()->nextDouble();
-	for (auto& bin : bins_) {
-		if (bin.probability() <= prob) {
-			return bin.calculateLag(size_of_timestep);
-		}
-	}
-	return bins_[bins_.size() - 1].calculateLag(size_of_timestep);
+	return dist.draw(prob)->calculateLag(size_of_timestep);
 }
 
 

@@ -32,7 +32,7 @@ private:
 	PrepParameters prep_;
 	bool dead_, diagnosed_, testable_;
 	Diagnoser<GeometricDistribution> diagnoser_;
-	AdherenceCategory adherence_;
+	AdherenceData adherence_;
 
 public:
 	Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser);
@@ -94,11 +94,11 @@ public:
 		return diagnoser_;
 	}
 
-	void setAdherence(AdherenceCategory category) {
-		adherence_ = category;
+	void setAdherence(AdherenceData data) {
+		adherence_ = data;
 	}
 
-	AdherenceCategory adherence() const {
+	const AdherenceData adherence() const {
 		return adherence_;
 	}
 
