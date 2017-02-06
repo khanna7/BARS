@@ -3,7 +3,7 @@
    
    #####################
    ## NETWORK (steady)
-     n <- 10000
+     n <- 3000
 
    ## empirical edegree information
      ## 0 main partnerships = 56.6% of men
