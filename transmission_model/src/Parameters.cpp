@@ -117,6 +117,7 @@ const std::string PROP_CASUAL_SEX_ACTS = "prop.casual.sex.acts";
 const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
 
 const std::string ART_LAG_PREFIX = "art.init.lag";
+const std::string ASM_PREFIX = "asm.";
 
 const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
 const std::string PROP_NEVER_ADHERENT = "prop.never.adherent";

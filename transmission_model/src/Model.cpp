@@ -29,7 +29,6 @@
 
 #include "debug_utils.h"
 
-
 //#include "EventWriter.h"
 
 using namespace Rcpp;
@@ -43,11 +42,8 @@ namespace TransModel {
 struct PersonToVALForSimulate {
 
 	List operator()(const PersonPtr& v, int idx, double tick) const {
-		return List::create(Named("na") = false,
-				Named("vertex_names") = idx,
-				Named("role") = v->role(),
-				Named("inf.status") = v->isInfected(),
-				Named("diagnosed") = v->isDiagnosed());
+		return List::create(Named("na") = false, Named("vertex_names") = idx, Named("role") = v->role(),
+				Named("inf.status") = v->isInfected(), Named("diagnosed") = v->isDiagnosed());
 	}
 };
 
@@ -56,8 +52,7 @@ struct PersonToVAL {
 	List operator()(const PersonPtr& p, int idx, double tick) const {
 		List vertex = List::create();
 
-		vertex["na"] = false,
-		vertex["vertex_names"] = idx;
+		vertex["na"] = false, vertex["vertex_names"] = idx;
 
 		vertex[C_ID] = p->id();
 		vertex["age"] = p->age();
@@ -114,7 +109,6 @@ struct PersonToVAL {
 		return vertex;
 	}
 };
-
 
 shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float circ_mult = (float) Parameters::instance()->getDoubleParameter(CIRCUM_MULT);
@@ -283,7 +277,8 @@ std::shared_ptr<GeometricDistribution> create_cessation_generator() {
 	return std::make_shared<GeometricDistribution>(prob, 1.1);
 }
 
-void add_condom_use_prob(CondomUseAssignerFactory& factory, PartnershipType ptype, int network_type, const std::string& category_param, const std::string& use_param) {
+void add_condom_use_prob(CondomUseAssignerFactory& factory, PartnershipType ptype, int network_type,
+		const std::string& category_param, const std::string& use_param) {
 	double cat_prob = Parameters::instance()->getDoubleParameter(category_param);
 	double use_prob = Parameters::instance()->getDoubleParameter(use_param);
 	factory.addProbability(ptype, network_type, cat_prob, use_prob);
@@ -291,31 +286,61 @@ void add_condom_use_prob(CondomUseAssignerFactory& factory, PartnershipType ptyp
 
 CondomUseAssigner create_condom_use_assigner() {
 	CondomUseAssignerFactory factory;
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_NEVER_USE_CONDOMS, SD_STEADY_NEVER_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_RARELY_USE_CONDOMS, SD_STEADY_RARELY_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_SOMETIMES_USE_CONDOMS, SD_STEADY_SOMETIMES_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_USUALLY_USE_CONDOMS, SD_STEADY_USUALLY_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_ALWAYS_USE_CONDOMS, SD_STEADY_ALWAYS_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_NEVER_USE_CONDOMS,
+			SD_STEADY_NEVER_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_RARELY_USE_CONDOMS,
+			SD_STEADY_RARELY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_SOMETIMES_USE_CONDOMS,
+			SD_STEADY_SOMETIMES_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_USUALLY_USE_CONDOMS,
+			SD_STEADY_USUALLY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, STEADY_NETWORK_TYPE, SD_STEADY_ALWAYS_USE_CONDOMS,
+			SD_STEADY_ALWAYS_USE_CONDOMS_PROB);
 
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_NEVER_USE_CONDOMS, SD_CASUAL_NEVER_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_RARELY_USE_CONDOMS, SD_CASUAL_RARELY_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_SOMETIMES_USE_CONDOMS, SD_CASUAL_SOMETIMES_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_USUALLY_USE_CONDOMS, SD_CASUAL_USUALLY_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_ALWAYS_USE_CONDOMS, SD_CASUAL_ALWAYS_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_NEVER_USE_CONDOMS,
+			SD_CASUAL_NEVER_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_RARELY_USE_CONDOMS,
+			SD_CASUAL_RARELY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_SOMETIMES_USE_CONDOMS,
+			SD_CASUAL_SOMETIMES_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_USUALLY_USE_CONDOMS,
+			SD_CASUAL_USUALLY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SERODISCORDANT, CASUAL_NETWORK_TYPE, SD_CASUAL_ALWAYS_USE_CONDOMS,
+			SD_CASUAL_ALWAYS_USE_CONDOMS_PROB);
 
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_NEVER_USE_CONDOMS, SC_STEADY_NEVER_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_RARELY_USE_CONDOMS, SC_STEADY_RARELY_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_SOMETIMES_USE_CONDOMS, SC_STEADY_SOMETIMES_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_USUALLY_USE_CONDOMS, SC_STEADY_USUALLY_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_ALWAYS_USE_CONDOMS, SC_STEADY_ALWAYS_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_NEVER_USE_CONDOMS,
+			SC_STEADY_NEVER_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_RARELY_USE_CONDOMS,
+			SC_STEADY_RARELY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_SOMETIMES_USE_CONDOMS,
+			SC_STEADY_SOMETIMES_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_USUALLY_USE_CONDOMS,
+			SC_STEADY_USUALLY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, STEADY_NETWORK_TYPE, SC_STEADY_ALWAYS_USE_CONDOMS,
+			SC_STEADY_ALWAYS_USE_CONDOMS_PROB);
 
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_NEVER_USE_CONDOMS, SC_CASUAL_NEVER_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_RARELY_USE_CONDOMS, SC_CASUAL_RARELY_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_SOMETIMES_USE_CONDOMS, SC_CASUAL_SOMETIMES_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_USUALLY_USE_CONDOMS, SC_CASUAL_USUALLY_USE_CONDOMS_PROB);
-	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_ALWAYS_USE_CONDOMS, SC_CASUAL_ALWAYS_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_NEVER_USE_CONDOMS,
+			SC_CASUAL_NEVER_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_RARELY_USE_CONDOMS,
+			SC_CASUAL_RARELY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_SOMETIMES_USE_CONDOMS,
+			SC_CASUAL_SOMETIMES_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_USUALLY_USE_CONDOMS,
+			SC_CASUAL_USUALLY_USE_CONDOMS_PROB);
+	add_condom_use_prob(factory, PartnershipType::SEROCONCORDANT, CASUAL_NETWORK_TYPE, SC_CASUAL_ALWAYS_USE_CONDOMS,
+			SC_CASUAL_ALWAYS_USE_CONDOMS_PROB);
 
 	return factory.createAssigner();
+}
+
+RangeWithProbability create_ASM_runner() {
+	RangeWithProbabilityCreator creator;
+	vector<string> keys;
+	Parameters::instance()->getKeys(ASM_PREFIX, keys);
+	for (auto& key : keys) {
+		creator.addBin(key, Parameters::instance()->getDoubleParameter(key));
+	}
+	return creator.createRangeWithProbability();
 }
 
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
@@ -323,10 +348,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DAILY_TESTING_PROB),
-				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) },
-				trans_params{}, art_lag_calculator{create_art_lag_calc()}, cessation_generator{create_cessation_generator()},
-				condom_assigner{create_condom_use_assigner()}
-{
+				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
+				create_art_lag_calc() }, cessation_generator { create_cessation_generator() }, condom_assigner {
+				create_condom_use_assigner() }, asm_runner { create_ASM_runner() } {
 
 	// get initial stats
 	init_stats();
@@ -435,7 +459,7 @@ void Model::step() {
 	float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
 	float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
 
-	if ((int)t % 100 == 0)
+	if ((int) t % 100 == 0)
 		std::cout << " ---- " << t << " ---- " << std::endl;
 	simulate(R, net, p2val, condom_assigner, t);
 	if (Parameters::instance()->getBooleanParameter(COUNT_OVERLAPS)) {
@@ -459,7 +483,8 @@ void Model::step() {
 	stats->resetForNextTimeStep();
 }
 
-void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep) {
+void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
+		float size_of_timestep) {
 	double lag = art_lag_calculator->calculateLag(size_of_timestep);
 	Stats::instance()->personDataRecorder().recordInitialARTLag(person, lag);
 
@@ -627,6 +652,15 @@ bool Model::dead(double tick, PersonPtr person, int max_age) {
 		++death_count;
 		++Stats::instance()->currentCounts().infection_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::INFECTION);
+		Stats::instance()->personDataRecorder().recordDeath(person, tick);
+		died = true;
+	}
+
+	if (!died && asm_runner.run(person->age(), Random::instance()->nextDouble())) {
+		// asm deaths
+		++death_count;
+		++Stats::instance()->currentCounts().asm_deaths;
+		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
 		Stats::instance()->personDataRecorder().recordDeath(person, tick);
 		died = true;
 	}

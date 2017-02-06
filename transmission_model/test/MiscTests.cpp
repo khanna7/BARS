@@ -15,9 +15,38 @@
 #include "Diagnoser.h"
 #include "StatsBuilder.h"
 #include "DayRangeCalculator.h"
+#include "RangeWithProbability.h"
 
 using namespace TransModel;
 using namespace Rcpp;
+
+TEST(RangeWithProbTests, TestRangeWithProb) {
+	RangeWithProbabilityCreator creator;
+	creator.addBin(12, 15, 0.3);
+	creator.addBin(16, 20, 0.8);
+	creator.addBin(21, 30, 0.1);
+
+	RangeWithProbability rp = creator.createRangeWithProbability();
+	ASSERT_TRUE(rp.run(13, 0.2));
+	ASSERT_FALSE(rp.run(12, 0.9));
+	ASSERT_TRUE(rp.run(16, 0.2));
+	ASSERT_FALSE(rp.run(19, 0.9));
+	ASSERT_TRUE(rp.run(25, 0.05));
+	ASSERT_FALSE(rp.run(30, 0.9));
+
+	creator.clear();
+	creator.addBin("asm.12_15", 0.3);
+	creator.addBin("asm.16_20", 0.8);
+	creator.addBin("asm.21_30", 0.1);
+
+	rp = creator.createRangeWithProbability();
+	ASSERT_TRUE(rp.run(13, 0.2));
+	ASSERT_FALSE(rp.run(12, 0.9));
+	ASSERT_TRUE(rp.run(16, 0.2));
+	ASSERT_FALSE(rp.run(19, 0.9));
+	ASSERT_TRUE(rp.run(25, 0.05));
+	ASSERT_FALSE(rp.run(30, 0.9));
+}
 
 TEST(DayRangeCalcTests, TestCreator) {
 	DayRangeCalculatorCreator creator;

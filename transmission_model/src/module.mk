@@ -21,6 +21,7 @@ CPP_SOURCE = Person.cpp \
 	PersonDataRecorder.cpp \
 	GeometricDistribution.cpp \
 	DayRangeCalculator.cpp \
+	RangeWithProbability.cpp \
 	AdherenceCheckScheduler.cpp \
 	art_functions.cpp \
 	PrepParameters.cpp \

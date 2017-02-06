@@ -68,7 +68,7 @@ struct Biomarker {
 struct DeathEvent {
 
 	static const std::string header;
-	static const std::string AGE, INFECTION;
+	static const std::string AGE, INFECTION, ASM;
 
 	double tick;
 	int p_id;
@@ -115,7 +115,7 @@ struct Counts {
 
 	double tick;
 	unsigned int main_edge_count, casual_edge_count, size, infected, infected_at_entry, uninfected,
-	entries, age_deaths, infection_deaths;
+	entries, age_deaths, infection_deaths, asm_deaths;
 	int overlaps;
 	unsigned int sex_acts, casual_sex_acts, steady_sex_acts;
 	unsigned int sd_casual_sex_with_condom, sd_casual_sex_without_condom;

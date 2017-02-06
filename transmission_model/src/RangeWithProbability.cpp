@@ -1,0 +1,83 @@
+/*
+ * RangeWithProbability.cpp
+ *
+ *  Created on: Feb 6, 2017
+ *      Author: nick
+ */
+
+#include <exception>
+
+#include "utils.h"
+#include "RangeWithProbability.h"
+
+namespace TransModel {
+
+using namespace std;
+
+RangeWithProbability::RangeWithProbability(std::vector<RangeBin> range_bins) :
+		bins { range_bins } {
+
+}
+
+RangeWithProbability::~RangeWithProbability() {
+}
+
+bool RangeWithProbability::run(float rangeValue, double draw) {
+	for (auto& bin : bins) {
+		if (bin.min <= rangeValue && bin.max >= rangeValue) {
+			return draw <= bin.prob;
+		}
+	}
+	throw std::domain_error("Error in RangeWithProbabilty::run: rangeValue is not within any bin range");
+}
+
+RangeWithProbabilityCreator::RangeWithProbabilityCreator() {
+}
+RangeWithProbabilityCreator::~RangeWithProbabilityCreator() {
+}
+
+void RangeWithProbabilityCreator::addBin(const std::string& bin_definition, double bin_probability) {
+// asm.15-19
+	std::vector<string> tokens;
+	tokenize(bin_definition, ".", tokens);
+
+	if (tokens.size() != 2) {
+		throw std::invalid_argument("Bad bin definition in RangeWithProbability: " + bin_definition);
+	}
+
+	tokens.clear();
+	tokenize(tokens[1], "_", tokens);
+	double min = 0, max = 0;
+	if (tokens.size() == 1) {
+		min = stod(tokens[0]);
+		max = min;
+	} else if (tokens.size() == 2) {
+		min = stod(tokens[0]);
+		max = stod(tokens[1]);
+	} else {
+		throw std::invalid_argument("Bad bin definition in RangeWithProbability: " + bin_definition);
+	}
+
+	if (min < 0 || max < 0 || max < min) {
+		throw std::invalid_argument(
+				"Bad bin definition in RangeWithProbability: " + bin_definition
+						+ ",  min and max must be > 0 and max must be > min.");
+	}
+
+	addBin(min, max, bin_probability);
+
+}
+
+void RangeWithProbabilityCreator::addBin(float min, float max, double prob) {
+	bins.push_back( { min, max, prob });
+}
+
+RangeWithProbability RangeWithProbabilityCreator::createRangeWithProbability() {
+	if (bins.size() == 0) {
+		throw std::domain_error("Cannot create RangeWithProbability without any bins.");
+	}
+
+	return RangeWithProbability(bins);
+}
+
+} /* namespace TransModel */

@@ -119,4 +119,12 @@ std::string output_directory(Parameters* params) {
 	return out_dir;
 }
 
+void tokenize(const string& str, const string& separator, vector<string>& tokens) {
+	boost::char_separator<char> sep{separator.c_str()};
+	boost::tokenizer<boost::char_separator<char>> tok(str, sep);
+	for (const auto& t : tok) {
+		tokens.push_back(t);
+	}
+}
+
 }

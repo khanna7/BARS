@@ -42,6 +42,8 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
  */
 std::string output_directory(Parameters* params);
 
+void tokenize(const std::string& str, const std::string& separator, std::vector<std::string>& tokens);
+
 }
 
 

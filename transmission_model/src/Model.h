@@ -25,6 +25,7 @@
 #include "DayRangeCalculator.h"
 #include "ARTScheduler.h"
 #include "CondomUseAssigner.h"
+#include "RangeWithProbability.h"
 
 namespace TransModel {
 
@@ -49,6 +50,7 @@ private:
 	std::shared_ptr<DayRangeCalculator> art_lag_calculator;
 	std::shared_ptr<GeometricDistribution> cessation_generator;
 	CondomUseAssigner condom_assigner;
+	RangeWithProbability asm_runner;
 
 	void runTransmission(double timestamp);
 	bool dead(double tick, PersonPtr person, int max_survival);

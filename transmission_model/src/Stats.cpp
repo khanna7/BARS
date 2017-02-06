@@ -33,6 +33,7 @@ void TestingEvent::writeTo(FileOutput& out) {
 const std::string DeathEvent::header("\"tick\",\"p_id\",\"age\",\"art_status\",\"cause\"");
 const std::string DeathEvent::AGE("AGE");
 const std::string DeathEvent::INFECTION("INFECTION");
+const std::string DeathEvent::ASM("ASM");
 
 void DeathEvent::writeTo(FileOutput& out) {
 	out << tick << "," << p_id << "," << age << "," << art_status << "," << cause << "\n";
@@ -65,7 +66,7 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 }
 
 const std::string Counts::header(
-		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"infected_via_transmission\",\"infected_at_entry\",\"uninfected\","
+		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"asm_deaths\",\"infected_via_transmission\",\"infected_at_entry\",\"uninfected\","
 		"\"steady_edge_count\",\"casual_edge_count\",\"vertex_count\",\"overlaps\",\"sex_acts\",\"casual_sex_acts\","
 		"\"sd_casual_sex_with_condom\",""\"sd_casual_sex_without_condom\","
 		"\"sc_casual_sex_with_condom\",""\"sc_casual_sex_without_condom\","
@@ -74,7 +75,7 @@ const std::string Counts::header(
 		"\"sc_steady_sex_with_condom\",\"sc_steady_sex_without_condom\"");
 
 void Counts::writeTo(FileOutput& out) {
-	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << infected << ","
+	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths << "," << infected << ","
 			<< infected_at_entry << "," << uninfected << "," << main_edge_count << "," << casual_edge_count << ","
 			<< size << "," << overlaps << "," << sex_acts << "," << casual_sex_acts << ","
 			<< sd_casual_sex_with_condom << "," << sd_casual_sex_without_condom << ","
@@ -86,7 +87,7 @@ void Counts::writeTo(FileOutput& out) {
 
 Counts::Counts() :
 		tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, size { 0 }, infected { 0 }, infected_at_entry { 0 }, uninfected {
-				0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, overlaps { 0 }, sex_acts { 0 },
+				0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, asm_deaths{0}, overlaps { 0 }, sex_acts { 0 },
 				casual_sex_acts{0}, steady_sex_acts{0}, sd_casual_sex_with_condom{0}, sd_casual_sex_without_condom{0},
 				sd_steady_sex_with_condom{0}, sd_steady_sex_without_condom {0},
 				sc_casual_sex_with_condom{0}, sc_casual_sex_without_condom{0},

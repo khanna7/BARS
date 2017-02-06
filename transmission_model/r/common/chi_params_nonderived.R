@@ -226,6 +226,24 @@
 	sc.casual.sometimes.use.condoms.prob <- 0.5
 	sc.casual.usually.use.condoms.prob <- 0.75
 	sc.casual.always.use.condoms.prob <- 1
+	
+	
+	### Age Specific Mortality ###
+	### We don't strictly need all these age ranges, but 
+	### they are here for completeness
+	
+	asm.15_19 <- 0.002333 / (365 * 5)
+	asm.20_24 <- 0.002711  / (365 * 5)
+	asm.25_29 <- 0.0028 / (365 * 5)
+	asm.30_34 <- 0.003451 / (365 * 5)
+	asm.35_39 <- 0.003477 / (365 * 5)
+	asm.40_44 <- 0.004394 / (365 * 5)
+	asm.45_49 <- 0.006315 / (365 * 5)
+	asm.50_54 <- 0.010228 / (365 * 5)
+	asm.55_59 <- 0.01605 / (365 * 5)
+	asm.60_64 <- 0.022538 / (365 * 5)
+	asm.65_69 <- 0.030628 / (365 * 5)
+	
 
 
 

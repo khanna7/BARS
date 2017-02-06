@@ -7,21 +7,12 @@
 
 #include <exception>
 
-#include "boost/tokenizer.hpp"
-
 #include "DayRangeCalculator.h"
+#include "utils.h"
 
 namespace TransModel {
 
 using namespace std;
-
-void tokenize(const string& str, const string& separator, vector<string>& tokens) {
-	boost::char_separator<char> sep{separator.c_str()};
-	boost::tokenizer<boost::char_separator<char>> tok(str, sep);
-	for (const auto& t : tok) {
-		tokens.push_back(t);
-	}
-}
 
 
 DayRangeBin::DayRangeBin(double min, double max) : gen(repast::Random::instance()->createUniIntGenerator(min, max)) {}
