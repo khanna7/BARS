@@ -16,15 +16,14 @@
    source("common-functions.R")
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:1)## +
-                  ## nodematch("role", keep=c(1,2))+
+   formation <- ~edges+degree(0:1)+
+                  nodematch("role_main", keep=c(2:3), diff=TRUE)#+
                   ## nodemix("diagnosed", base=c(1,3))
 
    dissolution <- ~offset(edges)
    theta.diss <- log(duration-1)
-   #target.stats <- c(nedges, deg_seq[1:2], 0, 0.12*nedges
-                     #)
-   target.stats <- c(nedges, deg_seq[1:2])
+
+   target.stats <- c(nedges, deg_seq[1:2], 1, 1)
    constraints <- ~.
 
    formation.n0 <- update.formula(formation, n0~.)
@@ -54,9 +53,13 @@
    init.infected <- which(init.inf.status == 1)
 
    ## sexual role
-   role <- sample(0:2, n, c(pr.versatile, pr.insertive, pr.receptive), replace=TRUE)
-   table(role, exclude=NULL)
-   n0 %v% "role" <- role #0=versatile, 1=insertive, 2=receptive
+   role_main <- sample(0:2, n, c(pr_versatile_main, 
+                            pr_insertive_main, 
+                            pr_receptive_main), 
+                  replace=TRUE)
+   
+   table(role_main, exclude=NULL)
+   n0 %v% "role_main" <- role_main #0=versatile, 1=insertive, 2=receptive
    
    ## time since infection
    ## (draw from uniform distribution)

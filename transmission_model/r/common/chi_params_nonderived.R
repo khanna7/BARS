@@ -3,7 +3,7 @@
    
    #####################
    ## NETWORK (steady)
-     n <- 5000
+     n <- 3000
 
    ## empirical edegree information
      ## 0 main partnerships = 56.6% of men
@@ -16,10 +16,14 @@
      duration <- (562+1260)/2
       
      ## role
-     pr.insertive <- 20.9/100
-     pr.receptive <- 24.2/100
+     pr_insertive_main <- 15/100
+     pr_receptive_main <- 20/100
        #28/35 partnerships match on infection status, 
        #almost equal between susc-susc and inf-inf 
+
+     ## agemixing
+     absdiff.sqrtage.main <- 0.38
+     absdiff.sqrtage.casual <- 0.43
    
 
    #####################
@@ -28,8 +32,8 @@
  
    #####################
    ## DEMOGRAPHIC
-   min.age <- 16
-   max.age <- 65
+   min.age <- 18
+   max.age <- 34
    daily.entry.rate <- 0.00008*10
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
@@ -114,9 +118,14 @@
    min.chronic.infectivity.unadj <- (0.00898+0.003379)/2 #jenness et al.
 
    ## relationship between viral load and chronic infectivity (hughes et al.)
-   
+      ## each log increment in viral load corresponds to a 2.89-fold increase in infectivity
+      inf.inc.log.vl <- 2.89
+
+   ## insertive partner transmission rel. to receptive partner
+      inf.part.insertive.mult <- 2
+
    #####################
-   ## Casual (steady)
+   ## Casual (non-main)
       ## duration
       dur_cas <- (214 + 456)/2
       ##degree 

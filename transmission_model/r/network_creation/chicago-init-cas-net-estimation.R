@@ -10,27 +10,40 @@
    library(network)
    library(networkDynamic)
    library(tergm)
-   library(parallel)
+   #library(parallel)
 
    load(file="initialized-model.RData")
-   source("../common/chicago_parameters.R")
-   np <- detectCores()
+   #source("../common/chicago_parameters.R")
+   #np <- detectCores()
 
    #####################
    ## MODEL SETUP
    net <- fit$network
-   formation_cas <- net~edges+degree(0:1)
+   formation_cas <- net~edges+degree(0:1)+
+                          nodematch("role_casual", keep=c(2:3), diff=TRUE)
+                       
 
    dissolution_cas <- net~offset(edges)
    theta.diss_cas <- log(dur_cas - 1)
    target.stats_cas <- c(cas_n_edges,
-                         cas_deg_seq[1:2]
+                         cas_deg_seq[1:2],
+                         c(1,1)
                     )
 
 
    constraints_cas <- ~.
    formation.n_cas <- update.formula(formation_cas, net~.)
 
+   ## sexual role
+   role_casual <- sample(0:2, n, c(pr_versatile_main, 
+                                 pr_insertive_main, 
+                                 pr_receptive_main), 
+                       replace=TRUE)
+   
+   table(role_casual, exclude=NULL)
+   net %v% "role_casual" <- role_casual #0=versatile, 1=insertive, 2=receptive
+   
+   
    #####################
    ## CREATE EMPTY NETWORK TO START
    #n_cas <- network.initialize(n, directed=FALSE, bipartite=FALSE)
@@ -40,14 +53,13 @@
                    constraints=constraints_cas,
                    eval.loglik=FALSE,
                    verbose=TRUE,
-                   control=control.ergm(MCMLE.maxit=500,
-                                        parallel=np)
+                   control=control.ergm(MCMLE.maxit=500)
                     )
 
    theta.form_cas <- cas_fit$coef 
    theta.form_cas[1] <- theta.form_cas[1] - theta.diss_cas
 
-    cas_sim_test <- simulate(n0,
+    cas_sim_test <- simulate(net,
                                 formation=formation.n_cas,
                                 dissolution=dissolution_cas,
                                 coef.form=theta.form_cas, 
@@ -55,7 +67,8 @@
                                 time.slices=2e4,
                                 #time.slices=1e2,
                                 constraints=constraints_cas,
-                                monitor=~edges+degree(0:5)
+                                monitor=~edges+degree(0:5),
+                                eval.l
                                 )
 
    #####################

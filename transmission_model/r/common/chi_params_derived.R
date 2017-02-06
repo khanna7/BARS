@@ -9,7 +9,7 @@
      duration <- (562+1260)/2
       
      ## role
-     pr.versatile <- 1-(pr.insertive + pr.receptive)
+     pr_versatile_main <- 1-(pr_insertive_main + pr_receptive_main)
      nodematch.inf.status <- 0.75*nedges 
        #28/35 partnerships match on infection status, 
        #almost equal between susc-susc and inf-inf 
