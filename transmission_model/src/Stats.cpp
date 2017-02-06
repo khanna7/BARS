@@ -97,7 +97,7 @@ Counts::Counts() :
 
 void Counts::reset() {
 	tick = 0;
-	main_edge_count = casual_edge_count = size = infected = entries = age_deaths = uninfected = infection_deaths =
+	main_edge_count = casual_edge_count = size = infected = entries = age_deaths = uninfected = infection_deaths = asm_deaths =
 			infected_at_entry = 0, sex_acts = 0, casual_sex_acts = 0, steady_sex_acts = 0;
 	sd_casual_sex_with_condom = sd_casual_sex_without_condom = 0;
 	sd_steady_sex_with_condom = sd_steady_sex_without_condom = 0;

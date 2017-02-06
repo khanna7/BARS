@@ -109,8 +109,8 @@ const std::string UNINFECTED_CD4_LEVEL = "uninfected.cd4.level";
 const std::string UNTREATED_CD4_DAILY_DECLINE = "untreated.cd4.daily.decline";
 const std::string UNTREATED_CD4_PERSTEP_DECLINE = "untreated.cd4.perstep.decline";
 
-const std::string PR_INSERTIVE = "pr.insertive";
-const std::string PR_RECEPTIVE = "pr.receptive";
+const std::string PR_INSERTIVE = "pr_insertive_main";
+const std::string PR_RECEPTIVE = "pr_receptive_main";
 
 const std::string PROP_STEADY_SEX_ACTS = "prop.steady.sex.acts";
 const std::string PROP_CASUAL_SEX_ACTS = "prop.casual.sex.acts";

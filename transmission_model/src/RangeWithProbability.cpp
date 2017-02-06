@@ -16,7 +16,6 @@ using namespace std;
 
 RangeWithProbability::RangeWithProbability(std::vector<RangeBin> range_bins) :
 		bins { range_bins } {
-
 }
 
 RangeWithProbability::~RangeWithProbability() {
@@ -24,11 +23,11 @@ RangeWithProbability::~RangeWithProbability() {
 
 bool RangeWithProbability::run(float rangeValue, double draw) {
 	for (auto& bin : bins) {
-		if (bin.min <= rangeValue && bin.max >= rangeValue) {
+		if (bin.min <= rangeValue && bin.max > rangeValue) {
 			return draw <= bin.prob;
 		}
 	}
-	throw std::domain_error("Error in RangeWithProbabilty::run: rangeValue is not within any bin range");
+	throw std::domain_error("Error in RangeWithProbabilty::run: rangeValue " + std::to_string(rangeValue) + " is not within any bin range");
 }
 
 RangeWithProbabilityCreator::RangeWithProbabilityCreator() {

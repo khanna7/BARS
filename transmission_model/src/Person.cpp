@@ -89,7 +89,7 @@ void Person::step(float size_of_timestep) {
 }
 
 bool Person::deadOfAge(int max_age) {
-	return age_ >= max_age;
+	return age_ > max_age;
 }
 
 bool Person::deadOfInfection() {
