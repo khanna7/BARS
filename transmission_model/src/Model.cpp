@@ -42,7 +42,8 @@ namespace TransModel {
 struct PersonToVALForSimulate {
 
 	List operator()(const PersonPtr& v, int idx, double tick) const {
-		return List::create(Named("na") = false, Named("vertex_names") = idx, Named("role") = v->role(),
+		// TODO update roles if R network has been updated as well.
+		return List::create(Named("na") = false, Named("vertex_names") = idx, Named("role") = v->steady_role(),
 				Named("inf.status") = v->isInfected(), Named("diagnosed") = v->isDiagnosed());
 	}
 };
@@ -58,7 +59,7 @@ struct PersonToVAL {
 		vertex["age"] = p->age();
 		vertex["cd4.count.today"] = p->infectionParameters().cd4_count;
 		vertex["circum.status"] = p->isCircumcised();
-		vertex["role"] = p->role();
+		vertex["role"] = p->steady_role();
 
 		vertex["diagnosed"] = p->isDiagnosed();
 		const Diagnoser<GeometricDistribution>& diagnoser = p->diagnoser();
@@ -731,14 +732,14 @@ void Model::runTransmission(double time_stamp) {
 			if (out_p->isInfected() && !in_p->isInfected()) {
 				discordant = true;
 
-				if (trans_runner->determineInfection(out_p, in_p, condom_used)) {
+				if (trans_runner->determineInfection(out_p, in_p, condom_used, type)) {
 					infecteds.push_back(in_p);
 					Stats::instance()->recordInfectionEvent(time_stamp, out_p, in_p, false, (*iter)->type());
 				}
 			} else if (!out_p->isInfected() && in_p->isInfected()) {
 				discordant = true;
 
-				if (trans_runner->determineInfection(in_p, out_p, condom_used)) {
+				if (trans_runner->determineInfection(in_p, out_p, condom_used, type)) {
 					infecteds.push_back(out_p);
 					Stats::instance()->recordInfectionEvent(time_stamp, in_p, out_p, false, (*iter)->type());
 				}

@@ -24,7 +24,7 @@ TransmissionRunner::TransmissionRunner(float circumcision_multiplier, float prep
 TransmissionRunner::~TransmissionRunner() {
 }
 
-bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infectee, bool condom_used) {
+bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infectee, bool condom_used, int edge_type) {
 	float infectivity = infector->infectivity();
 
 	if (condom_used) {
@@ -35,8 +35,11 @@ bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infe
 		infectivity *= prep_multiplier_;
 	}
 
-	if (infectee->isCircumcised() && (infectee->role() == INSERTIVE || infectee->role() == VERSATILE)
-			&& infector->role() == RECEPTIVE && !condom_used) {
+	int infectee_role = edge_type == STEADY_NETWORK_TYPE ? infectee->steady_role() : infectee->casual_role();
+	int infector_role = edge_type == STEADY_NETWORK_TYPE ? infector->steady_role() : infector->casual_role();
+
+	if (infectee->isCircumcised() && (infectee_role == INSERTIVE || infectee_role == VERSATILE)
+			&& infector_role == RECEPTIVE && !condom_used) {
 		infectivity *= circumcision_multiplier_;
 	}
 

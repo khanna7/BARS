@@ -24,7 +24,7 @@ class Person {
 private:
 	friend PersonCreator;
 
-	int id_, role_;
+	int id_, steady_role_, casual_role_;
 	float age_;
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
@@ -35,7 +35,7 @@ private:
 	AdherenceData adherence_;
 
 public:
-	Person(int id, float age, bool circum_status, int role, Diagnoser<GeometricDistribution>& diagnoser);
+	Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser<GeometricDistribution>& diagnoser);
 
 	virtual ~Person();
 
@@ -47,8 +47,12 @@ public:
 		return id_;
 	}
 
-	int role() const {
-		return role_;
+	int steady_role() const {
+		return steady_role_;
+	}
+
+	int casual_role() const {
+		return casual_role_;
 	}
 
 	/**

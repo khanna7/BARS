@@ -23,9 +23,11 @@ PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, 
 PersonCreator::~PersonCreator() {
 }
 
-int calculate_role() {
-	double insertive = Parameters::instance()->getDoubleParameter(PR_INSERTIVE);
-	double receptive = Parameters::instance()->getDoubleParameter(PR_RECEPTIVE) + insertive;
+int calculate_role(int network_type) {
+	double insertive = network_type == STEADY_NETWORK_TYPE ? Parameters::instance()->getDoubleParameter(PR_INSERTIVE_MAIN) :
+			Parameters::instance()->getDoubleParameter(PR_INSERTIVE_CASUAL);
+	double receptive = (network_type == STEADY_NETWORK_TYPE ? Parameters::instance()->getDoubleParameter(PR_RECEPTIVE_MAIN) :
+			Parameters::instance()->getDoubleParameter(PR_RECEPTIVE_CASUAL)) + insertive;
 
 	double draw = repast::Random::instance()->nextDouble();
 	if (draw <= insertive) {
@@ -40,7 +42,8 @@ int calculate_role() {
 PersonPtr PersonCreator::operator()(double tick, float age) {
 	int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
 	Diagnoser<GeometricDistribution> diagnoser(tick, detection_window_, dist);
-	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(), diagnoser);
+	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(STEADY_NETWORK_TYPE), calculate_role(CASUAL_NETWORK_TYPE),
+			diagnoser);
 	person->testable_= ((int) repast::Random::instance()->getGenerator(NON_TESTERS_BINOMIAL)->next()) == 0;
 
 	return person;
@@ -51,12 +54,13 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 	//Rf_PrintValue(val);
 	float age = as<float>(val["age"]);
 	bool circum_status = as<bool>(val["circum.status"]);
+	// TODO update for main and casual roles
 	int role = as<int>(val["role"]);
 
 	float next_test_at = tick + as<double>(val["time.until.next.test"]);
 	// float detection_window, float next_test_at, unsigned int test_count, std::shared_ptr<G> generator
 	Diagnoser<GeometricDistribution> diagnoser(detection_window_, next_test_at, as<unsigned int>(val["number.of.tests"]), dist);
-	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role, diagnoser);
+	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role, role, diagnoser);
 	person->diagnosed_ = as<bool>(val["diagnosed"]);
 	person->testable_ = !(as<bool>(val["non.testers"]));
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);

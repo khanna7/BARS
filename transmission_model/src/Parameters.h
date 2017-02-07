@@ -97,8 +97,11 @@ extern const std::string UNINFECTED_CD4_LEVEL;
 extern const std::string UNTREATED_CD4_DAILY_DECLINE;
 extern const std::string UNTREATED_CD4_PERSTEP_DECLINE;
 
-extern const std::string PR_INSERTIVE;
-extern const std::string PR_RECEPTIVE;
+extern const std::string PR_INSERTIVE_MAIN;
+extern const std::string PR_RECEPTIVE_MAIN;
+
+extern const std::string PR_INSERTIVE_CASUAL;
+extern const std::string PR_RECEPTIVE_CASUAL;
 
 extern const std::string PROP_STEADY_SEX_ACTS;
 extern const std::string PROP_CASUAL_SEX_ACTS;

@@ -37,8 +37,9 @@ public:
 	 *
 	 * @param infector the infected person
 	 * @param infectee the uninfected partner
+	 * @param edge_type the type of edge (steady or casual)
 	 */
-	bool determineInfection(PersonPtr& infector, PersonPtr& infectee, bool condom_used);
+	bool determineInfection(PersonPtr& infector, PersonPtr& infectee, bool condom_used, int edge_type);
 
 	/**
 	 * Sets the infection flag, time of infection etc on the specified person and
