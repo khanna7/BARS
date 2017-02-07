@@ -66,7 +66,7 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 }
 
 const std::string Counts::header(
-		"\"time\",\"entries\",\"old_age_deaths\",\"infection_deaths\",\"asm_deaths\",\"infected_via_transmission\",\"infected_at_entry\",\"uninfected\","
+		"\"time\",\"entries\",\"max_age_exits\",\"infection_deaths\",\"asm_deaths\",\"infected_via_transmission\",\"infected_at_entry\",\"uninfected\","
 		"\"steady_edge_count\",\"casual_edge_count\",\"vertex_count\",\"overlaps\",\"sex_acts\",\"casual_sex_acts\","
 		"\"sd_casual_sex_with_condom\",""\"sd_casual_sex_without_condom\","
 		"\"sc_casual_sex_with_condom\",""\"sc_casual_sex_without_condom\","

@@ -23,7 +23,7 @@ infection.events.file = infection_events.csv
 biomarker.log.file = biomarker_log.csv
 biomarker.number.of.persons.to.log = 100
 
-death.events.file = death_events.csv
+death.events.file = exit_events.csv
 person.data.file = person_data.csv
 testing.events.file = testing_events.csv
 art.events.file = art_events.csv
