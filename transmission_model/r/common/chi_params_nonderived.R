@@ -16,8 +16,8 @@
      duration <- (562+1260)/2
       
      ## role
-     pr.insertive <- pr_insertive_main <- 15/100
-     pr.receptive <- pr_receptive_main <- 20/100
+     pr_insertive_main <- 15/100
+     pr_receptive_main <- 20/100
        #28/35 partnerships match on infection status, 
        #almost equal between susc-susc and inf-inf 
 
