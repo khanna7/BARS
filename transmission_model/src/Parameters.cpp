@@ -80,6 +80,7 @@ const std::string DURATION_OF_INFECTION = "duration.of.infection";
 const std::string DUR_INF_BY_AGE = "given.dur.inf.by.age";
 const std::string INIT_HIV_PREV = "init.hiv.prev";
 const std::string INIT_HIV_PREV_ENTRIES = "init.hiv.prev.for.entries";
+const std::string INFECTIVE_INSERTIVE_MULT = " inf.part.insertive.mult";
 const std::string LATE_LENGTH_MIN = "late.length.min";
 const std::string LATE_LENGTH_MAX = "late.length.max";
 const std::string LATE_MULT = "late.mult";

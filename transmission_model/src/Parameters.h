@@ -68,6 +68,7 @@ extern const std::string DURATION_OF_INFECTION;
 extern const std::string DUR_INF_BY_AGE;
 extern const std::string INIT_HIV_PREV;
 extern const std::string INIT_HIV_PREV_ENTRIES;
+extern const std::string INFECTIVE_INSERTIVE_MULT;
 extern const std::string LATE_LENGTH_MIN;
 extern const std::string LATE_LENGTH_MAX;
 extern const std::string LATE_MULT;
