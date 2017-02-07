@@ -29,6 +29,9 @@ const std::string C_ID = "c.id";
 const int STEADY_NETWORK_TYPE = 0;
 const int CASUAL_NETWORK_TYPE = 1;
 
+const int VERSATILE = 0;
+const int INSERTIVE = 1;
+const int RECEPTIVE = 2;
 
 }
 

@@ -42,9 +42,10 @@ namespace TransModel {
 struct PersonToVALForSimulate {
 
 	List operator()(const PersonPtr& v, int idx, double tick) const {
-		// TODO update roles if R network has been updated as well.
-		return List::create(Named("na") = false, Named("vertex_names") = idx, Named("role") = v->steady_role(),
-				Named("inf.status") = v->isInfected(), Named("diagnosed") = v->isDiagnosed());
+
+		return List::create(Named("na") = false, Named("vertex_names") = idx, Named("role_main") = v->steady_role(),
+				Named("role_casual") = v->casual_role(), Named("inf.status") = v->isInfected(),
+				Named("diagnosed") = v->isDiagnosed());
 	}
 };
 
@@ -180,16 +181,17 @@ void init_stage_map(map<float, shared_ptr<Stage>> &stage_map) {
 	float acute_mult = (float) Parameters::instance()->getDoubleParameter(ACUTE_MULT);
 	float late_mult = (float) Parameters::instance()->getDoubleParameter(LATE_MULT);
 	float baseline_infectivity = (float) Parameters::instance()->getDoubleParameter(MIN_CHRONIC_INFECTIVITY_UNADJ);
+	float viral_load_incr = (float) Parameters::instance()->getDoubleParameter(VIRAL_LOAD_LOG_INCREMENT);
 
-	stage_map.emplace(acute_max, make_shared<AcuteStage>(baseline_infectivity, acute_mult, Range<float>(1, acute_max)));
+	stage_map.emplace(acute_max, make_shared<AcuteStage>(baseline_infectivity, acute_mult, Range<float>(1, acute_max), viral_load_incr));
 	stage_map.emplace(chronic_max,
-			make_shared<ChronicStage>(baseline_infectivity, Range<float>(acute_max, chronic_max)));
+			make_shared<ChronicStage>(baseline_infectivity, Range<float>(acute_max, chronic_max), viral_load_incr));
 	// make late_max essentially open ended as infected persons
 	// on ART can be in late stage forever where stage is not necessarily
 	// the medical stage, but the Stage class for our purposes.
 	float late_max = std::numeric_limits<float>::max();
 	stage_map.emplace(late_max,
-			make_shared<LateStage>(baseline_infectivity, late_mult, Range<float>(chronic_max, late_max)));
+			make_shared<LateStage>(baseline_infectivity, late_mult, Range<float>(chronic_max, late_max), viral_load_incr));
 }
 
 void init_generators() {

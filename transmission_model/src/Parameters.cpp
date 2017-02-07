@@ -108,6 +108,7 @@ const std::string UNDETECTABLE_VL = "undetectable.vl";
 const std::string UNINFECTED_CD4_LEVEL = "uninfected.cd4.level";
 const std::string UNTREATED_CD4_DAILY_DECLINE = "untreated.cd4.daily.decline";
 const std::string UNTREATED_CD4_PERSTEP_DECLINE = "untreated.cd4.perstep.decline";
+const std::string VIRAL_LOAD_LOG_INCREMENT = "inf.inc.log.vl";
 
 const std::string PR_INSERTIVE_MAIN = "pr_insertive_main";
 const std::string PR_RECEPTIVE_MAIN = "pr_receptive_main";

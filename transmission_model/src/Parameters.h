@@ -96,6 +96,7 @@ extern const std::string UNDETECTABLE_VL;
 extern const std::string UNINFECTED_CD4_LEVEL;
 extern const std::string UNTREATED_CD4_DAILY_DECLINE;
 extern const std::string UNTREATED_CD4_PERSTEP_DECLINE;
+extern const std::string VIRAL_LOAD_LOG_INCREMENT;
 
 extern const std::string PR_INSERTIVE_MAIN;
 extern const std::string PR_RECEPTIVE_MAIN;

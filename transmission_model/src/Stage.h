@@ -45,12 +45,13 @@ class Stage {
 
 protected:
 	float baseline_infectivity_, multiplier_;
+	float vl_inc;
 
 private:
 	Range<float> range_;
 
 public:
-	Stage(float baseline_infectivity, float multiplier, const Range<float>& range);
+	Stage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
 	virtual ~Stage();
 
 	/**
@@ -64,7 +65,7 @@ public:
 class AcuteStage: public Stage {
 
 public:
-	AcuteStage(float baseline_infectivity, float multiplier, const Range<float>& range);
+	AcuteStage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
 	virtual ~AcuteStage();
 
 	virtual float calculateInfectivity(const InfectionParameters& params) override;
@@ -73,7 +74,7 @@ public:
 class ChronicStage: public Stage {
 
 public:
-	ChronicStage(float baseline_infectivity, const Range<float>& range);
+	ChronicStage(float baseline_infectivity, const Range<float>& range, float viral_load_increment);
 	virtual ~ChronicStage();
 
 	virtual float calculateInfectivity(const InfectionParameters& params) override;
@@ -82,7 +83,7 @@ public:
 class LateStage: public Stage {
 
 public:
-	LateStage(float baseline_infectivity, float multiplier, const Range<float>& range);
+	LateStage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
 	virtual ~LateStage();
 
 	virtual float calculateInfectivity(const InfectionParameters& params) override;

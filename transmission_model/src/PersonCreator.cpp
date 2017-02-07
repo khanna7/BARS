@@ -31,11 +31,11 @@ int calculate_role(int network_type) {
 
 	double draw = repast::Random::instance()->nextDouble();
 	if (draw <= insertive) {
-		return 0;
+		return INSERTIVE;
 	} else if (draw <= receptive) {
-		return 1;
+		return RECEPTIVE;
 	} else {
-		return 2;
+		return VERSATILE;
 	}
 }
 
@@ -54,13 +54,16 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 	//Rf_PrintValue(val);
 	float age = as<float>(val["age"]);
 	bool circum_status = as<bool>(val["circum.status"]);
-	// TODO update for main and casual roles
-	int role = as<int>(val["role"]);
+	int role_main = as<int>(val["role_main"]);
+	int role_casual = role_main;
+	if (val.containsElementNamed("role_casual")) {
+		role_casual =  as<int>(val["role_casual"]);
+	}
 
 	float next_test_at = tick + as<double>(val["time.until.next.test"]);
 	// float detection_window, float next_test_at, unsigned int test_count, std::shared_ptr<G> generator
 	Diagnoser<GeometricDistribution> diagnoser(detection_window_, next_test_at, as<unsigned int>(val["number.of.tests"]), dist);
-	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role, role, diagnoser);
+	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role_main, role_casual, diagnoser);
 	person->diagnosed_ = as<bool>(val["diagnosed"]);
 	person->testable_ = !(as<bool>(val["non.testers"]));
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
