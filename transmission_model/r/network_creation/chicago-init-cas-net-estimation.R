@@ -67,9 +67,7 @@
                                 time.slices=2e4,
                                 #time.slices=1e2,
                                 constraints=constraints_cas,
-                                monitor=~edges+degree(0:5),
-                                eval.l
-                                )
+                                monitor=~edges+degree(0:5))
 
    #####################
    ## SAVE BINARY
