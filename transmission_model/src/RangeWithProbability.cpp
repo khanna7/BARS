@@ -40,15 +40,14 @@ void RangeWithProbabilityCreator::addBin(const std::string& bin_definition, doub
 // asm.15-19
 	std::vector<string> tokens;
 	boost::split(tokens, bin_definition, boost::is_any_of("."));
-	//tokenize(bin_definition, ".", tokens);
 
 	if (tokens.size() != 2) {
 		throw std::invalid_argument("Bad bin definition in RangeWithProbability: " + bin_definition);
 	}
 
+	std::string range = tokens[1];
 	tokens.clear();
-	//tokenize(tokens[1], "_", tokens);
-	boost::split(tokens, tokens[1], boost::is_any_of("_"));
+	boost::split(tokens, range, boost::is_any_of("_"));
 	double min = 0, max = 0;
 	if (tokens.size() == 1) {
 		min = stod(tokens[0]);
