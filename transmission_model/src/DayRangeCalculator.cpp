@@ -7,6 +7,8 @@
 
 #include <exception>
 
+#include "boost/algorithm/string.hpp"
+
 #include "DayRangeCalculator.h"
 #include "utils.h"
 
@@ -31,7 +33,8 @@ DayRangeCalculatorCreator::~DayRangeCalculatorCreator() {
 
 void DayRangeCalculatorCreator::addBin(const std::string& bin_definition) {
 	vector<string> tokens;
-	tokenize(bin_definition, ",", tokens);
+	//tokenize(bin_definition, ",", tokens);
+	boost::split(tokens, bin_definition, boost::is_any_of(","));
 
 	if (tokens.size() != 2) {
 		throw std::invalid_argument("Bad bin definition: " + bin_definition);
@@ -40,7 +43,8 @@ void DayRangeCalculatorCreator::addBin(const std::string& bin_definition) {
 	double prob = stod(tokens[0]);
 
 	tokens.clear();
-	tokenize(tokens[1], "-", tokens);
+	boost::split(tokens, tokens[1], boost::is_any_of("-"));
+	//tokenize(tokens[1], "-", tokens);
 	double min = 0, max = 0;
 	if (tokens.size() == 1) {
 		min = stod(tokens[0]);
