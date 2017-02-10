@@ -39,7 +39,8 @@ instance_directory=$3
 cd $instance_directory
 
 # TODO: Define the command to run the model
-APP=$emews_root/../Release/transmission_model-0.7
+VERSION="$(<$emews_root/../Release/version.txt)"
+APP=$emews_root/../Release/transmission_model-$VERSION
 PROPS_FILE=$emews_root/../config/model.props
 MODEL_CMD="mpirun -n 1 $APP $PROPS_FILE $param_line"
 
