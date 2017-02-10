@@ -13,6 +13,7 @@
 #include "repast_hpc/Random.h"
 
 #include "ProbDist.h"
+#include "GeometricDistribution.h"
 
 namespace TransModel {
 
@@ -24,7 +25,7 @@ public:
 	double calculateLag(float size_of_timestep);
 private:
 
-	repast::IntUniformGenerator gen;
+	GeometricDistribution gen;
 };
 
 /**

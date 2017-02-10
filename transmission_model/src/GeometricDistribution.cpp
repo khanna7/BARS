@@ -11,8 +11,7 @@
 
 namespace TransModel {
 
-GeometricDistribution::GeometricDistribution(double p, int increment) : dist(p), increment_{increment} {
-}
+GeometricDistribution::GeometricDistribution(double p, int increment) : dist(p), increment_{increment} {}
 
 GeometricDistribution::~GeometricDistribution() {
 }

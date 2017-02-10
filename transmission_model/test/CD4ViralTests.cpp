@@ -243,7 +243,7 @@ TEST(InfectivityTests, TestRange) {
 TEST(InfectivityTests, TestChronic) {
 	Range<float> range(3, 6.1);
 	float baseline = 2.5f;
-	ChronicStage stage(baseline, range);
+	ChronicStage stage(baseline, range, 2.98);
 	ASSERT_TRUE(stage.in(4));
 	ASSERT_FALSE(stage.in(1));
 
@@ -271,7 +271,7 @@ TEST(InfectivityTests, TestAcute) {
 	Range<float> range(3, 6.1);
 	float baseline = 2.5f;
 	float multiplier = 0.25;
-	AcuteStage stage(baseline, multiplier, range);
+	AcuteStage stage(baseline, multiplier, range, 2.98);
 	ASSERT_TRUE(stage.in(4));
 	ASSERT_FALSE(stage.in(1));
 
@@ -299,7 +299,7 @@ TEST(InfectivityTests, TestLate) {
 	Range<float> range(3, 6.1);
 	float baseline = 2.5f;
 	float multiplier = 0.25;
-	LateStage stage(baseline, multiplier, range);
+	LateStage stage(baseline, multiplier, range, 2.98);
 	ASSERT_TRUE(stage.in(4));
 	ASSERT_FALSE(stage.in(1));
 

@@ -17,8 +17,24 @@
 #include "DayRangeCalculator.h"
 #include "RangeWithProbability.h"
 
+#include "GeometricDistribution.h"
+
 using namespace TransModel;
 using namespace Rcpp;
+
+/*
+ Sanity check that this is working as I thought it would.
+TEST(GeometricDistTests, GeometricDistTest) {
+	repast::Random::initialize(1);
+	GeometricDistribution dist(1 / 500.0, 0);
+	double sum = 0;
+	for (int i = 0; i < 2000; ++i) {
+		sum += dist.next();
+	}
+	std::cout << (sum / 2000) << std::endl;
+
+}
+*/
 
 TEST(RangeWithProbTests, TestRangeWithProb) {
 	RangeWithProbabilityCreator creator;
@@ -32,7 +48,7 @@ TEST(RangeWithProbTests, TestRangeWithProb) {
 	ASSERT_TRUE(rp.run(16, 0.2));
 	ASSERT_FALSE(rp.run(19, 0.9));
 	ASSERT_TRUE(rp.run(25, 0.05));
-	ASSERT_FALSE(rp.run(30, 0.9));
+	ASSERT_FALSE(rp.run(29, 0.9));
 
 	creator.clear();
 	creator.addBin("asm.12_15", 0.3);
@@ -45,7 +61,7 @@ TEST(RangeWithProbTests, TestRangeWithProb) {
 	ASSERT_TRUE(rp.run(16, 0.2));
 	ASSERT_FALSE(rp.run(19, 0.9));
 	ASSERT_TRUE(rp.run(25, 0.05));
-	ASSERT_FALSE(rp.run(30, 0.9));
+	ASSERT_FALSE(rp.run(29, 0.9));
 }
 
 TEST(DayRangeCalcTests, TestCreator) {

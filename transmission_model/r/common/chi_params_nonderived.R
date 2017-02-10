@@ -153,7 +153,7 @@
      # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    art.init.lag.1 <- ".167142,1-7"  
+    art.init.lag.1 <- ".167142,0-7"  
     art.init.lag.2 <- ".298142,7-30"  
     art.init.lag.3 <- ".160142,30-90"  
     art.init.lag.4 <- ".092142,90-180"  

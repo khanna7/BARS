@@ -1,5 +1,5 @@
 /*
- * ARTInitLagCalculator.cpp
+ * DayRangeCalculator.cpp
  *
  *  Created on: Sep 22, 2016
  *      Author: nick
@@ -16,8 +16,8 @@ namespace TransModel {
 
 using namespace std;
 
-
-DayRangeBin::DayRangeBin(double min, double max) : gen(repast::Random::instance()->createUniIntGenerator(min, max)) {}
+// increment of 1, so dist never produces 0
+DayRangeBin::DayRangeBin(double min, double max) : gen(1 / (min + (max - min) / 2), 1) {}
 DayRangeBin::~DayRangeBin() {}
 
 double DayRangeBin::calculateLag(float size_of_timestep) {
