@@ -44,7 +44,7 @@ run_prerequisites() => {
     make_dir(instance) => {
       file out <instance+"out.txt">;
       file err <instance+"err.txt">;
-      (out,err) = run_model(model_sh, s, instance); //=> {
+      (out,err) = run_model(model_sh, s, instance) => {
         string summarize_code = summarize_template % (emews_root, instance + "output/counts.csv");
         string result = R(summarize_code, "a");
         results[i] = "%i,%s" % (i + 1, result);
