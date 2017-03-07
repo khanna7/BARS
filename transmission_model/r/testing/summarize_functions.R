@@ -6,7 +6,7 @@ summarize_prev <- function(filename="counts.csv"){
   counts <- counts[-1,]
   prev <- (counts$vertex_count - counts$uninfected)/(counts$vertex_count)
   prev <- prev*100
-  prev_last_ten_yrs <- tail(prev, 3600)
+  prev_last_ten_yrs <- tail(prev, 3650)
   mean_sd <- c(mean(prev_last_ten_yrs), sd(prev_last_ten_yrs))
   return(mean_sd)
 }
