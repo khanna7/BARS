@@ -31,7 +31,6 @@ summarize_inc <- function(filename="counts.csv"){
 summarize_pop_size <- function(filename="counts.csv"){
   
   counts <- read.csv(filename)
-  counts <- counts[-1]
-  
+
   return(tail(counts$vertex_count, 1))
 }
