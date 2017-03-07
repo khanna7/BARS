@@ -45,14 +45,14 @@ run_prerequisites() => {
       file out <instance+"out.txt">;
       file err <instance+"err.txt">;
       (out,err) = run_model(model_sh, s, instance); //=> {
-        //string summarize_code = summarize_template % (emews_root, instance + "output/counts.csv");
-        // string result = R(summarize_code, "a");
-        //results[i] = "%i,%s" % (i + 1, result);
-      //}
+        string summarize_code = summarize_template % (emews_root, instance + "output/counts.csv");
+        string result = R(summarize_code, "a");
+        results[i] = "%i,%s" % (i + 1, result);
+      }
     }
   }
 
   string fname = "%s/final_results.csv" % turbine_output;
-  file results_file <fname> = write(join(results, "\n"));
+  file results_file <fname> = write(join(results, "\n")) =>
   printf("Writing final result to %s", fname);
 }
