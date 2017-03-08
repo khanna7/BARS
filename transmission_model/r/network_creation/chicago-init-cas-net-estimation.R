@@ -19,14 +19,14 @@
    #####################
    ## MODEL SETUP
    net <- fit$network
-   formation_cas <- net~edges+degree(0:1)+
+   formation_cas <- net~edges+degree(1:2)+
                           nodematch("role_casual", keep=c(2:3), diff=TRUE)
                        
 
    dissolution_cas <- net~offset(edges)
    theta.diss_cas <- log(dur_cas - 1)
    target.stats_cas <- c(cas_n_edges,
-                         cas_deg_seq[1:2],
+                         cas_deg_seq[2:3],
                          c(1,1)
                     )
 
@@ -68,6 +68,15 @@
                                 #time.slices=1e2,
                                 constraints=constraints_cas,
                                 monitor=~edges+degree(0:5))
+
+   #####################
+   ## TEST
+   net.f <- network.collapse(cas_sim_test, at=1000)
+   network.size(net.f)
+   network.edgecount(net.f)
+   degreedist(net.f) 
+   
+   #####################
 
    #####################
    ## SAVE BINARY

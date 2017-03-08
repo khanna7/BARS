@@ -24,9 +24,30 @@ Note that `stop.at` is currently set in the model properties file as specified i
 If an indexing error appears, you may need to recompile the main and casual networks.
 
 
-To run without swift:
+## To run without swift:
 
 ```  
 mpirun -n 1 ./transmission_model-0.5 ../config/model.props
 ```  
 Copy excutable from `/home/ntcollie/src/BARS/transmission_model/Release/transmission_model-*` to `../Release` directory
+
+## To run without swift, with a particular instance of parameters, from the command line
+Change the contents of the transmission submit script to this:
+#!/bin/bash
+sbatch <<EOT
+#!/bin/sh
+
+module load R
+module load netcdf/4.2
+module load gcc/4.8
+
+mpirun -n 1 ./transmission_model-0.8 ../config/model.props $1
+EOT
+
+Then:
+chmod +x run-transmission-model.sh
+
+Then call using:
+./run-transmission-model.sh output.directory=./myoutput,global.random.seed=1,acute.mult=10,late.mult=5,prop.steady.sex.acts=0.1428
+57142857143,prop.casual.sex.acts=0.142857142857143,min.chronic.infectivity
+.unadj=8e-04,daily.entry.rate=8e-04

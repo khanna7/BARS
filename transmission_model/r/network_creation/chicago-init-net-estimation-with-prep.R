@@ -16,14 +16,14 @@
    source("common-functions.R")
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:1)+
+   formation <- ~edges+degree(1:2)+
                   nodematch("role_main", keep=c(2:3), diff=TRUE)#+
                   ## nodemix("diagnosed", base=c(1,3))
 
    dissolution <- ~offset(edges)
    theta.diss <- log(duration-1)
 
-   target.stats <- c(nedges, deg_seq[1:2], 1, 1)
+   target.stats <- c(nedges, deg_seq[2:3], 1, 1)
    constraints <- ~.
 
    formation.n0 <- update.formula(formation, n0~.)

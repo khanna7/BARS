@@ -34,7 +34,7 @@
    ## DEMOGRAPHIC
    min.age <- 18
    max.age <- 34
-   daily.entry.rate <- 0.00008*10
+   daily.entry.rate <- 0.00008/10
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
