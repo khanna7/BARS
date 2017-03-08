@@ -577,7 +577,7 @@ void Model::entries(double tick, float size_of_timestep) {
 	if (pop_size > 0) {
 		double births_prob = Parameters::instance()->getDoubleParameter(DAILY_ENTRY_RATE);
 		PoissonGen birth_gen(Random::instance()->engine(),
-				boost::random::poisson_distribution<>(births_prob * pop_size));
+				boost::random::poisson_distribution<>(births_prob));
 		DefaultNumberGenerator<PoissonGen> gen(birth_gen);
 		int entries = (int) gen.next();
 		Stats* stats = Stats::instance();
