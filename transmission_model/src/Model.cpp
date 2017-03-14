@@ -60,7 +60,6 @@ struct PersonToVAL {
 		vertex["age"] = p->age();
 		vertex["cd4.count.today"] = p->infectionParameters().cd4_count;
 		vertex["circum.status"] = p->isCircumcised();
-		vertex["role"] = p->steady_role();
 
 		vertex["diagnosed"] = p->isDiagnosed();
 		const Diagnoser<GeometricDistribution>& diagnoser = p->diagnoser();
@@ -68,6 +67,9 @@ struct PersonToVAL {
 		vertex["time.until.next.test"] = diagnoser.timeUntilNextTest(tick);
 		vertex["non.testers"] = !(p->isTestable());
 		vertex["prep.status"] = p->isOnPrep();
+		vertex["role_casual"] = p->casual_role();
+		vertex["role_main"] = p->steady_role();
+
 		if (p->isOnPrep()) {
 			vertex["time.of.prep.cessation"] = p->prepParameters().stopTime();
 			vertex["time.of.prep.initiation"] = p->prepParameters().startTime();
