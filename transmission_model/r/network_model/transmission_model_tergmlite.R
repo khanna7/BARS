@@ -23,16 +23,14 @@ nw_simulate <- function(net_for_sim) {
 }
 
 n_cas <- cas_fit$network
-cas_formation <- cas_fit$formula
-cas_dissolution <- dissolution_cas
 
 n_cas_simulate <- function(cas_net) {
   class(cas_net) <- "network"
-  p <- stergm_prep(cas_net, formation = cas_formation, dissolution=cas_dissolution, 
-                   coef.form=theta.form, coef.diss=theta.diss, constraints=constraints)
+  p <- stergm_prep(cas_net, formation = formation.n_cas, dissolution=dissolution_cas,
+                   coef.form=theta.form_cas, coef.diss=theta.diss_cas, constraints=constraints_cas)
   el <- as.edgelist(cas_net)
   attributes(el)$vnames <- NULL
-  z <- simulate_network(p, el, coef.form=theta.form, coef.diss=theta.diss, save.changes=T)
+  z <- simulate_network(p, el, coef.form=theta.form_cas, coef.diss=theta.diss_cas, save.changes=T)
   return(attr(z, 'changes'))
 }
 

@@ -91,11 +91,22 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 		//boost::to_upper(upper_name);
 		//boost::replace_all(upper_name, ".", "_");
 		SEXP val((*R)[name]);
-		// std::cout << name << ": " << TYPEOF(val) <<  std::endl;
+		//std::cout << name << ": " << TYPEOF(val) <<  std::endl;
 		if (TYPEOF(val) == REALSXP) {
 			Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(val);
 			if (v.size() == 1) {
 				params->putParameter(name, v[0]);
+
+			} else if (v.size() > 1) {
+				SEXP r;
+				R->parseEval("paste(" + name + ")", r);
+				Rcpp::CharacterVector cv = Rcpp::as<Rcpp::CharacterVector>(r);
+				std::string s;
+				for (int i = 0; i < cv.size(); ++i) {
+					if (i > 0) s += ",";
+					s += Rcpp::as<string>(cv[i]);
+				}
+				params->putParameter(name, s);
 			}
 			//std::cout << "extern const std::string " << upper_name << ";" << std::endl; //" = \"" << name << "\";" << std::endl;
 		} else if (TYPEOF(val) == INTSXP && (name == ACUTE_LENGTH || name == CHRONIC_LENGTH ||

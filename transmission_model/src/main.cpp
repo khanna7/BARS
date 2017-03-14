@@ -75,6 +75,7 @@ void run(std::string propsFile, int argc, char** argv) {
 	out.ostream() << Parameters::instance();
 	out.close();
 
+
 	init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE));
 
 	std::string net_var = Parameters::instance()->getStringParameter(NET_VAR);
