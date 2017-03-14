@@ -9,12 +9,12 @@ string turbine_output = getenv("TURBINE_OUTPUT");
 
 string summarize_template = """
 source('%s/R/summarize_functions.R')
-f <- %s
+f <- '%s'
 prev <- summarize_prev(f)
 inc <- summarize_inc(f)
 pop_size <- summarize_pop_size(f)
-a <- paste(paste(prev, collapse=","), paste(inc, collapse=","),
-  paste(pop_size, collapse=","), sep = ",")
+a <- paste(paste(prev, collapse=','), paste(inc, collapse=','),
+  paste(pop_size, collapse=','), sep = ',')
 """;
 
 app (file out, file err) run_model (file shfile, string param_line, string instance)
@@ -53,6 +53,6 @@ run_prerequisites() => {
   }
 
   string fname = "%s/final_results.csv" % turbine_output;
-  file results_file <fname> = write(join(results, "\n")) =>
+  file results_file <fname> = write(join(results, "\n") + "\n") =>
   printf("Writing final result to %s", fname);
 }

@@ -1,3 +1,10 @@
+8 March 2017
+
+Version 0.9:
+
+* Fixed entry rate
+* Added summary stats calculation in swift script
+
 10 Feb 2017
 
 Version 0.8:
