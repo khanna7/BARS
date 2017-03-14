@@ -1,3 +1,10 @@
+14 March 2017
+
+Version 0.10:
+
+* Added role_main and role_casual to network RDS output
+
+
 8 March 2017
 
 Version 0.9:
