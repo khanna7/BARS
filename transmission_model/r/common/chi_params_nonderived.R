@@ -127,7 +127,7 @@
    #####################
    ## Casual (non-main)
       ## duration
-      dur_cas <- (214 + 456)/2
+      dur_cas <- 160
       ##degree 
         ## 0: 54.1%
         ## 1: 35.4%
