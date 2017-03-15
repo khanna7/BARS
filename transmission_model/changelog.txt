@@ -2,8 +2,9 @@
 
 Version 0.10:
 
+* Fixed cas_simulate to use correct cas terms
 * Added role_main and role_casual to network RDS output
-
+* Parameter output now includes numeric vectors
 
 8 March 2017
 
