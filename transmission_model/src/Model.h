@@ -33,6 +33,9 @@ struct TransmissionParameters {
 	double prop_steady_sex_acts, prop_casual_sex_acts;
 };
 
+
+enum class CauseOfDeath { NONE, AGE, INFECTION, ASM};
+
 class Model {
 
 private:
@@ -53,7 +56,7 @@ private:
 	RangeWithProbability asm_runner;
 
 	void runTransmission(double timestamp);
-	bool dead(double tick, PersonPtr person, int max_survival);
+	CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
 	void entries(double tick, float size_of_time_step);
 	void deactivateEdges(int id, double time);
 	void updateVitals(double time, float size_of_time_step, int max_survival);

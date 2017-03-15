@@ -88,7 +88,7 @@ public:
 
 	EdgePtr<V> addEdge(const std::shared_ptr<V>& source, const std::shared_ptr<V>& target, int type = 0);
 	EdgePtr<V> addEdge(unsigned int v1_idx, unsigned int v2_idx, int type = 0);
-	bool removeEdge(unsigned int v1_idx, unsigned int v2_idx, int type = 0);
+	EdgePtr<V> removeEdge(unsigned int v1_idx, unsigned int v2_idx, int type = 0);
 	bool hasEdge(VertexPtr<V> v1, VertexPtr<V> v2, int type = 0);
 	bool hasEdge(unsigned int v1_idx, unsigned int v2_idx, int type = 0);
 
@@ -250,10 +250,12 @@ bool Network<V>::hasEdge(unsigned int v1_idx, unsigned int v2_idx, int type) {
 }
 
 template<typename V>
-bool Network<V>::removeEdge(unsigned int v1_idx, unsigned int v2_idx, int type) {
+EdgePtr<V> Network<V>::removeEdge(unsigned int v1_idx, unsigned int v2_idx, int type) {
+	// defaults to nullptr
+	EdgePtr<V> edge;
 	auto iter = oel.find(v1_idx);
 	if (iter == oel.end()) {
-		return false;
+		return edge;
 	}
 
 	for (auto edge_idx : iter->second.edge_idxs) {
@@ -272,11 +274,12 @@ bool Network<V>::removeEdge(unsigned int v1_idx, unsigned int v2_idx, int type) 
 			EdgeListData& d2 = iel.at(v2_idx);
 			d2.edge_idxs.erase(edge_idx);
 			--d2.edge_counts[type];
-			return true;
+			return edge;
 		}
 	}
 
-	return false;
+	// defaults to nullptr
+	return edge;
 }
 
 template<typename V>
