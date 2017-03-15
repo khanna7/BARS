@@ -13,7 +13,7 @@
      mean_deg <- (0*0.566)+(1*0.412)+(2*0.018)+(3*0.003)
 
      deg_seq <- c(56.6, 41.2, 1.8)*n/100   
-     duration <- (562+1260)/2
+     duration <- 512
       
      ## role
      pr_insertive_main <- 15/100
@@ -34,7 +34,7 @@
    ## DEMOGRAPHIC
    min.age <- 18
    max.age <- 34
-   daily.entry.rate <- 1
+   daily.entry.rate <- 0.75
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
@@ -127,7 +127,7 @@
    #####################
    ## Casual (non-main)
       ## duration
-      dur_cas <- (214 + 456)/2
+      dur_cas <- 160
       ##degree 
         ## 0: 54.1%
         ## 1: 35.4%
