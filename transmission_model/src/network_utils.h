@@ -131,9 +131,9 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 			EdgePtr<V> ep = net.addEdge(out, in, edge_type);
 			edge_initializer.initEdge(ep);
 			++added;
-			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::STARTED, edge_type);
+			Stats::instance()->recordPartnershipEvent(time, ep->id(), out, in, PartnershipEvent::STARTED, edge_type);
 		} else {
-			bool res = net.removeEdge(out, in, edge_type);
+			EdgePtr<V> res = net.removeEdge(out, in, edge_type);
 			if (!res) {
 				if (net.hasEdge(in, out, edge_type) || net.hasEdge(out, in, edge_type)) {
 					std::cout << "has edge" << std::endl;
@@ -141,7 +141,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 				std::cout << "At: " << time << ", "<< edge_type << ": " << out << ", " << in << std::endl;
 				throw std::domain_error("Updating from tergm changes: trying to remove an edge that doesn't exist");
 			}
-			Stats::instance()->recordPartnershipEvent(time, out, in, PartnershipEvent::ENDED, edge_type);
+			Stats::instance()->recordPartnershipEvent(time, res->id(), out, in, PartnershipEvent::ENDED_DISSOLUTION, edge_type);
 			++removed;
 		}
 	}

@@ -51,11 +51,15 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 ### Partnership Events
 Partnership events are recorded in the file defined by *partnership.events.file* in the model properties file. The format is csv with each row recording an event. The columns are:
 * tick: the time step at which the event occurred.
+* edge_id: the id of the edge created between the two persons
 * p1: the id of the first person in the partnership
 * p2: the id of the second person in the partnership
 * type: the type of partnership event.
-  * 0: partnership dissolved
+  * 0: partnership dissolved due to tergm simulate
   * 1: partnership added
+  * 2: partnership dissolved due to death by infection of one of the partners
+  * 3: partnership dissolved due to death by age specific mortality of one of the partners
+  * 4: partnership dissolved due to aging out of the model
 * network_type: the type of network in which the event occurred
   * 0: the main network
   * 1: the casual network

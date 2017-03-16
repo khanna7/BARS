@@ -39,6 +39,15 @@ namespace fs = boost::filesystem;
 
 namespace TransModel {
 
+PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
+	if (cod == CauseOfDeath::AGE) return PartnershipEvent::PEventType::ENDED_AGING_OUT;
+	else if (cod == CauseOfDeath::ASM) return PartnershipEvent::PEventType::ENDED_DEATH_ASM;
+	else if (cod == CauseOfDeath::INFECTION) return PartnershipEvent::PEventType::ENDED_DEATH_INFECTION;
+	else {
+		throw std::invalid_argument("No PEvent for specified CauseOfDeath");
+	}
+}
+
 struct PersonToVALForSimulate {
 
 	List operator()(const PersonPtr& v, int idx, double tick) const {
@@ -564,7 +573,15 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 		}
 
 		person->step(size_of_timestep);
-		if (dead(t, person, max_age)) {
+		CauseOfDeath cod = dead(t, person, max_age);
+		if (cod != CauseOfDeath::NONE) {
+			vector<EdgePtr<Person>> edges;
+			PartnershipEvent::PEventType pevent_type = cod_to_PEvent(cod);
+			net.getEdges(person, edges);
+			for (auto edge : edges) {
+				//cout << edge->id() << "," << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
+				Stats::instance()->recordPartnershipEvent(t, edge->id(), edge->v1()->id(), edge->v2()->id(), pevent_type, edge->type());
+			}
 			iter = net.removeVertex(iter);
 			++dead_count;
 		} else {
@@ -641,38 +658,38 @@ void Model::saveRNetwork() {
 	}
 }
 
-bool Model::dead(double tick, PersonPtr person, int max_age) {
+CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
 	int death_count = 0;
-	bool died = false;
+	CauseOfDeath cod = CauseOfDeath::NONE;
 	// dead of old age
 	if (person->deadOfAge(max_age)) {
 		++death_count;
 		++Stats::instance()->currentCounts().age_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::AGE);
 		Stats::instance()->personDataRecorder().recordDeath(person, tick);
-		died = true;
+		cod = CauseOfDeath::AGE;
 	}
 
-	if (!died && person->deadOfInfection()) {
+	if (cod == CauseOfDeath::NONE && person->deadOfInfection()) {
 		// infection deaths
 		++death_count;
 		++Stats::instance()->currentCounts().infection_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::INFECTION);
 		Stats::instance()->personDataRecorder().recordDeath(person, tick);
-		died = true;
+		cod = CauseOfDeath::INFECTION;
 	}
 
-	if (!died && asm_runner.run(person->age(), Random::instance()->nextDouble())) {
+	if (cod == CauseOfDeath::NONE && asm_runner.run(person->age(), Random::instance()->nextDouble())) {
 		// asm deaths
 		++death_count;
 		++Stats::instance()->currentCounts().asm_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
 		Stats::instance()->personDataRecorder().recordDeath(person, tick);
-		died = true;
+		cod = CauseOfDeath::ASM;
 	}
 
-	person->setDead(died);
-	return died;
+	person->setDead(cod != CauseOfDeath::NONE);
+	return cod;
 }
 
 bool Model::hasSex(int edge_type) {
