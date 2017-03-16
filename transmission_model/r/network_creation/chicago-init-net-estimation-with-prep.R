@@ -16,14 +16,14 @@
    source("common-functions.R")
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(1:2)+
+   formation <- ~edges+degree(0:2)+
                   nodematch("role_main", keep=c(2:3), diff=TRUE)#+
                   ## nodemix("diagnosed", base=c(1,3))
 
    dissolution <- ~offset(edges)
    theta.diss <- log(duration-1)
 
-   target.stats <- c(nedges, deg_seq[2:3], 1, 1)
+   target.stats <- c(nedges, deg_seq[1:3], 0, 0)
    constraints <- ~.
 
    formation.n0 <- update.formula(formation, n0~.)
@@ -323,24 +323,28 @@
 
    #####################
    ## SIMULATE (for testing)
-#     hetdeg.diag.sim <- simulate(n0,
-#                                 formation=formation.n0,
-#                                 dissolution=dissolution,
-#                                 coef.form=theta.form, 
-#                                 coef.diss=theta.diss,
-#                                 time.slices=2e4,
-#                                 #time.slices=1e2,
-#                                 constraints=constraints,
-#                                 monitor=~edges+degree(0:5)
-#                                 )
+    hetdeg.diag.sim <- simulate(n0,
+                                formation=formation.n0,
+                                dissolution=dissolution,
+                                coef.form=theta.form, 
+                                coef.diss=theta.diss,
+                                time.slices=2e4,
+                                #time.slices=1e2,
+                                constraints=constraints,
+                                monitor=~edges+degree(0:5)
+                                )
 
    #####################
-#    ## TEST
-#    net.f <- network.collapse(hetdeg.diag.sim, at=1000)
-#    network.size(net.f)
-#    network.edgecount(net.f)
-#    degreedist(net.f) 
+   ## TEST
+   net.f <- network.collapse(hetdeg.diag.sim, at=20000)
+   network.size(net.f)
+   network.edgecount(net.f)
+   degreedist(net.f) /network.size(net.f)
 
+   get.edge.activity(net.f)
+   ## To compute partnership metrics from network data, see 
+   ## https://github.com/khanna7/sero-discordant-couples/blob/master/Code/Engine/function_sdp_identify_d1.R
+   
    #####################
    ## SAVE BINARY
    save.image(file="initialized-model.RData")
