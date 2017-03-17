@@ -21,7 +21,8 @@
                   ## nodemix("diagnosed", base=c(1,3))
 
    dissolution <- ~offset(edges)
-   theta.diss <- log(duration-1)
+   #theta.diss <- log(duration-1)
+    theta.diss <- 6.43 #adjusted for death rate
 
    target.stats <- c(nedges, deg_seq[1:3], 0, 0)
    constraints <- ~.
