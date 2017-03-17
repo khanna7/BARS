@@ -24,7 +24,8 @@
                        
 
    dissolution_cas <- net~offset(edges)
-   theta.diss_cas <- log(dur_cas - 1)
+   #theta.diss_cas <- log(dur_cas - 1)
+   theta.diss_cas <- 5.13 #adjusted for deaths
    target.stats_cas <- c(cas_n_edges,
                          cas_deg_seq[1:3],
                          c(0,0)
