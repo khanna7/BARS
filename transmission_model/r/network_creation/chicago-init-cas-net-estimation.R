@@ -19,15 +19,16 @@
    #####################
    ## MODEL SETUP
    net <- fit$network
-   formation_cas <- net~edges+degree(1:2)+
+   formation_cas <- net~edges+degree(0:2)+
                           nodematch("role_casual", keep=c(2:3), diff=TRUE)
                        
 
    dissolution_cas <- net~offset(edges)
-   theta.diss_cas <- log(dur_cas - 1)
+   #theta.diss_cas <- log(dur_cas - 1)
+   theta.diss_cas <- 5.13 #adjusted for deaths
    target.stats_cas <- c(cas_n_edges,
-                         cas_deg_seq[2:3],
-                         c(1,1)
+                         cas_deg_seq[1:3],
+                         c(0,0)
                     )
 
 
