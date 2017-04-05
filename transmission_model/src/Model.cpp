@@ -558,7 +558,6 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 					person->infectionParameters());
 			person->setInfectivity(infectivity);
 		} else {
-			++stats->currentCounts().uninfected;
 			updatePREPUse(t, on_prep_prob, person);
 		}
 
@@ -585,6 +584,10 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 			iter = net.removeVertex(iter);
 			++dead_count;
 		} else {
+			// don't count dead uninfected persons
+			if (!person->isInfected()) {
+				++stats->currentCounts().uninfected;
+			}
 			++iter;
 		}
 	}
