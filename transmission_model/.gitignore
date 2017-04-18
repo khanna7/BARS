@@ -1,7 +1,9 @@
 /.cproject
 /.project
-/Release/
+Release/
 /.settings/
 *.o
 Debug
 /TODO.txt
+*~
+/traces/

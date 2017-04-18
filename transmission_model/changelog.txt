@@ -1,0 +1,73 @@
+5 April 2017
+
+Version 0.12:
+
+* Switched logging of uninfected count to occur after "death" check
+so that dead persons are not counted as uninfected.
+
+15 March 2017
+
+Version 0.11:
+
+* Added additional logging to track the cause of edge removal (dissolution,
+death, etc.)
+
+
+14 March 2017
+
+Version 0.10:
+
+* Fixed cas_simulate to use correct cas terms
+* Added role_main and role_casual to network RDS output
+* Parameter output now includes numeric vectors
+
+8 March 2017
+
+Version 0.9:
+
+* Fixed entry rate
+* Added summary stats calculation in swift script
+
+10 Feb 2017
+
+Version 0.8:
+
+* Lag time between diagnosis and ART initiation drawn from uConnect and NHBS empirical data.
+* New ART adherence categories: Never, Partial+, Partial-, and Always (where Never and Always)
+can still have obviously small chance of adherence or non-adherence).
+* Introduced age specific mortality.
+* Max age is now 34.
+
+13 Jan 2017
+
+Version 0.7:
+
+* Includes updated PrEP and condom use code.
+
+
+06 Jan 2017
+
+Version 0.6:
+
+* Introduced random seed
+
+
+18 Dec 2016
+
+Version 0.5:
+
+* Switched from tergm to tergmLite.
+
+
+27 Sept 2016
+
+Version 0.4:
+
+* Occurence of sex act is determined by probability that is the fraction of partners that have
+sex on a given day.
+* Implemented condom use and correspondent reduction of infectivity
+* ART initiation lag drawn from a distribution
+* Implemented ART adherence
+
+================
+0.3 - draw against probability of a sex act before running transmission.

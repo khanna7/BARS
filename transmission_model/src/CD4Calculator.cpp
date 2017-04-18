@@ -10,23 +10,10 @@
 
 namespace TransModel {
 
-// constants from Aditya's cd4-update.R file
-const float B1_REF = 23.53f;
-const float B2_AFRICAN = -0.76f;
-const float B4_CD4_REF = -1.49f;
-const float B5_AFRICAN = 0.34f;
-const float B6_AGE_1529 = 0.0f;
-const float B6_AGE_3039 = -0.1f;
-const float B6_AGE_4049 = -0.34f;
-const float B6_AGE_50 = -0.63f;
-
-const float B1_PLUS_B2 = B1_REF + B2_AFRICAN;
-const float B4_PLUS_B5 = B4_CD4_REF + B5_AFRICAN;
-
 CD4Calculator::CD4Calculator(float size_of_timestep, float cd4_recovery_time,
-		float cd4_at_infection_male, float per_day_cd4_recovery) : size_of_timestep_(size_of_timestep),
+		float cd4_at_infection_male, float per_day_cd4_recovery, BValues& b_values) : size_of_timestep_(size_of_timestep),
 				cd4_recovery_time_(cd4_recovery_time), cd4_at_infection_male_(cd4_at_infection_male),
-				per_day_cd4_recovery_(per_day_cd4_recovery){
+				per_day_cd4_recovery_(per_day_cd4_recovery), b_values_(b_values) {
 }
 
 CD4Calculator::~CD4Calculator() {
@@ -35,13 +22,13 @@ CD4Calculator::~CD4Calculator() {
 
 float CD4Calculator::getB6AgeValue(float age) {
 	if (age < 30) {
-		return B6_AGE_1529;
+		return b_values_.b6_age_15to29;
 	} else if (age < 40) {
-		return B6_AGE_3039;
+		return b_values_.b6_age_30to39;
 	} else if (age < 50) {
-		return B6_AGE_4049;
+		return b_values_.b6_age_40to49;
 	}
-	return B6_AGE_50;
+	return b_values_.b6_age_50ormore;
 }
 
 float CD4Calculator::calculateCD4(float age, const InfectionParameters& infection_params) {
@@ -54,8 +41,8 @@ float CD4Calculator::calculateCD4(float age, const InfectionParameters& infectio
 	} else {
 		// no anti-retroviral treatment
 		float b6_val = getB6AgeValue(age);
-		cd4 = std::pow(B1_PLUS_B2 + (infection_params.time_since_infection / 365.0 * size_of_timestep_) *
-				(B4_PLUS_B5 + b6_val), 2);
+		cd4 = std::pow((b_values_.b1_ref + b_values_.b2_african) + (infection_params.time_since_infection / 365.0 * size_of_timestep_) *
+				((b_values_.b4_cd4_ref + b_values_.b5_african) + b6_val), 2);
 	}
 
 	return cd4;

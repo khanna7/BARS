@@ -8,21 +8,34 @@
 #ifndef SRC_PERSON_H_
 #define SRC_PERSON_H_
 
-#include "RCpp.h"
+#include "Rcpp.h"
 #include "DiseaseParameters.h"
+#include "Diagnoser.h"
+#include "GeometricDistribution.h"
+#include "AdherenceCategory.h"
+#include "PrepParameters.h"
 
 namespace TransModel {
+
+class PersonCreator;
 
 class Person {
 
 private:
-	int id_, age_;
+	friend PersonCreator;
+
+	int id_, steady_role_, casual_role_;
+	float age_;
+	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
-	bool prep_;
+	PrepParameters prep_;
+	bool dead_, diagnosed_, testable_;
+	Diagnoser<GeometricDistribution> diagnoser_;
+	AdherenceData adherence_;
 
 public:
-	Person(int id, int age);
+	Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser<GeometricDistribution>& diagnoser);
 
 	virtual ~Person();
 
@@ -34,22 +47,40 @@ public:
 		return id_;
 	}
 
+	int steady_role() const {
+		return steady_role_;
+	}
+
+	int casual_role() const {
+		return casual_role_;
+	}
+
 	/**
 	 * Gets the age of this Person.
 	 */
-	int age() const {
+	float age() const {
 		return age_;
 	}
 
-	bool onPrep() const {
-		return prep_;
+	bool isOnPrep() const {
+		return prep_.status() == PrepStatus::ON;
+	}
+
+	const PrepStatus prepStatus() const {
+		return prep_.status();
 	}
 
 	const InfectionParameters& infectionParameters() const {
 		return infection_parameters_;
 	}
 
-	bool isYoung() const;
+	bool isCircumcised() const {
+		return circum_status_;
+	}
+
+	bool isOnART() const {
+		return infection_parameters_.art_status;
+	}
 
 	bool isInfected() const {
 		return infection_parameters_.infection_status;
@@ -63,24 +94,59 @@ public:
 		return infection_parameters_.time_since_infection;
 	}
 
+	const Diagnoser<GeometricDistribution> diagnoser() const {
+		return diagnoser_;
+	}
+
+	void setAdherence(AdherenceData data) {
+		adherence_ = data;
+	}
+
+	const AdherenceData adherence() const {
+		return adherence_;
+	}
+
 	void setViralLoad(float viral_load);
 
 	void setCD4Count(float cd4_count);
 
+	void setViralLoadARTSlope(float slope);
+
 	void setInfectivity(float infectivity);
 
-	void setAge(int age);
+	void setAge(float age);
 
 	/**
-	 * Infects this Person and sets whether or not they are on ART
-	 * and the duration of the infection.
+	 * Puts this Person on ART with the specified time stamp,
+	 * setting the art status to true.
 	 */
-	void infect(bool onART, float duration_of_infection);
+	void goOnART(float time_stamp);
 
 	/**
-	 * Updates age, etc. of person.
+	 * Takes this person off ART, setting the art status to false.
 	 */
-	void updateVitals(float size_of_timestep);
+	void goOffART();
+
+	/**
+	 * Takes this person off of PreP
+	 */
+	void goOffPrep();
+
+	/**
+	 * Puts this person on Prep
+	 */
+	void goOnPrep(double start_time, double end_time);
+
+	/**
+	 * Infects this Person and sets the duration of the infection,
+	 * and the time of infection.
+	 */
+	void infect(float duration_of_infection, float time);
+
+	/**
+	 * Updates age, etc. of person., to be called each iteration of the model.
+	 */
+	void step(float size_of_timestep);
 
 	/**
 	 * Checks if person is dead of old age. This doesn't kill
@@ -92,7 +158,31 @@ public:
 	 * Checks if person is dead of AIDS. This doesn't kill
 	 * the person, it just checks.
 	 */
-	bool deadOfAIDS();
+	bool deadOfInfection();
+
+	void setDead(bool isDead) {
+		dead_ = isDead;
+	}
+
+	bool isDead() const {
+		return dead_;
+	}
+
+	bool isDiagnosed() const {
+		return diagnosed_;
+	}
+
+	bool isTestable() const {
+		return testable_;
+	}
+
+	const PrepParameters prepParameters() const {
+		return prep_;
+	}
+
+	bool diagnose(double tick);
+
+	double timeUntilNextTest(double tick) const;
 
 };
 

@@ -13,7 +13,7 @@
 namespace TransModel {
 
 /**
- * Inclusive Range
+ * Range from [x, y)
  */
 template<typename T>
 class Range {
@@ -38,19 +38,20 @@ Range<T>::~Range() {
 
 template<typename T>
 bool Range<T>::within(T val) {
-	return val >= start_ && val <= end_;
+	return val >= start_ && val < end_;
 }
 
 class Stage {
 
 protected:
 	float baseline_infectivity_, multiplier_;
+	float vl_inc;
 
 private:
 	Range<float> range_;
 
 public:
-	Stage(float baseline_infectivity, float multiplier, const Range<float>& range);
+	Stage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
 	virtual ~Stage();
 
 	/**
@@ -58,34 +59,34 @@ public:
 	 * infection.
 	 */
 	bool in(float time_since_infection);
-	virtual float calculateInfectivity(const InfectionParameters& params, float sex_acts_per_timstep) = 0;
+	virtual float calculateInfectivity(const InfectionParameters& params) = 0;
 };
 
 class AcuteStage: public Stage {
 
 public:
-	AcuteStage(float baseline_infectivity, float multiplier, const Range<float>& range);
+	AcuteStage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
 	virtual ~AcuteStage();
 
-	virtual float calculateInfectivity(const InfectionParameters& params, float sex_acts_per_timstep);
+	virtual float calculateInfectivity(const InfectionParameters& params) override;
 };
 
 class ChronicStage: public Stage {
 
 public:
-	ChronicStage(float baseline_infectivity, const Range<float>& range);
+	ChronicStage(float baseline_infectivity, const Range<float>& range, float viral_load_increment);
 	virtual ~ChronicStage();
 
-	virtual float calculateInfectivity(const InfectionParameters& params, float sex_acts_per_timstep);
+	virtual float calculateInfectivity(const InfectionParameters& params) override;
 };
 
 class LateStage: public Stage {
 
 public:
-	LateStage(float baseline_infectivity, float multiplier, const Range<float>& range);
+	LateStage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
 	virtual ~LateStage();
 
-	virtual float calculateInfectivity(const InfectionParameters& params, float sex_acts_per_timstep);
+	virtual float calculateInfectivity(const InfectionParameters& params) override;
 };
 
 } /* namespace TransModel */

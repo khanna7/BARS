@@ -19,12 +19,15 @@ namespace TransModel {
 class TransmissionRunner {
 
 private:
-	float circumcision_multiplier_, prep_multiplier_;
+	float circumcision_multiplier_, prep_multiplier_, condom_multiplier_,
+	infective_insertive_multiplier_;
 	std::vector<float> dur_inf_by_age;
 
+
+
 public:
-	TransmissionRunner(float circumcision_multiplier, float prep_multiplier,
-			std::vector<float>& given_dur_inf_by_age);
+	TransmissionRunner(float circumcision_multiplier, float prep_multiplier, float condom_multiplier,
+			float infective_insertive_multiplier, std::vector<float>& given_dur_inf_by_age);
 	virtual ~TransmissionRunner();
 
 	/**
@@ -35,14 +38,20 @@ public:
 	 *
 	 * @param infector the infected person
 	 * @param infectee the uninfected partner
+	 * @param edge_type the type of edge (steady or casual)
 	 */
-	bool determineInfection(PersonPtr infector, PersonPtr infectee);
+	bool determineInfection(PersonPtr& infector, PersonPtr& infectee, bool condom_used, int edge_type);
 
 	/**
 	 * Sets the infection flag, time of infection etc on the specified person and
 	 * starts him or her on ART with some probability.
 	 */
-	void infect(PersonPtr infectee);
+	void infect(PersonPtr infectee, float time);
+
+	/**
+	 * Gets the expected duration of the infection given a Person's age.
+	 */
+	float durInfByAge(float age);
 
 
 };

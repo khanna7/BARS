@@ -16,13 +16,25 @@
 
 #include "Person.h"
 #include "Network.h"
-#include "Stats.h"
 #include "Stage.h"
 #include "TransmissionRunner.h"
 #include "CD4Calculator.h"
 #include "ViralLoadCalculator.h"
+#include "ViralLoadSlopeCalculator.h"
+#include "PersonCreator.h"
+#include "DayRangeCalculator.h"
+#include "ARTScheduler.h"
+#include "CondomUseAssigner.h"
+#include "RangeWithProbability.h"
 
 namespace TransModel {
+
+struct TransmissionParameters {
+	double prop_steady_sex_acts, prop_casual_sex_acts;
+};
+
+
+enum class CauseOfDeath { NONE, AGE, INFECTION, ASM};
 
 class Model {
 
@@ -32,22 +44,45 @@ private:
 	std::shared_ptr<TransmissionRunner> trans_runner;
 	CD4Calculator cd4_calculator;
 	ViralLoadCalculator viral_load_calculator;
-	std::vector<unsigned int> popsize;
-	unsigned int max_id;
+	ViralLoadSlopeCalculator viral_load_slope_calculator;
+	unsigned int current_pop_size, previous_pop_size;
 	std::map<float, std::shared_ptr<Stage>> stage_map;
-	Stats stats;
+	std::set<int> persons_to_log;
+	PersonCreator person_creator;
+	TransmissionParameters trans_params;
+	std::shared_ptr<DayRangeCalculator> art_lag_calculator;
+	std::shared_ptr<GeometricDistribution> cessation_generator;
+	CondomUseAssigner condom_assigner;
+	RangeWithProbability asm_runner;
 
 	void runTransmission(double timestamp);
-	bool dead(PersonPtr person, int max_survival);
-	void births(double time);
+	CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
+	void entries(double tick, float size_of_time_step);
 	void deactivateEdges(int id, double time);
-	void updateVitals(float size_of_time_step, int max_survival);
+	void updateVitals(double time, float size_of_time_step, int max_survival);
+	void updateThetaForm(const std::string& var_name);
+	void countOverlap();
+
+	bool hasSex(int type);
+	void schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep);
+
+	/**
+	 * Initializes PrEP cessation events for the initial set of persons.
+	 */
+	void initPrepCessation();
+
+	/**
+	 * Put prep with the specified probability.
+	 */
+	void updatePREPUse(double tick, double prob, PersonPtr person);
 
 public:
-	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var);
+	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);
 	virtual ~Model();
 
-	void run(const std::string& output_file);
+	void step();
+	void atEnd();
+	void saveRNetwork();
 };
 
 

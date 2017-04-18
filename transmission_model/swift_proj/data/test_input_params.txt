@@ -1,0 +1,6 @@
+global.random.seed=123,stop.at=1000,non.testers.prop=0.1
+global.random.seed=123,stop.at=1000,non.testers.prop=0.15
+global.random.seed=123,stop.at=1000,non.testers.prop=0.2
+global.random.seed=123,stop.at=1000,non.testers.prop=0.25
+global.random.seed=123,stop.at=1000,non.testers.prop=0.3
+global.random.seed=123,stop.at=1000,non.testers.prop=0.35
