@@ -388,10 +388,11 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	stats->currentCounts().size = net.vertexCount();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
 		PersonPtr p = *iter;
-		if (p->isInfected()) {
-			++stats->currentCounts().infected;
-		}
 		stats->personDataRecorder().initRecord(p, 0);
+		if (p->isInfected()) {
+			++stats->currentCounts().internal_infected;
+			stats->personDataRecorder().recordInfection(p, p->infectionParameters().time_of_infection, InfectionSource::INTERNAL);
+		}
 	}
 	stats->resetForNextTimeStep();
 
@@ -484,7 +485,9 @@ void Model::step() {
 	}
 	entries(t, size_of_timestep);
 	runTransmission(t);
-	updateVitals(t, size_of_timestep, max_survival);
+	vector<PersonPtr> uninfected;
+	updateVitals(t, size_of_timestep, max_survival, uninfected);
+	runExternalInfections(uninfected, t);
 	previous_pop_size = current_pop_size;
 	current_pop_size = net.vertexCount();
 
@@ -529,7 +532,7 @@ void Model::updatePREPUse(double tick, double prob, PersonPtr person) {
 	}
 }
 
-void Model::updateVitals(double t, float size_of_timestep, int max_age) {
+void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
 	map<double, ARTScheduler*> art_map;
@@ -537,6 +540,8 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 	double p = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
 	double k = Parameters::instance()->getDoubleParameter(PREP_USE_PROP);
 	double on_prep_prob = (p * k) / (1 - k);
+
+	uninfected.reserve(net.vertexCount());
 
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		PersonPtr person = (*iter);
@@ -587,9 +592,32 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age) {
 			// don't count dead uninfected persons
 			if (!person->isInfected()) {
 				++stats->currentCounts().uninfected;
+				uninfected.push_back(person);
 			}
 			++iter;
 		}
+	}
+}
+
+void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
+	double prob = uninfected.size() * Parameters::instance()->getDoubleParameter(EXTERNAL_INFECTION_RATE);
+	//std::cout << uninfected.size() << ", " << prob << std::endl;
+	if (Random::instance()->nextDouble() <= prob) {
+		Stats* stats = Stats::instance();
+		PersonPtr p = uninfected[(int)Random::instance()->createUniIntGenerator(0, uninfected.size() - 1).next()];
+		infectPerson(p, t);
+		++stats->currentCounts().external_infected;
+		stats->personDataRecorder().recordInfection(p, t, InfectionSource::EXTERNAL);
+	}
+}
+
+void Model::infectPerson(PersonPtr& person, double time_stamp) {
+	trans_runner->infect(person, time_stamp);
+
+	vector<EdgePtr<Person>> edges;
+	net.getEdges(person, edges);
+	for (EdgePtr<Person> ptr : edges) {
+		condom_assigner.initEdge(ptr);
 	}
 }
 
@@ -779,15 +807,9 @@ void Model::runTransmission(double time_stamp) {
 		// person gets multiple chances to become infected from them
 		// and so may appear more than once in the infecteds list
 		if (!person->isInfected()) {
-			trans_runner->infect(person, time_stamp);
-			++stats->currentCounts().infected;
-			stats->personDataRecorder().recordInfection(person, time_stamp);
-
-			vector<EdgePtr<Person>> edges;
-			net.getEdges(person, edges);
-			for (EdgePtr<Person> ptr : edges) {
-				condom_assigner.initEdge(ptr);
-			}
+			infectPerson(person, time_stamp);
+			++stats->currentCounts().internal_infected;
+			stats->personDataRecorder().recordInfection(person, time_stamp, InfectionSource::INTERNAL);
 		}
 	}
 }
