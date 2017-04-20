@@ -600,7 +600,11 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 }
 
 void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
-	double prob = uninfected.size() * Parameters::instance()->getDoubleParameter(EXTERNAL_INFECTION_RATE);
+	double min = Parameters::instance()->getDoubleParameter(EXTERNAL_INFECTION_RATE_MIN);
+	double max = Parameters::instance()->getDoubleParameter(EXTERNAL_INFECTION_RATE_MAX);
+	double val = Random::instance()->createUniDoubleGenerator(min, max).next();
+	// std::cout << val << std::endl;
+	double prob = uninfected.size() * val;
 	//std::cout << uninfected.size() << ", " << prob << std::endl;
 	if (Random::instance()->nextDouble() <= prob) {
 		Stats* stats = Stats::instance();

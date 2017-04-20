@@ -258,7 +258,8 @@
 # we mult. this value by the number of uninfected persons
 # to get a probability of an infection for that day
 # numerator here is 100 person years which we convert into days
-external.infections.per.person.day <- 0.8 / (100 * 365)
+external.infections.per.person.day.min <- 0.8 / (100 * 365)
+external.infections.per.person.day.max <- 1.6 / (100 * 365)
 
 
 
