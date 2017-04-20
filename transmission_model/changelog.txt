@@ -1,3 +1,15 @@
+20 April 2017
+
+Version 0.14:
+
+* Probability of random external infection drawn from min max range.
+
+18 April 2017
+
+Version 0.13:
+
+* Added random infections from external source.
+
 5 April 2017
 
 Version 0.12:

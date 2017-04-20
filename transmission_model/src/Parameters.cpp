@@ -182,6 +182,9 @@ const std::string SC_CASUAL_SOMETIMES_USE_CONDOMS_PROB = "sc.casual.sometimes.us
 const std::string SC_CASUAL_USUALLY_USE_CONDOMS_PROB = "sc.casual.usually.use.condoms.prob";
 const std::string SC_CASUAL_ALWAYS_USE_CONDOMS_PROB = "sc.casual.always.use.condoms.prob";
 
+const std::string EXTERNAL_INFECTION_RATE_MIN = "external.infections.per.person.day.min";
+const std::string EXTERNAL_INFECTION_RATE_MAX = "external.infections.per.person.day.max";
+
 
 Parameters* Parameters::instance_ = 0;
 

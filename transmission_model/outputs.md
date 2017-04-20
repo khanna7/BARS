@@ -29,6 +29,7 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * old_age_deaths: the number of persons who died from old age (person's age > max age) at that timestep
 * infection_deaths: the number of persons who died from infection at that timestep
 * infected_via_transmission: the number of persons infected via transmission at that timestep
+* infected_externally: the number of persons infected via "external infection" at that timestep
 * infected_at_entry: the number of persons who were infected when entering the model
 * uninfected: the number of uninfected persons at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
 * steady_edge_count: the number of edges in the steady partner network in the model at the end of the timestep
@@ -146,6 +147,10 @@ Person data recording collects the following attributes for each person in the m
   * 3: None of the above. Person is either not infected, or not yet diagnosed, and so ART adherence doesn't apply.
 * adhered_interval_count: the number of intervals during which a partially adherent person is on ART.
 * non_adhered_interval_count: the number of intervals during which a partially adherent person is not on ART.
+* infection_source: the "source" of the infection
+  * 0 via internal edge transmission
+  * 1 via the external infection mechanism
+  * 2 N/A person is not infected
 
 ### Testing Events
 Testing events are recorded in the file defined by the *testing.events.file* property. Each time a 

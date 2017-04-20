@@ -59,7 +59,14 @@ private:
 	CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
 	void entries(double tick, float size_of_time_step);
 	void deactivateEdges(int id, double time);
-	void updateVitals(double time, float size_of_time_step, int max_survival);
+
+	/**
+	 * @param uninfected empty vector into which the uninfected are placed
+	 */
+	void updateVitals(double time, float size_of_time_step, int max_survival,std::vector<PersonPtr>& uninfected);
+	void runExternalInfections(std::vector<PersonPtr>& uninfected, double time);
+
+	void infectPerson(PersonPtr& person, double time_stamp);
 	void updateThetaForm(const std::string& var_name);
 	void countOverlap();
 
