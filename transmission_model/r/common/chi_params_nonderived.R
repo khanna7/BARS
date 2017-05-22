@@ -261,7 +261,10 @@
 external.infections.per.person.day.min <- 0.8 / (100 * 365)
 external.infections.per.person.day.max <- 1.6 / (100 * 365)
 
-
-
-
+# factor used to calculate age related external inf probability --
+# [19, 20) year old will be "factor" time more likely to get externally
+# infected than [18,19) yearolds. Similarly, (20,21) year olds will 
+# be factor times more likely to get infected than the [19, 20) year olds, 
+# and factor^2 times more likely to get infected than the [18, 19) so on.
+external.infections.age.factor = 1.2
 

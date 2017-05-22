@@ -4,6 +4,7 @@
  *  Created on: Oct 8, 2015
  *      Author: nick
  */
+#include <cmath>
 #include "boost/algorithm/string.hpp"
 #include "boost/filesystem.hpp"
 
@@ -607,8 +608,22 @@ void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
 	double prob = uninfected.size() * val;
 	//std::cout << uninfected.size() << ", " << prob << std::endl;
 	if (Random::instance()->nextDouble() <= prob) {
+		float min_age = Parameters::instance()->getFloatParameter(MIN_AGE);
+		float factor = Parameters::instance()->getFloatParameter(EXTERNAL_INFECTION_AGE_FACTOR);
+
+		std::map<float, PersonPtr> prob_map;
+		float sum = 0;
+		for (auto p : uninfected) {
+			int exp = ((int)floor(p->age() - min_age));
+			sum += (float)pow(factor, exp);
+			prob_map.emplace(sum, p);
+		}
+
+		float draw = (float)Random::instance()->createUniDoubleGenerator(0, sum).next();
+		auto iter = prob_map.lower_bound(draw);
+
 		Stats* stats = Stats::instance();
-		PersonPtr p = uninfected[(int)Random::instance()->createUniIntGenerator(0, uninfected.size() - 1).next()];
+		PersonPtr p = iter->second;
 		infectPerson(p, t);
 		++stats->currentCounts().external_infected;
 		stats->personDataRecorder().recordInfection(p, t, InfectionSource::EXTERNAL);

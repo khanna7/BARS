@@ -184,6 +184,7 @@ const std::string SC_CASUAL_ALWAYS_USE_CONDOMS_PROB = "sc.casual.always.use.cond
 
 const std::string EXTERNAL_INFECTION_RATE_MIN = "external.infections.per.person.day.min";
 const std::string EXTERNAL_INFECTION_RATE_MAX = "external.infections.per.person.day.max";
+const std::string EXTERNAL_INFECTION_AGE_FACTOR = "external.infections.age.factor";
 
 
 Parameters* Parameters::instance_ = 0;

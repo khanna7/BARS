@@ -172,6 +172,7 @@ extern const std::string SC_CASUAL_ALWAYS_USE_CONDOMS_PROB;
 
 extern const std::string EXTERNAL_INFECTION_RATE_MIN;
 extern const std::string EXTERNAL_INFECTION_RATE_MAX;
+extern const std::string EXTERNAL_INFECTION_AGE_FACTOR;
 
 /**
  * Parameters singleton that contains the model properties.
