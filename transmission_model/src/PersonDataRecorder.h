@@ -16,6 +16,7 @@
 
 namespace TransModel {
 
+enum class InfectionSource {INTERNAL, EXTERNAL, NONE};
 
 struct PersonData {
 
@@ -31,6 +32,7 @@ struct PersonData {
 	int adherence_category;
 	unsigned int adhered_interval_count, non_adhered_interval_count;
 	double init_art_lag;
+	unsigned int infection_source;
 
 	PersonData(PersonPtr p, double time_of_birth);
 	void writeTo(FileOutput& out);
@@ -54,7 +56,7 @@ public:
 	void recordARTStop(PersonPtr& p, double ts);
 	void recordPREPStart(int id, double ts);
 	void recordPREPStop(int id, double ts, PrepStatus status);
-	void recordInfection(PersonPtr& p, double ts);
+	void recordInfection(PersonPtr& p, double ts, InfectionSource source);
 	void recordDeath(PersonPtr& p, double ts);
 	void recordInitialARTLag(PersonPtr& p, double lag);
 	void incrementNonAdheredIntervals(PersonPtr& p);
