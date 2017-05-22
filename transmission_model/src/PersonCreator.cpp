@@ -93,11 +93,12 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 
 		person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
 	} else {
+		// TODO set PreP status
 		//  the prep.status attribute only exists in uninfected persons in the R model
-		PrepParameters prep(as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF, as<double>(val["time.of.prep.initiation"]),
+		//PrepParameters prep(as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF, as<double>(val["time.of.prep.initiation"]),
 				// add 1 so they spend at least a day on prep and .1 so occurs after main loop
-				as<double>(val["time.of.prep.cessation"]) + 1.1);
-		person->prep_ = prep;
+		//		as<double>(val["time.of.prep.cessation"]) + 1.1);
+		//person->prep_ = prep;
 	}
 
 	return person;

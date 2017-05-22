@@ -39,7 +39,7 @@
    
    #####################
    ## PrEP
-   prep.daily.stop.prob <- 1/prep.mean.days.usage
+
    #####################
    ## Transmission Parameters
    ## relationship between viral load and chronic infectivity (hughes et al.)

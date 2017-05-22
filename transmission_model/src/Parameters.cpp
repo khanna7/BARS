@@ -94,8 +94,7 @@ const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
 const std::string PREG_MULT = "preg.mult";
 const std::string PREG_SUSC_MULT = "preg.susc.mult";
 const std::string PREP_TRANS_REDUCTION = "prep.transm.red";
-const std::string PREP_USE_PROP = "prep.bl.use.prop";
-const std::string PREP_DAILY_STOP_PROB = "prep.daily.stop.prob";
+
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
 const std::string TIME_INFECTION_TO_LATE_STAGE = "time.infection.to.late.stage";

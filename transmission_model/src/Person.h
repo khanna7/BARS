@@ -13,7 +13,7 @@
 #include "Diagnoser.h"
 #include "GeometricDistribution.h"
 #include "AdherenceCategory.h"
-#include "PrepParameters.h"
+#include "PrepStatus.h"
 
 namespace TransModel {
 
@@ -29,10 +29,11 @@ private:
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
-	PrepParameters prep_;
 	bool dead_, diagnosed_, testable_;
 	Diagnoser<GeometricDistribution> diagnoser_;
 	AdherenceData adherence_;
+	// TODO
+	// PrepStatus prep_status;
 
 public:
 	Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser<GeometricDistribution>& diagnoser);
@@ -63,11 +64,8 @@ public:
 	}
 
 	bool isOnPrep() const {
-		return prep_.status() == PrepStatus::ON;
-	}
-
-	const PrepStatus prepStatus() const {
-		return prep_.status();
+		// TODO update
+		return true;
 	}
 
 	const InfectionParameters& infectionParameters() const {
@@ -128,16 +126,6 @@ public:
 	void goOffART();
 
 	/**
-	 * Takes this person off of PreP
-	 */
-	void goOffPrep();
-
-	/**
-	 * Puts this person on Prep
-	 */
-	void goOnPrep(double start_time, double end_time);
-
-	/**
 	 * Infects this Person and sets the duration of the infection,
 	 * and the time of infection.
 	 */
@@ -174,10 +162,6 @@ public:
 
 	bool isTestable() const {
 		return testable_;
-	}
-
-	const PrepParameters prepParameters() const {
-		return prep_;
 	}
 
 	bool diagnose(double tick);

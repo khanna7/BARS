@@ -24,7 +24,6 @@
 #include "StatsBuilder.h"
 #include "file_utils.h"
 #include "utils.h"
-#include "PrepCessationEvent.h"
 #include "art_functions.h"
 #include "CondomUseAssigner.h"
 
@@ -80,9 +79,9 @@ struct PersonToVAL {
 		vertex["role_casual"] = p->casual_role();
 		vertex["role_main"] = p->steady_role();
 
+		// TODO update with PreP Data
 		if (p->isOnPrep()) {
-			vertex["time.of.prep.cessation"] = p->prepParameters().stopTime();
-			vertex["time.of.prep.initiation"] = p->prepParameters().startTime();
+
 		}
 
 		if (p->isInfected()) {
@@ -287,12 +286,6 @@ std::shared_ptr<DayRangeCalculator> create_art_lag_calc() {
 	return creator.createCalculator();
 }
 
-std::shared_ptr<GeometricDistribution> create_cessation_generator() {
-	double prob = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
-	// 1.1 so at least a day on prep, and .1 so after step loop.
-	return std::make_shared<GeometricDistribution>(prob, 1.1);
-}
-
 void add_condom_use_prob(CondomUseAssignerFactory& factory, PartnershipType ptype, int network_type,
 		const std::string& category_param, const std::string& use_param) {
 	double cat_prob = Parameters::instance()->getDoubleParameter(category_param);
@@ -365,7 +358,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DAILY_TESTING_PROB),
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
-				create_art_lag_calc() }, cessation_generator { create_cessation_generator() }, condom_assigner {
+				create_art_lag_calc() }, condom_assigner {
 				create_condom_use_assigner() }, asm_runner { create_ASM_runner() } {
 
 	// get initial stats
@@ -404,23 +397,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
 	runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::atEnd)));
 
-	initPrepCessation();
-
 	//write_edges(net, "./edges_at_1.csv");
-}
-
-void Model::initPrepCessation() {
-	ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
-	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
-		PersonPtr person = *iter;
-		if (person->isOnPrep()) {
-			double stop_time = person->prepParameters().stopTime();
-			runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
-			double start_time = person->prepParameters().startTime();
-			Stats::instance()->recordPREPEvent(start_time, person->id(), static_cast<int>(PrepStatus::ON));
-			Stats::instance()->personDataRecorder().recordPREPStart(person->id(), start_time);
-		}
-	}
 }
 
 void Model::atEnd() {
@@ -521,26 +498,10 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
 	scheduler->addPerson(person);
 }
 
-// ASSUMES PERSON IS UNINFECTED
-void Model::updatePREPUse(double tick, double prob, PersonPtr person) {
-	if (!person->isOnPrep() && Random::instance()->nextDouble() <= prob) {
-		ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
-		double stop_time = tick + cessation_generator->next();
-		person->goOnPrep(tick, stop_time);
-		Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
-		Stats::instance()->personDataRecorder().recordPREPStart(person->id(), tick);
-		runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
-	}
-}
-
 void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
 	map<double, ARTScheduler*> art_map;
-
-	double p = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
-	double k = Parameters::instance()->getDoubleParameter(PREP_USE_PROP);
-	double on_prep_prob = (p * k) / (1 - k);
 
 	uninfected.reserve(net.vertexCount());
 
@@ -563,8 +524,6 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			float infectivity = stage_map.upper_bound(person->timeSinceInfection())->second->calculateInfectivity(
 					person->infectionParameters());
 			person->setInfectivity(infectivity);
-		} else {
-			updatePREPUse(t, on_prep_prob, person);
 		}
 
 		if (persons_to_log.find(person->id()) != persons_to_log.end()) {

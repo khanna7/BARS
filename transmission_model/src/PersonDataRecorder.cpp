@@ -17,8 +17,9 @@ const std::string PersonData::header("id,time_of_entry,time_of_death,infection_s
 PersonData::PersonData(PersonPtr p, double time_of_birth) :
 		id_(p->id()), birth_ts(time_of_birth), death_ts(-1), infection_ts(
 				p->isInfected() ? p->infectionParameters().time_of_infection : -1), art_init_ts(
-				p->isOnART() ? p->infectionParameters().time_of_art_init : -1), art_stop_ts(-1), prep_init_ts(
-				p->isOnPrep() ? -1 : -1), prep_stop_ts(-1), prep_status(p->prepStatus()), infection_status(
+				p->isOnART() ? p->infectionParameters().time_of_art_init : -1), art_stop_ts(-1),
+				// TODO PreP recording
+				prep_init_ts(-1), prep_stop_ts(-1), prep_status(PrepStatus::OFF), infection_status(
 				p->isInfected()), art_status(p->isOnART()), diagnosed(p->isDiagnosed()), number_of_tests(
 				p->diagnoser().testCount()), time_since_last_test { -1 }, adherence_category(static_cast<int>(AdherenceCategory::NA)),
 				adhered_interval_count(0), non_adhered_interval_count(0), init_art_lag(-1), infection_source(static_cast<unsigned int>(InfectionSource::NONE)) {
@@ -78,7 +79,8 @@ void PersonDataRecorder::finalize(const PersonPtr& p, double ts) {
 	double lt =  p->diagnoser().lastTestAt();
 	pd.time_since_last_test = lt == -1.0 ? -1.0 : ts - lt;
 	pd.diagnosed = p->isDiagnosed();
-	pd.prep_status = p->prepStatus();
+	// TODO prep status
+	//pd.prep_status = p->prepStatus();
 	pd.adherence_category = static_cast<int>(p->adherence().category);
 }
 
