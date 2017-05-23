@@ -140,11 +140,17 @@ Person data recording collects the following attributes for each person in the m
   * 0: undiagnosed
   * 1: diagnosed
 * init_art_lag: the time lag between being diagnosed and going on ART. If never on ART, then -1. If diagnosis status is 1, and this is -999999 then the person is in the never going on ART.
-* adherence_category: the person's adherence category.
-  * 0: Never going on ART
-  * 1: Always on ART
-  * 2: ART adherence is re-evalatuted at some parameterized interval.
-  * 3: None of the above. Person is either not infected, or not yet diagnosed, and so ART adherence doesn't apply.
+* prep_adherence_category: the person's PrEP adherence category.
+  * 0: Never
+  * 1: Always (almost)
+  * 2: Partial Plus
+  * 3: Partial Minus
+* art_adherence_category: the person's adherence category.
+  * 0: Never
+  * 1: Always (almost)
+  * 2: Partial Plus
+  * 3: Partial Minus
+  * 4: None of the above. Person is either not infected, or not yet diagnosed, and so ART adherence doesn't apply.
 * adhered_interval_count: the number of intervals during which a partially adherent person is on ART.
 * non_adhered_interval_count: the number of intervals during which a partially adherent person is not on ART.
 * infection_source: the "source" of the infection
