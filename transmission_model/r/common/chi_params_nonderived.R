@@ -96,16 +96,16 @@
    
    ## ART adherence
    partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained
-   prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   prop.part.plus.adherent <- 0.28
-   prop.part.neg.adherent <- 0.30
+   art.prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+   art.prop.part.plus.adherent <- 0.28
+   art.prop.part.neg.adherent <- 0.30
 
-   prop.always.adherent <- 1 - (prop.never.adherent+prop.part.plus.adherent+prop.part.neg.adherent)
+   art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
    
- 	always.adherent.probability <- 0.95
-	never.adherent.probability <- 0.05
-	partial.pos.adherent.probability <- 0.66
-	partial.neg.adherent.probability <- 0.33
+ 	art.always.adherent.probability <- 0.95
+	art.never.adherent.probability <- 0.05
+	art.partial.pos.adherent.probability <- 0.66
+	art.partial.neg.adherent.probability <- 0.33
    
    #####################
    ## Transmission Parameters
@@ -164,9 +164,21 @@
    
     #####################
     ## PrEP
-    prep.bl.use.prop <- 10/100
-    prep.transm.red <- 96/100
-    prep.mean.days.usage <- 180
+
+# days
+prep.decision.frequency <- 7
+
+prep.prop.never.adherent <- 0.211
+prep.prop.always.adherent <- 0.619
+prep.prop.part.plus.adherent <- 0.10
+prep.prop.part.neg.adherent <- 0.07
+
+prep.always.adherent.probability <- 0.95
+prep.never.adherent.probability <- 0.0
+prep.partial.pos.adherent.probability <- 0.81 
+prep.partial.neg.adherent.probability <- 0.31
+    
+prep.transm.red <- 96/100
 
 #####################
     ## Socioeconomic status

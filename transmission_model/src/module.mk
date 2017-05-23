@@ -23,9 +23,7 @@ CPP_SOURCE = Person.cpp \
 	DayRangeCalculator.cpp \
 	RangeWithProbability.cpp \
 	AdherenceCheckScheduler.cpp \
-	art_functions.cpp \
-	PrepParameters.cpp \
-	PrepCessationEvent.cpp \
+	adherence_functions.cpp \
 	CondomUseAssigner.cpp \
 	debug_utils.cpp
 	

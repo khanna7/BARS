@@ -51,7 +51,6 @@ private:
 	PersonCreator person_creator;
 	TransmissionParameters trans_params;
 	std::shared_ptr<DayRangeCalculator> art_lag_calculator;
-	std::shared_ptr<GeometricDistribution> cessation_generator;
 	CondomUseAssigner condom_assigner;
 	RangeWithProbability asm_runner;
 
@@ -73,15 +72,6 @@ private:
 	bool hasSex(int type);
 	void schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep);
 
-	/**
-	 * Initializes PrEP cessation events for the initial set of persons.
-	 */
-	void initPrepCessation();
-
-	/**
-	 * Put prep with the specified probability.
-	 */
-	void updatePREPUse(double tick, double prob, PersonPtr person);
 
 public:
 	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);

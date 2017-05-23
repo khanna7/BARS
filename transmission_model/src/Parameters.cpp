@@ -94,8 +94,7 @@ const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
 const std::string PREG_MULT = "preg.mult";
 const std::string PREG_SUSC_MULT = "preg.susc.mult";
 const std::string PREP_TRANS_REDUCTION = "prep.transm.red";
-const std::string PREP_USE_PROP = "prep.bl.use.prop";
-const std::string PREP_DAILY_STOP_PROB = "prep.daily.stop.prob";
+
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
 const std::string TIME_INFECTION_TO_LATE_STAGE = "time.infection.to.late.stage";
@@ -123,16 +122,26 @@ const std::string ART_LAG_PREFIX = "art.init.lag";
 const std::string ASM_PREFIX = "asm.";
 
 const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
-const std::string PROP_NEVER_ADHERENT = "prop.never.adherent";
-const std::string PROP_ALWAYS_ADHERENT = "prop.always.adherent";
-const std::string PROP_PARTIAL_POS_ADHERENT = "prop.part.plus.adherent";
-const std::string PROP_PARTIAL_NEG_ADHERENT = "prop.part.neg.adherent";
+const std::string ART_PROP_NEVER_ADHERENT = "art.prop.never.adherent";
+const std::string ART_PROP_ALWAYS_ADHERENT = "art.prop.always.adherent";
+const std::string ART_PROP_PARTIAL_POS_ADHERENT = "art.prop.part.plus.adherent";
+const std::string ART_PROP_PARTIAL_NEG_ADHERENT = "art.prop.part.neg.adherent";
 
-const std::string ALWAYS_ADHERENT_PROB = "always.adherent.probability";
-const std::string NEVER_ADHERENT_PROB = "never.adherent.probability";
-const std::string PARTIAL_POS_ADHERENT_PROB = "partial.pos.adherent.probability";
-const std::string PARTIAL_NEG_ADHERENT_PROB = "partial.neg.adherent.probability";
+const std::string ART_ALWAYS_ADHERENT_PROB = "art.always.adherent.probability";
+const std::string ART_NEVER_ADHERENT_PROB = "art.never.adherent.probability";
+const std::string ART_PARTIAL_POS_ADHERENT_PROB = "art.partial.pos.adherent.probability";
+const std::string ART_PARTIAL_NEG_ADHERENT_PROB = "art.partial.neg.adherent.probability";
 
+const std::string PREP_DECISION_FREQUENCY = "prep.decision.frequency";
+const std::string PREP_PROP_NEVER_ADHERENT = "prep.prop.never.adherent";
+const std::string PREP_PROP_ALWAYS_ADHERENT = "prep.prop.always.adherent";
+const std::string PREP_PROP_PARTIAL_POS_ADHERENT = "prep.prop.part.plus.adherent";
+const std::string PREP_PROP_PARTIAL_NEG_ADHERENT = "prep.prop.part.neg.adherent";
+
+const std::string PREP_ALWAYS_ADHERENT_PROB = "prep.always.adherent.probability";
+const std::string PREP_NEVER_ADHERENT_PROB = "prep.never.adherent.probability";
+const std::string PREP_PARTIAL_POS_ADHERENT_PROB = "prep.partial.pos.adherent.probability";
+const std::string PREP_PARTIAL_NEG_ADHERENT_PROB = "prep.partial.neg.adherent.probability";
 
 const std::string SD_STEADY_NEVER_USE_CONDOMS = "sd.steady.never.use.condoms";
 const std::string SD_STEADY_RARELY_USE_CONDOMS = "sd.steady.rarely.use.condoms";

@@ -14,8 +14,9 @@ namespace TransModel {
 
 Person::Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser<GeometricDistribution>& diagnoser) :
 		id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age), circum_status_(circum_status),
-		infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false), testable_(false),
-		diagnoser_(diagnoser), adherence_{0, AdherenceCategory::NA} {
+		infection_parameters_(), infectivity_(0), dead_(false), diagnosed_(false), testable_(false),
+		diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, prep_adherence_{0, AdherenceCategory::NA},
+		prep_status_{PrepStatus::OFF}, prep_on_at{-1} {
 }
 
 //Person::Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth) : net(network), id_(id) {
@@ -68,14 +69,18 @@ void Person::goOnART(float time_stamp) {
 	infection_parameters_.vl_at_art_init = infection_parameters_.viral_load;
 }
 
-
-void Person::goOffPrep() {
-	prep_.off();
+void Person::goOnPrep(double timestamp) {
+	prep_status_ = PrepStatus::ON;
+	prep_on_at = timestamp;
 }
 
-void Person::goOnPrep(double start_time, double stop_time) {
-	prep_.on(start_time, stop_time);
+void Person::goOffPrep(PrepStatus off_status) {
+	if (off_status == PrepStatus::ON)
+		throw std::invalid_argument("goOffPrep -- status must be an off status");
+
+	prep_status_ = off_status;
 }
+
 
 void Person::step(float size_of_timestep) {
 	age_ += size_of_timestep / 365;
@@ -102,10 +107,10 @@ bool Person::diagnose(double tick) {
 	diagnosed_ = result == Result::POSITIVE;
 	if (result != Result::NO_TEST) {
 		Stats::instance()->recordTestingEvent(tick, id_, diagnosed_);
-		if (diagnosed_ && prep_.status() == PrepStatus::ON) {
-			prep_.offInfected();
+		if (diagnosed_ && prep_status_ == PrepStatus::ON) {
+			prep_status_ = PrepStatus::OFF_INFECTED;
 			Stats::instance()->recordPREPEvent(tick, id(), static_cast<int>(PrepStatus::OFF_INFECTED));
-			Stats::instance()->personDataRecorder().recordPREPStop(id(), tick, PrepStatus::OFF_INFECTED);
+			Stats::instance()->personDataRecorder().recordPREPStop(this, tick, PrepStatus::OFF_INFECTED);
 		}
 	}
 	return diagnosed_;

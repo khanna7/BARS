@@ -35,8 +35,6 @@ extern const std::string COUNT_OVERLAPS;
 extern const std::string EVENT_FILE;
 extern const std::string EVENT_FILE_BUFFER_SIZE;
 
-//extern const std::string PREP_MULT;
-
 // generated from parameters.R
 extern const std::string ACUTE_LENGTH_MIN;
 extern const std::string ACUTE_LENGTH_MAX;
@@ -83,8 +81,6 @@ extern const std::string PER_DAY_CD4_RECOVERY;
 extern const std::string PREG_MULT;
 extern const std::string PREG_SUSC_MULT;
 extern const std::string PREP_TRANS_REDUCTION;
-extern const std::string PREP_USE_PROP;
-extern const std::string PREP_DAILY_STOP_PROB;
 extern const std::string SET_POINT_VIRAL_LOAD;
 extern const std::string SIZE_OF_TIMESTEP;
 extern const std::string TIME_INFECTION_TO_LATE_STAGE;
@@ -112,15 +108,26 @@ extern const std::string ART_LAG_PREFIX;
 extern const std::string ASM_PREFIX;
 
 extern const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH;
-extern const std::string PROP_NEVER_ADHERENT;
-extern const std::string PROP_ALWAYS_ADHERENT;
-extern const std::string PROP_PARTIAL_POS_ADHERENT;
-extern const std::string PROP_PARTIAL_NEG_ADHERENT;
+extern const std::string ART_PROP_NEVER_ADHERENT;
+extern const std::string ART_PROP_ALWAYS_ADHERENT;
+extern const std::string ART_PROP_PARTIAL_POS_ADHERENT;
+extern const std::string ART_PROP_PARTIAL_NEG_ADHERENT;
 
-extern const std::string ALWAYS_ADHERENT_PROB;
-extern const std::string NEVER_ADHERENT_PROB;
-extern const std::string PARTIAL_POS_ADHERENT_PROB;
-extern const std::string PARTIAL_NEG_ADHERENT_PROB;
+extern const std::string ART_ALWAYS_ADHERENT_PROB;
+extern const std::string ART_NEVER_ADHERENT_PROB;
+extern const std::string ART_PARTIAL_POS_ADHERENT_PROB;
+extern const std::string ART_PARTIAL_NEG_ADHERENT_PROB;
+
+extern const std::string PREP_DECISION_FREQUENCY;
+extern const std::string PREP_PROP_NEVER_ADHERENT;
+extern const std::string PREP_PROP_ALWAYS_ADHERENT;
+extern const std::string PREP_PROP_PARTIAL_POS_ADHERENT;
+extern const std::string PREP_PROP_PARTIAL_NEG_ADHERENT;
+
+extern const std::string PREP_ALWAYS_ADHERENT_PROB;
+extern const std::string PREP_NEVER_ADHERENT_PROB;
+extern const std::string PREP_PARTIAL_POS_ADHERENT_PROB;
+extern const std::string PREP_PARTIAL_NEG_ADHERENT_PROB;
 
 extern const std::string SD_STEADY_NEVER_USE_CONDOMS;
 extern const std::string SD_STEADY_RARELY_USE_CONDOMS;

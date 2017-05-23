@@ -13,7 +13,7 @@
 #include "Diagnoser.h"
 #include "GeometricDistribution.h"
 #include "AdherenceCategory.h"
-#include "PrepParameters.h"
+#include "PrepStatus.h"
 
 namespace TransModel {
 
@@ -29,13 +29,15 @@ private:
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
-	PrepParameters prep_;
 	bool dead_, diagnosed_, testable_;
 	Diagnoser<GeometricDistribution> diagnoser_;
-	AdherenceData adherence_;
+	AdherenceData art_adherence_, prep_adherence_;
+	PrepStatus prep_status_;
+	double prep_on_at;
 
 public:
-	Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser<GeometricDistribution>& diagnoser);
+	Person(int id, float age, bool circum_status, int steady_role, int casual_role,
+			Diagnoser<GeometricDistribution>& diagnoser);
 
 	virtual ~Person();
 
@@ -63,11 +65,11 @@ public:
 	}
 
 	bool isOnPrep() const {
-		return prep_.status() == PrepStatus::ON;
+		return prep_status_ == PrepStatus::ON;
 	}
 
-	const PrepStatus prepStatus() const {
-		return prep_.status();
+	double prepStart() const {
+		return prep_on_at;
 	}
 
 	const InfectionParameters& infectionParameters() const {
@@ -98,14 +100,25 @@ public:
 		return diagnoser_;
 	}
 
-	void setAdherence(AdherenceData data) {
-		adherence_ = data;
+	void setArtAdherence(AdherenceData data) {
+		art_adherence_ = data;
 	}
 
-	const AdherenceData adherence() const {
-		return adherence_;
+	const AdherenceData artAdherence() const {
+		return art_adherence_;
 	}
 
+	void setPrepAdherence(AdherenceData data) {
+		prep_adherence_ = data;
+	}
+
+	const AdherenceData prepAdherence() const {
+		return prep_adherence_;
+	}
+
+	PrepStatus prepStatus() const {
+		return prep_status_;
+	}
 	void setViralLoad(float viral_load);
 
 	void setCD4Count(float cd4_count);
@@ -115,6 +128,10 @@ public:
 	void setInfectivity(float infectivity);
 
 	void setAge(float age);
+
+	void goOnPrep(double timestamp);
+
+	void goOffPrep(PrepStatus off_status);
 
 	/**
 	 * Puts this Person on ART with the specified time stamp,
@@ -126,16 +143,6 @@ public:
 	 * Takes this person off ART, setting the art status to false.
 	 */
 	void goOffART();
-
-	/**
-	 * Takes this person off of PreP
-	 */
-	void goOffPrep();
-
-	/**
-	 * Puts this person on Prep
-	 */
-	void goOnPrep(double start_time, double end_time);
 
 	/**
 	 * Infects this Person and sets the duration of the infection,
@@ -174,10 +181,6 @@ public:
 
 	bool isTestable() const {
 		return testable_;
-	}
-
-	const PrepParameters prepParameters() const {
-		return prep_;
 	}
 
 	bool diagnose(double tick);

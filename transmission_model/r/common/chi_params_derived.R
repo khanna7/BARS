@@ -33,13 +33,10 @@
    cd4.recovery.time <- 3*365/size.of.timestep ## CD4 recovery for 3 years
    ## parameter for viral decline (add)
    ## ART cessation parameters (what to consider)
-   
-   ## ART Adherence
-   prop.partially.adherent <- 1 - (prop.never.adherent+prop.always.adherent) 
-   
+    
    #####################
    ## PrEP
-   prep.daily.stop.prob <- 1/prep.mean.days.usage
+
    #####################
    ## Transmission Parameters
    ## relationship between viral load and chronic infectivity (hughes et al.)
