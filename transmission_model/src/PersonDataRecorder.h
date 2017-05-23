@@ -29,7 +29,7 @@ struct PersonData {
 	bool infection_status, art_status, diagnosed;
 	unsigned int number_of_tests;
 	double time_since_last_test;
-	int adherence_category;
+	int art_adherence_category, prep_adherence_category;
 	unsigned int adhered_interval_count, non_adhered_interval_count;
 	double init_art_lag;
 	unsigned int infection_source;
@@ -52,15 +52,15 @@ public:
 	virtual ~PersonDataRecorder();
 
 	void initRecord(PersonPtr& person, double time_of_entry);
-	void recordARTStart(PersonPtr& p, double ts);
-	void recordARTStop(PersonPtr& p, double ts);
-	void recordPREPStart(int id, double ts);
-	void recordPREPStop(int id, double ts, PrepStatus status);
-	void recordInfection(PersonPtr& p, double ts, InfectionSource source);
-	void recordDeath(PersonPtr& p, double ts);
-	void recordInitialARTLag(PersonPtr& p, double lag);
-	void incrementNonAdheredIntervals(PersonPtr& p);
-	void incrementAdheredIntervals(PersonPtr& p);
+	void recordARTStart(const PersonPtr& p, double ts);
+	void recordARTStop(const PersonPtr& p, double ts);
+	void recordPREPStart(const PersonPtr& p, double ts);
+	void recordPREPStop(const Person* p, double ts, PrepStatus status);
+	void recordInfection(const PersonPtr& p, double ts, InfectionSource source);
+	void recordDeath(const PersonPtr& p, double ts);
+	void recordInitialARTLag(const PersonPtr& p, double lag);
+	void incrementNonAdheredIntervals(const PersonPtr& p);
+	void incrementAdheredIntervals(const PersonPtr& p);
 	void finalize(const PersonPtr& p, double ts);
 
 };

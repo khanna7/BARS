@@ -4,7 +4,9 @@
  *  Created on: Oct 8, 2015
  *      Author: nick
  */
+
 #include <cmath>
+
 #include "boost/algorithm/string.hpp"
 #include "boost/filesystem.hpp"
 
@@ -24,8 +26,8 @@
 #include "StatsBuilder.h"
 #include "file_utils.h"
 #include "utils.h"
-#include "art_functions.h"
 #include "CondomUseAssigner.h"
+#include "adherence_functions.h"
 
 #include "debug_utils.h"
 
@@ -79,10 +81,7 @@ struct PersonToVAL {
 		vertex["role_casual"] = p->casual_role();
 		vertex["role_main"] = p->steady_role();
 
-		// TODO update with PreP Data
-		if (p->isOnPrep()) {
-
-		}
+		vertex["prep.status"] = static_cast<int>(p->prepStatus());
 
 		if (p->isInfected()) {
 			vertex["infectivity"] = p->infectivity();
@@ -103,7 +102,8 @@ struct PersonToVAL {
 			vertex["viral.load.today"] = 0;
 		}
 
-		vertex["adherence.category"] = static_cast<int>(p->adherence().category);
+		vertex["adherence.category"] = static_cast<int>(p->artAdherence().category);
+		vertex["prep.adherence.category"] = static_cast<int>(p->prepAdherence().category);
 
 		if (p->isOnART()) {
 			vertex["time.since.art.initiation"] = p->infectionParameters().time_since_art_init;

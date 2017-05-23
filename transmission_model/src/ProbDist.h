@@ -69,7 +69,7 @@ ProbDist<T> ProbDistCreator<T>::createProbDist() {
 	}
 
 	if (sum < 1.0 - EPSILON || sum > 1.0 + EPSILON) {
-		//std::cout << sum << std::endl;
+		std::cout << sum << std::endl;
 		throw std::domain_error("Invalid value used to initialize ProbDist. Sum of probabilities must equal 1.");
 	}
 	bins[bins.size() - 1].first = 1.0;

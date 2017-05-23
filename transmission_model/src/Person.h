@@ -31,12 +31,13 @@ private:
 	float infectivity_;
 	bool dead_, diagnosed_, testable_;
 	Diagnoser<GeometricDistribution> diagnoser_;
-	AdherenceData adherence_;
-	// TODO
-	// PrepStatus prep_status;
+	AdherenceData art_adherence_, prep_adherence_;
+	PrepStatus prep_status_;
+	double prep_on_at;
 
 public:
-	Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser<GeometricDistribution>& diagnoser);
+	Person(int id, float age, bool circum_status, int steady_role, int casual_role,
+			Diagnoser<GeometricDistribution>& diagnoser);
 
 	virtual ~Person();
 
@@ -64,8 +65,11 @@ public:
 	}
 
 	bool isOnPrep() const {
-		// TODO update
-		return true;
+		return prep_status_ == PrepStatus::ON;
+	}
+
+	double prepStart() const {
+		return prep_on_at;
 	}
 
 	const InfectionParameters& infectionParameters() const {
@@ -96,14 +100,25 @@ public:
 		return diagnoser_;
 	}
 
-	void setAdherence(AdherenceData data) {
-		adherence_ = data;
+	void setArtAdherence(AdherenceData data) {
+		art_adherence_ = data;
 	}
 
-	const AdherenceData adherence() const {
-		return adherence_;
+	const AdherenceData artAdherence() const {
+		return art_adherence_;
 	}
 
+	void setPrepAdherence(AdherenceData data) {
+		prep_adherence_ = data;
+	}
+
+	const AdherenceData prepAdherence() const {
+		return prep_adherence_;
+	}
+
+	PrepStatus prepStatus() const {
+		return prep_status_;
+	}
 	void setViralLoad(float viral_load);
 
 	void setCD4Count(float cd4_count);
@@ -113,6 +128,10 @@ public:
 	void setInfectivity(float infectivity);
 
 	void setAge(float age);
+
+	void goOnPrep(double timestamp);
+
+	void goOffPrep(PrepStatus off_status);
 
 	/**
 	 * Puts this Person on ART with the specified time stamp,

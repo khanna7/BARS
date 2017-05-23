@@ -8,8 +8,9 @@
 #include "Parameters.h"
 
 #include "ARTScheduler.h"
+
+#include "adherence_functions.h"
 #include "Stats.h"
-#include "art_functions.h"
 
 //#include "EventWriter.h"
 //#include "Events.h"
@@ -28,7 +29,7 @@ void ARTScheduler::operator()() {
 		// person might be die in between ART is scheduled
 		// and actually going on ART.
 		if (!p->isDead()) {
-			initialize_adherence(p, time_stamp_);
+			initialize_art_adherence(p, time_stamp_);
 			p->goOnART(time_stamp_);
 			Stats::instance()->personDataRecorder().recordARTStart(p, time_stamp_);
 			Stats::instance()->recordARTEvent(time_stamp_, p->id(), true);
