@@ -47,6 +47,8 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * sd_steady_sex_without_condom: the number of sex acts between sero-discordant steady partners in which a condom was not used.
 * sc_steady_sex_with_condom: the number of sex acts between sero-concordant steady partners in which a condom was used.
 * sc_steady_sex_without_condom: the number of sex acts between sero-concordant steady partners in which a condom was not used.
+* on_art: the number of persons on ART at this time step.
+* on_prep: the number of persons on PrEP at this time.
 
 
 ### Partnership Events
