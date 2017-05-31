@@ -9,7 +9,8 @@ Files under `swift_proj`
  * `swift/run_trans_model_sweep.sh` - bash script used to launch swift. The file containing the matrix of parameters that need to be swept over, the number of processes to use, walltime, and
  processes per node (PPN) can be set in here.
  * `swift/trans_model_sweep.swift` - the swift script that peforms the sweep.
-
+ * Remember to change the version number in `../Release/verstion.txt`    
+ 
 To run:
 
 ```
