@@ -123,6 +123,7 @@ struct Counts {
 	unsigned int sd_steady_sex_with_condom, sd_steady_sex_without_condom;
 	unsigned int sc_casual_sex_with_condom, sc_casual_sex_without_condom;
 	unsigned int sc_steady_sex_with_condom, sc_steady_sex_without_condom;
+	unsigned int on_art, on_prep;
 	Counts();
 	void reset();
 	void writeTo(FileOutput& out);

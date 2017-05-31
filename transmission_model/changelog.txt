@@ -1,3 +1,10 @@
+23 May 2017
+
+Version 0.15:
+
+* External infection probability is age dependent (older persons more likely)
+* PrEP adherence checked weekly and in 4 categories (always, never, partial plus, and partial minus).
+
 20 April 2017
 
 Version 0.14:

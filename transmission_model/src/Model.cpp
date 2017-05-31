@@ -552,7 +552,13 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			// don't count dead uninfected persons
 			if (!person->isInfected()) {
 				++stats->currentCounts().uninfected;
+				if (person->isOnPrep()) {
+					++stats->currentCounts().on_prep;
+				}
 				uninfected.push_back(person);
+			}
+			if (person->isOnART()) {
+				++stats->currentCounts().on_art;
 			}
 			++iter;
 		}

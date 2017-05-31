@@ -72,7 +72,8 @@ const std::string Counts::header(
 		"\"sc_casual_sex_with_condom\",""\"sc_casual_sex_without_condom\","
 		"\"steady_sex_acts\","
 		"\"sd_steady_sex_with_condom\",\"sd_steady_sex_without_condom\","
-		"\"sc_steady_sex_with_condom\",\"sc_steady_sex_without_condom\"");
+		"\"sc_steady_sex_with_condom\",\"sc_steady_sex_without_condom\","
+		"\"on_art\",\"on_prep\"");
 
 void Counts::writeTo(FileOutput& out) {
 	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths << "," << internal_infected << ","
@@ -82,7 +83,8 @@ void Counts::writeTo(FileOutput& out) {
 			<< sc_casual_sex_with_condom << "," << sc_casual_sex_without_condom << ","
 			<< steady_sex_acts << ","
 			<< sd_steady_sex_with_condom << "," << sd_steady_sex_without_condom << ","
-			<< sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom <<"\n";
+			<< sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom << ","
+			<< on_art << "," << on_prep << "\n";
 }
 
 Counts::Counts() :
@@ -91,7 +93,8 @@ Counts::Counts() :
 				casual_sex_acts{0}, steady_sex_acts{0}, sd_casual_sex_with_condom{0}, sd_casual_sex_without_condom{0},
 				sd_steady_sex_with_condom{0}, sd_steady_sex_without_condom {0},
 				sc_casual_sex_with_condom{0}, sc_casual_sex_without_condom{0},
-				sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0}
+				sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
+				on_art{0}, on_prep{0}
 {
 }
 
@@ -103,6 +106,7 @@ void Counts::reset() {
 	sd_steady_sex_with_condom = sd_steady_sex_without_condom = 0;
 	sc_casual_sex_with_condom = sc_casual_sex_without_condom = 0;
 	sc_steady_sex_with_condom = sc_steady_sex_without_condom = 0;
+	on_art = on_prep = 0;
 	overlaps = 0;
 }
 
