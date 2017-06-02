@@ -265,8 +265,8 @@ EdgePtr<V> Network<V>::removeEdge(unsigned int v1_idx, unsigned int v2_idx, int 
 					"Unable to delete edge: edge " + std::to_string(edge_idx) + " does not exist.");
 		EdgePtr<V> edge = edge_iter->second;
 		if (edge->v2()->id() == v2_idx && edge->type() == type) {
-			edges.erase(edge_iter);
 			--edge_counts[edge_iter->second->type()];
+			edges.erase(edge_iter);
 			EdgeListData& data = iter->second;
 			data.edge_idxs.erase(edge_idx);
 			--data.edge_counts[type];
