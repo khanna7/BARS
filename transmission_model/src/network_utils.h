@@ -119,7 +119,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
 		double time, EdgeInit& edge_initializer, int edge_type) {
 	// changes is a matrix with columns: "tail", "head", "to".
 	// to  == 1 if tie is formed, otherwise 0
-	NumericMatrix matrix = as<NumericMatrix>(changes);
+	IntegerMatrix matrix = as<IntegerMatrix>(changes);
 
 	int added = 0;
 	int removed = 0;
