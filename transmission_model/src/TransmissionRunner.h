@@ -19,14 +19,14 @@ namespace TransModel {
 class TransmissionRunner {
 
 private:
-	float circumcision_multiplier_, prep_multiplier_, condom_multiplier_,
+	float circumcision_multiplier_, condom_multiplier_,
 	infective_insertive_multiplier_;
 	std::vector<float> dur_inf_by_age;
 
 
 
 public:
-	TransmissionRunner(float circumcision_multiplier, float prep_multiplier, float condom_multiplier,
+	TransmissionRunner(float circumcision_multiplier, float condom_multiplier,
 			float infective_insertive_multiplier, std::vector<float>& given_dur_inf_by_age);
 	virtual ~TransmissionRunner();
 

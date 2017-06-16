@@ -24,6 +24,8 @@ CPP_SOURCE = Person.cpp \
 	RangeWithProbability.cpp \
 	AdherenceCheckScheduler.cpp \
 	adherence_functions.cpp \
+	PrepParameters.cpp \
+	PrepCessationEvent.cpp \
 	CondomUseAssigner.cpp \
 	debug_utils.cpp
 	

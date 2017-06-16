@@ -16,7 +16,7 @@
 #include "StatsBuilder.h"
 #include "DayRangeCalculator.h"
 #include "RangeWithProbability.h"
-
+#include "AdherenceCategory.h"
 #include "GeometricDistribution.h"
 
 using namespace TransModel;
@@ -24,17 +24,63 @@ using namespace Rcpp;
 
 /*
  Sanity check that this is working as I thought it would.
-TEST(GeometricDistTests, GeometricDistTest) {
-	repast::Random::initialize(1);
-	GeometricDistribution dist(1 / 500.0, 0);
-	double sum = 0;
-	for (int i = 0; i < 2000; ++i) {
-		sum += dist.next();
-	}
-	std::cout << (sum / 2000) << std::endl;
+ TEST(GeometricDistTests, GeometricDistTest) {
+ repast::Random::initialize(1);
+ GeometricDistribution dist(1 / 500.0, 0);
+ double sum = 0;
+ for (int i = 0; i < 2000; ++i) {
+ sum += dist.next();
+ }
+ std::cout << (sum / 2000) << std::endl;
 
+ }
+ */
+
+TEST(ProbDist, TestProbDist) {
+	/*
+	 * prep.prop.never.adherent <- 0.211
+prep.prop.always.adherent <- 0.619
+prep.prop.part.plus.adherent <- 0.10
+prep.prop.part.neg.adherent <- 0.07
+	 */
+	double always = 0.619;
+	double never = 0.211;
+	double partial_plus = 0.10;
+	double partial_minus = 0.07;
+
+	//std::cout << "prep: " << always << "," << never << "," << partial_plus << ", " << partial_minus << std::endl;
+
+	ProbDistCreator<AdherenceData> creator;
+	creator.addItem(always, std::make_shared<AdherenceData>(0, AdherenceCategory::ALWAYS));
+	creator.addItem(never, std::make_shared<AdherenceData>(0, AdherenceCategory::NEVER));
+	creator.addItem(partial_plus, std::make_shared<AdherenceData>(0, AdherenceCategory::PARTIAL_PLUS));
+	creator.addItem(partial_minus, std::make_shared<AdherenceData>(0, AdherenceCategory::PARTIAL_MINUS));
+
+	std::map<AdherenceCategory, int> map;
+	map.emplace(AdherenceCategory::ALWAYS, 0);
+	map.emplace(AdherenceCategory::NEVER, 0);
+	map.emplace(AdherenceCategory::PARTIAL_PLUS, 0);
+	map.emplace(AdherenceCategory::PARTIAL_MINUS, 0);
+
+	ProbDist<AdherenceData> dist = creator.createProbDist();
+
+	for (int i = 0; i < 100000; ++i) {
+		std::shared_ptr<AdherenceData> data = dist.draw(repast::Random::instance()->nextDouble());
+		int val = map[data->category];
+		map[data->category] = ++val;
+	}
+
+	int always_count = map[AdherenceCategory::ALWAYS];
+	int never_count = map[AdherenceCategory::NEVER];
+	int pp_count = map[AdherenceCategory::PARTIAL_PLUS];
+	int pm_count = map[AdherenceCategory::PARTIAL_MINUS];
+
+	double sum = always_count + never_count + pp_count + pm_count;
+	std::cout << "always: " << always_count / sum << std::endl;
+	std::cout << "never: " << never_count / sum << std::endl;
+	std::cout << "pp: " << pp_count / sum << std::endl;
+	std::cout << "pm: " << pm_count / sum << std::endl;
 }
-*/
 
 TEST(RangeWithProbTests, TestRangeWithProb) {
 	RangeWithProbabilityCreator creator;
@@ -70,7 +116,8 @@ TEST(DayRangeCalcTests, TestCreator) {
 	try {
 		creator.createCalculator();
 		FAIL();
-	} catch (...) {}
+	} catch (...) {
+	}
 
 	creator.clear();
 	try {

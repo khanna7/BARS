@@ -25,6 +25,7 @@ public:
 	double calculateLag(float size_of_timestep);
 private:
 
+
 	GeometricDistribution gen;
 };
 

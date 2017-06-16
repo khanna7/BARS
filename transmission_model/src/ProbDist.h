@@ -78,7 +78,8 @@ ProbDist<T> ProbDistCreator<T>::createProbDist() {
 }
 
 template<typename T>
-ProbDist<T>::ProbDist(std::vector<std::pair<double, PtrT>> items) : bins{items} {}
+ProbDist<T>::ProbDist(std::vector<std::pair<double, PtrT>> items) : bins{items} {
+}
 
 template<typename T>
 ProbDist<T>::~ProbDist() {}
@@ -86,7 +87,7 @@ ProbDist<T>::~ProbDist() {}
 template<typename T>
 std::shared_ptr<T> ProbDist<T>::draw(double val) {
 	for (auto& bin : bins) {
-		if (bin.first <= val) {
+		if (val <= bin.first) {
 			return bin.second;
 		}
 	}

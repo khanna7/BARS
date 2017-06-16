@@ -11,9 +11,9 @@
 
 namespace TransModel {
 
-TransmissionRunner::TransmissionRunner(float circumcision_multiplier, float prep_multiplier, float condom_multiplier, float infective_insertive_multiplier,
+TransmissionRunner::TransmissionRunner(float circumcision_multiplier, float condom_multiplier, float infective_insertive_multiplier,
 		std::vector<float>& given_dur_inf_by_age) :
-		circumcision_multiplier_(circumcision_multiplier), prep_multiplier_(prep_multiplier), condom_multiplier_(condom_multiplier),
+		circumcision_multiplier_(circumcision_multiplier), condom_multiplier_(condom_multiplier),
 		infective_insertive_multiplier_(infective_insertive_multiplier),
 		dur_inf_by_age(given_dur_inf_by_age) {
 }
@@ -29,7 +29,7 @@ bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infe
 	}
 
 	if (infectee->isOnPrep()) {
-		infectivity *= prep_multiplier_;
+		infectivity *= (1 - infectee->prepParameters().prepEffectiveness());
 	}
 
 	int infectee_role = edge_type == STEADY_NETWORK_TYPE ? infectee->steady_role() : infectee->casual_role();

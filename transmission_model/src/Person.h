@@ -13,7 +13,7 @@
 #include "Diagnoser.h"
 #include "GeometricDistribution.h"
 #include "AdherenceCategory.h"
-#include "PrepStatus.h"
+#include "PrepParameters.h"
 
 namespace TransModel {
 
@@ -29,11 +29,10 @@ private:
 	bool circum_status_;
 	InfectionParameters infection_parameters_;
 	float infectivity_;
+	PrepParameters prep_;
 	bool dead_, diagnosed_, testable_;
 	Diagnoser<GeometricDistribution> diagnoser_;
-	AdherenceData art_adherence_, prep_adherence_;
-	PrepStatus prep_status_;
-	double prep_on_at;
+	AdherenceData art_adherence_;
 
 public:
 	Person(int id, float age, bool circum_status, int steady_role, int casual_role,
@@ -65,11 +64,11 @@ public:
 	}
 
 	bool isOnPrep() const {
-		return prep_status_ == PrepStatus::ON;
+		return prep_.status() == PrepStatus::ON;
 	}
 
-	double prepStart() const {
-		return prep_on_at;
+	const PrepStatus prepStatus() const {
+		return prep_.status();
 	}
 
 	const InfectionParameters& infectionParameters() const {
@@ -108,17 +107,6 @@ public:
 		return art_adherence_;
 	}
 
-	void setPrepAdherence(AdherenceData data) {
-		prep_adherence_ = data;
-	}
-
-	const AdherenceData prepAdherence() const {
-		return prep_adherence_;
-	}
-
-	PrepStatus prepStatus() const {
-		return prep_status_;
-	}
 	void setViralLoad(float viral_load);
 
 	void setCD4Count(float cd4_count);
@@ -129,7 +117,7 @@ public:
 
 	void setAge(float age);
 
-	void goOnPrep(double timestamp);
+	void goOnPrep(double start_time, double stop_time);
 
 	void goOffPrep(PrepStatus off_status);
 
@@ -181,6 +169,10 @@ public:
 
 	bool isTestable() const {
 		return testable_;
+	}
+
+	const PrepParameters prepParameters() const {
+		return prep_;
 	}
 
 	bool diagnose(double tick);

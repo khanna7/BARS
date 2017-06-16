@@ -173,12 +173,13 @@ prep.prop.always.adherent <- 0.619
 prep.prop.part.plus.adherent <- 0.10
 prep.prop.part.neg.adherent <- 0.07
 
-prep.always.adherent.probability <- 0.95
-prep.never.adherent.probability <- 0.0
-prep.partial.pos.adherent.probability <- 0.81 
-prep.partial.neg.adherent.probability <- 0.31
+prep.always.adherent.trans.reduction <- 0.95
+prep.never.adherent.trans.reduction <- 0.0
+prep.partial.pos.adherent.trans.reduction <- 0.81 
+prep.partial.neg.adherent.trans.reduction <- 0.31
     
-prep.transm.red <- 96/100
+prep.bl.use.prop <- 10/100
+prep.mean.days.usage <- 180
 
 #####################
     ## Socioeconomic status

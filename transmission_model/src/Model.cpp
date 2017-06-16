@@ -27,6 +27,7 @@
 #include "file_utils.h"
 #include "utils.h"
 #include "CondomUseAssigner.h"
+#include "PrepCessationEvent.h"
 #include "adherence_functions.h"
 
 #include "debug_utils.h"
@@ -42,9 +43,12 @@ namespace fs = boost::filesystem;
 namespace TransModel {
 
 PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
-	if (cod == CauseOfDeath::AGE) return PartnershipEvent::PEventType::ENDED_AGING_OUT;
-	else if (cod == CauseOfDeath::ASM) return PartnershipEvent::PEventType::ENDED_DEATH_ASM;
-	else if (cod == CauseOfDeath::INFECTION) return PartnershipEvent::PEventType::ENDED_DEATH_INFECTION;
+	if (cod == CauseOfDeath::AGE)
+		return PartnershipEvent::PEventType::ENDED_AGING_OUT;
+	else if (cod == CauseOfDeath::ASM)
+		return PartnershipEvent::PEventType::ENDED_DEATH_ASM;
+	else if (cod == CauseOfDeath::INFECTION)
+		return PartnershipEvent::PEventType::ENDED_DEATH_INFECTION;
 	else {
 		throw std::invalid_argument("No PEvent for specified CauseOfDeath");
 	}
@@ -55,8 +59,8 @@ struct PersonToVALForSimulate {
 	List operator()(const PersonPtr& v, int idx, double tick) const {
 
 		return List::create(Named("na") = false, Named("vertex_names") = idx, Named("role_main") = v->steady_role(),
-				Named("role_casual") = v->casual_role(), Named("inf.status") = v->isInfected(), Named("diagnosed") = v->isDiagnosed(),
-				Named("age") = v->age(), Named("sqrt.age") = sqrt(v->age()));
+				Named("role_casual") = v->casual_role(), Named("inf.status") = v->isInfected(),
+				Named("diagnosed") = v->isDiagnosed(), Named("age") = v->age(), Named("sqrt.age") = sqrt(v->age()));
 	}
 };
 
@@ -77,11 +81,15 @@ struct PersonToVAL {
 		vertex["number.of.tests"] = diagnoser.testCount();
 		vertex["time.until.next.test"] = diagnoser.timeUntilNextTest(tick);
 		vertex["non.testers"] = !(p->isTestable());
-		vertex["prep.status"] = p->isOnPrep();
 		vertex["role_casual"] = p->casual_role();
 		vertex["role_main"] = p->steady_role();
 
 		vertex["prep.status"] = static_cast<int>(p->prepStatus());
+
+		if (p->isOnPrep()) {
+			vertex["time.of.prep.cessation"] = p->prepParameters().stopTime();
+			vertex["time.of.prep.initiation"] = p->prepParameters().startTime();
+		}
 
 		if (p->isInfected()) {
 			vertex["infectivity"] = p->infectivity();
@@ -103,7 +111,7 @@ struct PersonToVAL {
 		}
 
 		vertex["adherence.category"] = static_cast<int>(p->artAdherence().category);
-		vertex["prep.adherence.category"] = static_cast<int>(p->prepAdherence().category);
+		vertex["prep.adherence.category"] = static_cast<int>(p->prepParameters().adherenceCagegory());
 
 		if (p->isOnART()) {
 			vertex["time.since.art.initiation"] = p->infectionParameters().time_since_art_init;
@@ -125,7 +133,6 @@ struct PersonToVAL {
 
 shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float circ_mult = (float) Parameters::instance()->getDoubleParameter(CIRCUM_MULT);
-	float prep_mult = (float) Parameters::instance()->getDoubleParameter(PREP_TRANS_REDUCTION);
 	float condom_mult = (float) Parameters::instance()->getDoubleParameter(INFECTIVITY_REDUCTION_CONDOM);
 	float infective_insertive_mult = (float) Parameters::instance()->getDoubleParameter(INFECTIVE_INSERTIVE_MULT);
 
@@ -139,7 +146,7 @@ shared_ptr<TransmissionRunner> create_transmission_runner() {
 	// not by age yet
 	float duration = Parameters::instance()->getFloatParameter(DUR_INF_BY_AGE);
 	vector<float> dur_inf_by_age(4, duration);
-	return make_shared<TransmissionRunner>(circ_mult, prep_mult, condom_mult, infective_insertive_mult, dur_inf_by_age);
+	return make_shared<TransmissionRunner>(circ_mult, condom_mult, infective_insertive_mult, dur_inf_by_age);
 }
 
 CD4Calculator create_CD4Calculator() {
@@ -195,7 +202,8 @@ void init_stage_map(map<float, shared_ptr<Stage>> &stage_map) {
 	float baseline_infectivity = (float) Parameters::instance()->getDoubleParameter(MIN_CHRONIC_INFECTIVITY_UNADJ);
 	float viral_load_incr = (float) Parameters::instance()->getDoubleParameter(VIRAL_LOAD_LOG_INCREMENT);
 
-	stage_map.emplace(acute_max, make_shared<AcuteStage>(baseline_infectivity, acute_mult, Range<float>(1, acute_max), viral_load_incr));
+	stage_map.emplace(acute_max,
+			make_shared<AcuteStage>(baseline_infectivity, acute_mult, Range<float>(1, acute_max), viral_load_incr));
 	stage_map.emplace(chronic_max,
 			make_shared<ChronicStage>(baseline_infectivity, Range<float>(acute_max, chronic_max), viral_load_incr));
 	// make late_max essentially open ended as infected persons
@@ -203,7 +211,8 @@ void init_stage_map(map<float, shared_ptr<Stage>> &stage_map) {
 	// the medical stage, but the Stage class for our purposes.
 	float late_max = std::numeric_limits<float>::max();
 	stage_map.emplace(late_max,
-			make_shared<LateStage>(baseline_infectivity, late_mult, Range<float>(chronic_max, late_max), viral_load_incr));
+			make_shared<LateStage>(baseline_infectivity, late_mult, Range<float>(chronic_max, late_max),
+					viral_load_incr));
 }
 
 void init_generators() {
@@ -286,6 +295,12 @@ std::shared_ptr<DayRangeCalculator> create_art_lag_calc() {
 	return creator.createCalculator();
 }
 
+std::shared_ptr<GeometricDistribution> create_cessation_generator() {
+	double prob = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
+	// 1.1 so at least a day on prep, and .1 so after step loop.
+	return std::make_shared<GeometricDistribution>(prob, 1.1);
+}
+
 void add_condom_use_prob(CondomUseAssignerFactory& factory, PartnershipType ptype, int network_type,
 		const std::string& category_param, const std::string& use_param) {
 	double cat_prob = Parameters::instance()->getDoubleParameter(category_param);
@@ -358,8 +373,8 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DAILY_TESTING_PROB),
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
-				create_art_lag_calc() }, condom_assigner {
-				create_condom_use_assigner() }, asm_runner { create_ASM_runner() } {
+				create_art_lag_calc() },  cessation_generator { create_cessation_generator() }, condom_assigner { create_condom_use_assigner() },
+				asm_runner { create_ASM_runner() } {
 
 	// get initial stats
 	init_stats();
@@ -385,7 +400,8 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 		stats->personDataRecorder().initRecord(p, 0);
 		if (p->isInfected()) {
 			++stats->currentCounts().internal_infected;
-			stats->personDataRecorder().recordInfection(p, p->infectionParameters().time_of_infection, InfectionSource::INTERNAL);
+			stats->personDataRecorder().recordInfection(p, p->infectionParameters().time_of_infection,
+					InfectionSource::INTERNAL);
 		}
 	}
 	stats->resetForNextTimeStep();
@@ -397,7 +413,22 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
 	runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::atEnd)));
 
+	initPrepCessation();
 	//write_edges(net, "./edges_at_1.csv");
+}
+
+void Model::initPrepCessation() {
+	ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
+	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+		PersonPtr person = *iter;
+		if (person->isOnPrep()) {
+			double stop_time = person->prepParameters().stopTime();
+			runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
+			double start_time = person->prepParameters().startTime();
+			Stats::instance()->recordPREPEvent(start_time, person->id(), static_cast<int>(PrepStatus::ON));
+			Stats::instance()->personDataRecorder().recordPREPStart(person, start_time);
+		}
+	}
 }
 
 void Model::atEnd() {
@@ -498,10 +529,26 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
 	scheduler->addPerson(person);
 }
 
+// ASSUMES PERSON IS UNINFECTED
+void Model::updatePREPUse(double tick, double prob, PersonPtr person) {
+	if (!person->isOnPrep() && Random::instance()->nextDouble() <= prob) {
+		ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
+		double stop_time = tick + cessation_generator->next();
+		person->goOnPrep(tick, stop_time);
+		Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
+		Stats::instance()->personDataRecorder().recordPREPStart(person, tick);
+		runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
+	}
+}
+
 void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
 	map<double, ARTScheduler*> art_map;
+
+	double p = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
+	double k = Parameters::instance()->getDoubleParameter(PREP_USE_PROP);
+	double on_prep_prob = (p * k) / (1 - k);
 
 	uninfected.reserve(net.vertexCount());
 
@@ -524,6 +571,8 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			float infectivity = stage_map.upper_bound(person->timeSinceInfection())->second->calculateInfectivity(
 					person->infectionParameters());
 			person->setInfectivity(infectivity);
+		} else {
+			updatePREPUse(t, on_prep_prob, person);
 		}
 
 		if (persons_to_log.find(person->id()) != persons_to_log.end()) {
@@ -544,7 +593,8 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			net.getEdges(person, edges);
 			for (auto edge : edges) {
 				//cout << edge->id() << "," << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
-				Stats::instance()->recordPartnershipEvent(t, edge->id(), edge->v1()->id(), edge->v2()->id(), pevent_type, edge->type());
+				Stats::instance()->recordPartnershipEvent(t, edge->id(), edge->v1()->id(), edge->v2()->id(),
+						pevent_type, edge->type());
 			}
 			iter = net.removeVertex(iter);
 			++dead_count;
@@ -579,12 +629,12 @@ void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
 		std::map<float, PersonPtr> prob_map;
 		float sum = 0;
 		for (auto p : uninfected) {
-			int exp = ((int)floor(p->age() - min_age));
-			sum += (float)pow(factor, exp);
+			int exp = ((int) floor(p->age() - min_age));
+			sum += (float) pow(factor, exp);
 			prob_map.emplace(sum, p);
 		}
 
-		float draw = (float)Random::instance()->createUniDoubleGenerator(0, sum).next();
+		float draw = (float) Random::instance()->createUniDoubleGenerator(0, sum).next();
 		auto iter = prob_map.lower_bound(draw);
 
 		Stats* stats = Stats::instance();
@@ -610,8 +660,7 @@ void Model::entries(double tick, float size_of_timestep) {
 	size_t pop_size = net.vertexCount();
 	if (pop_size > 0) {
 		double births_prob = Parameters::instance()->getDoubleParameter(DAILY_ENTRY_RATE);
-		PoissonGen birth_gen(Random::instance()->engine(),
-				boost::random::poisson_distribution<>(births_prob));
+		PoissonGen birth_gen(Random::instance()->engine(), boost::random::poisson_distribution<>(births_prob));
 		DefaultNumberGenerator<PoissonGen> gen(birth_gen);
 		int entries = (int) gen.next();
 		Stats* stats = Stats::instance();

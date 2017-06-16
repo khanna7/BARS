@@ -26,18 +26,6 @@ public:
 	void operator()();
 };
 
-class PrepAdherenceCheckScheduler : public repast::Functor {
-private:
-	PersonPtr person_;
-	double timestamp_;
-
-public:
-	PrepAdherenceCheckScheduler(std::shared_ptr<Person> person, double timestamp);
-	virtual ~PrepAdherenceCheckScheduler();
-
-	void operator()();
-};
-
 } /* namespace TransModel */
 
 #endif /* SRC_ADHERENCECHECKSCHEDULER_H_ */

@@ -53,6 +53,10 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 			calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
 	person->testable_ = ((int) repast::Random::instance()->getGenerator(NON_TESTERS_BINOMIAL)->next()) == 0;
 
+	AdherenceData data = initialize_prep_adherence();
+	PrepParameters prep(PrepStatus::OFF, 0, 0, data);
+	person->prep_ = prep;
+
 	return person;
 }
 
@@ -102,21 +106,25 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 
 		person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
 	} else {
-		bool prep_status = as<bool>(val["prep.status"]);
-		if (prep_status) {
-			person->goOnPrep(tick);
+		//  the prep.status attribute only exists in uninfected persons in the R model
+		PrepStatus status = as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF;
+		if (status == PrepStatus::ON) {
 			Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
 		}
+
 		if (val.containsElementNamed("prep.adherence.category")) {
-			initialize_prep_adherence(person, tick, static_cast<AdherenceCategory>(as<int>(val["prep.adherence.category"])));
+			AdherenceData data = initialize_prep_adherence(static_cast<AdherenceCategory>(as<int>(val["prep.adherence.category"])));
+			PrepParameters prep(status, as<double>(val["time.of.prep.initiation"]),
+			// add 1 so they spend at least a day on prep and .1 so occurs after main loop
+					as<double>(val["time.of.prep.cessation"]) + 1.1, data);
+			person->prep_ = prep;
 		} else {
-			initialize_prep_adherence(person, tick);
+			AdherenceData data = initialize_prep_adherence();
+			PrepParameters prep(status, as<double>(val["time.of.prep.initiation"]),
+			// add 1 so they spend at least a day on prep and .1 so occurs after main loop
+					as<double>(val["time.of.prep.cessation"]) + 1.1, data);
+			person->prep_ = prep;
 		}
-		//  the prep.status attribute only exists in uninfected persons in the R model
-		//PrepParameters prep(as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF, as<double>(val["time.of.prep.initiation"]),
-		// add 1 so they spend at least a day on prep and .1 so occurs after main loop
-		//		as<double>(val["time.of.prep.cessation"]) + 1.1);
-		//person->prep_ = prep;
 	}
 
 	return person;

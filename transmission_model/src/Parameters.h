@@ -80,7 +80,8 @@ extern const std::string PEAK_VIRAL_LOAD;
 extern const std::string PER_DAY_CD4_RECOVERY;
 extern const std::string PREG_MULT;
 extern const std::string PREG_SUSC_MULT;
-extern const std::string PREP_TRANS_REDUCTION;
+extern const std::string PREP_USE_PROP;
+extern const std::string PREP_DAILY_STOP_PROB;
 extern const std::string SET_POINT_VIRAL_LOAD;
 extern const std::string SIZE_OF_TIMESTEP;
 extern const std::string TIME_INFECTION_TO_LATE_STAGE;
@@ -124,10 +125,10 @@ extern const std::string PREP_PROP_ALWAYS_ADHERENT;
 extern const std::string PREP_PROP_PARTIAL_POS_ADHERENT;
 extern const std::string PREP_PROP_PARTIAL_NEG_ADHERENT;
 
-extern const std::string PREP_ALWAYS_ADHERENT_PROB;
-extern const std::string PREP_NEVER_ADHERENT_PROB;
-extern const std::string PREP_PARTIAL_POS_ADHERENT_PROB;
-extern const std::string PREP_PARTIAL_NEG_ADHERENT_PROB;
+extern const std::string PREP_ALWAYS_ADHERENT_TR;
+extern const std::string PREP_NEVER_ADHERENT_TR;
+extern const std::string PREP_PARTIAL_POS_ADHERENT_TR;
+extern const std::string PREP_PARTIAL_NEG_ADHERENT_TR;
 
 extern const std::string SD_STEADY_NEVER_USE_CONDOMS;
 extern const std::string SD_STEADY_RARELY_USE_CONDOMS;

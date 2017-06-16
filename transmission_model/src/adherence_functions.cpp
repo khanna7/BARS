@@ -64,32 +64,31 @@ void schedule_art_adherence(std::shared_ptr<Person> person, double first_art_at_
 			repast::Schedule::FunctorPtr(ac_scheduler));
 }
 
-void initialize_prep_adherence(std::shared_ptr<Person> person, double tick, AdherenceCategory category) {
+AdherenceData initialize_prep_adherence(AdherenceCategory category) {
 	double prob = 0;
 	if (category == AdherenceCategory::ALWAYS) {
-		prob = Parameters::instance()->getDoubleParameter(PREP_ALWAYS_ADHERENT_PROB);
+		prob = Parameters::instance()->getDoubleParameter(PREP_ALWAYS_ADHERENT_TR);
 	} else if (category == AdherenceCategory::NEVER) {
-		prob = Parameters::instance()->getDoubleParameter(PREP_NEVER_ADHERENT_PROB);
+		prob = Parameters::instance()->getDoubleParameter(PREP_NEVER_ADHERENT_TR);
 	} else if (category == AdherenceCategory::PARTIAL_PLUS) {
-		prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_POS_ADHERENT_PROB);
+		prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_POS_ADHERENT_TR);
 	}  else if (category == AdherenceCategory::PARTIAL_MINUS) {
-		prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_NEG_ADHERENT_PROB);
+		prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_NEG_ADHERENT_TR);
 	}
 
-	person->setPrepAdherence({prob, category});
-	schedule_prep_adherence(person, tick);
+	return  AdherenceData(prob, category);
 }
 
-void initialize_prep_adherence(std::shared_ptr<Person> person, double tick) {
+AdherenceData initialize_prep_adherence() {
 	double always = Parameters::instance()->getDoubleParameter(PREP_PROP_ALWAYS_ADHERENT);
 	double never = Parameters::instance()->getDoubleParameter(PREP_PROP_NEVER_ADHERENT);
 	double partial_plus = Parameters::instance()->getDoubleParameter(PREP_PROP_PARTIAL_POS_ADHERENT);
 	double partial_minus = Parameters::instance()->getDoubleParameter(PREP_PROP_PARTIAL_NEG_ADHERENT);
 
-	double always_prob = Parameters::instance()->getDoubleParameter(PREP_ALWAYS_ADHERENT_PROB);
-	double never_prob = Parameters::instance()->getDoubleParameter(PREP_NEVER_ADHERENT_PROB);
-	double partial_plus_prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_POS_ADHERENT_PROB);
-	double partial_minus_prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_NEG_ADHERENT_PROB);
+	double always_prob = Parameters::instance()->getDoubleParameter(PREP_ALWAYS_ADHERENT_TR);
+	double never_prob = Parameters::instance()->getDoubleParameter(PREP_NEVER_ADHERENT_TR);
+	double partial_plus_prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_POS_ADHERENT_TR);
+	double partial_minus_prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_NEG_ADHERENT_TR);
 
 	//std::cout << "prep: " << always << "," << never << "," << partial_plus << ", " << partial_minus << std::endl;
 
@@ -100,15 +99,7 @@ void initialize_prep_adherence(std::shared_ptr<Person> person, double tick) {
 	creator.addItem(partial_minus, std::make_shared<AdherenceData>(partial_minus_prob, AdherenceCategory::PARTIAL_MINUS));
 
 	std::shared_ptr<AdherenceData> data = creator.createProbDist().draw(repast::Random::instance()->nextDouble());
-	person->setPrepAdherence({data->probability, data->category});
-	schedule_prep_adherence(person, tick);
-}
-
-void schedule_prep_adherence(std::shared_ptr<Person> person, double tick) {
-	double adherence_check_at = tick + Parameters::instance()->getDoubleParameter(PREP_DECISION_FREQUENCY);
-	PrepAdherenceCheckScheduler* ac_scheduler = new PrepAdherenceCheckScheduler(person, adherence_check_at);
-	repast::RepastProcess::instance()->getScheduleRunner().scheduleEvent(adherence_check_at - 0.1,
-			repast::Schedule::FunctorPtr(ac_scheduler));
+	return AdherenceData(data->probability, data->category);
 }
 
 }

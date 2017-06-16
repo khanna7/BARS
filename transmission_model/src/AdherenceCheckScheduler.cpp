@@ -46,33 +46,4 @@ void ARTAdherenceCheckScheduler::operator()() {
 	}
 }
 
-
-PrepAdherenceCheckScheduler::PrepAdherenceCheckScheduler(std::shared_ptr<Person> person, double timestamp) :
-		person_(person), timestamp_(timestamp) {
-}
-
-PrepAdherenceCheckScheduler::~PrepAdherenceCheckScheduler() {
-}
-
-void PrepAdherenceCheckScheduler::operator()() {
-	if (!person_->isDead() && person_->prepStatus() != PrepStatus::OFF_INFECTED) {
-		bool go_on_prep = (repast::Random::instance()->nextDouble() <= person_->prepAdherence().probability);
-		if (person_->isOnPrep() && !go_on_prep) {
-			// go off prep when already on
-			person_->goOffPrep(PrepStatus::OFF);
-			Stats::instance()->personDataRecorder().recordPREPStop(person_.get(), timestamp_, PrepStatus::OFF);
-			Stats::instance()->recordPREPEvent(timestamp_, person_->id(), static_cast<int>(PrepStatus::OFF));
-		} else if (!person_->isOnPrep() && go_on_prep) {
-			person_->goOnPrep(timestamp_);
-			Stats::instance()->personDataRecorder().recordPREPStart(person_, timestamp_);
-			Stats::instance()->recordPREPEvent(timestamp_, person_->id(), static_cast<int>(PrepStatus::ON));
-		}
-
-		double adherence_check_at = timestamp_
-				+ Parameters::instance()->getDoubleParameter(PREP_DECISION_FREQUENCY);
-		repast::RepastProcess::instance()->getScheduleRunner().scheduleEvent(adherence_check_at - 0.1,
-				repast::Schedule::FunctorPtr(new PrepAdherenceCheckScheduler(person_, adherence_check_at)));
-	}
-}
-
 } /* namespace TransModel */

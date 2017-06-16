@@ -36,6 +36,7 @@
     
    #####################
    ## PrEP
+   prep.daily.stop.prob <- 1/prep.mean.days.usage
 
    #####################
    ## Transmission Parameters
