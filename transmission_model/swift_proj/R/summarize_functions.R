@@ -16,7 +16,7 @@ summarize_inc <- function(filename="counts.csv"){
   counts <- read.csv(filename)
   counts <- counts[-1,]
   counts_yr_chunks <- split(counts,
-                            ceiling(seq_along(counts$time)/365))
+                            ceiling(seq_along(counts$tick)/365))
   
    mean_inc <- lapply(counts_yr_chunks, function (x)
     mean(x[2:nrow(x), "infected_via_transmission"] / x[1:(nrow(x) - 1), "uninfected"])
