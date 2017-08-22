@@ -14,7 +14,7 @@ df <- expand.grid(global.random.seed=global.random.seed,
                   )
 ndf <- names(df)
 
-l1 <- lapply(1:3,function(x) paste0(ndf[x],"=",df[[ndf[x]]]))
+l1 <- lapply(1:ncol(df),function(x) paste0(ndf[x],"=",df[[ndf[x]]]))
 res <- do.call(paste,c(l1,c(sep = ",")))
 
 write(res, file = "input_ut_retreat.txt")
