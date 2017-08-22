@@ -21,7 +21,9 @@
 
 * Run the model from within the Release directory with 
 
-   `./transmission_model-0.0 ../config/config.props ../config/model.props`
+   `./transmission_model-0.0 ../config/config.props ../config/model.props`    
+   
+* Midway 2 executable: /home/ntcollie/midway2/repos/BARS/transmission_model/Release/transmission_model-0.18
 
 
 ## previewing html docs from github
