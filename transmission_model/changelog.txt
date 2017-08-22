@@ -1,3 +1,9 @@
+22 August 2017
+
+Version 0.18
+
+* Fixed issue with random seed not being set properly from a command line parameter
+
 16 June 2017
 
 * Implemented PrEP v3: Persons on PrEP avg of 60 days with prep effectiveness 
