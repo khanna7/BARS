@@ -48,7 +48,9 @@ void parse_parameters(std::map<string, double>& props, std::map<string, string>&
 			throw invalid_argument("Invalid parameter: " + item);
 		}
 		try {
+			//std::cout << key << ": " << val << std::endl;
 			props.emplace(key, stod(val));
+			//std::cout << key << ": " << std::setprecision(10) << props[key] << std::endl;
 		} catch (...) {
 			string_props.emplace(key, val);
 		}
@@ -95,7 +97,9 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 		if (TYPEOF(val) == REALSXP) {
 			Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(val);
 			if (v.size() == 1) {
-				params->putParameter(name, v[0]);
+				std::ostringstream out;
+				out << std::setprecision(10) << v[0];
+				params->putParameter(name, out.str());
 
 			} else if (v.size() > 1) {
 				SEXP r;
