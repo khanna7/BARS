@@ -25,6 +25,9 @@
    
 * Midway 2 executable: /home/ntcollie/midway2/repos/BARS/transmission_model/Release/transmission_model-0.18
 
+* To exclude bad nodes (nodes 54-60, for example) from Midway, do the following:
+
+     in run_trans_model_sweep.sh, add `export TURBINE_SBATCH_ARGS="--exclude=midway2-[0054–0060]”`, after the line that reads: `export TURBINE_JOBNAME="${EXPID}_job”`    
 
 ## previewing html docs from github
 
