@@ -248,7 +248,7 @@ float Parameters::getFloatParameter(const std::string& prop_name) const {
 }
 
 double Parameters::getDoubleParameter(const std::string& prop_name) const {
-	return strToDouble(getStringParameter(prop_name));
+	return std::stod(getStringParameter(prop_name));
 }
 
 void Parameters::getKeys(const std::string& starts_with, std::vector<std::string>& keys) {

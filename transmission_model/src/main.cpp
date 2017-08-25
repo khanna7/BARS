@@ -58,7 +58,6 @@ void run(std::string propsFile, int argc, char** argv) {
 #endif
 
 	repast::Properties props(propsFile, argc, argv);
-	repast::initializeRandom(props);
 	std::shared_ptr<RInside> R = std::make_shared<RInside>(argc, argv);
 
 	TransModel::Parameters::initialize(props);
@@ -75,6 +74,8 @@ void run(std::string propsFile, int argc, char** argv) {
 	out.ostream() << Parameters::instance();
 	out.close();
 
+	props.putProperty("global.random.seed", Parameters::instance()->getIntParameter("global.random.seed"));
+	repast::initializeRandom(props);
 
 	init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE));
 
