@@ -42,7 +42,7 @@
    
    #####################
    ## BIOLOGICAL
-   circum.rate <- 0.90 #in accordance with Atlanta data from Jenness (2016)
+   circum.rate <- 0.64 #in accordance with CDC circumcision data sent by Kiana (2016)
    init.hiv.prev <- 0.10
    init.hiv.prev.for.entries <- 0.001/100 # probability that an entering person will have HIV
 
