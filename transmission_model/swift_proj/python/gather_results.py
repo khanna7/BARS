@@ -1,5 +1,6 @@
 import sys, glob, os
 from rpy2 import robjects
+from multiprocessing import Pool
 
 code = """
 f <- '{}'
@@ -8,7 +9,7 @@ inc <- summarize_inc(f)
 pop_size <- summarize_pop_size(f)
 """
 
-def main(root, start, end):
+def run(root, start, end):
     robjects.r.source("../R/summarize_functions.R")
     expected_instances = set(range(start, end + 1))
     instances = ["{}/instance_{}".format(root, x) for x in expected_instances]
@@ -29,6 +30,27 @@ def main(root, start, end):
     with open("missing_instances_{}_{}.csv".format(start, end), 'w') as f_out:
         for i in expected_instances:
             f_out.write("{}\n".format(i))
+
+
+def main(root, num_expected, procs):
+    args = []
+    chunk = int(num_expected / procs)
+    start = 1
+    for i in range(procs):
+        end = start + chunk
+        if i == procs - 1:
+            end = num_expected
+
+        args.append((root, start, end))
+        start = end + 1
+
+
+    p = Pool(procs)
+    p.starmap(run, args)
+
+
+
+
 
 
 if __name__ == '__main__':
