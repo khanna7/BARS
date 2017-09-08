@@ -13,8 +13,8 @@
      mean_deg <- (0*0.566)+(1*0.412)+(2*0.018)+(3*0.003)
 
      deg_seq <- c(56.6, 41.2, 1.8)*n/100   
-     #duration <- 512
-      duration <- 160
+     duration <- 512
+     #duration <- 160
 
      ## role
      pr_insertive_main <- 15/100
