@@ -15,6 +15,7 @@
        #almost equal between susc-susc and inf-inf 
 
      ## ergm parameters for dissolution 
+     d.rate <- 1/((max.age - min.age)*365)
      pg <- (duration - 1)/duration
      ps2 <- (1 - d.rate)^2
      theta.diss <- log(pg/(ps2-pg)) #adjusted for death rate, Run 
