@@ -13,6 +13,11 @@
      nodematch.inf.status <- 0.75*nedges 
        #28/35 partnerships match on infection status, 
        #almost equal between susc-susc and inf-inf 
+
+     ## ergm parameters for dissolution 
+     pg <- (duration - 1)/duration
+     ps2 <- (1 - d.rate)^2
+     theta.diss <- log(pg/(ps2-pg)) #adjusted for death rate, Run 
    
    #####################
    ## DEMOGRAPHIC
