@@ -91,7 +91,7 @@
    #####################
    ## ART
    #baseline.art.coverage.rate <- 0.60 NOT NEEDED
-   #art.init.time <- 365 # currently set to one year, make more complex later NOT NEEDED
+   art.init.time <- 365 # currently set to one year, make more complex later NEEDED ONLY FOR TIME 0 INITIALIZATION
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month
    
    ## ART adherence
