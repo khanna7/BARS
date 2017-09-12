@@ -13,8 +13,8 @@
      mean_deg <- (0*0.566)+(1*0.412)+(2*0.018)+(3*0.003)
 
      deg_seq <- c(56.6, 41.2, 1.8)*n/100   
-     #duration <- 512
-      duration <- 160
+     duration <- 512
+     #duration <- 160
 
      ## role
      pr_insertive_main <- 15/100
@@ -271,8 +271,8 @@ prep.mean.days.usage <- 180
 # we mult. this value by the number of uninfected persons
 # to get a probability of an infection for that day
 # numerator here is 100 person years which we convert into days
-external.infections.per.person.day.min <- 0.8 / (100 * 365)
-external.infections.per.person.day.max <- 1.6 / (100 * 365)
+external.infections.per.person.day.min <- 0.7 / (100 * 365) #revised as per write up from 0.8 and 1.6 for lower and upper bounds on 09.07.17
+external.infections.per.person.day.max <- 1.9 / (100 * 365)
 
 # factor used to calculate age related external inf probability --
 # [19, 20) year old will be "factor" time more likely to get externally

@@ -20,7 +20,7 @@
 
    dissolution <- ~offset(edges)
    #theta.diss <- log(duration-1)
-    theta.diss <- 6.43 #adjusted for death rate
+   # theta.diss <- should be 6.43 (corresponding to duration of 512 and death correction with 16-year life expectancy). set in derived param file
 
    target.stats <- c(nedges, deg_seq[1:3])
    constraints <- ~.
