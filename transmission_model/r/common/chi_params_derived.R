@@ -52,7 +52,7 @@
    ## Network (casual)
       ## nedges
          cas_tot_deg <- (0*cas_deg_seq[1])+(1*cas_deg_seq[2])+
-                        (2*cas_deg_seq[3])+(3*cas_deg_seq[4])
+                        (2*cas_deg_seq[3])
          cas_n_edges <- cas_tot_deg/2
       ## role
       pr_versatile_casual <- 1 - (pr_insertive_casual + pr_receptive_casual)
