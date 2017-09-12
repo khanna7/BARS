@@ -121,6 +121,8 @@ const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
 const std::string ART_LAG_PREFIX = "art.init.lag";
 const std::string ASM_PREFIX = "asm.";
 
+const std::string TESTING_PROB_PREFIX = "testing.prob";
+
 const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
 const std::string ART_PROP_NEVER_ADHERENT = "art.prop.never.adherent";
 const std::string ART_PROP_ALWAYS_ADHERENT = "art.prop.always.adherent";

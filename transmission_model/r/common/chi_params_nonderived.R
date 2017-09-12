@@ -281,3 +281,18 @@ external.infections.per.person.day.max <- 1.6 / (100 * 365)
 # and factor^2 times more likely to get infected than the [18, 19) so on.
 external.infections.age.factor = 1.2
 
+
+
+# range of number of tests in last two years min-max, fraction of the population
+testing.prob.1 = "1-2,0.457377778"
+testing.prob.2 = "3-4,0.299377778"
+testing.prob.3 = "5-6,0.109377778"
+testing.prob.4 = "7-8,0.055377778"
+testing.prob.5 = "9-10,0.039377778"
+testing.prob.6 = "11-12,0.012377778"
+testing.prob.7 = "13-16,0.008877778"
+testing.prob.8 = "17-20,0.010677778"
+testing.prob.9 = "21-30,0.007177778"
+
+
+

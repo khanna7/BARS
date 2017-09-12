@@ -23,28 +23,23 @@ class ProbDist {
 private:
 	friend class ProbDistCreator<T>;
 
-	using PtrT = std::shared_ptr<T>;
-
-	std::vector<std::pair<double, PtrT>> bins;
-	ProbDist(std::vector<std::pair<double, PtrT>> items);
+	std::vector<std::pair<double, T>> bins;
+	ProbDist(std::vector<std::pair<double, T>> items);
 
 public:
-
-	~ProbDist();
-	PtrT draw(double val);
+	T draw(double val);
 };
 
 template<typename T>
 class ProbDistCreator {
 private:
-	using PtrT = std::shared_ptr<T>;
-	std::vector<std::pair<double, PtrT>> bins;
+	std::vector<std::pair<double, T>> bins;
 
 public:
 	ProbDistCreator() {}
 	~ProbDistCreator() {}
 
-	void addItem(double probability, PtrT item);
+	void addItem(double probability, T item);
 	ProbDist<T> createProbDist();
 
 	void clear() {
@@ -54,7 +49,7 @@ public:
 
 
 template<typename T>
-void ProbDistCreator<T>::addItem(double probability, PtrT item) {
+void ProbDistCreator<T>::addItem(double probability, T item) {
 	if (probability > 0) {
 		bins.push_back(std::make_pair(probability, item));
 	}
@@ -69,7 +64,6 @@ ProbDist<T> ProbDistCreator<T>::createProbDist() {
 	}
 
 	if (sum < 1.0 - EPSILON || sum > 1.0 + EPSILON) {
-		std::cout << sum << std::endl;
 		throw std::domain_error("Invalid value used to initialize ProbDist. Sum of probabilities must equal 1.");
 	}
 	bins[bins.size() - 1].first = 1.0;
@@ -78,14 +72,11 @@ ProbDist<T> ProbDistCreator<T>::createProbDist() {
 }
 
 template<typename T>
-ProbDist<T>::ProbDist(std::vector<std::pair<double, PtrT>> items) : bins{items} {
+ProbDist<T>::ProbDist(std::vector<std::pair<double, T>> items) : bins{items} {
 }
 
 template<typename T>
-ProbDist<T>::~ProbDist() {}
-
-template<typename T>
-std::shared_ptr<T> ProbDist<T>::draw(double val) {
+T ProbDist<T>::draw(double val) {
 	for (auto& bin : bins) {
 		if (val <= bin.first) {
 			return bin.second;

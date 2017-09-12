@@ -46,13 +46,13 @@ void initialize_art_adherence(std::shared_ptr<Person> person, double first_art_a
 	double partial_minus_prob = Parameters::instance()->getDoubleParameter(ART_PARTIAL_NEG_ADHERENT_PROB);
 
 	ProbDistCreator<AdherenceData> creator;
-	creator.addItem(always, std::make_shared<AdherenceData>(always_prob, AdherenceCategory::ALWAYS));
-	creator.addItem(never, std::make_shared<AdherenceData>(never_prob, AdherenceCategory::NEVER));
-	creator.addItem(partial_plus, std::make_shared<AdherenceData>(partial_plus_prob, AdherenceCategory::PARTIAL_PLUS));
-	creator.addItem(partial_minus, std::make_shared<AdherenceData>(partial_minus_prob, AdherenceCategory::PARTIAL_MINUS));
+	creator.addItem(always, AdherenceData(always_prob, AdherenceCategory::ALWAYS));
+	creator.addItem(never, AdherenceData(never_prob, AdherenceCategory::NEVER));
+	creator.addItem(partial_plus, AdherenceData(partial_plus_prob, AdherenceCategory::PARTIAL_PLUS));
+	creator.addItem(partial_minus, AdherenceData(partial_minus_prob, AdherenceCategory::PARTIAL_MINUS));
 
-	std::shared_ptr<AdherenceData> data = creator.createProbDist().draw(repast::Random::instance()->nextDouble());
-	person->setArtAdherence({data->probability, data->category});
+	AdherenceData data = creator.createProbDist().draw(repast::Random::instance()->nextDouble());
+	person->setArtAdherence(data);
 	schedule_art_adherence(person, first_art_at_tick);
 }
 
@@ -93,13 +93,13 @@ AdherenceData initialize_prep_adherence() {
 	//std::cout << "prep: " << always << "," << never << "," << partial_plus << ", " << partial_minus << std::endl;
 
 	ProbDistCreator<AdherenceData> creator;
-	creator.addItem(always, std::make_shared<AdherenceData>(always_prob, AdherenceCategory::ALWAYS));
-	creator.addItem(never, std::make_shared<AdherenceData>(never_prob, AdherenceCategory::NEVER));
-	creator.addItem(partial_plus, std::make_shared<AdherenceData>(partial_plus_prob, AdherenceCategory::PARTIAL_PLUS));
-	creator.addItem(partial_minus, std::make_shared<AdherenceData>(partial_minus_prob, AdherenceCategory::PARTIAL_MINUS));
+	creator.addItem(always, AdherenceData(always_prob, AdherenceCategory::ALWAYS));
+	creator.addItem(never, AdherenceData(never_prob, AdherenceCategory::NEVER));
+	creator.addItem(partial_plus, AdherenceData(partial_plus_prob, AdherenceCategory::PARTIAL_PLUS));
+	creator.addItem(partial_minus, AdherenceData(partial_minus_prob, AdherenceCategory::PARTIAL_MINUS));
 
-	std::shared_ptr<AdherenceData> data = creator.createProbDist().draw(repast::Random::instance()->nextDouble());
-	return AdherenceData(data->probability, data->category);
+	AdherenceData data = creator.createProbDist().draw(repast::Random::instance()->nextDouble());
+	return data;
 }
 
 }
