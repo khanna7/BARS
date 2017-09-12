@@ -10,9 +10,9 @@
      ## 1 main partnership = 41.2% of men
      ## 2 main partnerships = 1.8 % of men
      ## >=3 main partnerships = 0.3 % of men
-     mean_deg <- (0*0.566)+(1*0.412)+(2*0.018)+(3*0.003)
+     deg_seq <- c(63.71, 34.03, 1.89)*n/100   
+     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
-     deg_seq <- c(56.6, 41.2, 1.8)*n/100   
      duration <- 512
      #duration <- 160
 
@@ -134,7 +134,8 @@
         ## 1: 35.4%
         ## 2: 7.6% 
         ## 3: 2.9%
-      cas_deg_seq <- c(54.1, 35.4, 7.6, 2.9)*n/100
+      cas_deg_seq <- c(58.9, 32.2, 6.8)*n/100
+
       ## nedges
 
       ## role
