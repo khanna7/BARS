@@ -58,7 +58,6 @@ extern const std::string CHRONIC_LENGTH_MAX;
 extern const std::string CIRCUM_MULT;
 extern const std::string CIRCUM_RATE;
 extern const std::string DAILY_ENTRY_RATE;
-extern const std::string DAILY_TESTING_PROB;
 extern const std::string DETECTION_WINDOW;
 extern const std::string DUR_INF;
 extern const std::string DURATION_OF_INFECTION;

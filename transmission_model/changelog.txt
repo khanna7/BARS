@@ -1,3 +1,9 @@
+12 September 2017
+
+Version 0.19
+
+* Updated testing frequency to match empirical distribution
+
 22 August 2017
 
 Version 0.18

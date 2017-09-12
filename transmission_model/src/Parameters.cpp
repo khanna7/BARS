@@ -71,7 +71,6 @@ const std::string CHRONIC_LENGTH_MAX = "chronic.length.max";
 const std::string CIRCUM_MULT = "circum.mult";
 const std::string CIRCUM_RATE = "circum.rate";
 const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
-const std::string DAILY_TESTING_PROB = "daily.testing.prob";
 const std::string DETECTION_WINDOW = "detection.window";
 const std::string DUR_INF = "dur.inf";
 const std::string DURATION_OF_INFECTION = "duration.of.infection";
