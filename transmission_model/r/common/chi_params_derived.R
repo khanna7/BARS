@@ -63,6 +63,12 @@
      theta.diss_cas <- log(pg_cas/(ps2-pg_cas)) #adjusted for death rate 
 
     #####################
+     ## Testing and diagnosis
+     daily.testing.prob <- 1/mean.time.until.next.test #FOR INITIALIZATION ONLY
+  
+      #####################
+
+    #####################
     ## PrEP
     
 #####################
