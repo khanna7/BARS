@@ -21,6 +21,7 @@ DayRangeBin::DayRangeBin(double min, double max) : gen(1 / (min + (max - min) / 
 DayRangeBin::~DayRangeBin() {}
 
 double DayRangeBin::calculateLag(float size_of_timestep) {
+
 	return gen.next() / size_of_timestep;
 }
 
@@ -70,7 +71,7 @@ std::shared_ptr<DayRangeCalculator> DayRangeCalculatorCreator::createCalculator(
 	return shared_ptr<DayRangeCalculator>(new DayRangeCalculator(pd_creator.createProbDist()));
 }
 
-DayRangeCalculator::DayRangeCalculator(ProbDist<DayRangeBin> prob_dist) : dist(prob_dist) {
+DayRangeCalculator::DayRangeCalculator(ProbDist<std::shared_ptr<DayRangeBin>> prob_dist) : dist(prob_dist) {
 
 }
 

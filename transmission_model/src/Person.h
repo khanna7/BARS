@@ -31,12 +31,12 @@ private:
 	float infectivity_;
 	PrepParameters prep_;
 	bool dead_, diagnosed_, testable_;
-	Diagnoser<GeometricDistribution> diagnoser_;
+	Diagnoser diagnoser_;
 	AdherenceData art_adherence_;
 
 public:
 	Person(int id, float age, bool circum_status, int steady_role, int casual_role,
-			Diagnoser<GeometricDistribution>& diagnoser);
+			Diagnoser diagnoser);
 
 	virtual ~Person();
 
@@ -95,7 +95,7 @@ public:
 		return infection_parameters_.time_since_infection;
 	}
 
-	const Diagnoser<GeometricDistribution> diagnoser() const {
+	const Diagnoser diagnoser() const {
 		return diagnoser_;
 	}
 

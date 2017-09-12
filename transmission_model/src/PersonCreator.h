@@ -13,9 +13,11 @@
 #include "RInside.h"
 
 #include "Person.h"
+#include "ProbDist.h"
 #include "TransmissionRunner.h"
 #include "common.h"
 #include "GeometricDistribution.h"
+#include "testing_functions.h"
 
 namespace TransModel {
 
@@ -25,11 +27,11 @@ class PersonCreator {
 private:
 	int id;
 	std::shared_ptr<TransmissionRunner> trans_runner_;
-	std::shared_ptr<GeometricDistribution> dist;
+	ProbDist<TestingDist> testing_dist;
 	double detection_window_;
 
 public:
-	PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double daily_testing_prob, double detection_window);
+	PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window);
 	virtual ~PersonCreator();
 
 	PersonPtr operator()(Rcpp::List& val, double tick);

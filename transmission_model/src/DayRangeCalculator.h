@@ -36,8 +36,8 @@ class DayRangeCalculator {
 private:
 	friend class DayRangeCalculatorCreator;
 
-	ProbDist<DayRangeBin> dist;
-	DayRangeCalculator(ProbDist<DayRangeBin> prob_dist);
+	ProbDist<std::shared_ptr<DayRangeBin>> dist;
+	DayRangeCalculator(ProbDist<std::shared_ptr<DayRangeBin>> prob_dist);
 
 public:
 	virtual ~DayRangeCalculator();
@@ -48,7 +48,7 @@ public:
 class DayRangeCalculatorCreator {
 
 private:
-	ProbDistCreator<DayRangeBin> pd_creator;
+	ProbDistCreator<std::shared_ptr<DayRangeBin>> pd_creator;
 
 public:
 	DayRangeCalculatorCreator();

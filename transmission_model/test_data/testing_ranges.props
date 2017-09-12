@@ -1,0 +1,5 @@
+# range of number of tests in last two years min-max, fraction of the population
+# when these are in the R file the values need to be quoted
+testing.prob.1 = 1-3,0.4
+testing.prob.2 = 4-6,0.3
+testing.prob.3 = 7-8,0.3

@@ -10,9 +10,9 @@
      ## 1 main partnership = 41.2% of men
      ## 2 main partnerships = 1.8 % of men
      ## >=3 main partnerships = 0.3 % of men
-     mean_deg <- (0*0.566)+(1*0.412)+(2*0.018)+(3*0.003)
+     deg_seq <- c(63.71, 34.03, 1.89)*n/100   
+     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
-     deg_seq <- c(56.6, 41.2, 1.8)*n/100   
      duration <- 512
      #duration <- 160
 
@@ -90,8 +90,8 @@
 
    #####################
    ## ART
-   baseline.art.coverage.rate <- 0.60
-   art.init.time <- 365 # currently set to one year, make more complex later
+   #baseline.art.coverage.rate <- 0.60 NOT NEEDED
+   #art.init.time <- 365 # currently set to one year, make more complex later NOT NEEDED
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month
    
    ## ART adherence
@@ -134,7 +134,8 @@
         ## 1: 35.4%
         ## 2: 7.6% 
         ## 3: 2.9%
-      cas_deg_seq <- c(54.1, 35.4, 7.6, 2.9)*n/100
+      cas_deg_seq <- c(58.9, 32.2, 6.8)*n/100
+
       ## nedges
 
       ## role
@@ -147,7 +148,6 @@
     ## Testing, diagnosis and linkage-to-care
     detection.window <- 22
 
-    mean.time.until.next.test <- 365*1
     #lag.bet.diagnosis.and.art.init <- 30
     non.testers.prop <- 0.06
 
@@ -280,4 +280,19 @@ external.infections.per.person.day.max <- 1.9 / (100 * 365)
 # be factor times more likely to get infected than the [19, 20) year olds, 
 # and factor^2 times more likely to get infected than the [18, 19) so on.
 external.infections.age.factor = 1.2
+
+
+
+# range of number of tests in last two years min-max, fraction of the population
+testing.prob.1 = "1-2,0.457377778"
+testing.prob.2 = "3-4,0.299377778"
+testing.prob.3 = "5-6,0.109377778"
+testing.prob.4 = "7-8,0.055377778"
+testing.prob.5 = "9-10,0.039377778"
+testing.prob.6 = "11-12,0.012377778"
+testing.prob.7 = "13-16,0.008877778"
+testing.prob.8 = "17-20,0.010677778"
+testing.prob.9 = "21-30,0.007177778"
+
+
 

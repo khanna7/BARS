@@ -27,7 +27,9 @@ CPP_SOURCE = Person.cpp \
 	PrepParameters.cpp \
 	PrepCessationEvent.cpp \
 	CondomUseAssigner.cpp \
-	debug_utils.cpp
+	debug_utils.cpp \
+	testing_functions.cpp \
+	Diagnoser.cpp
 	
 #	EventWriter.cpp \
 	

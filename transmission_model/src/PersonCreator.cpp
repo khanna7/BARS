@@ -17,10 +17,8 @@ using namespace Rcpp;
 
 namespace TransModel {
 
-PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double daily_testing_prob,
-		double detection_window) :
-		id(0), trans_runner_(trans_runner), dist { std::make_shared<GeometricDistribution>(daily_testing_prob, 1) }, detection_window_(
-				detection_window) {
+PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window) :
+		id(0), trans_runner_(trans_runner), testing_dist(create_testing_dist()), detection_window_(detection_window) {
 }
 
 PersonCreator::~PersonCreator() {
@@ -48,7 +46,8 @@ int calculate_role(int network_type) {
 
 PersonPtr PersonCreator::operator()(double tick, float age) {
 	int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
-	Diagnoser<GeometricDistribution> diagnoser(tick, detection_window_, dist);
+	double test_prob = testing_dist.draw(repast::Random::instance()->nextDouble()).next(Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP));
+	Diagnoser diagnoser(tick, detection_window_, test_prob);
 	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(STEADY_NETWORK_TYPE),
 			calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
 	person->testable_ = ((int) repast::Random::instance()->getGenerator(NON_TESTERS_BINOMIAL)->next()) == 0;
@@ -71,10 +70,16 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 		role_casual = as<int>(val["role_casual"]);
 	}
 
-	float next_test_at = tick + as<double>(val["time.until.next.test"]);
-	// float detection_window, float next_test_at, unsigned int test_count, std::shared_ptr<G> generator
-	Diagnoser<GeometricDistribution> diagnoser(detection_window_, next_test_at,
-			as<unsigned int>(val["number.of.tests"]), dist);
+	//float next_test_at = tick + as<double>(val["time.until.next.test"]);
+	// float detection_window,  unsigned int test_count, test_prob
+	double test_prob = 0;
+	if (val.containsElementNamed("testing.probability")) {
+		test_prob = as<double>(val["testing.probability"]);
+	} else {
+		TestingDist dist = testing_dist.draw(repast::Random::instance()->nextDouble());
+		test_prob = dist.next(Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP));
+	}
+	Diagnoser diagnoser(detection_window_, as<unsigned int>(val["number.of.tests"]), test_prob);
 	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role_main, role_casual, diagnoser);
 	person->diagnosed_ = as<bool>(val["diagnosed"]);
 	person->testable_ = !(as<bool>(val["non.testers"]));

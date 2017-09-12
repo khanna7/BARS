@@ -77,9 +77,9 @@ struct PersonToVAL {
 		vertex["circum.status"] = p->isCircumcised();
 
 		vertex["diagnosed"] = p->isDiagnosed();
-		const Diagnoser<GeometricDistribution>& diagnoser = p->diagnoser();
+		const Diagnoser& diagnoser = p->diagnoser();
 		vertex["number.of.tests"] = diagnoser.testCount();
-		vertex["time.until.next.test"] = diagnoser.timeUntilNextTest(tick);
+		vertex["testing.probability"] = diagnoser.testingProbability();
 		vertex["non.testers"] = !(p->isTestable());
 		vertex["role_casual"] = p->casual_role();
 		vertex["role_main"] = p->steady_role();
@@ -371,7 +371,6 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
-				Parameters::instance()->getDoubleParameter(DAILY_TESTING_PROB),
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
 				create_art_lag_calc() },  cessation_generator { create_cessation_generator() }, condom_assigner { create_condom_use_assigner() },
 				asm_runner { create_ASM_runner() } {

@@ -58,7 +58,6 @@ extern const std::string CHRONIC_LENGTH_MAX;
 extern const std::string CIRCUM_MULT;
 extern const std::string CIRCUM_RATE;
 extern const std::string DAILY_ENTRY_RATE;
-extern const std::string DAILY_TESTING_PROB;
 extern const std::string DETECTION_WINDOW;
 extern const std::string DUR_INF;
 extern const std::string DURATION_OF_INFECTION;
@@ -107,6 +106,7 @@ extern const std::string INFECTIVITY_REDUCTION_CONDOM;
 
 extern const std::string ART_LAG_PREFIX;
 extern const std::string ASM_PREFIX;
+extern const std::string TESTING_PROB_PREFIX;
 
 extern const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH;
 extern const std::string ART_PROP_NEVER_ADHERENT;
