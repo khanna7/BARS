@@ -271,6 +271,10 @@ prep.mean.days.usage <- 180
 # we mult. this value by the number of uninfected persons
 # to get a probability of an infection for that day
 # numerator here is 100 person years which we convert into days
+# critical information is that: incidence is 5-9 per 100 py
+# 14%-21% of infections are incident externally
+# 5 * 14% = 0.7 (for min)
+# 9*21% = 1.9 (for max)
 external.infections.per.person.day.min <- 0.7 / (100 * 365) #revised as per write up from 0.8 and 1.6 for lower and upper bounds on 09.07.17
 external.infections.per.person.day.max <- 1.9 / (100 * 365)
 
