@@ -52,7 +52,7 @@
    ## Network (casual)
       ## nedges
          cas_tot_deg <- (0*cas_deg_seq[1])+(1*cas_deg_seq[2])+
-                        (2*cas_deg_seq[3])+(3*cas_deg_seq[4])
+                        (2*cas_deg_seq[3])
          cas_n_edges <- cas_tot_deg/2
       ## role
       pr_versatile_casual <- 1 - (pr_insertive_casual + pr_receptive_casual)
@@ -61,6 +61,12 @@
      ## dissolution parameters for ergm
      pg_cas <- (dur_cas - 1)/dur_cas
      theta.diss_cas <- log(pg_cas/(ps2-pg_cas)) #adjusted for death rate 
+
+    #####################
+     ## Testing and diagnosis
+     daily.testing.prob <- 1/mean.time.until.next.test #FOR INITIALIZATION ONLY
+  
+      #####################
 
     #####################
     ## PrEP

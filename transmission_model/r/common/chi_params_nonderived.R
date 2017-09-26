@@ -10,9 +10,15 @@
      ## 1 main partnership = 41.2% of men
      ## 2 main partnerships = 1.8 % of men
      ## >=3 main partnerships = 0.3 % of men
+<<<<<<< .merge_file_qRzwR0
      mean_deg <- (0*0.566)+(1*0.412)+(2*0.018)+(3*0.003)
 
      deg_seq <- c(56.6, 41.2, 1.8)*n/100   
+=======
+     deg_seq <- c(63.71, 34.03, 1.89)*n/100   
+     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
+
+>>>>>>> .merge_file_DUD2Zr
      duration <- 512
      #duration <- 160
 
@@ -90,7 +96,8 @@
 
    #####################
    ## ART
-   baseline.art.coverage.rate <- 0.60
+   #baseline.art.coverage.rate <- 0.60 NOT NEEDED
+   art.init.time <- 365 # currently set to one year, make more complex later NEEDED ONLY FOR TIME 0 INITIALIZATION
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month
    
    ## ART adherence
@@ -133,7 +140,12 @@
         ## 1: 35.4%
         ## 2: 7.6% 
         ## 3: 2.9%
+<<<<<<< .merge_file_qRzwR0
       cas_deg_seq <- c(54.1, 35.4, 7.6, 2.9)*n/100
+=======
+      cas_deg_seq <- c(58.9, 32.2, 6.8)*n/100
+
+>>>>>>> .merge_file_DUD2Zr
       ## nedges
 
       ## role
@@ -145,7 +157,11 @@
     #####################
     ## Testing, diagnosis and linkage-to-care
     detection.window <- 22
+<<<<<<< .merge_file_qRzwR0
 
+=======
+    mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY
+>>>>>>> .merge_file_DUD2Zr
     #lag.bet.diagnosis.and.art.init <- 30
     non.testers.prop <- 0.06
 
@@ -269,6 +285,13 @@ prep.mean.days.usage <- 180
 # we mult. this value by the number of uninfected persons
 # to get a probability of an infection for that day
 # numerator here is 100 person years which we convert into days
+<<<<<<< .merge_file_qRzwR0
+=======
+# critical information is that: incidence is 5-9 per 100 py
+# 14%-21% of infections are incident externally
+# 5 * 14% = 0.7 (for min)
+# 9*21% = 1.9 (for max)
+>>>>>>> .merge_file_DUD2Zr
 external.infections.per.person.day.min <- 0.7 / (100 * 365) #revised as per write up from 0.8 and 1.6 for lower and upper bounds on 09.07.17
 external.infections.per.person.day.max <- 1.9 / (100 * 365)
 
