@@ -53,7 +53,6 @@ const std::string ACUTE_LENGTH_MIN = "acute.length.min";
 const std::string ACUTE_LENGTH_MAX = "acute.length.max";
 const std::string ACUTE_MULT = "acute.mult";
 const std::string ACUTE_MULT_HOLLING = "acute.mult.holling";
-const std::string ART_INIT_TIME = "art.init.time";
 const std::string B1_REF = "b1.ref";
 const std::string B2_AFRICAN = "b2.african";
 const std::string B3_FEMALE = "b3.female";

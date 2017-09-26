@@ -124,9 +124,14 @@ struct Counts {
 	unsigned int sc_casual_sex_with_condom, sc_casual_sex_without_condom;
 	unsigned int sc_steady_sex_with_condom, sc_steady_sex_without_condom;
 	unsigned int on_art, on_prep;
+	unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
+		vertex_count_u26, vertex_count_gte26;
 	Counts();
 	void reset();
 	void writeTo(FileOutput& out);
+	void incrementInfected(PersonPtr& p);
+	void incrementUninfected(PersonPtr& p);
+	void incrementVertexCount(PersonPtr p);
 
 };
 

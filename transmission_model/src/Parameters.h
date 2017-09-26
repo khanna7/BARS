@@ -40,7 +40,6 @@ extern const std::string ACUTE_LENGTH_MIN;
 extern const std::string ACUTE_LENGTH_MAX;
 extern const std::string ACUTE_MULT;
 extern const std::string ACUTE_MULT_HOLLING;
-extern const std::string ART_INIT_TIME;
 extern const std::string B1_REF;
 extern const std::string B2_AFRICAN;
 extern const std::string B3_FEMALE;

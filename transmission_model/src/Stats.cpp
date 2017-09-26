@@ -66,8 +66,13 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 }
 
 const std::string Counts::header(
-		"\"tick\",\"entries\",\"max_age_exits\",\"infection_deaths\",\"asm_deaths\",\"infected_via_transmission\",\"infected_externally\",\"infected_at_entry\",\"uninfected\","
-		"\"steady_edge_count\",\"casual_edge_count\",\"vertex_count\",\"overlaps\",\"sex_acts\",\"casual_sex_acts\","
+		"\"tick\",\"entries\",\"max_age_exits\",\"infection_deaths\",\"asm_deaths\","
+		"\"infected_via_transmission\",\"infected_via_transmission_u26\",\"infected_via_transmission_gte26\","
+		"\"infected_externally\",\"infected_at_entry\","
+		"\"uninfected\",\"uninfected_u26\",\"uninfected_gte26\","
+		"\"steady_edge_count\",\"casual_edge_count\","
+		"\"vertex_count\",\"vertex_count_u26\",\"vertex_count_gte26\","
+		"\"overlaps\",\"sex_acts\",\"casual_sex_acts\","
 		"\"sd_casual_sex_with_condom\",""\"sd_casual_sex_without_condom\","
 		"\"sc_casual_sex_with_condom\",""\"sc_casual_sex_without_condom\","
 		"\"steady_sex_acts\","
@@ -76,9 +81,13 @@ const std::string Counts::header(
 		"\"on_art\",\"on_prep\"");
 
 void Counts::writeTo(FileOutput& out) {
-	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths << "," << internal_infected << ","
-			<< external_infected << "," << infected_at_entry << "," << uninfected << "," << main_edge_count << "," << casual_edge_count << ","
-			<< size << "," << overlaps << "," << sex_acts << "," << casual_sex_acts << ","
+	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths << ","
+			<< internal_infected << ","	<< infected_via_transmission_u26 << "," << infected_via_transmission_gte26 << ","
+			<< external_infected << "," << infected_at_entry << ","
+			<< uninfected << "," << uninfected_u26 << "," << uninfected_gte26 << ","
+			<< main_edge_count << "," << casual_edge_count << ","
+			<< size << "," << vertex_count_u26 << "," << vertex_count_gte26 << ","
+			<< overlaps << "," << sex_acts << "," << casual_sex_acts << ","
 			<< sd_casual_sex_with_condom << "," << sd_casual_sex_without_condom << ","
 			<< sc_casual_sex_with_condom << "," << sc_casual_sex_without_condom << ","
 			<< steady_sex_acts << ","
@@ -94,7 +103,10 @@ Counts::Counts() :
 				sd_steady_sex_with_condom{0}, sd_steady_sex_without_condom {0},
 				sc_casual_sex_with_condom{0}, sc_casual_sex_without_condom{0},
 				sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
-				on_art{0}, on_prep{0}
+				on_art{0}, on_prep{0}, uninfected_u26{0}, uninfected_gte26{0},
+				infected_via_transmission_u26{0}, infected_via_transmission_gte26{0},
+				vertex_count_u26{0}, vertex_count_gte26{0}
+
 {
 }
 
@@ -107,7 +119,30 @@ void Counts::reset() {
 	sc_casual_sex_with_condom = sc_casual_sex_without_condom = 0;
 	sc_steady_sex_with_condom = sc_steady_sex_without_condom = 0;
 	on_art = on_prep = 0;
+	uninfected_u26 = uninfected_gte26 = infected_via_transmission_u26 = infected_via_transmission_gte26 = 0;
+	vertex_count_u26 = vertex_count_gte26 = 0;
 	overlaps = 0;
+}
+
+void Counts::incrementInfected(PersonPtr& p) {
+	++internal_infected;
+	// < 26, >= 26
+	if (p->age() < 26) ++infected_via_transmission_u26;
+	else ++infected_via_transmission_gte26;
+}
+
+void Counts::incrementUninfected(PersonPtr& p) {
+	++uninfected;
+	// < 26, >= 26
+	if (p->age() < 26) ++uninfected_u26;
+	else ++uninfected_gte26;
+}
+
+void Counts::incrementVertexCount(PersonPtr p) {
+	++size;
+	// < 26, >= 26
+	if (p->age() < 26) ++vertex_count_u26;
+	else ++vertex_count_gte26;
 }
 
 Stats* Stats::instance_ = nullptr;
