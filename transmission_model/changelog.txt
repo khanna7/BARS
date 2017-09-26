@@ -1,3 +1,9 @@
+26 September 2017
+
+Version 0.20
+
+* Added new output to record stats by age group (under 26, 26 and over). 
+
 12 September 2017
 
 Version 0.19
