@@ -398,7 +398,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 		PersonPtr p = *iter;
 		stats->personDataRecorder().initRecord(p, 0);
 		if (p->isInfected()) {
-			++stats->currentCounts().internal_infected;
+			stats->currentCounts().incrementInfected(p);
 			stats->personDataRecorder().recordInfection(p, p->infectionParameters().time_of_infection,
 					InfectionSource::INTERNAL);
 		}
@@ -505,6 +505,9 @@ void Model::step() {
 
 	stats->currentCounts().main_edge_count = net.edgeCount(STEADY_NETWORK_TYPE);
 	stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
+	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+		stats->currentCounts().incrementVertexCount((*iter));
+	}
 	stats->currentCounts().size = net.vertexCount();
 	stats->resetForNextTimeStep();
 }
@@ -600,7 +603,7 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 		} else {
 			// don't count dead uninfected persons
 			if (!person->isInfected()) {
-				++stats->currentCounts().uninfected;
+				stats->currentCounts().incrementUninfected(person);
 				if (person->isOnPrep()) {
 					++stats->currentCounts().on_prep;
 				}
@@ -840,7 +843,7 @@ void Model::runTransmission(double time_stamp) {
 		// and so may appear more than once in the infecteds list
 		if (!person->isInfected()) {
 			infectPerson(person, time_stamp);
-			++stats->currentCounts().internal_infected;
+			stats->currentCounts().incrementInfected(person);
 			stats->personDataRecorder().recordInfection(person, time_stamp, InfectionSource::INTERNAL);
 		}
 	}
