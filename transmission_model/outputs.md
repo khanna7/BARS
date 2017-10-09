@@ -29,12 +29,19 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * old_age_deaths: the number of persons who died from old age (person's age > max age) at that timestep
 * infection_deaths: the number of persons who died from infection at that timestep
 * infected_via_transmission: the number of persons infected via transmission at that timestep
+* infected_via_transmission_u26: the number of persons under 26 infected via transmission at that timestep
+* infected_via_transmission_gte26: the number of persons 26 and over infected via transmission at that timestep
 * infected_externally: the number of persons infected via "external infection" at that timestep
 * infected_at_entry: the number of persons who were infected when entering the model
 * uninfected: the number of uninfected persons at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
+* uninfected_u26: the number of uninfected persons under 26 at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
+* uninfected_gte26: the number of uninfected persons 26 and over at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
 * steady_edge_count: the number of edges in the steady partner network in the model at the end of the timestep
-* casual_edge_count: the number of edges in the casual partner network in the model at the end of the timestep
+* casual_edge_count: the number of edges in the casual partner
+network in the model at the end of the timestep
 * vertex_count: the total number of vertices at the end of the timestep. This takes into account adding entries and subtracting deaths.
+* vertex_count_u26: the total number of vertices (persons) under 26 at the end of the timestep. This takes into account adding entries and subtracting deaths.
+* vertex_count_gte26: the total number of vertices (persons) 26 and over at the end of the timestep. This takes into account adding entries and subtracting deaths.
 * overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false.
 * sex_acts: the number of sex acts that occured at that timestep.
 * casual_sex_acts: the number of sex acts that occurred between casual partners.
