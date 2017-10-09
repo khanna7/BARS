@@ -147,15 +147,20 @@ void Counts::incrementVertexCount(PersonPtr p) {
 
 Stats* Stats::instance_ = nullptr;
 
-Stats::Stats(std::shared_ptr<StatsWriter<Counts>> counts, std::shared_ptr<StatsWriter<PartnershipEvent>> pevents,
-		std::shared_ptr<StatsWriter<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriter<Biomarker>> bio_writer,
-		std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer, const std::string& person_data_fname,
-		std::shared_ptr<StatsWriter<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriter<ARTEvent>> art_writer,
-		std::shared_ptr<StatsWriter<PREPEvent>> prep_writer) :
+Stats::Stats(std::shared_ptr<StatsWriterI<Counts>> counts, std::shared_ptr<StatsWriterI<PartnershipEvent>> pevents,
+		std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
+		std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
+		std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_writer,
+		std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer) :
 		counts_writer { counts }, current_counts { }, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
 				bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer}, art_event_writer {art_writer}, prep_event_writer{prep_writer},
-				pd_recorder{person_data_fname, 1000}
-			 {
+				pd_recorder{nullptr} {
+
+	if (person_data_fname == "") {
+		pd_recorder = std::make_shared<NullPersonDataRecorder>();
+	} else {
+		pd_recorder = std::make_shared<PersonDataRecorder>(person_data_fname, 1000);
+	}
 }
 
 Stats::~Stats() {

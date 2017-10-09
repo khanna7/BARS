@@ -18,15 +18,15 @@ namespace TransModel {
 class StatsBuilder {
 
 private:
-	std::shared_ptr<StatsWriter<Counts>> counts_writer;
-	std::shared_ptr<StatsWriter<PartnershipEvent>> pevent_writer;
-	std::shared_ptr<StatsWriter<InfectionEvent>> ievent_writer;
-	std::shared_ptr<StatsWriter<Biomarker>> biomarker_writer;
-	std::shared_ptr<StatsWriter<DeathEvent>> death_writer;
+	std::shared_ptr<StatsWriterI<Counts>> counts_writer;
+	std::shared_ptr<StatsWriterI<PartnershipEvent>> pevent_writer;
+	std::shared_ptr<StatsWriterI<InfectionEvent>> ievent_writer;
+	std::shared_ptr<StatsWriterI<Biomarker>> biomarker_writer;
+	std::shared_ptr<StatsWriterI<DeathEvent>> death_writer;
 	std::string pd_fname;
-	std::shared_ptr<StatsWriter<TestingEvent>> tevent_writer;
-	std::shared_ptr<StatsWriter<ARTEvent>> art_event_writer;
-	std::shared_ptr<StatsWriter<PREPEvent>> prep_event_writer;
+	std::shared_ptr<StatsWriterI<TestingEvent>> tevent_writer;
+	std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer;
+	std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer;
 	std::string out_dir_;
 
 public:

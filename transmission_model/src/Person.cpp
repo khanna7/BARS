@@ -105,7 +105,7 @@ bool Person::diagnose(double tick) {
 		if (diagnosed_ && prep_.status() == PrepStatus::ON) {
 			prep_.off(PrepStatus::OFF_INFECTED);
 			Stats::instance()->recordPREPEvent(tick, id(), static_cast<int>(PrepStatus::OFF_INFECTED));
-			Stats::instance()->personDataRecorder().recordPREPStop(this, tick, PrepStatus::OFF_INFECTED);
+			Stats::instance()->personDataRecorder()->recordPREPStop(this, tick, PrepStatus::OFF_INFECTED);
 		}
 	}
 	return diagnosed_;

@@ -29,14 +29,14 @@ void ARTAdherenceCheckScheduler::operator()() {
 		if (person_->isOnART() && !go_on_art) {
 			// go off art when already on
 			person_->goOffART();
-			Stats::instance()->personDataRecorder().recordARTStop(person_, timestamp_);
-			Stats::instance()->personDataRecorder().incrementNonAdheredIntervals(person_);
+			Stats::instance()->personDataRecorder()->recordARTStop(person_, timestamp_);
+			Stats::instance()->personDataRecorder()->incrementNonAdheredIntervals(person_);
 			Stats::instance()->recordARTEvent(timestamp_, person_->id(), false);
 		} else if (!person_->isOnART() && go_on_art) {
 			person_->goOnART(timestamp_);
-			Stats::instance()->personDataRecorder().recordARTStart(person_, timestamp_);
+			Stats::instance()->personDataRecorder()->recordARTStart(person_, timestamp_);
 			Stats::instance()->recordARTEvent(timestamp_, person_->id(), true);
-			Stats::instance()->personDataRecorder().incrementAdheredIntervals(person_);
+			Stats::instance()->personDataRecorder()->incrementAdheredIntervals(person_);
 		}
 
 		double adherence_check_at = timestamp_

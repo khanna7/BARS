@@ -138,26 +138,26 @@ struct Counts {
 class Stats {
 
 private:
-	std::shared_ptr<StatsWriter<Counts>> counts_writer;
+	std::shared_ptr<StatsWriterI<Counts>> counts_writer;
 	Counts current_counts;
-	std::shared_ptr<StatsWriter<PartnershipEvent>> pevent_writer;
-	std::shared_ptr<StatsWriter<InfectionEvent>> ievent_writer;
-	std::shared_ptr<StatsWriter<Biomarker>> biomarker_writer;
-	std::shared_ptr<StatsWriter<DeathEvent>> death_writer;
-	std::shared_ptr<StatsWriter<TestingEvent>> tevent_writer;
-	std::shared_ptr<StatsWriter<ARTEvent>> art_event_writer;
-	std::shared_ptr<StatsWriter<PREPEvent>> prep_event_writer;
+	std::shared_ptr<StatsWriterI<PartnershipEvent>> pevent_writer;
+	std::shared_ptr<StatsWriterI<InfectionEvent>> ievent_writer;
+	std::shared_ptr<StatsWriterI<Biomarker>> biomarker_writer;
+	std::shared_ptr<StatsWriterI<DeathEvent>> death_writer;
+	std::shared_ptr<StatsWriterI<TestingEvent>> tevent_writer;
+	std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer;
+	std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer;
 
-	PersonDataRecorder pd_recorder;
+	std::shared_ptr<PersonDataRecorderI> pd_recorder;
 
 	friend class StatsBuilder;
 	static Stats* instance_;
 
-	Stats(std::shared_ptr<StatsWriter<Counts>> counts, std::shared_ptr<StatsWriter<PartnershipEvent>> pevents,
-			std::shared_ptr<StatsWriter<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriter<Biomarker>> bio_writer,
-			std::shared_ptr<StatsWriter<DeathEvent>> death_event_writer, const std::string& person_data_fname,
-			std::shared_ptr<StatsWriter<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriter<ARTEvent>> art_event_writer,
-			std::shared_ptr<StatsWriter<PREPEvent>> prep_event_writer);
+	Stats(std::shared_ptr<StatsWriterI<Counts>> counts, std::shared_ptr<StatsWriterI<PartnershipEvent>> pevents,
+			std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
+			std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
+			std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer,
+			std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer);
 
 public:
 	virtual ~Stats();
@@ -168,7 +168,7 @@ public:
 		return current_counts;
 	}
 
-	PersonDataRecorder& personDataRecorder() {
+	std::shared_ptr<PersonDataRecorderI> personDataRecorder() {
 		return pd_recorder;
 	}
 

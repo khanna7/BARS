@@ -226,17 +226,26 @@ void init_generators() {
 	Random::instance()->putGenerator(CIRCUM_STATUS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(rate));
 }
 
+std::string get_stats_filename(const std::string& key) {
+	if (Parameters::instance()->contains(key)) {
+		return Parameters::instance()->getStringParameter(key);
+	} else {
+		return "";
+	}
+
+}
+
 void init_stats() {
 	StatsBuilder builder(output_directory(Parameters::instance()));
-	builder.countsWriter(Parameters::instance()->getStringParameter(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
-	builder.partnershipEventWriter(Parameters::instance()->getStringParameter(PARTNERSHIP_EVENTS_FILE));
-	builder.infectionEventWriter(Parameters::instance()->getStringParameter(INFECTION_EVENTS_FILE));
-	builder.biomarkerWriter(Parameters::instance()->getStringParameter(BIOMARKER_FILE));
-	builder.deathEventWriter(Parameters::instance()->getStringParameter(DEATH_EVENT_FILE));
-	builder.personDataRecorder(Parameters::instance()->getStringParameter(PERSON_DATA_FILE));
-	builder.testingEventWriter(Parameters::instance()->getStringParameter(TESTING_EVENT_FILE));
-	builder.artEventWriter(Parameters::instance()->getStringParameter(ART_EVENT_FILE));
-	builder.prepEventWriter(Parameters::instance()->getStringParameter(PREP_EVENT_FILE));
+	builder.countsWriter(get_stats_filename(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
+	builder.partnershipEventWriter(get_stats_filename(PARTNERSHIP_EVENTS_FILE));
+	builder.infectionEventWriter(get_stats_filename(INFECTION_EVENTS_FILE));
+	builder.biomarkerWriter(get_stats_filename(BIOMARKER_FILE));
+	builder.deathEventWriter(get_stats_filename(DEATH_EVENT_FILE));
+	builder.personDataRecorder(get_stats_filename(PERSON_DATA_FILE));
+	builder.testingEventWriter(get_stats_filename(TESTING_EVENT_FILE));
+	builder.artEventWriter(get_stats_filename(ART_EVENT_FILE));
+	builder.prepEventWriter(get_stats_filename(PREP_EVENT_FILE));
 
 	builder.createStatsSingleton();
 }
@@ -396,10 +405,10 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	stats->currentCounts().size = net.vertexCount();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
 		PersonPtr p = *iter;
-		stats->personDataRecorder().initRecord(p, 0);
+		stats->personDataRecorder()->initRecord(p, 0);
 		if (p->isInfected()) {
 			stats->currentCounts().incrementInfected(p);
-			stats->personDataRecorder().recordInfection(p, p->infectionParameters().time_of_infection,
+			stats->personDataRecorder()->recordInfection(p, p->infectionParameters().time_of_infection,
 					InfectionSource::INTERNAL);
 		}
 	}
@@ -425,16 +434,16 @@ void Model::initPrepCessation() {
 			runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
 			double start_time = person->prepParameters().startTime();
 			Stats::instance()->recordPREPEvent(start_time, person->id(), static_cast<int>(PrepStatus::ON));
-			Stats::instance()->personDataRecorder().recordPREPStart(person, start_time);
+			Stats::instance()->personDataRecorder()->recordPREPStart(person, start_time);
 		}
 	}
 }
 
 void Model::atEnd() {
 	double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
-	PersonDataRecorder& pdr = Stats::instance()->personDataRecorder();
+	std::shared_ptr<PersonDataRecorderI> pdr = Stats::instance()->personDataRecorder();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
-		pdr.finalize(*iter, ts);
+		pdr->finalize(*iter, ts);
 	}
 
 	// forces stat writing via destructors
@@ -515,7 +524,7 @@ void Model::step() {
 void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
 		float size_of_timestep) {
 	double lag = art_lag_calculator->calculateLag(size_of_timestep);
-	Stats::instance()->personDataRecorder().recordInitialARTLag(person, lag);
+	Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
 
 	double art_at_tick = lag + tick;
 	ARTScheduler* scheduler = nullptr;
@@ -538,7 +547,7 @@ void Model::updatePREPUse(double tick, double prob, PersonPtr person) {
 		double stop_time = tick + cessation_generator->next();
 		person->goOnPrep(tick, stop_time);
 		Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
-		Stats::instance()->personDataRecorder().recordPREPStart(person, tick);
+		Stats::instance()->personDataRecorder()->recordPREPStart(person, tick);
 		runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
 	}
 }
@@ -643,7 +652,7 @@ void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
 		PersonPtr p = iter->second;
 		infectPerson(p, t);
 		++stats->currentCounts().external_infected;
-		stats->personDataRecorder().recordInfection(p, t, InfectionSource::EXTERNAL);
+		stats->personDataRecorder()->recordInfection(p, t, InfectionSource::EXTERNAL);
 	}
 }
 
@@ -686,7 +695,7 @@ void Model::entries(double tick, float size_of_timestep) {
 				stats->recordInfectionEvent(infected_at, p);
 			}
 			net.addVertex(p);
-			Stats::instance()->personDataRecorder().initRecord(p, tick);
+			Stats::instance()->personDataRecorder()->initRecord(p, tick);
 		}
 	}
 }
@@ -732,7 +741,7 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
 		++death_count;
 		++Stats::instance()->currentCounts().age_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::AGE);
-		Stats::instance()->personDataRecorder().recordDeath(person, tick);
+		Stats::instance()->personDataRecorder()->recordDeath(person, tick);
 		cod = CauseOfDeath::AGE;
 	}
 
@@ -741,7 +750,7 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
 		++death_count;
 		++Stats::instance()->currentCounts().infection_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::INFECTION);
-		Stats::instance()->personDataRecorder().recordDeath(person, tick);
+		Stats::instance()->personDataRecorder()->recordDeath(person, tick);
 		cod = CauseOfDeath::INFECTION;
 	}
 
@@ -750,7 +759,7 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
 		++death_count;
 		++Stats::instance()->currentCounts().asm_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
-		Stats::instance()->personDataRecorder().recordDeath(person, tick);
+		Stats::instance()->personDataRecorder()->recordDeath(person, tick);
 		cod = CauseOfDeath::ASM;
 	}
 
@@ -844,7 +853,7 @@ void Model::runTransmission(double time_stamp) {
 		if (!person->isInfected()) {
 			infectPerson(person, time_stamp);
 			stats->currentCounts().incrementInfected(person);
-			stats->personDataRecorder().recordInfection(person, time_stamp, InfectionSource::INTERNAL);
+			stats->personDataRecorder()->recordInfection(person, time_stamp, InfectionSource::INTERNAL);
 		}
 	}
 }
