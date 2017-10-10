@@ -118,7 +118,8 @@ const std::string PROP_STEADY_SEX_ACTS = "prop.steady.sex.acts";
 const std::string PROP_CASUAL_SEX_ACTS = "prop.casual.sex.acts";
 const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
 
-const std::string ART_LAG_PREFIX = "art.init.lag";
+const std::string ART_LAG_PREFIX_LT = "art.init.lag.lt";
+const std::string ART_LAG_PREFIX_GTE = "art.init.lag.gte";
 const std::string ASM_PREFIX = "asm.";
 
 const std::string TESTING_PROB_PREFIX = "testing.prob";

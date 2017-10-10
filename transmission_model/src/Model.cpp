@@ -295,14 +295,25 @@ void init_trans_params(TransmissionParameters& params) {
 	params.prop_casual_sex_acts = Parameters::instance()->getDoubleParameter(PROP_CASUAL_SEX_ACTS) * size_of_time_step;
 }
 
-std::shared_ptr<DayRangeCalculator> create_art_lag_calc() {
+ARTLagCalculator create_art_lag_calc() {
 	DayRangeCalculatorCreator creator;
 	vector<string> lag_keys;
-	Parameters::instance()->getKeys(ART_LAG_PREFIX, lag_keys);
+	Parameters::instance()->getKeys(ART_LAG_PREFIX_LT, lag_keys);
 	for (auto& key : lag_keys) {
 		creator.addBin(Parameters::instance()->getStringParameter(key));
 	}
-	return creator.createCalculator();
+	std::shared_ptr<DayRangeCalculator> lower = creator.createCalculator();
+
+	creator.clear();
+	lag_keys.clear();
+	Parameters::instance()->getKeys(ART_LAG_PREFIX_GTE, lag_keys);
+	for (auto& key : lag_keys) {
+		creator.addBin(Parameters::instance()->getStringParameter(key));
+	}
+	std::shared_ptr<DayRangeCalculator> upper = creator.createCalculator();
+
+	float age_threshold =  Parameters::instance()->getFloatParameter(AGE_THRESHOLD);
+	return ARTLagCalculator(upper, lower, age_threshold);
 }
 
 std::shared_ptr<GeometricDistribution> create_cessation_generator() {
@@ -524,7 +535,7 @@ void Model::step() {
 
 void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
 		float size_of_timestep) {
-	double lag = art_lag_calculator->calculateLag(size_of_timestep);
+	double lag = art_lag_calculator.calculateLag(person, size_of_timestep);
 	Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
 
 	double art_at_tick = lag + tick;

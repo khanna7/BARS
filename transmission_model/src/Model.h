@@ -22,10 +22,11 @@
 #include "ViralLoadCalculator.h"
 #include "ViralLoadSlopeCalculator.h"
 #include "PersonCreator.h"
-#include "DayRangeCalculator.h"
+//#include "DayRangeCalculator.h"
 #include "ARTScheduler.h"
 #include "CondomUseAssigner.h"
 #include "RangeWithProbability.h"
+#include "ARTLagCalculator.h"
 
 namespace TransModel {
 
@@ -51,7 +52,7 @@ private:
 	std::set<int> persons_to_log;
 	PersonCreator person_creator;
 	TransmissionParameters trans_params;
-	std::shared_ptr<DayRangeCalculator> art_lag_calculator;
+	ARTLagCalculator art_lag_calculator;
 	std::shared_ptr<GeometricDistribution> cessation_generator;
 	CondomUseAssigner condom_assigner;
 	RangeWithProbability asm_runner;

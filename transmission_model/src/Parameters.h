@@ -105,7 +105,8 @@ extern const std::string PROP_STEADY_SEX_ACTS;
 extern const std::string PROP_CASUAL_SEX_ACTS;
 extern const std::string INFECTIVITY_REDUCTION_CONDOM;
 
-extern const std::string ART_LAG_PREFIX;
+extern const std::string ART_LAG_PREFIX_LT;
+extern const std::string ART_LAG_PREFIX_GTE;
 extern const std::string ASM_PREFIX;
 extern const std::string TESTING_PROB_PREFIX;
 

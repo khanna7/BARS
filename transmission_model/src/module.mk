@@ -29,7 +29,8 @@ CPP_SOURCE = Person.cpp \
 	CondomUseAssigner.cpp \
 	debug_utils.cpp \
 	testing_functions.cpp \
-	Diagnoser.cpp
+	Diagnoser.cpp \
+	ARTLagCalculator.cpp
 	
 #	EventWriter.cpp \
 	
