@@ -19,6 +19,8 @@ namespace TransModel {
 
 const std::string RUN_NUMBER = "run";
 
+const std::string AGE_THRESHOLD = "age.threshold";
+
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";
 

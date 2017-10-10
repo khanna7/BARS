@@ -35,7 +35,7 @@ protected:
 		builder.testingEventWriter("null");
 		builder.prepEventWriter("null");
 		builder.artEventWriter("null");
-		builder.createStatsSingleton();
+		builder.createStatsSingleton(0);
 
 		repast::Properties props("../test_data/test.props");
 		Parameters::initialize(props);
@@ -209,14 +209,14 @@ TEST_F(CreatorTests, TestDiagnosis) {
 	person->infect(50, tick);
 //	// person should diagnose true at next_text_at, detection window is 10 which is long
 //	// before next_test_at
-	Stats::instance()->personDataRecorder().initRecord(person, 0);
+	Stats::instance()->personDataRecorder()->initRecord(person, 0);
 	ASSERT_FALSE(person->diagnose(100));
 	ASSERT_FALSE(person->diagnose(next_test_at - 1));
 	ASSERT_TRUE(person->diagnose(next_test_at));
 
 	p_list["time.until.next.test"] = 5;
 	PersonPtr p2 = creator(p_list, tick);
-	Stats::instance()->personDataRecorder().initRecord(p2, 0);
+	Stats::instance()->personDataRecorder()->initRecord(p2, 0);
 	p2->infect(50, tick);
 	// test should be false at next_test_at (7)
 	// because detection window not yet reached

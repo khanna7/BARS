@@ -101,14 +101,14 @@ StatsBuilder* StatsBuilder::personDataRecorder(const std::string& fname) {
 	return this;
 }
 
-void StatsBuilder::createStatsSingleton() {
+void StatsBuilder::createStatsSingleton(float threshold) {
 	if (counts_writer && pevent_writer && ievent_writer && biomarker_writer && death_writer && tevent_writer
 			&& art_event_writer && prep_event_writer) {
 		if (Stats::instance_ != nullptr) {
 			delete Stats::instance_;
 		}
 		Stats::instance_ = new Stats(counts_writer, pevent_writer, ievent_writer, biomarker_writer, death_writer,
-				pd_fname, tevent_writer, art_event_writer, prep_event_writer);
+				pd_fname, tevent_writer, art_event_writer, prep_event_writer, threshold);
 	} else {
 		throw std::domain_error("Stats must be fully initialized from StatsBuilder before being used.");
 	}

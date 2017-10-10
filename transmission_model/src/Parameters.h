@@ -7,6 +7,8 @@ namespace TransModel {
 
 extern const std::string RUN_NUMBER;
 
+extern const std::string AGE_THRESHOLD;
+
 extern const std::string NET_VAR;
 extern const std::string CASUAL_NET_VAR;
 

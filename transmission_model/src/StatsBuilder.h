@@ -44,7 +44,7 @@ public:
 	StatsBuilder* prepEventWriter(const std::string& fname,  unsigned int buffer = 1000);
 
 
-	void createStatsSingleton();
+	void createStatsSingleton(float threshold);
 };
 
 } /* namespace TransModel */

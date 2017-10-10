@@ -70,7 +70,7 @@ protected:
 		builder.testingEventWriter("null");
 		builder.prepEventWriter("null");
 		builder.artEventWriter("null");
-		builder.createStatsSingleton();
+		builder.createStatsSingleton(0);
 	}
 
 	virtual ~NetworkTests() {

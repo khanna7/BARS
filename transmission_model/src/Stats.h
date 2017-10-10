@@ -126,7 +126,9 @@ struct Counts {
 	unsigned int on_art, on_prep;
 	unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
 		vertex_count_u26, vertex_count_gte26;
-	Counts();
+	float threshold_;
+
+	Counts(float threshold);
 	void reset();
 	void writeTo(FileOutput& out);
 	void incrementInfected(PersonPtr& p);
@@ -157,7 +159,7 @@ private:
 			std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
 			std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
 			std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer,
-			std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer);
+			std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, float threshold);
 
 public:
 	virtual ~Stats();

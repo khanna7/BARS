@@ -247,7 +247,8 @@ void init_stats() {
 	builder.artEventWriter(get_stats_filename(ART_EVENT_FILE));
 	builder.prepEventWriter(get_stats_filename(PREP_EVENT_FILE));
 
-	builder.createStatsSingleton();
+	float age_threshold =  Parameters::instance()->getFloatParameter(AGE_THRESHOLD);
+	builder.createStatsSingleton(age_threshold);
 }
 
 void init_network_save(Model* model) {

@@ -96,7 +96,7 @@ void Counts::writeTo(FileOutput& out) {
 			<< on_art << "," << on_prep << "\n";
 }
 
-Counts::Counts() :
+Counts::Counts(float threshold) :
 		tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, size { 0 }, internal_infected { 0 }, external_infected{0}, infected_at_entry { 0 }, uninfected {
 				0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, asm_deaths{0}, overlaps { 0 }, sex_acts { 0 },
 				casual_sex_acts{0}, steady_sex_acts{0}, sd_casual_sex_with_condom{0}, sd_casual_sex_without_condom{0},
@@ -105,7 +105,7 @@ Counts::Counts() :
 				sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
 				on_art{0}, on_prep{0}, uninfected_u26{0}, uninfected_gte26{0},
 				infected_via_transmission_u26{0}, infected_via_transmission_gte26{0},
-				vertex_count_u26{0}, vertex_count_gte26{0}
+				vertex_count_u26{0}, vertex_count_gte26{0}, threshold_{threshold}
 
 {
 }
@@ -127,21 +127,21 @@ void Counts::reset() {
 void Counts::incrementInfected(PersonPtr& p) {
 	++internal_infected;
 	// < 26, >= 26
-	if (p->age() < 26) ++infected_via_transmission_u26;
+	if (p->age() < threshold_) ++infected_via_transmission_u26;
 	else ++infected_via_transmission_gte26;
 }
 
 void Counts::incrementUninfected(PersonPtr& p) {
 	++uninfected;
-	// < 26, >= 26
-	if (p->age() < 26) ++uninfected_u26;
+	// < threshold_, >= 26
+	if (p->age() < threshold_) ++uninfected_u26;
 	else ++uninfected_gte26;
 }
 
 void Counts::incrementVertexCount(PersonPtr p) {
 	++size;
-	// < 26, >= 26
-	if (p->age() < 26) ++vertex_count_u26;
+	// < threshold_, >= 26
+	if (p->age() < threshold_) ++vertex_count_u26;
 	else ++vertex_count_gte26;
 }
 
@@ -151,8 +151,8 @@ Stats::Stats(std::shared_ptr<StatsWriterI<Counts>> counts, std::shared_ptr<Stats
 		std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
 		std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
 		std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_writer,
-		std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer) :
-		counts_writer { counts }, current_counts { }, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
+		std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, float threshold) :
+		counts_writer { counts }, current_counts {threshold}, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
 				bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer}, art_event_writer {art_writer}, prep_event_writer{prep_writer},
 				pd_recorder{nullptr} {
 
