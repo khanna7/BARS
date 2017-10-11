@@ -216,11 +216,6 @@ void init_stage_map(map<float, shared_ptr<Stage>> &stage_map) {
 }
 
 void init_generators() {
-	float non_tester_rate = Parameters::instance()->getDoubleParameter(NON_TESTERS_PROP);
-	BinomialGen coverage(repast::Random::instance()->engine(),
-			boost::random::binomial_distribution<>(1, non_tester_rate));
-	Random::instance()->putGenerator(NON_TESTERS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(coverage));
-
 	float circum_rate = Parameters::instance()->getDoubleParameter(CIRCUM_RATE);
 	BinomialGen rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, circum_rate));
 	Random::instance()->putGenerator(CIRCUM_STATUS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(rate));
@@ -394,7 +389,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
 				create_art_lag_calc() },  cessation_generator { create_cessation_generator() }, condom_assigner { create_condom_use_assigner() },
-				asm_runner { create_ASM_runner() } {
+				asm_runner { create_ASM_runner() }, age_threshold{Parameters::instance()->getFloatParameter(AGE_THRESHOLD)} {
 
 	// get initial stats
 	init_stats();
@@ -564,6 +559,25 @@ void Model::updatePREPUse(double tick, double prob, PersonPtr person) {
 	}
 }
 
+void Model::updateDisease(PersonPtr person) {
+	if (person->isOnART()) {
+		float slope = viral_load_slope_calculator.calculateSlope(person->infectionParameters());
+		person->setViralLoadARTSlope(slope);
+	}
+
+	float viral_load = viral_load_calculator.calculateViralLoad(person->infectionParameters());
+	person->setViralLoad(viral_load);
+	// update cd4
+	float cd4 = cd4_calculator.calculateCD4(person->age(), person->infectionParameters());
+	person->setCD4Count(cd4);
+
+	// select stage, and use it
+	float infectivity = stage_map.upper_bound(person->timeSinceInfection())->second->calculateInfectivity(
+			person->infectionParameters());
+	person->setInfectivity(infectivity);
+}
+
+
 void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
@@ -577,23 +591,9 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		PersonPtr person = (*iter);
-		// update viral load
+		// update viral load, cd4
 		if (person->isInfected()) {
-			if (person->isOnART()) {
-				float slope = viral_load_slope_calculator.calculateSlope(person->infectionParameters());
-				person->setViralLoadARTSlope(slope);
-			}
-
-			float viral_load = viral_load_calculator.calculateViralLoad(person->infectionParameters());
-			person->setViralLoad(viral_load);
-			// update cd4
-			float cd4 = cd4_calculator.calculateCD4(person->age(), person->infectionParameters());
-			person->setCD4Count(cd4);
-
-			// select stage, and use it
-			float infectivity = stage_map.upper_bound(person->timeSinceInfection())->second->calculateInfectivity(
-					person->infectionParameters());
-			person->setInfectivity(infectivity);
+			updateDisease(person);
 		} else {
 			updatePREPUse(t, on_prep_prob, person);
 		}
@@ -608,7 +608,7 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			}
 		}
 
-		person->step(size_of_timestep);
+		bool crossed_thresh = person->step(size_of_timestep, age_threshold);
 		CauseOfDeath cod = dead(t, person, max_age);
 		if (cod != CauseOfDeath::NONE) {
 			vector<EdgePtr<Person>> edges;
@@ -632,6 +632,10 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			}
 			if (person->isOnART()) {
 				++stats->currentCounts().on_art;
+			}
+
+			if (crossed_thresh) {
+				person_creator.updateTestingConfig(person, size_of_timestep);
 			}
 			++iter;
 		}

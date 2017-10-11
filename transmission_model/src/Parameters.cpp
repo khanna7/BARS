@@ -87,7 +87,8 @@ const std::string LATE_STAGE_VIRAL_LOAD = "late.stage.viral.load";
 const std::string MAX_AGE = "max.age";
 const std::string MIN_AGE = "min.age";
 const std::string MIN_CHRONIC_INFECTIVITY_UNADJ = "min.chronic.infectivity.unadj";
-const std::string NON_TESTERS_PROP = "non.testers.prop";
+const std::string NON_TESTERS_PROP_LT = "non.testers.prop.lt";
+const std::string NON_TESTERS_PROP_GTE = "non.testers.prop.gte";
 const std::string NUM_SEX_ACTS_PER_TIMESTEP = "num.sex.acts.per.timestep";
 const std::string PEAK_VIRAL_LOAD = "peak.viral.load";
 const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
@@ -122,7 +123,8 @@ const std::string ART_LAG_PREFIX_LT = "art.init.lag.lt";
 const std::string ART_LAG_PREFIX_GTE = "art.init.lag.gte";
 const std::string ASM_PREFIX = "asm.";
 
-const std::string TESTING_PROB_PREFIX = "testing.prob";
+const std::string TESTING_PROB_PREFIX_LT = "testing.prob.lt";
+const std::string TESTING_PROB_PREFIX_GTE = "testing.prob.gte";
 
 const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
 const std::string ART_PROP_NEVER_ADHERENT = "art.prop.never.adherent";

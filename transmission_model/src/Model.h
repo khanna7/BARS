@@ -57,6 +57,8 @@ private:
 	CondomUseAssigner condom_assigner;
 	RangeWithProbability asm_runner;
 
+	float age_threshold;
+
 	void runTransmission(double timestamp);
 	CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
 	void entries(double tick, float size_of_time_step);
@@ -66,6 +68,7 @@ private:
 	 * @param uninfected empty vector into which the uninfected are placed
 	 */
 	void updateVitals(double time, float size_of_time_step, int max_survival, std::vector<PersonPtr>& uninfected);
+	void updateDisease(PersonPtr person);
 	void runExternalInfections(std::vector<PersonPtr>& uninfected, double time);
 
 	void infectPerson(PersonPtr& person, double time_stamp);

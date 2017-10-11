@@ -45,11 +45,6 @@ protected:
 		repast::Random::initialize(1);
 		repast::RepastProcess::init("");
 
-		float non_tester_rate = Parameters::instance()->getDoubleParameter(NON_TESTERS_PROP);
-		BinomialGen coverage(repast::Random::instance()->engine(),
-				boost::random::binomial_distribution<>(1, non_tester_rate));
-		repast::Random::instance()->putGenerator(NON_TESTERS_BINOMIAL, new repast::DefaultNumberGenerator<BinomialGen>(coverage));
-
 		float circum_rate = Parameters::instance()->getDoubleParameter(CIRCUM_RATE);
 		BinomialGen rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, circum_rate));
 		repast::Random::instance()->putGenerator(CIRCUM_STATUS_BINOMIAL, new repast::DefaultNumberGenerator<BinomialGen>(rate));

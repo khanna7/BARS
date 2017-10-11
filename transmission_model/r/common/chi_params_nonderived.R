@@ -149,7 +149,8 @@
     detection.window <- 22
     mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY
     #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop <- 0.06
+    non.testers.prop.lt <- 0.078
+    non.testers.prop.gte <- 0.023
 
      # lag between diagnosis and ART init
     # format is probability, min range val - max range val
@@ -297,14 +298,24 @@ external.infections.age.factor = 1.2
 
 
 # range of number of tests in last two years min-max, fraction of the population
-testing.prob.1 = "1-2,0.457377778"
-testing.prob.2 = "3-4,0.299377778"
-testing.prob.3 = "5-6,0.109377778"
-testing.prob.4 = "7-8,0.055377778"
-testing.prob.5 = "9-10,0.039377778"
-testing.prob.6 = "11-12,0.012377778"
-testing.prob.7 = "13-16,0.008877778"
-testing.prob.8 = "17-20,0.010677778"
-testing.prob.9 = "21-30,0.007177778"
+testing.prob.lt.1 = "1-2,0.457377778"
+testing.prob.lt.2 = "3-4,0.299377778"
+testing.prob.lt.3 = "5-6,0.109377778"
+testing.prob.lt.4 = "7-8,0.055377778"
+testing.prob.lt.5 = "9-10,0.039377778"
+testing.prob.lt.6 = "11-12,0.012377778"
+testing.prob.lt.7 = "13-16,0.008877778"
+testing.prob.lt.8 = "17-20,0.010677778"
+testing.prob.lt.9 = "21-30,0.007177778"
+
+testing.prob.gte.1 = "1-2,0.457377778"
+testing.prob.gte.2 = "3-4,0.299377778"
+testing.prob.gte.3 = "5-6,0.109377778"
+testing.prob.gte.4 = "7-8,0.055377778"
+testing.prob.gte.5 = "9-10,0.039377778"
+testing.prob.gte.6 = "11-12,0.012377778"
+testing.prob.gte.7 = "13-16,0.008877778"
+testing.prob.gte.8 = "17-20,0.010677778"
+testing.prob.gte.9 = "21-30,0.007177778"
 
 

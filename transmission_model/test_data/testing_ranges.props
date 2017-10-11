@@ -1,5 +1,14 @@
 # range of number of tests in last two years min-max, fraction of the population
 # when these are in the R file the values need to be quoted
-testing.prob.1 = 1-3,0.4
-testing.prob.2 = 4-6,0.3
-testing.prob.3 = 7-8,0.3
+testing.prob.lt.1 = 1-3,0.4
+testing.prob.lt.2 = 4-6,0.3
+testing.prob.lt.3 = 7-8,0.3
+
+testing.prob.gte.1 = 1-3,0.2
+testing.prob.gte.2 = 4-6,0.1
+testing.prob.gte.3 = 7-8,0.7
+
+non.testers.prop.lt = 0 
+non.testers.prop.gte = 1
+
+age.threshold = 26

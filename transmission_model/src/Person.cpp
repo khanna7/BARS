@@ -77,7 +77,8 @@ void Person::goOnPrep(double start_time, double stop_time) {
 	prep_.on(start_time, stop_time);
 }
 
-void Person::step(float size_of_timestep) {
+bool Person::step(float size_of_timestep, float threshold) {
+	float prev_age = age_;
 	age_ += size_of_timestep / 365;
 	if (infection_parameters_.infection_status) {
 		++infection_parameters_.time_since_infection;
@@ -86,6 +87,8 @@ void Person::step(float size_of_timestep) {
 	if (infection_parameters_.art_status) {
 		++infection_parameters_.time_since_art_init;
 	}
+
+	return prev_age < threshold && age_ >= threshold;
 }
 
 bool Person::deadOfAge(int max_age) {
@@ -109,6 +112,11 @@ bool Person::diagnose(double tick) {
 		}
 	}
 	return diagnosed_;
+}
+
+void Person::updateDiagnoser(double test_prob, bool testable) {
+	testable_ = testable;
+	diagnoser_.setTestingProbability(test_prob);
 }
 
 } /* namespace TransModel */

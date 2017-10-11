@@ -8,7 +8,6 @@
 #include "Parameters.h"
 
 #include "PersonCreator.h"
-
 #include "adherence_functions.h"
 #include "Diagnoser.h"
 #include "Stats.h"
@@ -18,7 +17,7 @@ using namespace Rcpp;
 namespace TransModel {
 
 PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window) :
-		id(0), trans_runner_(trans_runner), testing_dist(create_testing_dist()), detection_window_(detection_window) {
+		id(0), trans_runner_(trans_runner), testing_configurator(create_testing_configurator()), detection_window_(detection_window) {
 }
 
 PersonCreator::~PersonCreator() {
@@ -46,11 +45,11 @@ int calculate_role(int network_type) {
 
 PersonPtr PersonCreator::operator()(double tick, float age) {
 	int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
-	double test_prob = testing_dist.draw(repast::Random::instance()->nextDouble()).next(Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP));
-	Diagnoser diagnoser(tick, detection_window_, test_prob);
+	double size_of_timestep = Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP);
+	Diagnoser diagnoser(tick, detection_window_, 0);
 	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(STEADY_NETWORK_TYPE),
 			calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
-	person->testable_ = ((int) repast::Random::instance()->getGenerator(NON_TESTERS_BINOMIAL)->next()) == 0;
+	testing_configurator.configurePerson(person, size_of_timestep);
 
 	AdherenceData data = initialize_prep_adherence();
 	PrepParameters prep(PrepStatus::OFF, 0, 0, data);
@@ -72,17 +71,20 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 
 	//float next_test_at = tick + as<double>(val["time.until.next.test"]);
 	// float detection_window,  unsigned int test_count, test_prob
-	double test_prob = 0;
-	if (val.containsElementNamed("testing.probability")) {
-		test_prob = as<double>(val["testing.probability"]);
-	} else {
-		TestingDist dist = testing_dist.draw(repast::Random::instance()->nextDouble());
-		test_prob = dist.next(Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP));
-	}
-	Diagnoser diagnoser(detection_window_, as<unsigned int>(val["number.of.tests"]), test_prob);
+	Diagnoser diagnoser(detection_window_, as<unsigned int>(val["number.of.tests"]), 0);
 	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role_main, role_casual, diagnoser);
+	bool testable = !(as<bool>(val["non.testers"]));
+	if (val.containsElementNamed("testing.probability")) {
+		double test_prob = as<double>(val["testing.probability"]);
+		person->updateDiagnoser(test_prob, testable);
+	} else {
+		double size_of_timestep = Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP);
+		testing_configurator.configurePerson(person, size_of_timestep);
+		// update only the testable property to what's passed from R
+		person->updateDiagnoser(person->diagnoser().testingProbability(), testable);
+	}
+
 	person->diagnosed_ = as<bool>(val["diagnosed"]);
-	person->testable_ = !(as<bool>(val["non.testers"]));
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
 
 	bool infected = as<bool>(val["inf.status"]);
