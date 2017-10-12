@@ -21,6 +21,9 @@ const std::string RUN_NUMBER = "run";
 
 const std::string AGE_THRESHOLD = "age.threshold";
 
+const std::string LT_SUFFIX = ".lt";
+const std::string GTE_SUFFIX = ".gte";
+
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";
 
@@ -139,7 +142,6 @@ const std::string ART_NEVER_ADHERENT_PROB = "art.never.adherent.probability";
 const std::string ART_PARTIAL_POS_ADHERENT_PROB = "art.partial.pos.adherent.probability";
 const std::string ART_PARTIAL_NEG_ADHERENT_PROB = "art.partial.neg.adherent.probability";
 
-const std::string PREP_DECISION_FREQUENCY = "prep.decision.frequency";
 const std::string PREP_PROP_NEVER_ADHERENT = "prep.prop.never.adherent";
 const std::string PREP_PROP_ALWAYS_ADHERENT = "prep.prop.always.adherent";
 const std::string PREP_PROP_PARTIAL_POS_ADHERENT = "prep.prop.part.plus.adherent";

@@ -643,7 +643,8 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			}
 
 			if (crossed_thresh) {
-				person_creator.updateTestingConfig(person, size_of_timestep);
+				person_creator.updateTesting(person, size_of_timestep);
+				person_creator.updatePREPAdherence(person);
 			}
 			++iter;
 		}

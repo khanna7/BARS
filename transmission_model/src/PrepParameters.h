@@ -57,6 +57,10 @@ public:
 	void offInfected() {
 		status_ = PrepStatus::OFF_INFECTED;
 	}
+
+	void setAdherenceData(AdherenceData data) {
+		adherence = data;
+	}
 };
 
 } /* namespace TransModel */

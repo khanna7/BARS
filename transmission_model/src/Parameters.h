@@ -9,6 +9,9 @@ extern const std::string RUN_NUMBER;
 
 extern const std::string AGE_THRESHOLD;
 
+extern const std::string LT_SUFFIX;
+extern const std::string GTE_SUFFIX;
+
 extern const std::string NET_VAR;
 extern const std::string CASUAL_NET_VAR;
 
@@ -125,7 +128,6 @@ extern const std::string ART_NEVER_ADHERENT_PROB;
 extern const std::string ART_PARTIAL_POS_ADHERENT_PROB;
 extern const std::string ART_PARTIAL_NEG_ADHERENT_PROB;
 
-extern const std::string PREP_DECISION_FREQUENCY;
 extern const std::string PREP_PROP_NEVER_ADHERENT;
 extern const std::string PREP_PROP_ALWAYS_ADHERENT;
 extern const std::string PREP_PROP_PARTIAL_POS_ADHERENT;

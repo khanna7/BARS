@@ -119,4 +119,8 @@ void Person::updateDiagnoser(double test_prob, bool testable) {
 	diagnoser_.setTestingProbability(test_prob);
 }
 
+void Person::updatePrepAdherence(AdherenceData& data) {
+	prep_.setAdherenceData(data);
+}
+
 } /* namespace TransModel */

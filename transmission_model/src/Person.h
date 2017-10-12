@@ -186,6 +186,11 @@ public:
 	 */
 	void updateDiagnoser(double test_prob, bool testable);
 
+	/**
+	 * Updates the prep AdherenceData.
+	 */
+	void updatePrepAdherence(AdherenceData& data);
+
 };
 
 } /* namespace TransModel */

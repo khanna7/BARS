@@ -178,10 +178,15 @@
 # days
 prep.decision.frequency <- 7
 
-prep.prop.never.adherent <- 0.211
-prep.prop.always.adherent <- 0.619
-prep.prop.part.plus.adherent <- 0.10
-prep.prop.part.neg.adherent <- 0.07
+prep.prop.never.adherent.lt <- 0.211
+prep.prop.always.adherent.lt <- 0.619
+prep.prop.part.plus.adherent.lt <- 0.10
+prep.prop.part.neg.adherent.lt <- 0.07
+
+prep.prop.never.adherent.gte <- 0.211
+prep.prop.always.adherent.gte <- 0.619
+prep.prop.part.plus.adherent.gte <- 0.10
+prep.prop.part.neg.adherent.gte <- 0.07
 
 prep.always.adherent.trans.reduction <- 0.95
 prep.never.adherent.trans.reduction <- 0.0

@@ -14,6 +14,7 @@
 
 #include "Person.h"
 #include "TestingConfigurator.h"
+#include "PREPAdherenceConfigurator.h"
 #include "TransmissionRunner.h"
 #include "common.h"
 #include "GeometricDistribution.h"
@@ -27,6 +28,7 @@ private:
 	int id;
 	std::shared_ptr<TransmissionRunner> trans_runner_;
 	TestingConfigurator testing_configurator;
+	PREPAdherenceConfigurator prep_adherence_configurator;
 	double detection_window_;
 
 public:
@@ -36,9 +38,8 @@ public:
 	PersonPtr operator()(Rcpp::List& val, double tick);
 	PersonPtr operator()(double tick, float age);
 
-	void updateTestingConfig(std::shared_ptr<Person> p, double size_of_timestep) {
-		testing_configurator.configurePerson(p, size_of_timestep);
-	}
+	void updateTesting(std::shared_ptr<Person> p, double size_of_timestep);
+	void updatePREPAdherence(std::shared_ptr<Person> p);
 };
 
 } /* namespace TransModel */

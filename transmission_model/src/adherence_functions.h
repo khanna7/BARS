@@ -19,9 +19,6 @@ void initialize_art_adherence(std::shared_ptr<Person> person, double tick, Adher
 void initialize_art_adherence(std::shared_ptr<Person> person, double first_art_at_tick);
 void schedule_art_adherence(std::shared_ptr<Person> person, double first_art_at_tick);
 
-AdherenceData initialize_prep_adherence(AdherenceCategory category);
-AdherenceData initialize_prep_adherence();
-
 }
 
 

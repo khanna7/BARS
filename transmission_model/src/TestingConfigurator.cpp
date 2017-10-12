@@ -36,17 +36,17 @@ void TestingConfigurator::configurePerson(std::shared_ptr<Person> p, double size
 
 void TestingConfigurator::configurePerson(std::shared_ptr<Person> p, double size_of_timestep, double draw) {
 	ProbDist<TestingDist>* dist = nullptr;
-		repast::NumberGenerator* gen = nullptr;
-		if (p->age() < threshold) {
-			dist = &lt_dist_;
-			gen = lt_gen;
-		} else {
-			dist = &gte_dist_;
-			gen = gte_gen;
-		}
-		double test_prob = dist->draw(draw).next(size_of_timestep);
-		bool testable = ((int) gen->next()) == 0;
-		p->updateDiagnoser(test_prob, testable);
+	repast::NumberGenerator* gen = nullptr;
+	if (p->age() < threshold) {
+		dist = &lt_dist_;
+		gen = lt_gen;
+	} else {
+		dist = &gte_dist_;
+		gen = gte_gen;
+	}
+	double test_prob = dist->draw(draw).next(size_of_timestep);
+	bool testable = ((int) gen->next()) == 0;
+	p->updateDiagnoser(test_prob, testable);
 }
 
 const double TWO_YEARS = 730;

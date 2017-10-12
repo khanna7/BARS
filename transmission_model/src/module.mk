@@ -30,7 +30,8 @@ CPP_SOURCE = Person.cpp \
 	debug_utils.cpp \
 	Diagnoser.cpp \
 	ARTLagCalculator.cpp \
-	TestingConfigurator.cpp
+	TestingConfigurator.cpp \
+	PREPAdherenceConfigurator.cpp
 	
 #	EventWriter.cpp \
 	

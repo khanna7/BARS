@@ -17,7 +17,8 @@ using namespace Rcpp;
 namespace TransModel {
 
 PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window) :
-		id(0), trans_runner_(trans_runner), testing_configurator(create_testing_configurator()), detection_window_(detection_window) {
+		id(0), trans_runner_(trans_runner), testing_configurator(create_testing_configurator()),
+		prep_adherence_configurator(create_prep_adherence_configurator()), detection_window_(detection_window) {
 }
 
 PersonCreator::~PersonCreator() {
@@ -51,9 +52,9 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 			calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
 	testing_configurator.configurePerson(person, size_of_timestep);
 
-	AdherenceData data = initialize_prep_adherence();
-	PrepParameters prep(PrepStatus::OFF, 0, 0, data);
+	PrepParameters prep(PrepStatus::OFF, 0, 0);
 	person->prep_ = prep;
+	prep_adherence_configurator.configurePerson(person);
 
 	return person;
 }
@@ -120,21 +121,30 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 		}
 
 		if (val.containsElementNamed("prep.adherence.category")) {
-			AdherenceData data = initialize_prep_adherence(static_cast<AdherenceCategory>(as<int>(val["prep.adherence.category"])));
+			AdherenceCategory cat = static_cast<AdherenceCategory>(as<int>(val["prep.adherence.category"]));
 			PrepParameters prep(status, as<double>(val["time.of.prep.initiation"]),
-			// add 1 so they spend at least a day on prep and .1 so occurs after main loop
-					as<double>(val["time.of.prep.cessation"]) + 1.1, data);
+						// add 1 so they spend at least a day on prep and .1 so occurs after main loop
+								as<double>(val["time.of.prep.cessation"]) + 1.1);
 			person->prep_ = prep;
+			prep_adherence_configurator.configurePerson(person, cat);
 		} else {
-			AdherenceData data = initialize_prep_adherence();
 			PrepParameters prep(status, as<double>(val["time.of.prep.initiation"]),
 			// add 1 so they spend at least a day on prep and .1 so occurs after main loop
-					as<double>(val["time.of.prep.cessation"]) + 1.1, data);
+					as<double>(val["time.of.prep.cessation"]) + 1.1);
 			person->prep_ = prep;
+			prep_adherence_configurator.configurePerson(person);
 		}
 	}
 
 	return person;
+}
+
+void PersonCreator::updateTesting(std::shared_ptr<Person> p, double size_of_timestep) {
+	testing_configurator.configurePerson(p, size_of_timestep);
+}
+
+void PersonCreator::updatePREPAdherence(std::shared_ptr<Person> p) {
+	prep_adherence_configurator.configurePerson(p);
 }
 
 } /* namespace TransModel */
