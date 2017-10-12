@@ -53,7 +53,7 @@ private:
 	PersonCreator person_creator;
 	TransmissionParameters trans_params;
 	ARTLagCalculator art_lag_calculator;
-	std::shared_ptr<GeometricDistribution> cessation_generator;
+	std::shared_ptr<GeometricDistribution> cessation_generator_lt, cessation_generator_gte;
 	CondomUseAssigner condom_assigner;
 	RangeWithProbability asm_runner;
 

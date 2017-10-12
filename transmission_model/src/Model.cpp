@@ -311,8 +311,8 @@ ARTLagCalculator create_art_lag_calc() {
 	return ARTLagCalculator(upper, lower, age_threshold);
 }
 
-std::shared_ptr<GeometricDistribution> create_cessation_generator() {
-	double prob = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
+std::shared_ptr<GeometricDistribution> create_cessation_generator(const std::string& daily_stop_prob_key) {
+	double prob = Parameters::instance()->getDoubleParameter(daily_stop_prob_key);
 	// 1.1 so at least a day on prep, and .1 so after step loop.
 	return std::make_shared<GeometricDistribution>(prob, 1.1);
 }
@@ -388,7 +388,8 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
-				create_art_lag_calc() },  cessation_generator { create_cessation_generator() }, condom_assigner { create_condom_use_assigner() },
+				create_art_lag_calc() },  cessation_generator_lt { create_cessation_generator(PREP_DAILY_STOP_PROB_LT) },
+				cessation_generator_gte { create_cessation_generator(PREP_DAILY_STOP_PROB_GTE)},	condom_assigner { create_condom_use_assigner() },
 				asm_runner { create_ASM_runner() }, age_threshold{Parameters::instance()->getFloatParameter(AGE_THRESHOLD)} {
 
 	// get initial stats
@@ -551,7 +552,8 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
 void Model::updatePREPUse(double tick, double prob, PersonPtr person) {
 	if (!person->isOnPrep() && Random::instance()->nextDouble() <= prob) {
 		ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
-		double stop_time = tick + cessation_generator->next();
+		double delay = person->age() < age_threshold ? cessation_generator_lt->next() : cessation_generator_gte->next();
+		double stop_time = tick + delay;
 		person->goOnPrep(tick, stop_time);
 		Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
 		Stats::instance()->personDataRecorder()->recordPREPStart(person, tick);
@@ -577,15 +579,20 @@ void Model::updateDisease(PersonPtr person) {
 	person->setInfectivity(infectivity);
 }
 
+double calc_on_prep_prob(const std::string& stop_prob_key, const std::string& prep_use_key) {
+	double p = Parameters::instance()->getDoubleParameter(stop_prob_key);
+	double k = Parameters::instance()->getDoubleParameter(prep_use_key);
+	return (p * k) / (1 - k);
+}
+
 
 void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
 	map<double, ARTScheduler*> art_map;
 
-	double p = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
-	double k = Parameters::instance()->getDoubleParameter(PREP_USE_PROP);
-	double on_prep_prob = (p * k) / (1 - k);
+	double on_prep_prob_lt = calc_on_prep_prob(PREP_DAILY_STOP_PROB_LT, PREP_USE_PROP_LT);
+	double on_prep_prob_gte = calc_on_prep_prob(PREP_DAILY_STOP_PROB_GTE, PREP_USE_PROP_GTE);
 
 	uninfected.reserve(net.vertexCount());
 
@@ -595,7 +602,8 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 		if (person->isInfected()) {
 			updateDisease(person);
 		} else {
-			updatePREPUse(t, on_prep_prob, person);
+			double prob = person->age() < age_threshold ? on_prep_prob_lt : on_prep_prob_gte;
+			updatePREPUse(t, prob, person);
 		}
 
 		if (persons_to_log.find(person->id()) != persons_to_log.end()) {

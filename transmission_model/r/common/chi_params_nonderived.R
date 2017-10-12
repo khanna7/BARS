@@ -188,8 +188,10 @@ prep.never.adherent.trans.reduction <- 0.0
 prep.partial.pos.adherent.trans.reduction <- 0.81 
 prep.partial.neg.adherent.trans.reduction <- 0.31
     
-prep.bl.use.prop <- 10/100
-prep.mean.days.usage <- 180
+prep.bl.use.prop.lt <- 12.7/100
+prep.bl.use.prop.gte <- 14.7/100
+prep.mean.days.usage.lt <- 180
+prep.mean.days.usage.gte <- 180
 
 #####################
     ## Socioeconomic status
