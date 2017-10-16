@@ -44,6 +44,7 @@
    ## PrEP
    prep.daily.stop.prob.lt <- 1/prep.mean.days.usage.lt
    prep.daily.stop.prob.gte <- 1/prep.mean.days.usage.gte
+   prep.daily.stop.prob <- mean(c(prep.daily.stop.prob.lt, prep.daily.stop.prob.gte))
 
    #####################
    ## Transmission Parameters

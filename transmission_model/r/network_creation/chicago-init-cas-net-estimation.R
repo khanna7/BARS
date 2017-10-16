@@ -19,14 +19,15 @@
    #####################
    ## MODEL SETUP
    net <- fit$network
-   formation_cas <- net~edges+degree(0:2)
+   formation_cas <- net~edges+degree(0:2)+absdiff("age")
                        
 
    dissolution_cas <- net~offset(edges)
    #theta.diss_cas <- log(dur_cas - 1)
    #theta.diss_cas <- should be 5.13 when assuming 160-day ptshp duration and 16-year life expectancy. See `derived` param file for details.
    target.stats_cas <- c(cas_n_edges,
-                         cas_deg_seq[1:3]
+                         cas_deg_seq[1:3],
+                         cas_n_edges*3.1
                          )
 
 
