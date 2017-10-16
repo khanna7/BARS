@@ -7,6 +7,11 @@ namespace TransModel {
 
 extern const std::string RUN_NUMBER;
 
+extern const std::string AGE_THRESHOLD;
+
+extern const std::string LT_SUFFIX;
+extern const std::string GTE_SUFFIX;
+
 extern const std::string NET_VAR;
 extern const std::string CASUAL_NET_VAR;
 
@@ -72,14 +77,17 @@ extern const std::string LATE_STAGE_VIRAL_LOAD;
 extern const std::string MAX_AGE;
 extern const std::string MIN_AGE;
 extern const std::string MIN_CHRONIC_INFECTIVITY_UNADJ;
-extern const std::string NON_TESTERS_PROP;
+extern const std::string NON_TESTERS_PROP_LT;
+extern const std::string NON_TESTERS_PROP_GTE;
 extern const std::string NUM_SEX_ACTS_PER_TIMESTEP;
 extern const std::string PEAK_VIRAL_LOAD;
 extern const std::string PER_DAY_CD4_RECOVERY;
 extern const std::string PREG_MULT;
 extern const std::string PREG_SUSC_MULT;
-extern const std::string PREP_USE_PROP;
-extern const std::string PREP_DAILY_STOP_PROB;
+extern const std::string PREP_USE_PROP_LT;
+extern const std::string PREP_USE_PROP_GTE;
+extern const std::string PREP_DAILY_STOP_PROB_LT;
+extern const std::string PREP_DAILY_STOP_PROB_GTE;
 extern const std::string SET_POINT_VIRAL_LOAD;
 extern const std::string SIZE_OF_TIMESTEP;
 extern const std::string TIME_INFECTION_TO_LATE_STAGE;
@@ -103,9 +111,11 @@ extern const std::string PROP_STEADY_SEX_ACTS;
 extern const std::string PROP_CASUAL_SEX_ACTS;
 extern const std::string INFECTIVITY_REDUCTION_CONDOM;
 
-extern const std::string ART_LAG_PREFIX;
+extern const std::string ART_LAG_PREFIX_LT;
+extern const std::string ART_LAG_PREFIX_GTE;
 extern const std::string ASM_PREFIX;
-extern const std::string TESTING_PROB_PREFIX;
+extern const std::string TESTING_PROB_PREFIX_LT;
+extern const std::string TESTING_PROB_PREFIX_GTE;
 
 extern const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH;
 extern const std::string ART_PROP_NEVER_ADHERENT;
@@ -118,7 +128,6 @@ extern const std::string ART_NEVER_ADHERENT_PROB;
 extern const std::string ART_PARTIAL_POS_ADHERENT_PROB;
 extern const std::string ART_PARTIAL_NEG_ADHERENT_PROB;
 
-extern const std::string PREP_DECISION_FREQUENCY;
 extern const std::string PREP_PROP_NEVER_ADHERENT;
 extern const std::string PREP_PROP_ALWAYS_ADHERENT;
 extern const std::string PREP_PROP_PARTIAL_POS_ADHERENT;

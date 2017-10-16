@@ -20,7 +20,7 @@ void PrepCessationEvent::operator()() {
 	// prior to this event occuring
 	if (!person_->isDead() && person_->isOnPrep()) {
 		person_->goOffPrep(PrepStatus::OFF);
-		Stats::instance()->personDataRecorder().recordPREPStop(person_.get(), timestamp_, PrepStatus::OFF);
+		Stats::instance()->personDataRecorder()->recordPREPStop(person_.get(), timestamp_, PrepStatus::OFF);
 		Stats::instance()->recordPREPEvent(timestamp_, person_->id(), static_cast<int>(PrepStatus::OFF));
 	}
 }

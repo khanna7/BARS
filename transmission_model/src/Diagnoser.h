@@ -41,6 +41,10 @@ public:
 		return test_prob;
 	}
 
+	void setTestingProbability(double prob) {
+		test_prob = prob;
+	}
+
 };
 
 } /* namespace TransModel */

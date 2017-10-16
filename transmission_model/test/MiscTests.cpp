@@ -20,7 +20,9 @@
 #include "RangeWithProbability.h"
 #include "AdherenceCategory.h"
 #include "GeometricDistribution.h"
-#include "testing_functions.h"
+#include "TestingConfigurator.h"
+#include "PREPAdherenceConfigurator.h"
+#include "Person.h"
 
 using namespace TransModel;
 using namespace Rcpp;
@@ -213,7 +215,7 @@ TEST(MiscTests, TestDiagnosis) {
 	builder.testingEventWriter("null");
 	builder.prepEventWriter("null");
 	builder.artEventWriter("null");
-	builder.createStatsSingleton();
+	builder.createStatsSingleton(0);
 
 	// window is 5, test count 0, prob of test is 0
 	Diagnoser diagnoser(5, 0, 0);
@@ -254,7 +256,7 @@ TEST(MiscTests, testTestingFunc) {
 	// testing.prob.1 = 1-3,0.4
 	// testing.prob.2 = 4-6,0.3
 	// testing.prob.3 = 7-8,0.3
-	ProbDist<TestingDist> dist = create_testing_dist();
+	ProbDist<TestingDist> dist = create_prob_dist("testing.prob.lt");
 	std::default_random_engine generator;
 
 	// 730 -- days in 2 years
@@ -283,5 +285,133 @@ TEST(MiscTests, testTestingFunc) {
 		double val = dist.draw(r2(generator)).next(1);
 		ASSERT_GE(val, exp_min);
 		ASSERT_LE(val, exp_max);
+	}
+
+	Diagnoser diagnoser(0, 0);
+	PersonPtr person = std::make_shared<Person>(1, 27, true, 1, 1, diagnoser);
+	TestingConfigurator config = create_testing_configurator();
+
+	exp_min = 1 / 730.0;
+	exp_max = 3 / 730.0;
+	std::uniform_real_distribution<double> g(0.0,0.2);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g(generator);
+		config.configurePerson(person, 1, draw);
+		double val = person->diagnoser().testingProbability();
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+		ASSERT_TRUE(!person->isTestable());
+	}
+
+	exp_min = 4 / 730.0;
+	exp_max = 6 / 730.0;
+	std::uniform_real_distribution<double> g1(0.2, 0.3);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g1(generator);
+		config.configurePerson(person, 1, draw);
+		double val = person->diagnoser().testingProbability();
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+		ASSERT_TRUE(!person->isTestable());
+	}
+
+	exp_min = 7 / 730.0;
+	exp_max = 8 / 730.0;
+	std::uniform_real_distribution<double> g2(0.3, 1.0);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g2(generator);
+		config.configurePerson(person, 1, draw);
+		double val = person->diagnoser().testingProbability();
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+		ASSERT_TRUE(!person->isTestable());
+	}
+
+	exp_min = 1 / 730.0;
+	exp_max = 3 / 730.0;
+	person->setAge(25);
+	std::uniform_real_distribution<double> g3(0.0, 0.4);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g3(generator);
+		config.configurePerson(person, 1, draw);
+		double val = person->diagnoser().testingProbability();
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+		ASSERT_TRUE(person->isTestable());
+	}
+}
+
+TEST(MiscTests, testPrepAdherenceConfig) {
+
+	Diagnoser diagnoser(0, 0);
+	PersonPtr person = std::make_shared<Person>(1, 25.9, true, 1, 1, diagnoser);
+	PREPAdherenceConfigurator config = create_prep_adherence_configurator();
+
+	/*
+	 * prep.prop.always.adherent.lt = 0.619
+	 * prep.prop.never.adherent.lt = 0.211
+prep.prop.part.plus.adherent.lt = 0.10
+prep.prop.part.neg.adherent.lt = 0.07
+	 */
+	double exp_tr = 0.95;
+	AdherenceCategory exp_cat = AdherenceCategory::ALWAYS;
+	double max = 0.619;
+	double min = 0.0;
+	std::uniform_real_distribution<double> g(min, max);
+	std::default_random_engine generator;
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
+	}
+
+	exp_tr = 0.0;
+	exp_cat = AdherenceCategory::NEVER;
+	min = max;
+	max += 0.211;
+	std::uniform_real_distribution<double> g1(min, max);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g1(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
+	}
+
+	exp_tr = 0.81;
+	exp_cat = AdherenceCategory::PARTIAL_PLUS;
+	min = max;
+	max += 0.1;
+	std::uniform_real_distribution<double> g2(min, max);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g2(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
+	}
+
+	exp_tr = 0.31;
+	exp_cat = AdherenceCategory::PARTIAL_MINUS;
+	min = max;
+	max = 1.0;
+	std::uniform_real_distribution<double> g3(min, max);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g3(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
+	}
+
+	person->setAge(26.1);
+	exp_tr = 0.0;
+	exp_cat = AdherenceCategory::NEVER;
+	min = 0.8;
+	max = 0.9;
+	std::uniform_real_distribution<double> g4(min, max);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g4(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
 	}
 }

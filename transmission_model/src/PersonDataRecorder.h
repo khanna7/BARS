@@ -39,30 +39,66 @@ struct PersonData {
 
 };
 
-class PersonDataRecorder {
+class PersonDataRecorderI {
+
+public:
+	PersonDataRecorderI() {}
+	virtual ~PersonDataRecorderI()  {}
+
+	virtual void initRecord(PersonPtr& person, double time_of_entry) = 0;
+	virtual void recordARTStart(const PersonPtr& p, double ts) = 0;
+	virtual void recordARTStop(const PersonPtr& p, double ts) = 0;
+	virtual void recordPREPStart(const PersonPtr& p, double ts) = 0;
+	virtual void recordPREPStop(const Person* p, double ts, PrepStatus status) = 0;
+	virtual void recordInfection(const PersonPtr& p, double ts, InfectionSource source) = 0;
+	virtual void recordDeath(const PersonPtr& p, double ts) = 0;
+	virtual void recordInitialARTLag(const PersonPtr& p, double lag) = 0;
+	virtual void incrementNonAdheredIntervals(const PersonPtr& p) = 0;
+	virtual void incrementAdheredIntervals(const PersonPtr& p) = 0;
+	virtual void finalize(const PersonPtr& p, double ts) = 0;
+};
+
+class PersonDataRecorder : public PersonDataRecorderI {
 
 	std::map<int, PersonData> data;
 	StatsWriter<PersonData> writer;
-
-private:
 
 public:
 	PersonDataRecorder(const std::string& fname, unsigned int buffer);
 
 	virtual ~PersonDataRecorder();
 
-	void initRecord(PersonPtr& person, double time_of_entry);
-	void recordARTStart(const PersonPtr& p, double ts);
-	void recordARTStop(const PersonPtr& p, double ts);
-	void recordPREPStart(const PersonPtr& p, double ts);
-	void recordPREPStop(const Person* p, double ts, PrepStatus status);
-	void recordInfection(const PersonPtr& p, double ts, InfectionSource source);
-	void recordDeath(const PersonPtr& p, double ts);
-	void recordInitialARTLag(const PersonPtr& p, double lag);
-	void incrementNonAdheredIntervals(const PersonPtr& p);
-	void incrementAdheredIntervals(const PersonPtr& p);
-	void finalize(const PersonPtr& p, double ts);
+	void initRecord(PersonPtr& person, double time_of_entry) override;
+	void recordARTStart(const PersonPtr& p, double ts) override;
+	void recordARTStop(const PersonPtr& p, double ts) override;
+	void recordPREPStart(const PersonPtr& p, double ts) override;
+	void recordPREPStop(const Person* p, double ts, PrepStatus status) override;
+	void recordInfection(const PersonPtr& p, double ts, InfectionSource source) override;
+	void recordDeath(const PersonPtr& p, double ts) override;
+	void recordInitialARTLag(const PersonPtr& p, double lag) override;
+	void incrementNonAdheredIntervals(const PersonPtr& p) override;
+	void incrementAdheredIntervals(const PersonPtr& p) override;
+	void finalize(const PersonPtr& p, double ts) override;
+};
 
+class NullPersonDataRecorder : public PersonDataRecorderI {
+
+public:
+	NullPersonDataRecorder() {}
+
+	virtual ~NullPersonDataRecorder() {}
+
+	void initRecord(PersonPtr& person, double time_of_entry) override {}
+	void recordARTStart(const PersonPtr& p, double ts) override {}
+	void recordARTStop(const PersonPtr& p, double ts) override {}
+	void recordPREPStart(const PersonPtr& p, double ts) override {}
+	void recordPREPStop(const Person* p, double ts, PrepStatus status) override {}
+	void recordInfection(const PersonPtr& p, double ts, InfectionSource source) override {}
+	void recordDeath(const PersonPtr& p, double ts) override {}
+	void recordInitialARTLag(const PersonPtr& p, double lag) override {}
+	void incrementNonAdheredIntervals(const PersonPtr& p) override {}
+	void incrementAdheredIntervals(const PersonPtr& p) override {}
+	void finalize(const PersonPtr& p, double ts) override {}
 };
 
 } /* namespace TransModel */

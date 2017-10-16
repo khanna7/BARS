@@ -1,3 +1,15 @@
+12 October 2017
+
+Version 0.21
+
+* Age specific parameters and ability to disable specific outputs.
+	* non.testers.prop
+	* testing.prob
+	* art.init.lag
+	* prep.bl.use.prop
+	* prep.mean.days.usage
+	* prep.prop.*.adherent
+
 26 September 2017
 
 Version 0.20

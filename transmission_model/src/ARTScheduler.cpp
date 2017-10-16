@@ -31,7 +31,7 @@ void ARTScheduler::operator()() {
 		if (!p->isDead()) {
 			initialize_art_adherence(p, time_stamp_);
 			p->goOnART(time_stamp_);
-			Stats::instance()->personDataRecorder().recordARTStart(p, time_stamp_);
+			Stats::instance()->personDataRecorder()->recordARTStart(p, time_stamp_);
 			Stats::instance()->recordARTEvent(time_stamp_, p->id(), true);
 		}
 	}

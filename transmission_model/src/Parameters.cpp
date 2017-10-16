@@ -19,6 +19,11 @@ namespace TransModel {
 
 const std::string RUN_NUMBER = "run";
 
+const std::string AGE_THRESHOLD = "age.threshold";
+
+const std::string LT_SUFFIX = ".lt";
+const std::string GTE_SUFFIX = ".gte";
+
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";
 
@@ -85,14 +90,17 @@ const std::string LATE_STAGE_VIRAL_LOAD = "late.stage.viral.load";
 const std::string MAX_AGE = "max.age";
 const std::string MIN_AGE = "min.age";
 const std::string MIN_CHRONIC_INFECTIVITY_UNADJ = "min.chronic.infectivity.unadj";
-const std::string NON_TESTERS_PROP = "non.testers.prop";
+const std::string NON_TESTERS_PROP_LT = "non.testers.prop.lt";
+const std::string NON_TESTERS_PROP_GTE = "non.testers.prop.gte";
 const std::string NUM_SEX_ACTS_PER_TIMESTEP = "num.sex.acts.per.timestep";
 const std::string PEAK_VIRAL_LOAD = "peak.viral.load";
 const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
 const std::string PREG_MULT = "preg.mult";
 const std::string PREG_SUSC_MULT = "preg.susc.mult";
-const std::string PREP_USE_PROP = "prep.bl.use.prop";
-const std::string PREP_DAILY_STOP_PROB = "prep.daily.stop.prob";
+const std::string PREP_USE_PROP_LT = "prep.bl.use.prop.lt";
+const std::string PREP_USE_PROP_GTE = "prep.bl.use.prop.gte";
+const std::string PREP_DAILY_STOP_PROB_LT = "prep.daily.stop.prob.lt";
+const std::string PREP_DAILY_STOP_PROB_GTE = "prep.daily.stop.prob.gte";
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
 const std::string TIME_INFECTION_TO_LATE_STAGE = "time.infection.to.late.stage";
@@ -116,10 +124,12 @@ const std::string PROP_STEADY_SEX_ACTS = "prop.steady.sex.acts";
 const std::string PROP_CASUAL_SEX_ACTS = "prop.casual.sex.acts";
 const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
 
-const std::string ART_LAG_PREFIX = "art.init.lag";
+const std::string ART_LAG_PREFIX_LT = "art.init.lag.lt";
+const std::string ART_LAG_PREFIX_GTE = "art.init.lag.gte";
 const std::string ASM_PREFIX = "asm.";
 
-const std::string TESTING_PROB_PREFIX = "testing.prob";
+const std::string TESTING_PROB_PREFIX_LT = "testing.prob.lt";
+const std::string TESTING_PROB_PREFIX_GTE = "testing.prob.gte";
 
 const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
 const std::string ART_PROP_NEVER_ADHERENT = "art.prop.never.adherent";
@@ -132,7 +142,6 @@ const std::string ART_NEVER_ADHERENT_PROB = "art.never.adherent.probability";
 const std::string ART_PARTIAL_POS_ADHERENT_PROB = "art.partial.pos.adherent.probability";
 const std::string ART_PARTIAL_NEG_ADHERENT_PROB = "art.partial.neg.adherent.probability";
 
-const std::string PREP_DECISION_FREQUENCY = "prep.decision.frequency";
 const std::string PREP_PROP_NEVER_ADHERENT = "prep.prop.never.adherent";
 const std::string PREP_PROP_ALWAYS_ADHERENT = "prep.prop.always.adherent";
 const std::string PREP_PROP_PARTIAL_POS_ADHERENT = "prep.prop.part.plus.adherent";

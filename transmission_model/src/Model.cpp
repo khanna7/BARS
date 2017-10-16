@@ -216,29 +216,34 @@ void init_stage_map(map<float, shared_ptr<Stage>> &stage_map) {
 }
 
 void init_generators() {
-	float non_tester_rate = Parameters::instance()->getDoubleParameter(NON_TESTERS_PROP);
-	BinomialGen coverage(repast::Random::instance()->engine(),
-			boost::random::binomial_distribution<>(1, non_tester_rate));
-	Random::instance()->putGenerator(NON_TESTERS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(coverage));
-
 	float circum_rate = Parameters::instance()->getDoubleParameter(CIRCUM_RATE);
 	BinomialGen rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, circum_rate));
 	Random::instance()->putGenerator(CIRCUM_STATUS_BINOMIAL, new DefaultNumberGenerator<BinomialGen>(rate));
 }
 
+std::string get_stats_filename(const std::string& key) {
+	if (Parameters::instance()->contains(key)) {
+		return Parameters::instance()->getStringParameter(key);
+	} else {
+		return "";
+	}
+
+}
+
 void init_stats() {
 	StatsBuilder builder(output_directory(Parameters::instance()));
-	builder.countsWriter(Parameters::instance()->getStringParameter(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
-	builder.partnershipEventWriter(Parameters::instance()->getStringParameter(PARTNERSHIP_EVENTS_FILE));
-	builder.infectionEventWriter(Parameters::instance()->getStringParameter(INFECTION_EVENTS_FILE));
-	builder.biomarkerWriter(Parameters::instance()->getStringParameter(BIOMARKER_FILE));
-	builder.deathEventWriter(Parameters::instance()->getStringParameter(DEATH_EVENT_FILE));
-	builder.personDataRecorder(Parameters::instance()->getStringParameter(PERSON_DATA_FILE));
-	builder.testingEventWriter(Parameters::instance()->getStringParameter(TESTING_EVENT_FILE));
-	builder.artEventWriter(Parameters::instance()->getStringParameter(ART_EVENT_FILE));
-	builder.prepEventWriter(Parameters::instance()->getStringParameter(PREP_EVENT_FILE));
+	builder.countsWriter(get_stats_filename(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
+	builder.partnershipEventWriter(get_stats_filename(PARTNERSHIP_EVENTS_FILE));
+	builder.infectionEventWriter(get_stats_filename(INFECTION_EVENTS_FILE));
+	builder.biomarkerWriter(get_stats_filename(BIOMARKER_FILE));
+	builder.deathEventWriter(get_stats_filename(DEATH_EVENT_FILE));
+	builder.personDataRecorder(get_stats_filename(PERSON_DATA_FILE));
+	builder.testingEventWriter(get_stats_filename(TESTING_EVENT_FILE));
+	builder.artEventWriter(get_stats_filename(ART_EVENT_FILE));
+	builder.prepEventWriter(get_stats_filename(PREP_EVENT_FILE));
 
-	builder.createStatsSingleton();
+	float age_threshold =  Parameters::instance()->getFloatParameter(AGE_THRESHOLD);
+	builder.createStatsSingleton(age_threshold);
 }
 
 void init_network_save(Model* model) {
@@ -285,18 +290,29 @@ void init_trans_params(TransmissionParameters& params) {
 	params.prop_casual_sex_acts = Parameters::instance()->getDoubleParameter(PROP_CASUAL_SEX_ACTS) * size_of_time_step;
 }
 
-std::shared_ptr<DayRangeCalculator> create_art_lag_calc() {
+ARTLagCalculator create_art_lag_calc() {
 	DayRangeCalculatorCreator creator;
 	vector<string> lag_keys;
-	Parameters::instance()->getKeys(ART_LAG_PREFIX, lag_keys);
+	Parameters::instance()->getKeys(ART_LAG_PREFIX_LT, lag_keys);
 	for (auto& key : lag_keys) {
 		creator.addBin(Parameters::instance()->getStringParameter(key));
 	}
-	return creator.createCalculator();
+	std::shared_ptr<DayRangeCalculator> lower = creator.createCalculator();
+
+	creator.clear();
+	lag_keys.clear();
+	Parameters::instance()->getKeys(ART_LAG_PREFIX_GTE, lag_keys);
+	for (auto& key : lag_keys) {
+		creator.addBin(Parameters::instance()->getStringParameter(key));
+	}
+	std::shared_ptr<DayRangeCalculator> upper = creator.createCalculator();
+
+	float age_threshold =  Parameters::instance()->getFloatParameter(AGE_THRESHOLD);
+	return ARTLagCalculator(upper, lower, age_threshold);
 }
 
-std::shared_ptr<GeometricDistribution> create_cessation_generator() {
-	double prob = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
+std::shared_ptr<GeometricDistribution> create_cessation_generator(const std::string& daily_stop_prob_key) {
+	double prob = Parameters::instance()->getDoubleParameter(daily_stop_prob_key);
 	// 1.1 so at least a day on prep, and .1 so after step loop.
 	return std::make_shared<GeometricDistribution>(prob, 1.1);
 }
@@ -372,8 +388,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
-				create_art_lag_calc() },  cessation_generator { create_cessation_generator() }, condom_assigner { create_condom_use_assigner() },
-				asm_runner { create_ASM_runner() } {
+				create_art_lag_calc() },  cessation_generator_lt { create_cessation_generator(PREP_DAILY_STOP_PROB_LT) },
+				cessation_generator_gte { create_cessation_generator(PREP_DAILY_STOP_PROB_GTE)},	condom_assigner { create_condom_use_assigner() },
+				asm_runner { create_ASM_runner() }, age_threshold{Parameters::instance()->getFloatParameter(AGE_THRESHOLD)} {
 
 	// get initial stats
 	init_stats();
@@ -396,10 +413,10 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	stats->currentCounts().size = net.vertexCount();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
 		PersonPtr p = *iter;
-		stats->personDataRecorder().initRecord(p, 0);
+		stats->personDataRecorder()->initRecord(p, 0);
 		if (p->isInfected()) {
 			stats->currentCounts().incrementInfected(p);
-			stats->personDataRecorder().recordInfection(p, p->infectionParameters().time_of_infection,
+			stats->personDataRecorder()->recordInfection(p, p->infectionParameters().time_of_infection,
 					InfectionSource::INTERNAL);
 		}
 	}
@@ -425,16 +442,16 @@ void Model::initPrepCessation() {
 			runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
 			double start_time = person->prepParameters().startTime();
 			Stats::instance()->recordPREPEvent(start_time, person->id(), static_cast<int>(PrepStatus::ON));
-			Stats::instance()->personDataRecorder().recordPREPStart(person, start_time);
+			Stats::instance()->personDataRecorder()->recordPREPStart(person, start_time);
 		}
 	}
 }
 
 void Model::atEnd() {
 	double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
-	PersonDataRecorder& pdr = Stats::instance()->personDataRecorder();
+	std::shared_ptr<PersonDataRecorderI> pdr = Stats::instance()->personDataRecorder();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
-		pdr.finalize(*iter, ts);
+		pdr->finalize(*iter, ts);
 	}
 
 	// forces stat writing via destructors
@@ -514,8 +531,8 @@ void Model::step() {
 
 void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
 		float size_of_timestep) {
-	double lag = art_lag_calculator->calculateLag(size_of_timestep);
-	Stats::instance()->personDataRecorder().recordInitialARTLag(person, lag);
+	double lag = art_lag_calculator.calculateLag(person, size_of_timestep);
+	Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
 
 	double art_at_tick = lag + tick;
 	ARTScheduler* scheduler = nullptr;
@@ -535,46 +552,58 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
 void Model::updatePREPUse(double tick, double prob, PersonPtr person) {
 	if (!person->isOnPrep() && Random::instance()->nextDouble() <= prob) {
 		ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
-		double stop_time = tick + cessation_generator->next();
+		double delay = person->age() < age_threshold ? cessation_generator_lt->next() : cessation_generator_gte->next();
+		double stop_time = tick + delay;
 		person->goOnPrep(tick, stop_time);
 		Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
-		Stats::instance()->personDataRecorder().recordPREPStart(person, tick);
+		Stats::instance()->personDataRecorder()->recordPREPStart(person, tick);
 		runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
 	}
 }
+
+void Model::updateDisease(PersonPtr person) {
+	if (person->isOnART()) {
+		float slope = viral_load_slope_calculator.calculateSlope(person->infectionParameters());
+		person->setViralLoadARTSlope(slope);
+	}
+
+	float viral_load = viral_load_calculator.calculateViralLoad(person->infectionParameters());
+	person->setViralLoad(viral_load);
+	// update cd4
+	float cd4 = cd4_calculator.calculateCD4(person->age(), person->infectionParameters());
+	person->setCD4Count(cd4);
+
+	// select stage, and use it
+	float infectivity = stage_map.upper_bound(person->timeSinceInfection())->second->calculateInfectivity(
+			person->infectionParameters());
+	person->setInfectivity(infectivity);
+}
+
+double calc_on_prep_prob(const std::string& stop_prob_key, const std::string& prep_use_key) {
+	double p = Parameters::instance()->getDoubleParameter(stop_prob_key);
+	double k = Parameters::instance()->getDoubleParameter(prep_use_key);
+	return (p * k) / (1 - k);
+}
+
 
 void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
 	map<double, ARTScheduler*> art_map;
 
-	double p = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB);
-	double k = Parameters::instance()->getDoubleParameter(PREP_USE_PROP);
-	double on_prep_prob = (p * k) / (1 - k);
+	double on_prep_prob_lt = calc_on_prep_prob(PREP_DAILY_STOP_PROB_LT, PREP_USE_PROP_LT);
+	double on_prep_prob_gte = calc_on_prep_prob(PREP_DAILY_STOP_PROB_GTE, PREP_USE_PROP_GTE);
 
 	uninfected.reserve(net.vertexCount());
 
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		PersonPtr person = (*iter);
-		// update viral load
+		// update viral load, cd4
 		if (person->isInfected()) {
-			if (person->isOnART()) {
-				float slope = viral_load_slope_calculator.calculateSlope(person->infectionParameters());
-				person->setViralLoadARTSlope(slope);
-			}
-
-			float viral_load = viral_load_calculator.calculateViralLoad(person->infectionParameters());
-			person->setViralLoad(viral_load);
-			// update cd4
-			float cd4 = cd4_calculator.calculateCD4(person->age(), person->infectionParameters());
-			person->setCD4Count(cd4);
-
-			// select stage, and use it
-			float infectivity = stage_map.upper_bound(person->timeSinceInfection())->second->calculateInfectivity(
-					person->infectionParameters());
-			person->setInfectivity(infectivity);
+			updateDisease(person);
 		} else {
-			updatePREPUse(t, on_prep_prob, person);
+			double prob = person->age() < age_threshold ? on_prep_prob_lt : on_prep_prob_gte;
+			updatePREPUse(t, prob, person);
 		}
 
 		if (persons_to_log.find(person->id()) != persons_to_log.end()) {
@@ -587,7 +616,7 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			}
 		}
 
-		person->step(size_of_timestep);
+		bool crossed_thresh = person->step(size_of_timestep, age_threshold);
 		CauseOfDeath cod = dead(t, person, max_age);
 		if (cod != CauseOfDeath::NONE) {
 			vector<EdgePtr<Person>> edges;
@@ -611,6 +640,11 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			}
 			if (person->isOnART()) {
 				++stats->currentCounts().on_art;
+			}
+
+			if (crossed_thresh) {
+				person_creator.updateTesting(person, size_of_timestep);
+				person_creator.updatePREPAdherence(person);
 			}
 			++iter;
 		}
@@ -643,7 +677,7 @@ void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
 		PersonPtr p = iter->second;
 		infectPerson(p, t);
 		++stats->currentCounts().external_infected;
-		stats->personDataRecorder().recordInfection(p, t, InfectionSource::EXTERNAL);
+		stats->personDataRecorder()->recordInfection(p, t, InfectionSource::EXTERNAL);
 	}
 }
 
@@ -686,7 +720,7 @@ void Model::entries(double tick, float size_of_timestep) {
 				stats->recordInfectionEvent(infected_at, p);
 			}
 			net.addVertex(p);
-			Stats::instance()->personDataRecorder().initRecord(p, tick);
+			Stats::instance()->personDataRecorder()->initRecord(p, tick);
 		}
 	}
 }
@@ -732,7 +766,7 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
 		++death_count;
 		++Stats::instance()->currentCounts().age_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::AGE);
-		Stats::instance()->personDataRecorder().recordDeath(person, tick);
+		Stats::instance()->personDataRecorder()->recordDeath(person, tick);
 		cod = CauseOfDeath::AGE;
 	}
 
@@ -741,7 +775,7 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
 		++death_count;
 		++Stats::instance()->currentCounts().infection_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::INFECTION);
-		Stats::instance()->personDataRecorder().recordDeath(person, tick);
+		Stats::instance()->personDataRecorder()->recordDeath(person, tick);
 		cod = CauseOfDeath::INFECTION;
 	}
 
@@ -750,7 +784,7 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
 		++death_count;
 		++Stats::instance()->currentCounts().asm_deaths;
 		Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
-		Stats::instance()->personDataRecorder().recordDeath(person, tick);
+		Stats::instance()->personDataRecorder()->recordDeath(person, tick);
 		cod = CauseOfDeath::ASM;
 	}
 
@@ -844,7 +878,7 @@ void Model::runTransmission(double time_stamp) {
 		if (!person->isInfected()) {
 			infectPerson(person, time_stamp);
 			stats->currentCounts().incrementInfected(person);
-			stats->personDataRecorder().recordInfection(person, time_stamp, InfectionSource::INTERNAL);
+			stats->personDataRecorder()->recordInfection(person, time_stamp, InfectionSource::INTERNAL);
 		}
 	}
 }

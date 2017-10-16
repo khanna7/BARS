@@ -140,8 +140,10 @@ public:
 
 	/**
 	 * Updates age, etc. of person., to be called each iteration of the model.
+	 *
+	 * @return true if, in aging, this person has crossed the specified threshold.
 	 */
-	void step(float size_of_timestep);
+	bool step(float size_of_timestep, float threshold);
 
 	/**
 	 * Checks if person is dead of old age. This doesn't kill
@@ -178,6 +180,16 @@ public:
 	bool diagnose(double tick);
 
 	double timeUntilNextTest(double tick) const;
+
+	/**
+	 * Updates the diagnoser component with new test_prob etc.
+	 */
+	void updateDiagnoser(double test_prob, bool testable);
+
+	/**
+	 * Updates the prep AdherenceData.
+	 */
+	void updatePrepAdherence(AdherenceData& data);
 
 };
 

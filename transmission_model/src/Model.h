@@ -22,10 +22,11 @@
 #include "ViralLoadCalculator.h"
 #include "ViralLoadSlopeCalculator.h"
 #include "PersonCreator.h"
-#include "DayRangeCalculator.h"
+//#include "DayRangeCalculator.h"
 #include "ARTScheduler.h"
 #include "CondomUseAssigner.h"
 #include "RangeWithProbability.h"
+#include "ARTLagCalculator.h"
 
 namespace TransModel {
 
@@ -51,10 +52,12 @@ private:
 	std::set<int> persons_to_log;
 	PersonCreator person_creator;
 	TransmissionParameters trans_params;
-	std::shared_ptr<DayRangeCalculator> art_lag_calculator;
-	std::shared_ptr<GeometricDistribution> cessation_generator;
+	ARTLagCalculator art_lag_calculator;
+	std::shared_ptr<GeometricDistribution> cessation_generator_lt, cessation_generator_gte;
 	CondomUseAssigner condom_assigner;
 	RangeWithProbability asm_runner;
+
+	float age_threshold;
 
 	void runTransmission(double timestamp);
 	CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
@@ -65,6 +68,7 @@ private:
 	 * @param uninfected empty vector into which the uninfected are placed
 	 */
 	void updateVitals(double time, float size_of_time_step, int max_survival, std::vector<PersonPtr>& uninfected);
+	void updateDisease(PersonPtr person);
 	void runExternalInfections(std::vector<PersonPtr>& uninfected, double time);
 
 	void infectPerson(PersonPtr& person, double time_stamp);

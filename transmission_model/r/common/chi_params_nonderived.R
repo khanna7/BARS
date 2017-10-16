@@ -149,37 +149,54 @@
     detection.window <- 22
     mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY
     #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop <- 0.06
+    non.testers.prop.lt <- 0.078
+    non.testers.prop.gte <- 0.023
 
      # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    art.init.lag.1 <- ".167142,0-7"  
-    art.init.lag.2 <- ".298142,7-30"  
-    art.init.lag.3 <- ".160142,30-90"  
-    art.init.lag.4 <- ".092142,90-180"  
-    art.init.lag.5 <- ".129142,180-365"  
-    art.init.lag.6 <- ".084142,365-730"
-    art.init.lag.7 <- ".069142,1825-1825"
+    art.init.lag.lt.1 <- "0.1692857143,0-7"  
+    art.init.lag.lt.2 <- "0.314285714,7-30"  
+    art.init.lag.lt.3 <- "0.191285714,30-90"  
+    art.init.lag.lt.4 <- "0.067285714,90-180"  
+    art.init.lag.lt.5 <- "0.123285714,180-365"  
+    art.init.lag.lt.6 <- "0.089285714,365-730"
+    art.init.lag.lt.7 <- "0.045285714,1825-1825"
+    
+    art.init.lag.gte.1 <- "0.167125,0-7"  
+    art.init.lag.gte.2 <- "0.2621250,7-30"  
+    art.init.lag.gte.3 <- "0.095125,30-90"  
+    art.init.lag.gte.4 <- "0.143125,90-180"  
+    art.init.lag.gte.5 <- "0.143125,180-365"  
+    art.init.lag.gte.6 <- "0.071125,365-730"
+    art.init.lag.gte.7 <- "0.047125,730-1825"
+    art.init.lag.gte.8 <- "0.071125,1825-1825"
    
     #####################
     ## PrEP
-
+ 
 # days
 prep.decision.frequency <- 7
 
-prep.prop.never.adherent <- 0.211
-prep.prop.always.adherent <- 0.619
-prep.prop.part.plus.adherent <- 0.10
-prep.prop.part.neg.adherent <- 0.07
+prep.prop.never.adherent.lt <- 0.211
+prep.prop.always.adherent.lt <- 0.619
+prep.prop.part.plus.adherent.lt <- 0.10
+prep.prop.part.neg.adherent.lt <- 0.07
+
+prep.prop.never.adherent.gte <- 0.211
+prep.prop.always.adherent.gte <- 0.619
+prep.prop.part.plus.adherent.gte <- 0.10
+prep.prop.part.neg.adherent.gte <- 0.07
 
 prep.always.adherent.trans.reduction <- 0.95
 prep.never.adherent.trans.reduction <- 0.0
 prep.partial.pos.adherent.trans.reduction <- 0.81 
 prep.partial.neg.adherent.trans.reduction <- 0.31
     
-prep.bl.use.prop <- 10/100
-prep.mean.days.usage <- 180
+prep.bl.use.prop.lt <- 12.7/100
+prep.bl.use.prop.gte <- 14.7/100
+prep.mean.days.usage.lt <- 180
+prep.mean.days.usage.gte <- 180
 
 #####################
     ## Socioeconomic status
@@ -288,14 +305,24 @@ external.infections.age.factor = 1.2
 
 
 # range of number of tests in last two years min-max, fraction of the population
-testing.prob.1 = "1-2,0.457377778"
-testing.prob.2 = "3-4,0.299377778"
-testing.prob.3 = "5-6,0.109377778"
-testing.prob.4 = "7-8,0.055377778"
-testing.prob.5 = "9-10,0.039377778"
-testing.prob.6 = "11-12,0.012377778"
-testing.prob.7 = "13-16,0.008877778"
-testing.prob.8 = "17-20,0.010677778"
-testing.prob.9 = "21-30,0.007177778"
+testing.prob.lt.1 = "1-2,0.457377778"
+testing.prob.lt.2 = "3-4,0.299377778"
+testing.prob.lt.3 = "5-6,0.109377778"
+testing.prob.lt.4 = "7-8,0.055377778"
+testing.prob.lt.5 = "9-10,0.039377778"
+testing.prob.lt.6 = "11-12,0.012377778"
+testing.prob.lt.7 = "13-16,0.008877778"
+testing.prob.lt.8 = "17-20,0.010677778"
+testing.prob.lt.9 = "21-30,0.007177778"
+
+testing.prob.gte.1 = "1-2,0.457377778"
+testing.prob.gte.2 = "3-4,0.299377778"
+testing.prob.gte.3 = "5-6,0.109377778"
+testing.prob.gte.4 = "7-8,0.055377778"
+testing.prob.gte.5 = "9-10,0.039377778"
+testing.prob.gte.6 = "11-12,0.012377778"
+testing.prob.gte.7 = "13-16,0.008877778"
+testing.prob.gte.8 = "17-20,0.010677778"
+testing.prob.gte.9 = "21-30,0.007177778"
 
 

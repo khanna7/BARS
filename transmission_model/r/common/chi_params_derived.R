@@ -42,7 +42,8 @@
     
    #####################
    ## PrEP
-   prep.daily.stop.prob <- 1/prep.mean.days.usage
+   prep.daily.stop.prob.lt <- 1/prep.mean.days.usage.lt
+   prep.daily.stop.prob.gte <- 1/prep.mean.days.usage.gte
 
    #####################
    ## Transmission Parameters

@@ -64,43 +64,5 @@ void schedule_art_adherence(std::shared_ptr<Person> person, double first_art_at_
 			repast::Schedule::FunctorPtr(ac_scheduler));
 }
 
-AdherenceData initialize_prep_adherence(AdherenceCategory category) {
-	double prob = 0;
-	if (category == AdherenceCategory::ALWAYS) {
-		prob = Parameters::instance()->getDoubleParameter(PREP_ALWAYS_ADHERENT_TR);
-	} else if (category == AdherenceCategory::NEVER) {
-		prob = Parameters::instance()->getDoubleParameter(PREP_NEVER_ADHERENT_TR);
-	} else if (category == AdherenceCategory::PARTIAL_PLUS) {
-		prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_POS_ADHERENT_TR);
-	}  else if (category == AdherenceCategory::PARTIAL_MINUS) {
-		prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_NEG_ADHERENT_TR);
-	}
-
-	return  AdherenceData(prob, category);
-}
-
-AdherenceData initialize_prep_adherence() {
-	double always = Parameters::instance()->getDoubleParameter(PREP_PROP_ALWAYS_ADHERENT);
-	double never = Parameters::instance()->getDoubleParameter(PREP_PROP_NEVER_ADHERENT);
-	double partial_plus = Parameters::instance()->getDoubleParameter(PREP_PROP_PARTIAL_POS_ADHERENT);
-	double partial_minus = Parameters::instance()->getDoubleParameter(PREP_PROP_PARTIAL_NEG_ADHERENT);
-
-	double always_prob = Parameters::instance()->getDoubleParameter(PREP_ALWAYS_ADHERENT_TR);
-	double never_prob = Parameters::instance()->getDoubleParameter(PREP_NEVER_ADHERENT_TR);
-	double partial_plus_prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_POS_ADHERENT_TR);
-	double partial_minus_prob = Parameters::instance()->getDoubleParameter(PREP_PARTIAL_NEG_ADHERENT_TR);
-
-	//std::cout << "prep: " << always << "," << never << "," << partial_plus << ", " << partial_minus << std::endl;
-
-	ProbDistCreator<AdherenceData> creator;
-	creator.addItem(always, AdherenceData(always_prob, AdherenceCategory::ALWAYS));
-	creator.addItem(never, AdherenceData(never_prob, AdherenceCategory::NEVER));
-	creator.addItem(partial_plus, AdherenceData(partial_plus_prob, AdherenceCategory::PARTIAL_PLUS));
-	creator.addItem(partial_minus, AdherenceData(partial_minus_prob, AdherenceCategory::PARTIAL_MINUS));
-
-	AdherenceData data = creator.createProbDist().draw(repast::Random::instance()->nextDouble());
-	return data;
-}
-
 }
 
