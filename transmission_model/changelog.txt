@@ -1,5 +1,7 @@
 16 October 2017
 
+Version 0.22
+
 * Testing prob category not assigned if person is not testable
 
 12 October 2017
