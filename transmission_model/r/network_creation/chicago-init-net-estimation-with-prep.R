@@ -121,12 +121,25 @@
     n0 %v% "cd4.count.today" <- cd4.count.today
 
    ## non-testers
-   non.tester <- rbinom(n, 1, non.testers.prop)
-   testers <- which(non.tester == 0)
-   n0 %v% "non.testers" <- non.tester
+   age.threshold <- 26
 
+   lt.msm <- which(age < age.threshold) #lt = "less than"
+   gte.msm <- which(age >= age.threshold) #gte = "greater than equal to"
+   
+   non.tester.lt <- rbinom(length(lt.msm), 1, non.testers.prop.lt)
+   non.tester.gte <- rbinom(length(gte.msm), 1, non.testers.prop.gte)
+   
+   set.vertex.attribute(n0, "non.testers", non.tester.lt, v=lt.msm)
+   set.vertex.attribute(n0, "non.testers", non.tester.gte, v=gte.msm)
+   
+   age.lt26 <- age #test if above construction worked
+   age.lt26[lt.msm] <- 1
+   age.lt26[gte.msm] <- 0
+   
+   xtabs(~age.lt26 + n0%v%"non.testers") #7.8% (2.3%) of <26y (>=26y) have never testerd
+   
    ## ART coverage 
-   art.covered <- 1-non.tester
+   art.covered <- 1-(n0%v%"non.testers")
    set.vertex.attribute(n0, "art.covered", art.covered)
 
    ## ART status
