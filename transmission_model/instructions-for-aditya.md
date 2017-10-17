@@ -23,7 +23,7 @@
 
    `./transmission_model-0.0 ../config/config.props ../config/model.props`    
    
-* Midway 2 executable: /home/ntcollie/midway2/repos/BARS/transmission_model/Release/transmission_model-0.18
+* Midway 2 executable: `/home/ntcollie/midway2/repos/BARS/transmission_model/Release/transmission_model-0.18`
 
 * To exclude bad nodes (nodes 54-60, for example) from Midway, do the following:
 
