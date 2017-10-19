@@ -676,7 +676,7 @@ void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
 		Stats* stats = Stats::instance();
 		PersonPtr p = iter->second;
 		infectPerson(p, t);
-		++stats->currentCounts().external_infected;
+		stats->currentCounts().incrementInfectedExternal(p);
 		stats->personDataRecorder()->recordInfection(p, t, InfectionSource::EXTERNAL);
 	}
 }
@@ -716,7 +716,7 @@ void Model::entries(double tick, float size_of_timestep) {
 				// update cd4
 				float cd4 = cd4_calculator.calculateCD4(p->age(), p->infectionParameters());
 				p->setCD4Count(cd4);
-				++stats->currentCounts().infected_at_entry;
+				stats->currentCounts().incrementInfectedAtEntry(p);
 				stats->recordInfectionEvent(infected_at, p);
 			}
 			net.addVertex(p);

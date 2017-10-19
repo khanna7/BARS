@@ -126,12 +126,15 @@ struct Counts {
 	unsigned int on_art, on_prep;
 	unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
 		vertex_count_u26, vertex_count_gte26;
+	unsigned int external_infected_u26, external_infected_gte26, infected_at_entry_u26, infected_at_entry_gte26;
 	float threshold_;
 
 	Counts(float threshold);
 	void reset();
 	void writeTo(FileOutput& out);
 	void incrementInfected(PersonPtr& p);
+	void incrementInfectedAtEntry(PersonPtr& p);
+	void incrementInfectedExternal(PersonPtr& p);
 	void incrementUninfected(PersonPtr& p);
 	void incrementVertexCount(PersonPtr p);
 

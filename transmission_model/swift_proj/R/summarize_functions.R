@@ -22,6 +22,29 @@ summarize_prev <- function(filename="counts.csv"){
   return(c(mean_sd, mean_sd_u26, mean_sd_gte26))
 }
 
+inc_func <- function(counts, counts_yr_chunks, numerators, denominator) {
+  print(length(numerators))
+  
+  if (length(numerators) == 1) {
+    mean_inc <- lapply(counts_yr_chunks, function (x)
+      mean(x[2:nrow(x), numerators] / x[1:(nrow(x) - 1), denominator])
+    )
+  } else if (length(numerators) == 2) {
+    mean_inc <- lapply(counts_yr_chunks, function (x)
+      mean((x[2:nrow(x), numerators[1]] + x[2:nrow(x), numerators[2]]) / x[1:(nrow(x) - 1), denominator])
+    )
+  } else if (length(numerators) == 3) {
+    mean_inc <- lapply(counts_yr_chunks, function (x)
+      mean((x[2:nrow(x), numerators[1]] + x[2:nrow(x), numerators[2]] + + x[2:nrow(x), numerators[3]]) / x[1:(nrow(x) - 1), denominator])
+    )
+  }
+  
+  mean_inc_ten_yrs <- tail(mean_inc, 10)
+  mean_inc_ten_yrs <- unlist(mean_inc_ten_yrs)*365*100 
+  result <- round(mean_inc_ten_yrs, 3)
+  return(result)
+}
+
 summarize_inc <- function(filename="counts.csv"){
   
   counts <- read.csv(filename)
@@ -29,30 +52,24 @@ summarize_inc <- function(filename="counts.csv"){
   counts_yr_chunks <- split(counts,
                             ceiling(seq_along(counts$tick)/365))
   
-   mean_inc <- lapply(counts_yr_chunks, function (x)
-    mean(x[2:nrow(x), "infected_via_transmission"] / x[1:(nrow(x) - 1), "uninfected"])
-  )
-   mean_inc_ten_yrs <- tail(mean_inc, 10)
-   mean_inc_ten_yrs <- unlist(mean_inc_ten_yrs)*365*100 
-   full_result <- round(mean_inc_ten_yrs, 3)
-   
-   # u26
-   mean_inc <- lapply(counts_yr_chunks, function (x)
-     mean(x[2:nrow(x), "infected_via_transmission_u26"] / x[1:(nrow(x) - 1), "uninfected_u26"])
-   )
-   mean_inc_ten_yrs <- tail(mean_inc, 10)
-   mean_inc_ten_yrs <- unlist(mean_inc_ten_yrs)*365*100 
-   u26_result <- round(mean_inc_ten_yrs, 3)
-   
-   # gte26
-   mean_inc <- lapply(counts_yr_chunks, function (x)
-     mean(x[2:nrow(x), "infected_via_transmission_gte26"] / x[1:(nrow(x) - 1), "uninfected_gte26"])
-   )
-   mean_inc_ten_yrs <- tail(mean_inc, 10)
-   mean_inc_ten_yrs <- unlist(mean_inc_ten_yrs)*365*100 
-   gte26_result <- round(mean_inc_ten_yrs, 3)
+  full_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission"), "uninfected")
+  u26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_u26"), "uninfected_u26")
+  gte26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_gte26"), "uninfected_gte26")
   
-   return(c(full_result, u26_result, gte26_result))
+  ex_full_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission", "infected_externally"), "uninfected")
+  ex_u26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_u26", "infected_external_u26"), "uninfected_u26")
+  ex_gte26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_gte26", "infected_external_gte26"), 
+                              "uninfected_gte26")
+  
+  ee_full_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission", "infected_externally", 
+                                                         "infected_at_entry"), "uninfected")
+  ee_u26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_u26", "infected_external_u26", 
+                                                        "infected_at_entry_u26"), "uninfected_u26")
+  ee_gte26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_gte26", "infected_external_gte26", 
+                                                          "infected_at_entry_gte26"), "uninfected_gte26")
+
+   return(c(full_result, u26_result, gte26_result, ex_full_result, ex_u26_result, ex_gte26_result, 
+            ee_full_result, ee_u26_result, ee_gte26_result))
 }
 
 summarize_pop_size <- function(filename="counts.csv"){
