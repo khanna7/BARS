@@ -1,3 +1,11 @@
+19 October 2017
+
+Version 0.23
+
+* Added additional outputs tracking u26 and gte26 external and entry infections.
+* Updated summarize_functions to calculate incidence using other infection sources (entry and external).
+
+
 16 October 2017
 
 Version 0.22
