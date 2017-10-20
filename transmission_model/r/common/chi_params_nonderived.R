@@ -44,7 +44,8 @@
    ## BIOLOGICAL
    circum.rate <- 0.64 #in accordance with CDC circumcision data sent by Kiana (2016)
    init.hiv.prev <- 0.10
-   init.hiv.prev.for.entries <- 0.001/100 # probability that an entering person will have HIV
+   init.hiv.prev.for.entries <- 1/100 # probability that an entering person will have HIV
+   # value prior to 10/19/2017: 0.001/100 
 
    acute.length <- 1:90 ## in daily time units
    chronic.length <- 91:3550

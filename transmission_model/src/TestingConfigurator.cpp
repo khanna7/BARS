@@ -44,8 +44,12 @@ void TestingConfigurator::configurePerson(std::shared_ptr<Person> p, double size
 		dist = &gte_dist_;
 		gen = gte_gen;
 	}
-	double test_prob = dist->draw(draw).next(size_of_timestep);
+
 	bool testable = ((int) gen->next()) == 0;
+	double test_prob = 0;
+	if (testable) {
+		test_prob = dist->draw(draw).next(size_of_timestep);
+	}
 	p->updateDiagnoser(test_prob, testable);
 }
 

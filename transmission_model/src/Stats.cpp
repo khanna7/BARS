@@ -68,7 +68,8 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 const std::string Counts::header(
 		"\"tick\",\"entries\",\"max_age_exits\",\"infection_deaths\",\"asm_deaths\","
 		"\"infected_via_transmission\",\"infected_via_transmission_u26\",\"infected_via_transmission_gte26\","
-		"\"infected_externally\",\"infected_at_entry\","
+		"\"infected_externally\",\"infected_external_u26\",\"infected_external_gte26\","
+		"\"infected_at_entry\",\"infected_at_entry_u26\",\"infected_at_entry_gte26\","
 		"\"uninfected\",\"uninfected_u26\",\"uninfected_gte26\","
 		"\"steady_edge_count\",\"casual_edge_count\","
 		"\"vertex_count\",\"vertex_count_u26\",\"vertex_count_gte26\","
@@ -83,7 +84,8 @@ const std::string Counts::header(
 void Counts::writeTo(FileOutput& out) {
 	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths << ","
 			<< internal_infected << ","	<< infected_via_transmission_u26 << "," << infected_via_transmission_gte26 << ","
-			<< external_infected << "," << infected_at_entry << ","
+			<< external_infected << "," << external_infected_u26 << "," << external_infected_gte26 << ","
+			<< infected_at_entry << "," << infected_at_entry_u26 << "," << infected_at_entry_gte26  << ","
 			<< uninfected << "," << uninfected_u26 << "," << uninfected_gte26 << ","
 			<< main_edge_count << "," << casual_edge_count << ","
 			<< size << "," << vertex_count_u26 << "," << vertex_count_gte26 << ","
@@ -105,7 +107,10 @@ Counts::Counts(float threshold) :
 				sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
 				on_art{0}, on_prep{0}, uninfected_u26{0}, uninfected_gte26{0},
 				infected_via_transmission_u26{0}, infected_via_transmission_gte26{0},
-				vertex_count_u26{0}, vertex_count_gte26{0}, threshold_{threshold}
+				vertex_count_u26{0}, vertex_count_gte26{0},
+				external_infected_u26{0}, external_infected_gte26{0},
+				infected_at_entry_u26{0}, infected_at_entry_gte26{0},
+				threshold_{threshold}
 
 {
 }
@@ -121,6 +126,8 @@ void Counts::reset() {
 	on_art = on_prep = 0;
 	uninfected_u26 = uninfected_gte26 = infected_via_transmission_u26 = infected_via_transmission_gte26 = 0;
 	vertex_count_u26 = vertex_count_gte26 = 0;
+	external_infected_u26 = external_infected_gte26  = 0;
+	infected_at_entry_u26 = infected_at_entry_gte26 = 0;
 	overlaps = 0;
 }
 
@@ -129,6 +136,22 @@ void Counts::incrementInfected(PersonPtr& p) {
 	// < 26, >= 26
 	if (p->age() < threshold_) ++infected_via_transmission_u26;
 	else ++infected_via_transmission_gte26;
+}
+
+void Counts::incrementInfectedAtEntry(PersonPtr& p) {
+	++infected_at_entry;
+	if (p->age() < threshold_)
+		++infected_at_entry_u26;
+	else
+		++infected_at_entry_gte26;
+}
+
+void Counts::incrementInfectedExternal(PersonPtr& p) {
+	++external_infected;
+	if (p->age() < threshold_)
+		++external_infected_u26;
+	else
+		++external_infected_gte26;
 }
 
 void Counts::incrementUninfected(PersonPtr& p) {
