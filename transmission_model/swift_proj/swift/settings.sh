@@ -1,7 +1,9 @@
-export PATH=/home/ntcollie/sfw/swift-t/stc/bin:$PATH
+export PATH=/home/ntcollie/midway2/sfw/swift-t-1.3-pyR/stc/bin:$PATH
 
 module load java
-module load mvapich2/2.0 
-module load R
-module load netcdf/4.2
-module load gcc/4.8
+module load mpich/3.2
+module load R/3.4.1
+module load gcc/6.2
+module load mkl
+module load python/2.7.13+gcc-6.2 
+module load tcl/8.6.6     
