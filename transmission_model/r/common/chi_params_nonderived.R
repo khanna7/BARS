@@ -65,7 +65,8 @@
    time.to.full.supp <- 4*30/size.of.timestep ## 4 months
    undetectable.vl <- log(50, base=10)
 
-   uninfected.cd4.level <- 518 #(might draw uniformly from a range)
+   #uninfected.cd4.level <- 518 #(might draw uniformly from a range)
+   uninfected.cd4.level <- 916 #updated value as per nina's suggestion from Mallory Witt (2013), CID.
 
    ## (to compute cd4 in infected but ART-naive)
    b1.ref <- 23.53
