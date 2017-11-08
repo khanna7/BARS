@@ -105,7 +105,7 @@ summarize_inc_new <- function(filename="counts.csv"){
   num_new_inf_explicit <- lapply(counts_yr_chunks, function (x) #explicit
     sum(x[2:nrow(x), "infected_via_transmission"]) 
   )
-  mean_num_new_inf_explicit <- mean(unlist(num_new_inf_explicit))
+  mean_num_new_inf_explicit <- mean(unlist(num_new_inf_explicit)) #mean num. inf. annually
   
   num_new_inf_explicit_ext <- lapply(counts_yr_chunks, function (x) #explicit+ext
     sum(c(x[2:nrow(x), "infected_via_transmission"],
@@ -174,7 +174,7 @@ summarize_inc_new <- function(filename="counts.csv"){
   
   
   return(c(full_result, 
-           mean_num_new_inf_explicit,
+           mean_num_new_inf_explicit, #mean number of infections annually
            mean_num_new_inf_explicit_ext,
            mean_num_new_inf_explicit_ext_ent,
            u26_result, 
