@@ -15,6 +15,7 @@
 #include "StatsWriter.h"
 #include "common.h"
 #include "PersonDataRecorder.h"
+#include "Range.h"
 
 namespace TransModel {
 
@@ -127,9 +128,9 @@ struct Counts {
 	unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
 		vertex_count_u26, vertex_count_gte26;
 	unsigned int external_infected_u26, external_infected_gte26, infected_at_entry_u26, infected_at_entry_gte26;
-	float threshold_;
+	Range<double> r1_, r2_;
 
-	Counts(float threshold);
+	Counts(Range<double> r1, Range<double> r2);
 	void reset();
 	void writeTo(FileOutput& out);
 	void incrementInfected(PersonPtr& p);
@@ -162,7 +163,7 @@ private:
 			std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
 			std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
 			std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer,
-			std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, float threshold);
+			std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, Range<double> r1, Range<double> r2);
 
 public:
 	virtual ~Stats();

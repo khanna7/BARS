@@ -31,7 +31,8 @@ CPP_SOURCE = Person.cpp \
 	Diagnoser.cpp \
 	ARTLagCalculator.cpp \
 	TestingConfigurator.cpp \
-	PREPAdherenceConfigurator.cpp
+	PREPAdherenceConfigurator.cpp \
+	Range.cpp
 	
 #	EventWriter.cpp \
 	

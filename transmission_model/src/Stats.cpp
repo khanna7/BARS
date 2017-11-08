@@ -67,12 +67,12 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 
 const std::string Counts::header(
 		"\"tick\",\"entries\",\"max_age_exits\",\"infection_deaths\",\"asm_deaths\","
-		"\"infected_via_transmission\",\"infected_via_transmission_u26\",\"infected_via_transmission_gte26\","
-		"\"infected_externally\",\"infected_external_u26\",\"infected_external_gte26\","
-		"\"infected_at_entry\",\"infected_at_entry_u26\",\"infected_at_entry_gte26\","
-		"\"uninfected\",\"uninfected_u26\",\"uninfected_gte26\","
+		"\"infected_via_transmission\",\"infected_via_transmission_A\",\"infected_via_transmission_B\","
+		"\"infected_externally\",\"infected_external_A\",\"infected_external_B\","
+		"\"infected_at_entry\",\"infected_at_entry_A\",\"infected_at_entry_B\","
+		"\"uninfected\",\"uninfected_A\",\"uninfected_B\","
 		"\"steady_edge_count\",\"casual_edge_count\","
-		"\"vertex_count\",\"vertex_count_u26\",\"vertex_count_gte26\","
+		"\"vertex_count\",\"vertex_count_A\",\"vertex_count_B\","
 		"\"overlaps\",\"sex_acts\",\"casual_sex_acts\","
 		"\"sd_casual_sex_with_condom\",""\"sd_casual_sex_without_condom\","
 		"\"sc_casual_sex_with_condom\",""\"sc_casual_sex_without_condom\","
@@ -98,7 +98,7 @@ void Counts::writeTo(FileOutput& out) {
 			<< on_art << "," << on_prep << "\n";
 }
 
-Counts::Counts(float threshold) :
+Counts::Counts(Range<double> r1, Range<double> r2) :
 		tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, size { 0 }, internal_infected { 0 }, external_infected{0}, infected_at_entry { 0 }, uninfected {
 				0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, asm_deaths{0}, overlaps { 0 }, sex_acts { 0 },
 				casual_sex_acts{0}, steady_sex_acts{0}, sd_casual_sex_with_condom{0}, sd_casual_sex_without_condom{0},
@@ -110,7 +110,7 @@ Counts::Counts(float threshold) :
 				vertex_count_u26{0}, vertex_count_gte26{0},
 				external_infected_u26{0}, external_infected_gte26{0},
 				infected_at_entry_u26{0}, infected_at_entry_gte26{0},
-				threshold_{threshold}
+				r1_{r1}, r2_{r2}
 
 {
 }
@@ -133,39 +133,38 @@ void Counts::reset() {
 
 void Counts::incrementInfected(PersonPtr& p) {
 	++internal_infected;
-	// < 26, >= 26
-	if (p->age() < threshold_) ++infected_via_transmission_u26;
-	else ++infected_via_transmission_gte26;
+	if (r1_.within(p->age())) ++infected_via_transmission_u26;
+	else if (r2_.within(p->age())) ++infected_via_transmission_gte26;
 }
 
 void Counts::incrementInfectedAtEntry(PersonPtr& p) {
 	++infected_at_entry;
-	if (p->age() < threshold_)
+	if (r1_.within(p->age()))
 		++infected_at_entry_u26;
-	else
+	else if (r2_.within(p->age()))
 		++infected_at_entry_gte26;
 }
 
 void Counts::incrementInfectedExternal(PersonPtr& p) {
 	++external_infected;
-	if (p->age() < threshold_)
+	if (r1_.within(p->age()))
 		++external_infected_u26;
-	else
+	else if (r2_.within(p->age()))
 		++external_infected_gte26;
 }
 
 void Counts::incrementUninfected(PersonPtr& p) {
 	++uninfected;
 	// < threshold_, >= 26
-	if (p->age() < threshold_) ++uninfected_u26;
-	else ++uninfected_gte26;
+	if (r1_.within(p->age())) ++uninfected_u26;
+	else if (r2_.within(p->age())) ++uninfected_gte26;
 }
 
 void Counts::incrementVertexCount(PersonPtr p) {
 	++size;
 	// < threshold_, >= 26
-	if (p->age() < threshold_) ++vertex_count_u26;
-	else ++vertex_count_gte26;
+	if (r1_.within(p->age())) ++vertex_count_u26;
+	else if (r2_.within(p->age())) ++vertex_count_gte26;
 }
 
 Stats* Stats::instance_ = nullptr;
@@ -174,8 +173,8 @@ Stats::Stats(std::shared_ptr<StatsWriterI<Counts>> counts, std::shared_ptr<Stats
 		std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
 		std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
 		std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_writer,
-		std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, float threshold) :
-		counts_writer { counts }, current_counts {threshold}, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
+		std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, Range<double> r1, Range<double> r2) :
+		counts_writer { counts }, current_counts {r1, r2}, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
 				bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer}, art_event_writer {art_writer}, prep_event_writer{prep_writer},
 				pd_recorder{nullptr} {
 

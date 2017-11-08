@@ -108,7 +108,7 @@ TestingConfigurator create_testing_configurator() {
 
 	double lt_non_tester_rate = Parameters::instance()->getDoubleParameter(NON_TESTERS_PROP_LT);
 	double gte_non_tester_rate = Parameters::instance()->getDoubleParameter(NON_TESTERS_PROP_GTE);
-	float age_threshold = Parameters::instance()->getFloatParameter(AGE_THRESHOLD);
+	float age_threshold = Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
 
 	return TestingConfigurator(lt_dist, gte_dist, age_threshold, lt_non_tester_rate, gte_non_tester_rate);
 }

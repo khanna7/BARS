@@ -43,7 +43,7 @@ ProbDist<AdherenceData> create_prep_adherence_dist(const std::string& threshold_
 PREPAdherenceConfigurator create_prep_adherence_configurator() {
 	ProbDist<AdherenceData> lt_dist = create_prep_adherence_dist(LT_SUFFIX);
 	ProbDist<AdherenceData> gte_dist = create_prep_adherence_dist(GTE_SUFFIX);
-	float age_threshold = Parameters::instance()->getFloatParameter(AGE_THRESHOLD);
+	float age_threshold = Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
 	std::map<AdherenceCategory, double> cat_map;
 	init_category_map(cat_map);
 

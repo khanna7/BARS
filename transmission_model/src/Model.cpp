@@ -14,6 +14,7 @@
 #include "repast_hpc/RepastProcess.h"
 #include "repast_hpc/Utilities.h"
 
+#include "Range.h"
 #include "Parameters.h"
 #include "Model.h"
 #include "network_utils.h"
@@ -231,6 +232,7 @@ std::string get_stats_filename(const std::string& key) {
 }
 
 void init_stats() {
+	// 19-30,30-100
 	StatsBuilder builder(output_directory(Parameters::instance()));
 	builder.countsWriter(get_stats_filename(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
 	builder.partnershipEventWriter(get_stats_filename(PARTNERSHIP_EVENTS_FILE));
@@ -242,8 +244,17 @@ void init_stats() {
 	builder.artEventWriter(get_stats_filename(ART_EVENT_FILE));
 	builder.prepEventWriter(get_stats_filename(PREP_EVENT_FILE));
 
-	float age_threshold =  Parameters::instance()->getFloatParameter(AGE_THRESHOLD);
-	builder.createStatsSingleton(age_threshold);
+	std::string range_string = Parameters::instance()->getStringParameter(OUTPUT_AGE_RANGE);
+	vector<string> tokens;
+	boost::split(tokens, range_string, boost::is_any_of(","));
+	if (tokens.size() != 2) {
+		throw std::invalid_argument("Bad " + OUTPUT_AGE_RANGE + " definition " + range_string);
+	}
+
+	Range<double> low = parse_range(tokens[0]);
+	Range<double> high = parse_range(tokens[1]);
+
+	builder.createStatsSingleton(low, high);
 }
 
 void init_network_save(Model* model) {
@@ -307,7 +318,7 @@ ARTLagCalculator create_art_lag_calc() {
 	}
 	std::shared_ptr<DayRangeCalculator> upper = creator.createCalculator();
 
-	float age_threshold =  Parameters::instance()->getFloatParameter(AGE_THRESHOLD);
+	float age_threshold =  Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
 	return ARTLagCalculator(upper, lower, age_threshold);
 }
 
@@ -390,7 +401,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
 				create_art_lag_calc() },  cessation_generator_lt { create_cessation_generator(PREP_DAILY_STOP_PROB_LT) },
 				cessation_generator_gte { create_cessation_generator(PREP_DAILY_STOP_PROB_GTE)},	condom_assigner { create_condom_use_assigner() },
-				asm_runner { create_ASM_runner() }, age_threshold{Parameters::instance()->getFloatParameter(AGE_THRESHOLD)} {
+				asm_runner { create_ASM_runner() }, age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)} {
 
 	// get initial stats
 	init_stats();

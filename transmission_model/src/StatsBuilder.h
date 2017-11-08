@@ -12,6 +12,7 @@
 
 #include "StatsWriter.h"
 #include "Stats.h"
+#include "Range.h"
 
 namespace TransModel {
 
@@ -44,7 +45,7 @@ public:
 	StatsBuilder* prepEventWriter(const std::string& fname,  unsigned int buffer = 1000);
 
 
-	void createStatsSingleton(float threshold);
+	void createStatsSingleton(Range<double> r1, Range<double> r2);
 };
 
 } /* namespace TransModel */

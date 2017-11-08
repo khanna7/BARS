@@ -6,6 +6,7 @@
  */
 
 #include "StatsBuilder.h"
+#include "Range.h"
 
 namespace TransModel {
 
@@ -101,14 +102,14 @@ StatsBuilder* StatsBuilder::personDataRecorder(const std::string& fname) {
 	return this;
 }
 
-void StatsBuilder::createStatsSingleton(float threshold) {
+void StatsBuilder::createStatsSingleton(Range<double> age1, Range<double> age2) {
 	if (counts_writer && pevent_writer && ievent_writer && biomarker_writer && death_writer && tevent_writer
 			&& art_event_writer && prep_event_writer) {
 		if (Stats::instance_ != nullptr) {
 			delete Stats::instance_;
 		}
 		Stats::instance_ = new Stats(counts_writer, pevent_writer, ievent_writer, biomarker_writer, death_writer,
-				pd_fname, tevent_writer, art_event_writer, prep_event_writer, threshold);
+				pd_fname, tevent_writer, art_event_writer, prep_event_writer, age1, age2);
 	} else {
 		throw std::domain_error("Stats must be fully initialized from StatsBuilder before being used.");
 	}

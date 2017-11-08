@@ -1,3 +1,10 @@
+11 November 2017
+
+Version 0.24
+
+* Added range-based age specific output
+* Input age parmameter is specifiable
+
 19 October 2017
 
 Version 0.23

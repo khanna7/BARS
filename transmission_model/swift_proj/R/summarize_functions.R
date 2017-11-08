@@ -9,21 +9,21 @@ summarize_prev <- function(filename="counts.csv"){
   prev_last_ten_yrs <- tail(prev, 3650)
   mean_sd <- c(mean(prev_last_ten_yrs), sd(prev_last_ten_yrs))
   
-  prev <- (counts$vertex_count_u26 - counts$uninfected_u26)/(counts$vertex_count_u26)
+  prev <- (counts$vertex_count_A - counts$uninfected_A)/(counts$vertex_count_A)
   prev <- prev*100
   prev_last_ten_yrs <- tail(prev, 3650)
-  mean_sd_u26 <- c(mean(prev_last_ten_yrs), sd(prev_last_ten_yrs))
+  mean_sd_A <- c(mean(prev_last_ten_yrs), sd(prev_last_ten_yrs))
   
-  prev <- (counts$vertex_count_gte26 - counts$uninfected_gte26)/(counts$vertex_count_gte26)
+  prev <- (counts$vertex_count_B - counts$uninfected_B)/(counts$vertex_count_B)
   prev <- prev*100
   prev_last_ten_yrs <- tail(prev, 3650)
-  mean_sd_gte26 <- c(mean(prev_last_ten_yrs), sd(prev_last_ten_yrs))
+  mean_sd_B <- c(mean(prev_last_ten_yrs), sd(prev_last_ten_yrs))
   
-  return(c(mean_sd, mean_sd_u26, mean_sd_gte26))
+  return(c(mean_sd, mean_sd_A, mean_sd_B))
 }
 
 inc_func <- function(counts, counts_yr_chunks, numerators, denominator) {
-  print(length(numerators))
+  #print(length(numerators))
   
   if (length(numerators) == 1) {
     mean_inc <- lapply(counts_yr_chunks, function (x)
@@ -53,27 +53,27 @@ summarize_inc <- function(filename="counts.csv"){
                             ceiling(seq_along(counts$tick)/365))
   
   full_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission"), "uninfected")
-  u26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_u26"), "uninfected_u26")
-  gte26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_gte26"), "uninfected_gte26")
+  a_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_A"), "uninfected_A")
+  b_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_B"), "uninfected_B")
   
   ex_full_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission", "infected_externally"), "uninfected")
-  ex_u26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_u26", "infected_external_u26"), "uninfected_u26")
-  ex_gte26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_gte26", "infected_external_gte26"), 
-                              "uninfected_gte26")
+  ex_A_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_A", "infected_external_A"), "uninfected_A")
+  ex_B_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_B", "infected_external_B"), 
+                              "uninfected_B")
   
   ee_full_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission", "infected_externally", 
                                                          "infected_at_entry"), "uninfected")
-  ee_u26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_u26", "infected_external_u26", 
-                                                        "infected_at_entry_u26"), "uninfected_u26")
-  ee_gte26_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_gte26", "infected_external_gte26", 
-                                                          "infected_at_entry_gte26"), "uninfected_gte26")
+  ee_A_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_A", "infected_external_A", 
+                                                        "infected_at_entry_A"), "uninfected_A")
+  ee_B_result <- inc_func(counts, counts_yr_chunks, c("infected_via_transmission_B", "infected_external_B", 
+                                                          "infected_at_entry_B"), "uninfected_B")
 
-   return(c(full_result, u26_result, gte26_result, ex_full_result, ex_u26_result, ex_gte26_result, 
-            ee_full_result, ee_u26_result, ee_gte26_result))
+   return(c(full_result, a_result, b_result, ex_full_result, ex_A_result, ex_B_result,
+            ee_full_result, ee_A_result, ee_B_result))
 }
 
 summarize_pop_size <- function(filename="counts.csv"){
   
   counts <- read.csv(filename)
-  return(c(tail(counts$vertex_count, 1), tail(counts$vertex_count_u26, 1), tail(counts$vertex_count_gte26, 1)))
+  return(c(tail(counts$vertex_count, 1), tail(counts$vertex_count_A, 1), tail(counts$vertex_count_B, 1)))
 }

@@ -9,37 +9,9 @@
 #define SRC_STAGE_H_
 
 #include "DiseaseParameters.h"
+#include "Range.h"
 
 namespace TransModel {
-
-/**
- * Range from [x, y)
- */
-template<typename T>
-class Range {
-
-private:
-	T start_, end_;
-
-public:
-	Range(T start, T end);
-	virtual ~Range();
-	bool within(T val);
-};
-
-template<typename T>
-Range<T>::Range(T start, T end) :
-		start_(start), end_(end) {
-}
-
-template<typename T>
-Range<T>::~Range() {
-}
-
-template<typename T>
-bool Range<T>::within(T val) {
-	return val >= start_ && val < end_;
-}
 
 class Stage {
 

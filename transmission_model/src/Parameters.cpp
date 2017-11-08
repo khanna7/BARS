@@ -19,7 +19,8 @@ namespace TransModel {
 
 const std::string RUN_NUMBER = "run";
 
-const std::string AGE_THRESHOLD = "age.threshold";
+const std::string INPUT_AGE_THRESHOLD = "input.age.threshold";
+const std::string OUTPUT_AGE_RANGE = "output.age.range";
 
 const std::string LT_SUFFIX = ".lt";
 const std::string GTE_SUFFIX = ".gte";

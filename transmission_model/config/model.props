@@ -35,4 +35,5 @@ casual.net.save.file = casual_network.RDS
 save.network.at = end
 count.overlaps = true
 
-age.threshold = 26
+output.age.range = 19-30,30-100
+input.age.threshold = 26
