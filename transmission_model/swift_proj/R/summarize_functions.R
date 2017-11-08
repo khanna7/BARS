@@ -45,6 +45,109 @@ inc_func <- function(counts, counts_yr_chunks, numerators, denominator) {
   return(result)
 }
 
+summarize_inc_new <- function(filename="counts.csv"){
+  
+  counts <- read.csv(filename)
+  counts <- counts[-1,]
+  counts_yr_chunks <- split(counts,
+                            ceiling(seq_along(counts$tick)/365))
+  
+  mean_inc <- lapply(counts_yr_chunks, function (x)
+    mean(x[2:nrow(x), "infected_via_transmission"] / x[1:(nrow(x) - 1), "uninfected"])
+  )
+  mean_inc_ten_yrs <- tail(mean_inc, 10)
+  mean_inc_ten_yrs <- unlist(mean_inc_ten_yrs)*365*100 
+  full_result <- round(mean_inc_ten_yrs, 3)
+  
+  num_new_inf_explicit <- lapply(counts_yr_chunks, function (x) #explicit
+    sum(x[2:nrow(x), "infected_via_transmission"]) 
+  )
+  mean_num_new_inf_explicit <- mean(unlist(num_new_inf_explicit)) #mean num. new inf. (per year)
+  
+  num_new_inf_explicit_ext <- lapply(counts_yr_chunks, function (x) #explicit+ext
+    sum(c(x[2:nrow(x), "infected_via_transmission"],
+          x[2:nrow(x), "infected_externally"])) 
+  )
+  mean_num_new_inf_explicit_ext <- mean(unlist(num_new_inf_explicit_ext))
+  
+  num_new_inf_explicit_ext_ent <- lapply(counts_yr_chunks, function (x) #explicit+ext+entry
+    sum(c(x[2:nrow(x), "infected_via_transmission"],
+          x[2:nrow(x), "infected_externally"],
+          x[2:nrow(x), "infected_at_entry"])) 
+  )
+  mean_num_new_inf_explicit_ext_ent <- mean(unlist(num_new_inf_explicit_ext_ent))
+  
+  # u26
+  mean_inc <- lapply(counts_yr_chunks, function (x)
+    mean(x[2:nrow(x), "infected_via_transmission_A"] / x[1:(nrow(x) - 1), "uninfected_A"])
+  )
+  mean_inc_ten_yrs <- tail(mean_inc, 10)
+  mean_inc_ten_yrs <- unlist(mean_inc_ten_yrs)*365*100 
+  u26_result <- round(mean_inc_ten_yrs, 3)
+  
+  num_new_inf_explicit_u26 <- lapply(counts_yr_chunks, function (x) #explicit
+    sum(x[2:nrow(x), "infected_via_transmission_A"]) 
+  )
+  mean_num_new_inf_explicit_u26 <- mean(unlist(num_new_inf_explicit_u26))
+  
+  num_new_inf_explicit_ext_u26 <- lapply(counts_yr_chunks, function (x) #explicit+ext
+    sum(c(x[2:nrow(x), "infected_via_transmission_A"],
+          x[2:nrow(x), "infected_external_A"])) 
+  )
+  mean_num_new_inf_explicit_ext_u26 <- mean(unlist(num_new_inf_explicit_ext_u26))
+  
+  num_new_inf_explicit_ext_ent_u26 <- lapply(counts_yr_chunks, function (x) #explicit+ext+entry
+    sum(c(x[2:nrow(x), "infected_via_transmission_A"],
+          x[2:nrow(x), "infected_external_A"],
+          x[2:nrow(x), "infected_at_entry_A"])) 
+  )
+  mean_num_new_inf_explicit_ext_ent_u26 <- mean(unlist(num_new_inf_explicit_ext_ent_u26))
+  
+  # gte26
+  mean_inc <- lapply(counts_yr_chunks, function (x)
+    mean(x[2:nrow(x), "infected_via_transmission_B"] / x[1:(nrow(x) - 1), "uninfected_B"])
+  )
+  mean_inc_ten_yrs <- tail(mean_inc, 10)
+  mean_inc_ten_yrs <- unlist(mean_inc_ten_yrs)*365*100 
+  gte26_result <- round(mean_inc_ten_yrs, 3)
+  
+  num_new_inf_explicit_gte26 <- lapply(counts_yr_chunks, function (x) #explicit
+    sum(x[2:nrow(x), "infected_via_transmission_B"]) 
+  )
+  mean_num_new_inf_explicit_gte26 <- mean(unlist(num_new_inf_explicit_gte26))
+  
+  num_new_inf_explicit_ext_gte26 <- lapply(counts_yr_chunks, function (x) #explicit+ext
+    sum(c(x[2:nrow(x), "infected_via_transmission_B"],
+          x[2:nrow(x), "infected_external_B"])) 
+  )
+  mean_num_new_inf_explicit_ext_gte26 <- mean(unlist(num_new_inf_explicit_ext_gte26))
+  
+  num_new_inf_explicit_ext_ent_gte26 <- lapply(counts_yr_chunks, function (x) #explicit+ext+entry
+    sum(c(x[2:nrow(x), "infected_via_transmission_B"],
+          x[2:nrow(x), "infected_external_B"],
+          x[2:nrow(x), "infected_at_entry_B"])) 
+  )
+  mean_num_new_inf_explicit_ext_ent_gte26 <- mean(unlist(num_new_inf_explicit_ext_ent_gte26))
+  
+  #mean number of infections below is average of the number of new infections per year
+  # across the length of the simulation
+  
+  return(c(full_result, 
+           mean_num_new_inf_explicit, #mean number of new infections annually
+           mean_num_new_inf_explicit_ext,
+           mean_num_new_inf_explicit_ext_ent,
+           u26_result, 
+           mean_num_new_inf_explicit_u26,
+           mean_num_new_inf_explicit_ext_u26,
+           mean_num_new_inf_explicit_ext_ent_u26,
+           gte26_result,
+           mean_num_new_inf_explicit_gte26,
+           mean_num_new_inf_explicit_ext_gte26,
+           mean_num_new_inf_explicit_ext_ent_gte26
+  ))
+}
+
+
 summarize_inc <- function(filename="counts.csv"){
   
   counts <- read.csv(filename)
