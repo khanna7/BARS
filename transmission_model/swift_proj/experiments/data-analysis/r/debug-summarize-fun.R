@@ -172,6 +172,8 @@ summarize_inc_new <- function(filename="counts.csv"){
   )
   mean_num_new_inf_explicit_ext_ent_gte26 <- mean(unlist(num_new_inf_explicit_ext_ent_gte26))
   
+  #mean number of infections below is average of the number of new infections per year
+  # across the length of the simulation
   
   return(c(full_result, 
            mean_num_new_inf_explicit, #mean number of new infections annually
