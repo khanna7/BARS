@@ -44,7 +44,8 @@
    ## BIOLOGICAL
    circum.rate <- 0.64 #in accordance with CDC circumcision data sent by Kiana (2016)
    init.hiv.prev <- 0.10
-   init.hiv.prev.for.entries <- 0.001/100 # probability that an entering person will have HIV
+   init.hiv.prev.for.entries <- 1/100 # probability that an entering person will have HIV
+   # value prior to 10/19/2017: 0.001/100 
 
    acute.length <- 1:90 ## in daily time units
    chronic.length <- 91:3550
@@ -64,7 +65,8 @@
    time.to.full.supp <- 4*30/size.of.timestep ## 4 months
    undetectable.vl <- log(50, base=10)
 
-   uninfected.cd4.level <- 518 #(might draw uniformly from a range)
+   #uninfected.cd4.level <- 518 #(might draw uniformly from a range)
+   uninfected.cd4.level <- 916 #updated value as per nina's suggestion from Mallory Witt (2013), CID.
 
    ## (to compute cd4 in infected but ART-naive)
    b1.ref <- 23.53

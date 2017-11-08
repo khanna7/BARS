@@ -22,13 +22,13 @@ export TURBINE_OUTPUT=$EMEWS_PROJECT_ROOT/experiments/$EXPID
 check_directory_exists
 
 # TODO edit the number of processes as required.
-export PROCS=280
+export PROCS=1820
 
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if the MACHINE variable (see below) is not set.
 export QUEUE=broadwl
-export WALLTIME=7:00:00
+export WALLTIME=15:00:00
 export PPN=28
 export TURBINE_JOBNAME="${EXPID}_job"
 
@@ -66,4 +66,4 @@ set -x
 
 #swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/small_runs.txt" $CMD_LINE_ARGS
 
-swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/inv-ext-inf.txt" $CMD_LINE_ARGS
+swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/upf_Morris_1_seeds1to10.txt" $CMD_LINE_ARGS
