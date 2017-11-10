@@ -11,7 +11,7 @@ string summarize_template = """
 source('%s/R/summarize_functions.R')
 f <- '%s'
 prev <- summarize_prev(f)
-inc <- summarize_inc_new(f)
+inc <- summarize_inc(f)
 pop_size <- summarize_pop_size(f)
 a <- paste(paste(prev, collapse=','), paste(inc, collapse=','),
   paste(pop_size, collapse=','), sep = ',')
