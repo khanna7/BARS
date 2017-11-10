@@ -35,7 +35,7 @@ inc_func <- function(counts, counts_yr_chunks, numerators, denominator) {
     )
   } else if (length(numerators) == 3) {
     mean_inc <- lapply(counts_yr_chunks, function (x)
-      mean((x[2:nrow(x), numerators[1]] + x[2:nrow(x), numerators[2]] + + x[2:nrow(x), numerators[3]]) / x[1:(nrow(x) - 1), denominator])
+      mean((x[2:nrow(x), numerators[1]] + x[2:nrow(x), numerators[2]] + x[2:nrow(x), numerators[3]]) / x[1:(nrow(x) - 1), denominator])
     )
   }
   
