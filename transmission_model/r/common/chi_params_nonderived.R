@@ -292,9 +292,12 @@ prep.mean.days.usage.gte <- 180
 # to get a probability of an infection for that day
 # numerator here is 100 person years which we convert into days
 # critical information is that: incidence is 5-9 per 100 py
+# 28% of transmissions are linked to older BMSM
+# 50%-60% of those are likely incident from older to younger BMSM (i.e. 14% to 21%) 
 # 14%-21% of infections are incident externally
 # 5 * 14% = 0.7 (for min)
 # 9*21% = 1.9 (for max)
+
 external.infections.per.person.day.min <- 0.7 / (100 * 365) #revised as per write up from 0.8 and 1.6 for lower and upper bounds on 09.07.17
 external.infections.per.person.day.max <- 1.9 / (100 * 365)
 
@@ -303,8 +306,8 @@ external.infections.per.person.day.max <- 1.9 / (100 * 365)
 # infected than [18,19) yearolds. Similarly, (20,21) year olds will 
 # be factor times more likely to get infected than the [19, 20) year olds, 
 # and factor^2 times more likely to get infected than the [18, 19) so on.
-external.infections.age.factor = 1.2
-
+# external.infections.age.factor = 1.2
+external.infections.age.factor = 1 # changed to 1 to remove more external infections going to older age groups
 
 
 # range of number of tests in last two years min-max, fraction of the population
