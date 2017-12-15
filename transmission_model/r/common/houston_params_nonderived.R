@@ -82,7 +82,7 @@
   ## (time of infection)
 
   ## (cd4 decline)
-  cd4.at.infection.male <- 518 #cells/mm3
+  cd4.at.infection.male <- uninfected.cd4.level #cells/mm3
   untreated.cd4.daily.decline <- 0.14 # (for men and women)
 
    ## healthy level of CD4: sample from some distribution, or should it be the same for all uninfected men?
