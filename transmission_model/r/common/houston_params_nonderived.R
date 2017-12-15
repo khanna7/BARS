@@ -10,21 +10,23 @@
      ## 1 main partnership = 41.2% of men
      ## 2 main partnerships = 1.8 % of men
      ## >=3 main partnerships = 0.3 % of men
-     deg_seq <- c(63.71, 34.03, 1.89)*n/100   
+
+     # QTN: Why aren't there any zero degree individuals?
+     # QTN: Why is the 2nd table not equal to 3rd+4th
+     deg_seq <- c(63.71, 34.03, 1.89)*n/100        # TODO: not updated
      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
-     duration <- 512
-     #duration <- 160
+     # QTN: Where is this (for both main/casual)?
+     duration <- 512 #TODO: not updated
 
      ## role
-     pr_insertive_main <- 15/100
-     pr_receptive_main <- 20/100
-       #28/35 partnerships match on infection status, 
-       #almost equal between susc-susc and inf-inf 
+     pr_insertive_main <- 0.25
+     pr_receptive_main <- 0.24 
 
      ## agemixing
-     absdiff.sqrtage.main <- 0.38
-     absdiff.sqrtage.casual <- 0.43
+     ## note: in chicago, the age diff was the mean of the diffs, not the sqrts
+     absdiff.sqrtage.main <- 0.312
+     absdiff.sqrtage.casual <- 0.344
    
 
    #####################
@@ -35,17 +37,20 @@
    ## DEMOGRAPHIC
    min.age <- 18
    max.age <- 34
-   daily.entry.rate <- 0.75
+   # TODO: not updated
+   daily.entry.rate <- 0.75 # this is to balance out the exits from the population; makes sense to change this after other things
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
    
    #####################
    ## BIOLOGICAL
-   circum.rate <- 0.64 #in accordance with CDC circumcision data sent by Kiana (2016)
+   circum.rate <- 0.64 #TODO: not updated
+   # QTN: what's the circumcision rate?
+   
+   # these are general background rates
    init.hiv.prev <- 0.10
    init.hiv.prev.for.entries <- 1/100 # probability that an entering person will have HIV
-   # value prior to 10/19/2017: 0.001/100 
 
    acute.length <- 1:90 ## in daily time units
    chronic.length <- 91:3550
@@ -65,7 +70,6 @@
    time.to.full.supp <- 4*30/size.of.timestep ## 4 months
    undetectable.vl <- log(50, base=10)
 
-   #uninfected.cd4.level <- 518 #(might draw uniformly from a range)
    uninfected.cd4.level <- 916 #updated value as per nina's suggestion from Mallory Witt (2013), CID.
 
    ## (to compute cd4 in infected but ART-naive)
@@ -98,10 +102,10 @@
    
    ## ART adherence
    partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained
-   art.prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   art.prop.part.plus.adherent <- 0.28
-   art.prop.part.neg.adherent <- 0.30
-
+   # QTN: double check these numbers since they seem high
+   art.prop.never.adherent <- 0.026 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+   art.prop.part.neg.adherent <- 0.026 + 0.5*0.11
+   art.prop.part.plus.adherent <- 0.24 + 0.5*0.11
    art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
    
  	art.always.adherent.probability <- 0.95
@@ -117,7 +121,6 @@
    circum.mult <- 0.40 ## 40% is the multiplier. Circumcised insertive men are 0.60 times as infectious
    acute.mult.holling <- 26
    late.mult.holling <- 7
-   #min.chronic.infectivity.unadj <- 0.000497/2.89 
    min.chronic.infectivity.unadj <- (0.00898+0.003379)/2 #jenness et al.
 
    ## relationship between viral load and chronic infectivity (hughes et al.)
@@ -130,7 +133,9 @@
    #####################
    ## Casual (non-main)
       ## duration
+      # QTN: dont have duration
       dur_cas <- 160
+      # QTN: same issue with the degree sequence
       ##degree 
         ## 0: 54.1%
         ## 1: 35.4%
@@ -141,8 +146,8 @@
       ## nedges
 
       ## role
-      pr_insertive_casual <- 25.8/100
-      pr_receptive_casual <- 19.4/100
+      pr_insertive_casual <- 21.64/100
+      pr_receptive_casual <- 32.09/100
 
       ## serosorting
    
@@ -151,12 +156,13 @@
     detection.window <- 22
     mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY
     #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop.lt <- 0.078
+    non.testers.prop.lt <- 0.078 # QTN: Don't know this for houston
     non.testers.prop.gte <- 0.023
 
-     # lag between diagnosis and ART init
+    # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
+    # QTN: don't have any of this for houston
     art.init.lag.lt.1 <- "0.1692857143,0-7"  
     art.init.lag.lt.2 <- "0.314285714,7-30"  
     art.init.lag.lt.3 <- "0.191285714,30-90"  
@@ -180,6 +186,7 @@
 # days
 prep.decision.frequency <- 7
 
+# QTN: doesn't seem to be there
 prep.prop.never.adherent.lt <- 0.211
 prep.prop.always.adherent.lt <- 0.619
 prep.prop.part.plus.adherent.lt <- 0.10
@@ -209,6 +216,7 @@ prep.mean.days.usage.gte <- 180
 ######################
     ## Sexual Behavior
     #num.sex.acts.base <- 2.4
+    # QTN: not there; might be hard to estimate
     prop.steady.sex.acts <- 0.093 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
                                  #same as freq.of.sex parameter in data table
     prop.casual.sex.acts <- 0.053 #same as above, but for casual
@@ -217,6 +225,8 @@ prep.mean.days.usage.gte <- 180
 # sd -- sero-discordant
 # each partnership falls in one of these buckets with
 # specified probability
+  # QTN: the numbers seem too high
+  # TODO: need to update these
     sd.steady.never.use.condoms <- 0.261627907
     sd.steady.rarely.use.condoms <- 0.046511628
     sd.steady.sometimes.use.condoms <- 0.081395349
@@ -274,7 +284,7 @@ prep.mean.days.usage.gte <- 180
 	### Age Specific Mortality ###
 	### We don't strictly need all these age ranges, but 
 	### they are here for completeness -- format is [min_max)
-	
+	# TODO: CDC wonder; look up; add in
 	asm.15_20 <- 0.002333 / (365 * 1)
 	asm.20_25 <- 0.002711  / (365 * 1)
 	asm.25_30 <- 0.0028 / (365 * 1)
@@ -298,6 +308,7 @@ prep.mean.days.usage.gte <- 180
 # 5 * 14% = 0.7 (for min)
 # 9*21% = 1.9 (for max)
 
+# TODO: might need to recompute
 external.infections.per.person.day.min <- 0.7 / (100 * 365) #revised as per write up from 0.8 and 1.6 for lower and upper bounds on 09.07.17
 external.infections.per.person.day.max <- 1.9 / (100 * 365)
 
@@ -311,6 +322,7 @@ external.infections.age.factor = 1 # changed to 1 to remove more external infect
 
 
 # range of number of tests in last two years min-max, fraction of the population
+# QTN: need to break up by age?
 testing.prob.lt.1 = "1-2,0.457377778"
 testing.prob.lt.2 = "3-4,0.299377778"
 testing.prob.lt.3 = "5-6,0.109377778"
