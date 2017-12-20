@@ -13,7 +13,7 @@
 
      # QTN: Why aren't there any zero degree individuals?
      # QTN: Why is the 2nd table not equal to 3rd+4th
-     deg_seq <- c(63.71, 34.03, 1.89)*n/100        # TODO: not updated
+     Deg_seq <- c(63.71, 34.03, 1.89)*n/100        # TODO: not updated
      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
      # QTN: Where is this (for both main/casual)?

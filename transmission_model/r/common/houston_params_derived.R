@@ -5,24 +5,22 @@
 
      nedges <- n*mean_deg/2 
 
-     deg_seq <- c(56.6, 41.2, 1.8)*n/100   
-     #duration <- (562+1260)/2
-      
      ## role
      pr_versatile_main <- 1-(pr_insertive_main + pr_receptive_main)
      nodematch.inf.status <- 0.75*nedges 
-       #28/35 partnerships match on infection status, 
+       # not really used in the model
        #almost equal between susc-susc and inf-inf 
 
      ## ergm parameters for dissolution 
-     d.rate <- 1/((max.age - min.age)*365)
-     pg <- (duration - 1)/duration
-     ps2 <- (1 - d.rate)^2
-     theta.diss <- log(pg/(ps2-pg)) #adjusted for death rate, Run 
+     d.rate <- 1/((max.age - min.age)*365) # death rate
+     pg <- (duration - 1)/duration 	   # P(partnership doesn't dissolve) on a given day
+     ps2 <- (1 - d.rate)^2 	   	   # no one involved dies
+     theta.diss <- log(pg/(ps2-pg)) 	   #dissolution rate, adjusted for death rate
    
    #####################
    ## DEMOGRAPHIC
    given.dur.inf.by.age <- 10*365/size.of.timestep #(not age-specific yet)  
+   # if you're infected, and don't go on treatment, will live for 10 yrs
    ##daily.entry.rate <- 0.00008
    
    #####################
