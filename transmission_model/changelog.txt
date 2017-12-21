@@ -1,3 +1,9 @@
+21 December 2017
+
+Version 0.25
+
+* Updated to use duration.of.infection parameter rather than dur.inf.by.age
+
 11 November 2017
 
 Version 0.24
