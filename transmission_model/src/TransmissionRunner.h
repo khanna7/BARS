@@ -21,13 +21,13 @@ class TransmissionRunner {
 private:
 	float circumcision_multiplier_, condom_multiplier_,
 	infective_insertive_multiplier_;
-	std::vector<float> dur_inf_by_age;
+	float duration_;
 
 
 
 public:
 	TransmissionRunner(float circumcision_multiplier, float condom_multiplier,
-			float infective_insertive_multiplier, std::vector<float>& given_dur_inf_by_age);
+			float infective_insertive_multiplier,  float duration);
 	virtual ~TransmissionRunner();
 
 	/**
@@ -49,9 +49,9 @@ public:
 	void infect(PersonPtr infectee, float time);
 
 	/**
-	 * Gets the expected duration of the infection given a Person's age.
+	 * Gets the expected duration of the infection.
 	 */
-	float durInfByAge(float age);
+	float durationOfInfection();
 
 
 };

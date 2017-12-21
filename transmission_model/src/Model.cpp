@@ -137,17 +137,8 @@ shared_ptr<TransmissionRunner> create_transmission_runner() {
 	float condom_mult = (float) Parameters::instance()->getDoubleParameter(INFECTIVITY_REDUCTION_CONDOM);
 	float infective_insertive_mult = (float) Parameters::instance()->getDoubleParameter(INFECTIVE_INSERTIVE_MULT);
 
-//	string str_dur_inf = Parameters::instance()->getStringParameter(DUR_INF_BY_AGE);
-//	vector<string> tokens;
-//	// TODO error checking for correct number of values
-//	repast::tokenize(str_dur_inf, tokens, ",");
-//	for (auto s : tokens) {
-//		dur_inf_by_age.push_back((float) std::atof(s.c_str()));
-//	}
-	// not by age yet
-	float duration = Parameters::instance()->getFloatParameter(DUR_INF_BY_AGE);
-	vector<float> dur_inf_by_age(4, duration);
-	return make_shared<TransmissionRunner>(circ_mult, condom_mult, infective_insertive_mult, dur_inf_by_age);
+	float duration = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION);
+	return make_shared<TransmissionRunner>(circ_mult, condom_mult, infective_insertive_mult, duration);
 }
 
 CD4Calculator create_CD4Calculator() {

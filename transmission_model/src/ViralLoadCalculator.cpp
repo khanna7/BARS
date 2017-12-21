@@ -54,7 +54,7 @@ float ViralLoadCalculator::calculateViralLoadNoART(const InfectionParameters& in
 		if (infection_params.viral_load < vl_params.late_stage_viral_load) {
 			return vl_params.set_point_viral_load + ((vl_params.late_stage_viral_load - vl_params.set_point_viral_load) *
 					(infection_params.time_since_infection - vl_params.time_infection_to_late_stage) /
-					((infection_params.dur_inf_by_age - 1) - vl_params.time_infection_to_late_stage)) * 0.5;
+					((infection_params.dur_inf - 1) - vl_params.time_infection_to_late_stage)) * 0.5;
 		} else {
 			return vl_params.late_stage_viral_load;
 		}

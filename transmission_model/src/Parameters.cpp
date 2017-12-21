@@ -79,7 +79,6 @@ const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
 const std::string DETECTION_WINDOW = "detection.window";
 const std::string DUR_INF = "dur.inf";
 const std::string DURATION_OF_INFECTION = "duration.of.infection";
-const std::string DUR_INF_BY_AGE = "given.dur.inf.by.age";
 const std::string INIT_HIV_PREV = "init.hiv.prev";
 const std::string INIT_HIV_PREV_ENTRIES = "init.hiv.prev.for.entries";
 const std::string INFECTIVE_INSERTIVE_MULT = "inf.part.insertive.mult";

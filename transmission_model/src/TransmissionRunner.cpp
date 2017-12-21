@@ -12,10 +12,10 @@
 namespace TransModel {
 
 TransmissionRunner::TransmissionRunner(float circumcision_multiplier, float condom_multiplier, float infective_insertive_multiplier,
-		std::vector<float>& given_dur_inf_by_age) :
+		float duration) :
 		circumcision_multiplier_(circumcision_multiplier), condom_multiplier_(condom_multiplier),
 		infective_insertive_multiplier_(infective_insertive_multiplier),
-		dur_inf_by_age(given_dur_inf_by_age) {
+		duration_(duration) {
 }
 
 TransmissionRunner::~TransmissionRunner() {
@@ -47,22 +47,12 @@ bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infe
 	return infectivity >= repast::Random::instance()->nextDouble();
 }
 
-float TransmissionRunner::durInfByAge(float age) {
-	float dur_inf = 0;
-	if (age <= 24) {
-		dur_inf = dur_inf_by_age[0];
-	} else if (age <= 34) {
-		dur_inf = dur_inf_by_age[1];
-	} else if (age <= 44) {
-		dur_inf = dur_inf_by_age[2];
-	} else {
-		dur_inf = dur_inf_by_age[3];
-	}
-	return dur_inf;
+float TransmissionRunner::durationOfInfection() {
+	return duration_;
 }
 
 void TransmissionRunner::infect(PersonPtr infectee, float time) {
-	float dur_inf = durInfByAge(infectee->age());
+	float dur_inf = durationOfInfection();
 	infectee->infect(dur_inf, time);
 }
 

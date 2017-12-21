@@ -28,7 +28,7 @@ Person::~Person() {
 }
 
 void Person::infect(float duration_of_infection, float time) {
-	infection_parameters_.dur_inf_by_age = duration_of_infection;
+	infection_parameters_.dur_inf = duration_of_infection;
 	infection_parameters_.infection_status = true;
 	infection_parameters_.time_since_infection = 0;
 	infection_parameters_.age_at_infection = age_;
@@ -97,7 +97,7 @@ bool Person::deadOfAge(int max_age) {
 
 bool Person::deadOfInfection() {
 	return infection_parameters_.infection_status && !infection_parameters_.art_status &&
-			infection_parameters_.time_since_infection >= infection_parameters_.dur_inf_by_age;
+			infection_parameters_.time_since_infection >= infection_parameters_.dur_inf;
 }
 
 bool Person::diagnose(double tick) {

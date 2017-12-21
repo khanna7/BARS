@@ -148,7 +148,7 @@ TEST(TestViralLoadTests, TestVLUntreated) {
 	inf_params.infection_status = true;
 	inf_params.art_status = false;
 	inf_params.time_since_infection = 5;
-	inf_params.dur_inf_by_age = 20;
+	inf_params.dur_inf = 20;
 	inf_params.viral_load = 10;
 
 	SharedViralLoadParameters shared_params = { 10, 20, 30, 0, 110, 200, 300, 0 };
@@ -194,7 +194,7 @@ TEST(TestViralLoadTests, TestVLUntreated) {
 	expected = shared_params.set_point_viral_load
 			+ ((shared_params.late_stage_viral_load - shared_params.set_point_viral_load)
 					* (inf_params.time_since_infection - shared_params.time_infection_to_late_stage)
-					/ ((inf_params.dur_inf_by_age - 1) - shared_params.time_infection_to_late_stage)) * 0.5;
+					/ ((inf_params.dur_inf - 1) - shared_params.time_infection_to_late_stage)) * 0.5;
 	actual = calc.calculateViralLoad(inf_params);
 	ASSERT_EQ(expected, actual);
 
@@ -209,7 +209,7 @@ TEST(TestViralLoadTests, TestVLART) {
 	inf_params.infection_status = true;
 	inf_params.art_status = true;
 	inf_params.time_since_infection = 5;
-	inf_params.dur_inf_by_age = 20;
+	inf_params.dur_inf = 20;
 	inf_params.viral_load = 10;
 	inf_params.vl_art_traj_slope = 0;
 

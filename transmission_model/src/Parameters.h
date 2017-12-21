@@ -67,7 +67,6 @@ extern const std::string DAILY_ENTRY_RATE;
 extern const std::string DETECTION_WINDOW;
 extern const std::string DUR_INF;
 extern const std::string DURATION_OF_INFECTION;
-extern const std::string DUR_INF_BY_AGE;
 extern const std::string INIT_HIV_PREV;
 extern const std::string INIT_HIV_PREV_ENTRIES;
 extern const std::string INFECTIVE_INSERTIVE_MULT;

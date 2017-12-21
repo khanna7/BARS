@@ -120,6 +120,13 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 			params->putParameter(name + ".max", (double)vec[vec.size() - 1]);
 			//std::cout << "extern const std::string " << upper_name << "_MIN;" << std::endl; //<< " = \"" << name << ".min" << "\";" << std::endl;
 			//std::cout << "extern const std::string " << upper_name << "_MAX;" << std::endl; //<< " = \"" << name << ".max" << "\";" << std::endl;
+		} else if (TYPEOF(val) == INTSXP) {
+			Rcpp::IntegerVector vec = Rcpp::as<Rcpp::IntegerVector>(val);
+			if (vec.size() == 1) {
+				params->putParameter(name, std::to_string(vec[0]));
+			} else {
+				throw std::invalid_argument("Parameter error: " + name + " int vectors not supported");
+			}
 		} else if (TYPEOF(val) == STRSXP) {
 			params->putParameter(name, Rcpp::as<std::string>(val));
 		}

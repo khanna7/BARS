@@ -94,8 +94,7 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 		person->infection_parameters_.time_since_infection = as<float>(val["time.since.infection"]);
 		person->infection_parameters_.time_of_infection = as<float>(val["time.of.infection"]);
 		person->infection_parameters_.age_at_infection = as<float>(val["age.at.infection"]);
-		person->infection_parameters_.dur_inf_by_age = trans_runner_->durInfByAge(
-				person->infection_parameters_.age_at_infection);
+		person->infection_parameters_.dur_inf = trans_runner_->durationOfInfection();
 		person->infection_parameters_.art_status = as<bool>(val["art.status"]);
 		if (person->infection_parameters_.art_status) {
 			person->infection_parameters_.time_since_art_init = as<float>(val["time.since.art.initiation"]);
