@@ -22,7 +22,7 @@
    #theta.diss <- log(duration-1)
    # theta.diss <- should be 6.43 (corresponding to duration of 512 and death correction with 16-year life expectancy). set in derived param file
 
-   target.stats <- c(nedges, deg_seq[1:3], 2.9*nedges)
+   target.stats <- c(nedges, deg_seq[1:3], absdiff.main*nedges)  
    constraints <- ~.
 
    formation.n0 <- update.formula(formation, n0~.)
