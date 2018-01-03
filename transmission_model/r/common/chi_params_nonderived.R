@@ -23,8 +23,10 @@
        #almost equal between susc-susc and inf-inf 
 
      ## agemixing
-     absdiff.sqrtage.main <- 0.38
-     absdiff.sqrtage.casual <- 0.43
+     absdiff.sqrtage.main <- 0.38 #not used
+     absdiff.sqrtage.casual <- 0.43 #not used
+     absdiff.main <- 2.9
+     absdiff.casual <- 3.1
    
 
    #####################
