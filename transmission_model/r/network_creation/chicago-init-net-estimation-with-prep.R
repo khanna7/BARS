@@ -359,5 +359,5 @@
    
    #####################
    ## SAVE BINARY
-   save.image(file="initialized-model.RData")
+   save.image(file="initialized-model_n5000.RData")
    
