@@ -7,6 +7,8 @@ import string;
 string emews_root = getenv("EMEWS_PROJECT_ROOT");
 string turbine_output = getenv("TURBINE_OUTPUT");
 
+string model_sh_file = argv("model_sh");
+
 string summarize_template = """
 source('%s/R/summarize_functions.R')
 f <- '%s'
@@ -35,7 +37,8 @@ app (void o) run_prerequisites() {
 }
 
 run_prerequisites() => {
-  file model_sh = input(emews_root+"/scripts/trans_model.sh");
+
+  file model_sh = input(model_sh_file);
   file upf = input(argv("f"));
   string upf_lines[] = file_lines(upf);
   string results[];

@@ -45,6 +45,8 @@ export TURBINE_JOBNAME="${EXPID}_job"
 # command line arguments to the swift script.
 CMD_LINE_ARGS="$*"
 
+MODEL_SH=$EMEWS_PROJECT_ROOT/scripts/trans_model.sh
+
 # set machine to your schedule type (e.g. pbs, slurm, cobalt etc.),
 # or empty for an immediate non-queued unscheduled run
 MACHINE="slurm"
@@ -64,6 +66,13 @@ log_script
 set -x
 
 
-swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/small_runs.txt" $CMD_LINE_ARGS
+swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/small_runs.txt" -model_sh=$MODEL_SH $CMD_LINE_ARGS
 
-#swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/upf_Morris_1_seeds1to10.txt" $CMD_LINE_ARGS
+
+#swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/upf_Morris_1_seeds1to10.txt" -model_sh=$MODEL_SH $CMD_LINE_ARGS
+
+# swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift \
+#     -f="$EMEWS_PROJECT_ROOT/data/upf_Morris_1_seeds1to10.txt" \
+#     -model_sh=$MODEL_SH \
+#     $CMD_LINE_ARGS
+
