@@ -45,7 +45,7 @@ export TURBINE_JOBNAME="${EXPID}_job"
 # command line arguments to the swift script.
 CMD_LINE_ARGS="$*"
 
-MODEL_SH=$EMEWS_ROOT/scripts/trans_model.sh
+MODEL_SH=$EMEWS_PROJECT_ROOT/scripts/trans_model.sh
 
 # set machine to your schedule type (e.g. pbs, slurm, cobalt etc.),
 # or empty for an immediate non-queued unscheduled run
