@@ -2,6 +2,7 @@ import io;
 import sys;
 import files;
 import R;
+import python;
 import string;
 
 string emews_root = getenv("EMEWS_PROJECT_ROOT");
@@ -67,7 +68,7 @@ run_prerequisites() => {
         string summarize_code = summarize_template % (emews_root, instance + "output/counts.csv");
         string result = R(summarize_code, "a");
         if (length(result) > 0) {
-          results[i] = "%i,%s" % (i + 1, result);
+          results[i] = "%i,%s" % (run_num, result);
         } else {
           results[i] = "";
         }

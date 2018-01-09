@@ -9,6 +9,7 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
+PATH=/home/ntcollie/midway2/sfw/swift-t-838176b/stc/bin:$PATH
 
 # uncomment to turn on swift/t logging. Can also set TURBINE_LOG,
 # TURBINE_DEBUG, and ADLB_DEBUG to 0 to turn off logging
@@ -28,7 +29,7 @@ export PROCS=28
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if the MACHINE variable (see below) is not set.
 export QUEUE=broadwl
-export WALLTIME=00:03:00
+export WALLTIME=00:10:00
 export PPN=28
 export TURBINE_JOBNAME="${EXPID}_job"
 
@@ -66,7 +67,7 @@ log_script
 set -x
 
 
-swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/small_runs.txt" -model_sh=$MODEL_SH $CMD_LINE_ARGS
+swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/test_input_params.txt" -model_sh=$MODEL_SH $CMD_LINE_ARGS
 
 
 #swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/upf_Morris_1_seeds1to10.txt" -model_sh=$MODEL_SH $CMD_LINE_ARGS
@@ -75,4 +76,3 @@ swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift 
 #     -f="$EMEWS_PROJECT_ROOT/data/upf_Morris_1_seeds1to10.txt" \
 #     -model_sh=$MODEL_SH \
 #     $CMD_LINE_ARGS
-
