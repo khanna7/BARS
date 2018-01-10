@@ -68,7 +68,7 @@ PARAM_ARGS+="-prep.bl.use.prop.gte=$PREP_BL_USE_PROP_GTE -model_sh=$MODEL_SH"
 # Add any script variables that you want to log as
 # part of the experiment meta data to the USER_VARS array,
 # for example, USER_VARS=("VAR_1" "VAR_2")
-USER_VARS=("DAILY_ENTRY_RATE" "PREP_MEAN_DAYS_USAGE_LTE" "PREP_MEAN_DAYS_USAGE_GTE"
+USER_VARS=("DAILY_ENTRY_RATE" "PREP_MEAN_DAYS_USAGE_LT" "PREP_MEAN_DAYS_USAGE_GTE"
   "PREP_BL_USE_PROP_LT" "PREP_BL_USE_PROP_GTE" "SCENARIO_PARAMS_FILE")
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
