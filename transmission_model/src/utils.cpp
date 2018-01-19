@@ -77,7 +77,7 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 
 	param_string_to_R_vars(param_string, params, R);
 
-	std::cout << (Rcpp::as<Rcpp::NumericVector>((*R)["prep.bl.use.prop.gte"]))[0] << std::endl;
+	//std::cout << (Rcpp::as<Rcpp::NumericVector>((*R)["prep.bl.use.prop.gte"]))[0] << std::endl;
 
 	cmd = "source(file=\"" + derived + "\")";
 	R->parseEvalQ(cmd);
@@ -134,7 +134,7 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 		}
 	}
 
-	std::cout << Parameters::instance()->getDoubleParameter("prep.bl.use.prop.gte") << std::endl;
+	//std::cout << Parameters::instance()->getDoubleParameter("prep.bl.use.prop.gte") << std::endl;
 }
 
 std::string output_directory(Parameters* params) {

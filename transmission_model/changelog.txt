@@ -1,3 +1,10 @@
+19 January 2018
+
+Version 0.26
+
+* Parameters that appear later in the input parameter string will override those with the same name
+that appear earlier in the string
+
 21 December 2017
 
 Version 0.25
