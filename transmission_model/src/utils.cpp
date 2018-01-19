@@ -49,7 +49,7 @@ void parse_parameters(std::map<string, double>& props, std::map<string, string>&
 		}
 		try {
 			//std::cout << key << ": " << val << std::endl;
-			props.emplace(key, stod(val));
+			props[key] = stod(val);
 			//std::cout << key << ": " << std::setprecision(10) << props[key] << std::endl;
 		} catch (...) {
 			string_props.emplace(key, val);
@@ -76,6 +76,8 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 	R->parseEvalQ(cmd);
 
 	param_string_to_R_vars(param_string, params, R);
+
+	std::cout << (Rcpp::as<Rcpp::NumericVector>((*R)["prep.bl.use.prop.gte"]))[0] << std::endl;
 
 	cmd = "source(file=\"" + derived + "\")";
 	R->parseEvalQ(cmd);
@@ -131,6 +133,8 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
 			params->putParameter(name, Rcpp::as<std::string>(val));
 		}
 	}
+
+	std::cout << Parameters::instance()->getDoubleParameter("prep.bl.use.prop.gte") << std::endl;
 }
 
 std::string output_directory(Parameters* params) {
