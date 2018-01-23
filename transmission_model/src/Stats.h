@@ -115,8 +115,11 @@ struct Counts {
 
 	static const std::string header;
 
+
+
 	double tick;
-	unsigned int main_edge_count, casual_edge_count, size, internal_infected, external_infected, infected_at_entry, uninfected,
+	unsigned int main_edge_count, casual_edge_count,
+	//size, internal_infected, external_infected, infected_at_entry, uninfected,
 	entries, age_deaths, infection_deaths, asm_deaths;
 	int overlaps;
 	unsigned int sex_acts, casual_sex_acts, steady_sex_acts;
@@ -125,12 +128,14 @@ struct Counts {
 	unsigned int sc_casual_sex_with_condom, sc_casual_sex_without_condom;
 	unsigned int sc_steady_sex_with_condom, sc_steady_sex_without_condom;
 	unsigned int on_art, on_prep;
-	unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
-		vertex_count_u26, vertex_count_gte26;
-	unsigned int external_infected_u26, external_infected_gte26, infected_at_entry_u26, infected_at_entry_gte26;
-	Range<double> r1_, r2_;
+	//unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
+	//	vertex_count_u26, vertex_count_gte26;
+	//unsigned int external_infected_u26, external_infected_gte26, infected_at_entry_u26, infected_at_entry_gte26;
+	// internal_infected is infected by transmission
+	std::vector<unsigned int> uninfected, internal_infected, external_infected, infected_at_entry, vertex_count;
+	int min_age_;
 
-	Counts(Range<double> r1, Range<double> r2);
+	Counts(int min_age, int max_age);
 	void reset();
 	void writeTo(FileOutput& out);
 	void incrementInfected(PersonPtr& p);
@@ -163,7 +168,7 @@ private:
 			std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
 			std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
 			std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer,
-			std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, Range<double> r1, Range<double> r2);
+			std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, int min_age, int max_age);
 
 public:
 	virtual ~Stats();

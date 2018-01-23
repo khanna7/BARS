@@ -45,7 +45,7 @@ public:
 	StatsBuilder* prepEventWriter(const std::string& fname,  unsigned int buffer = 1000);
 
 
-	void createStatsSingleton(Range<double> r1, Range<double> r2);
+	void createStatsSingleton(int min_age, int max_age);
 };
 
 } /* namespace TransModel */

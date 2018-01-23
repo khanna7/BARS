@@ -7,9 +7,7 @@ namespace TransModel {
 
 extern const std::string RUN_NUMBER;
 
-//extern const std::string AGE_THRESHOLD;
 extern const std::string INPUT_AGE_THRESHOLD;
-extern const std::string OUTPUT_AGE_RANGE;
 
 extern const std::string LT_SUFFIX;
 extern const std::string GTE_SUFFIX;

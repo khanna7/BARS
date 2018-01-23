@@ -4,6 +4,7 @@
  *  Created on: Nov 6, 2015
  *      Author: nick
  */
+#include <cmath>
 
 #include "boost/filesystem.hpp"
 
@@ -66,105 +67,115 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 }
 
 const std::string Counts::header(
-		"\"tick\",\"entries\",\"max_age_exits\",\"infection_deaths\",\"asm_deaths\","
-		"\"infected_via_transmission\",\"infected_via_transmission_A\",\"infected_via_transmission_B\","
-		"\"infected_externally\",\"infected_external_A\",\"infected_external_B\","
-		"\"infected_at_entry\",\"infected_at_entry_A\",\"infected_at_entry_B\","
-		"\"uninfected\",\"uninfected_A\",\"uninfected_B\","
-		"\"steady_edge_count\",\"casual_edge_count\","
-		"\"vertex_count\",\"vertex_count_A\",\"vertex_count_B\","
-		"\"overlaps\",\"sex_acts\",\"casual_sex_acts\","
-		"\"sd_casual_sex_with_condom\",""\"sd_casual_sex_without_condom\","
-		"\"sc_casual_sex_with_condom\",""\"sc_casual_sex_without_condom\","
-		"\"steady_sex_acts\","
-		"\"sd_steady_sex_with_condom\",\"sd_steady_sex_without_condom\","
-		"\"sc_steady_sex_with_condom\",\"sc_steady_sex_without_condom\","
-		"\"on_art\",\"on_prep\"");
+		"tick,entries,max_age_exits,infection_deaths,asm_deaths,"
 
-void Counts::writeTo(FileOutput& out) {
-	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths << ","
-			<< internal_infected << ","	<< infected_via_transmission_u26 << "," << infected_via_transmission_gte26 << ","
-			<< external_infected << "," << external_infected_u26 << "," << external_infected_gte26 << ","
-			<< infected_at_entry << "," << infected_at_entry_u26 << "," << infected_at_entry_gte26  << ","
-			<< uninfected << "," << uninfected_u26 << "," << uninfected_gte26 << ","
-			<< main_edge_count << "," << casual_edge_count << ","
-			<< size << "," << vertex_count_u26 << "," << vertex_count_gte26 << ","
-			<< overlaps << "," << sex_acts << "," << casual_sex_acts << ","
-			<< sd_casual_sex_with_condom << "," << sd_casual_sex_without_condom << ","
-			<< sc_casual_sex_with_condom << "," << sc_casual_sex_without_condom << ","
-			<< steady_sex_acts << ","
-			<< sd_steady_sex_with_condom << "," << sd_steady_sex_without_condom << ","
-			<< sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom << ","
-			<< on_art << "," << on_prep << "\n";
+		"infected_via_transmission,infected_via_transmission_18,infected_via_transmission_19,infected_via_transmission_20,"
+		"infected_via_transmission_21,infected_via_transmission_22,infected_via_transmission_23,infected_via_transmission_24,infected_via_transmission_25,"
+		"infected_via_transmission_26,infected_via_transmission_27,infected_via_transmission_28,infected_via_transmission_29,infected_via_transmission_30,"
+		"infected_via_transmission_31,infected_via_transmission_32,infected_via_transmission_33,infected_via_transmission_34,"
+
+		"infected_externally,infected_external_18,infected_external_19,infected_external_20,"
+		"infected_external_21,infected_external_22,infected_external_23,infected_external_24,infected_external_25,"
+		"infected_external_26,infected_external_27,infected_external_28,infected_external_29,infected_external_30,"
+		"infected_external_31,infected_external_32,infected_external_33,infected_external_34,"
+
+		"infected_at_entry,infected_at_entry_18,infected_at_entry_19,infected_at_entry_20,"
+		"infected_at_entry_21,infected_at_entry_22,infected_at_entry_23,infected_at_entry_24,infected_at_entry_25,"
+		"infected_at_entry_26,infected_at_entry_27,infected_at_entry_28,infected_at_entry_29,infected_at_entry_30,"
+		"infected_at_entry_31,infected_at_entry_32,infected_at_entry_33,infected_at_entry_34,"
+
+		"uninfected,uninfected_18,uninfected_19,uninfected_20,"
+		"uninfected_21,uninfected_22,uninfected_23,uninfected_24,uninfected_25,"
+		"uninfected_26,uninfected_27,uninfected_28,uninfected_29,uninfected_30,"
+		"uninfected_31,uninfected_32,uninfected_33,uninfected_34,"
+
+		"steady_edge_count,casual_edge_count,"
+
+		"vertex_count,vertex_count_18,vertex_count_19,vertex_count_20,"
+		"vertex_count_21,vertex_count_22,vertex_count_23,vertex_count_24,vertex_count_25,"
+		"vertex_count_26,vertex_count_27,vertex_count_28,vertex_count_29,vertex_count_30,"
+		"vertex_count_31,vertex_count_32,vertex_count_33,vertex_count_34,"
+
+		"overlaps,sex_acts,casual_sex_acts,"
+		"sd_casual_sex_with_condom,""sd_casual_sex_without_condom,"
+		"sc_casual_sex_with_condom,""sc_casual_sex_without_condom,"
+		"steady_sex_acts,"
+		"sd_steady_sex_with_condom,sd_steady_sex_without_condom,"
+		"sc_steady_sex_with_condom,sc_steady_sex_without_condom,"
+		"on_art,on_prep");
+
+void write_vector_out(std::vector<unsigned int>& vec, FileOutput& out) {
+	out << "," << std::accumulate(vec.begin(), vec.end(), 0);
+	for (auto i : vec) {
+		out << "," << i;
+	}
 }
 
-Counts::Counts(Range<double> r1, Range<double> r2) :
-		tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, size { 0 }, internal_infected { 0 }, external_infected{0}, infected_at_entry { 0 }, uninfected {
-				0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, asm_deaths{0}, overlaps { 0 }, sex_acts { 0 },
+void Counts::writeTo(FileOutput& out) {
+	out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths;
+	write_vector_out(internal_infected, out);
+	write_vector_out(external_infected, out);
+	write_vector_out(infected_at_entry, out);
+	write_vector_out(uninfected, out);
+	out << "," << main_edge_count << "," << casual_edge_count;
+	write_vector_out(vertex_count, out);
+	out << "," << overlaps << "," << sex_acts << "," << casual_sex_acts << ","
+	<< sd_casual_sex_with_condom << "," << sd_casual_sex_without_condom << ","
+	<< sc_casual_sex_with_condom << "," << sc_casual_sex_without_condom << ","
+	<< steady_sex_acts << ","
+	<< sd_steady_sex_with_condom << "," << sd_steady_sex_without_condom << ","
+	<< sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom << ","
+	<< on_art << "," << on_prep << "\n";
+}
+
+Counts::Counts(int min_age, int max_age) :
+		tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, asm_deaths{0}, overlaps { 0 }, sex_acts { 0 },
 				casual_sex_acts{0}, steady_sex_acts{0}, sd_casual_sex_with_condom{0}, sd_casual_sex_without_condom{0},
 				sd_steady_sex_with_condom{0}, sd_steady_sex_without_condom {0},
 				sc_casual_sex_with_condom{0}, sc_casual_sex_without_condom{0},
 				sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
-				on_art{0}, on_prep{0}, uninfected_u26{0}, uninfected_gte26{0},
-				infected_via_transmission_u26{0}, infected_via_transmission_gte26{0},
-				vertex_count_u26{0}, vertex_count_gte26{0},
-				external_infected_u26{0}, external_infected_gte26{0},
-				infected_at_entry_u26{0}, infected_at_entry_gte26{0},
-				r1_{r1}, r2_{r2}
+				on_art{0}, on_prep{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
+				infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age)
 
 {
 }
 
 void Counts::reset() {
 	tick = 0;
-	main_edge_count = casual_edge_count = size = internal_infected = external_infected = entries = age_deaths = uninfected = infection_deaths = asm_deaths =
-			infected_at_entry = 0, sex_acts = 0, casual_sex_acts = 0, steady_sex_acts = 0;
+	main_edge_count = casual_edge_count = entries = age_deaths = infection_deaths = asm_deaths =
+	sex_acts = 0, casual_sex_acts = 0, steady_sex_acts = 0;
 	sd_casual_sex_with_condom = sd_casual_sex_without_condom = 0;
 	sd_steady_sex_with_condom = sd_steady_sex_without_condom = 0;
 	sc_casual_sex_with_condom = sc_casual_sex_without_condom = 0;
 	sc_steady_sex_with_condom = sc_steady_sex_without_condom = 0;
 	on_art = on_prep = 0;
-	uninfected_u26 = uninfected_gte26 = infected_via_transmission_u26 = infected_via_transmission_gte26 = 0;
-	vertex_count_u26 = vertex_count_gte26 = 0;
-	external_infected_u26 = external_infected_gte26  = 0;
-	infected_at_entry_u26 = infected_at_entry_gte26 = 0;
+	std::fill(uninfected.begin(), uninfected.end(), 0);
+	std::fill(internal_infected.begin(), internal_infected.end(), 0);
+	std::fill(external_infected.begin(), external_infected.end(), 0);
+	std::fill(infected_at_entry.begin(), infected_at_entry.end(), 0);
+	std::fill(vertex_count.begin(), vertex_count.end(), 0);
 	overlaps = 0;
 }
 
+
 void Counts::incrementInfected(PersonPtr& p) {
-	++internal_infected;
-	if (r1_.within(p->age())) ++infected_via_transmission_u26;
-	else if (r2_.within(p->age())) ++infected_via_transmission_gte26;
+	++internal_infected[(size_t)(std::floor(p->age())) - min_age_];
 }
 
 void Counts::incrementInfectedAtEntry(PersonPtr& p) {
-	++infected_at_entry;
-	if (r1_.within(p->age()))
-		++infected_at_entry_u26;
-	else if (r2_.within(p->age()))
-		++infected_at_entry_gte26;
+	++infected_at_entry[(size_t)(std::floor(p->age())) - min_age_];
 }
 
 void Counts::incrementInfectedExternal(PersonPtr& p) {
-	++external_infected;
-	if (r1_.within(p->age()))
-		++external_infected_u26;
-	else if (r2_.within(p->age()))
-		++external_infected_gte26;
+	++external_infected[(size_t)(std::floor(p->age())) - min_age_];
 }
 
 void Counts::incrementUninfected(PersonPtr& p) {
-	++uninfected;
-	// < threshold_, >= 26
-	if (r1_.within(p->age())) ++uninfected_u26;
-	else if (r2_.within(p->age())) ++uninfected_gte26;
+	++uninfected[(size_t)(std::floor(p->age())) - min_age_];
 }
 
 void Counts::incrementVertexCount(PersonPtr p) {
-	++size;
-	// < threshold_, >= 26
-	if (r1_.within(p->age())) ++vertex_count_u26;
-	else if (r2_.within(p->age())) ++vertex_count_gte26;
+	++vertex_count[(size_t)(std::floor(p->age())) - min_age_];
 }
 
 Stats* Stats::instance_ = nullptr;
@@ -173,8 +184,8 @@ Stats::Stats(std::shared_ptr<StatsWriterI<Counts>> counts, std::shared_ptr<Stats
 		std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
 		std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
 		std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_writer,
-		std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, Range<double> r1, Range<double> r2) :
-		counts_writer { counts }, current_counts {r1, r2}, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
+		std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, int min_age, int max_age) :
+		counts_writer { counts }, current_counts {min_age, max_age}, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
 				bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer}, art_event_writer {art_writer}, prep_event_writer{prep_writer},
 				pd_recorder{nullptr} {
 

@@ -235,17 +235,10 @@ void init_stats() {
 	builder.artEventWriter(get_stats_filename(ART_EVENT_FILE));
 	builder.prepEventWriter(get_stats_filename(PREP_EVENT_FILE));
 
-	std::string range_string = Parameters::instance()->getStringParameter(OUTPUT_AGE_RANGE);
-	vector<string> tokens;
-	boost::split(tokens, range_string, boost::is_any_of(","));
-	if (tokens.size() != 2) {
-		throw std::invalid_argument("Bad " + OUTPUT_AGE_RANGE + " definition " + range_string);
-	}
+	int min_age = Parameters::instance()->getIntParameter(MIN_AGE);
+	int max_age = Parameters::instance()->getIntParameter(MAX_AGE);
 
-	Range<double> low = parse_range(tokens[0]);
-	Range<double> high = parse_range(tokens[1]);
-
-	builder.createStatsSingleton(low, high);
+	builder.createStatsSingleton(min_age, max_age);
 }
 
 void init_network_save(Model* model) {
@@ -412,7 +405,6 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	Stats* stats = TransModel::Stats::instance();
 	stats->currentCounts().main_edge_count = net.edgeCount(STEADY_NETWORK_TYPE);
 	stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
-	stats->currentCounts().size = net.vertexCount();
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
 		PersonPtr p = *iter;
 		stats->personDataRecorder()->initRecord(p, 0);
@@ -527,7 +519,7 @@ void Model::step() {
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
 		stats->currentCounts().incrementVertexCount((*iter));
 	}
-	stats->currentCounts().size = net.vertexCount();
+
 	stats->resetForNextTimeStep();
 }
 
