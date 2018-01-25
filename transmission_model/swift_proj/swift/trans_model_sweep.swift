@@ -24,9 +24,10 @@ source('%s/R/summarize_functions.R')
 f <- '%s'
 a <- ''
 if (file.exists(f)) {
-  prev <- summarize_prev(f)
-  inc <- summarize_inc(f)
-  pop_size <- summarize_pop_size(f)
+  ranges <- c(20,29,30,34)
+  prev <- summarize_prev(f, ranges)
+  inc <- summarize_inc(f, ranges)
+  pop_size <- summarize_pop_size(f, ranges)
   a <- paste(paste(prev, collapse=','), paste(inc, collapse=','),
     paste(pop_size, collapse=','), sep = ',')
 }
