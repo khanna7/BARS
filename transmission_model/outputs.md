@@ -26,22 +26,25 @@ Parameters.txt contains the parameter values for a model run. It is written out 
 The aggregate data consist of various aggregate per time step stats (e.g. the total number of persons infected during a timestep). These are recorded in the file defined by *per.tick.counts.output.file* in the model properties file. The format is csv with each row recording the stats for that timestep. The columns are:
 * tick: the timestep at which the stats were generated
 * entries: the number of persons who entered the simulation at that timestep
-* old_age_deaths: the number of persons who died from old age (person's age > max age) at that timestep
+* max_age_exits: the number of persons who exited the model due to age (person's age > max age) at that timestep
 * infection_deaths: the number of persons who died from infection at that timestep
-* infected_via_transmission: the number of persons infected via transmission at that timestep
-* infected_via_transmission_u26: the number of persons under 26 infected via transmission at that timestep
-* infected_via_transmission_gte26: the number of persons 26 and over infected via transmission at that timestep
-* infected_externally: the number of persons infected via "external infection" at that timestep
-* infected_at_entry: the number of persons who were infected when entering the model
+* asm_deaths: the number of persons who died due to ASM at that timestep
+* infected_via_transmission: the total number of persons infected via transmission at that timestep
+* infected_via_transmission_N: the total number of persons of age N infected via transmission at that timestep. N is currently
+18 - 34 with one column for each age.
+* infected_externally: the number of persons infected via external infection at that timestep
+* infected_external_N: the total number of persons of age N infected externally at that timestep. N is currently
+18 - 34 with one column for each age.
+* infected_at_entry: the number of persons who were infected when entering the model at that timestep.
+* infected_at_entry_N: the total number of persons of age N infected when entering the model at that timestep. N is currently
+18 - 34 with one column for each age.
 * uninfected: the number of uninfected persons at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
-* uninfected_u26: the number of uninfected persons under 26 at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
-* uninfected_gte26: the number of uninfected persons 26 and over at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
+* uninfected_N: the number of uninfected persons of age N at that timestep. N is currently 18 - 34 with one column for each age.
 * steady_edge_count: the number of edges in the steady partner network in the model at the end of the timestep
 * casual_edge_count: the number of edges in the casual partner
 network in the model at the end of the timestep
 * vertex_count: the total number of vertices at the end of the timestep. This takes into account adding entries and subtracting deaths.
-* vertex_count_u26: the total number of vertices (persons) under 26 at the end of the timestep. This takes into account adding entries and subtracting deaths.
-* vertex_count_gte26: the total number of vertices (persons) 26 and over at the end of the timestep. This takes into account adding entries and subtracting deaths.
+* vertex_count_N:  the total number of vertices of age N at the end of the timestep.  N is currently 18 - 34 with one column for each age.
 * overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false.
 * sex_acts: the number of sex acts that occured at that timestep.
 * casual_sex_acts: the number of sex acts that occurred between casual partners.
