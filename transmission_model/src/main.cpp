@@ -91,6 +91,7 @@ void run(std::string propsFile, int argc, char** argv) {
 	// constructor should schedule the step method
 	TransModel::Model model(R, net_var, cas_net_var);
 
+
 #ifdef PROFILING
 	timer.stop();
 	std::cout << "Initialization Time: " << timer.format(6, "%t") << std::endl;

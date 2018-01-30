@@ -119,17 +119,22 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 			Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
 		}
 
+		// same values as when a person is created from scratch
+		double time_of_init = 0;
+		double time_of_cess = 0;
+		if (val.containsElementNamed("time.of.prep.initiation")) {
+			 time_of_init = as<double>(val["time.of.prep.initiation"]);
+			 // add 1 so they spend at least a day on prep and .1 so occurs after main loop
+			time_of_cess = as<double>(val["time.of.prep.cessation"]) + 1.1;
+		}
+
 		if (val.containsElementNamed("prep.adherence.category")) {
 			AdherenceCategory cat = static_cast<AdherenceCategory>(as<int>(val["prep.adherence.category"]));
-			PrepParameters prep(status, as<double>(val["time.of.prep.initiation"]),
-						// add 1 so they spend at least a day on prep and .1 so occurs after main loop
-								as<double>(val["time.of.prep.cessation"]) + 1.1);
+			PrepParameters prep(status, time_of_init, time_of_cess);
 			person->prep_ = prep;
 			prep_adherence_configurator.configurePerson(person, cat);
 		} else {
-			PrepParameters prep(status, as<double>(val["time.of.prep.initiation"]),
-			// add 1 so they spend at least a day on prep and .1 so occurs after main loop
-					as<double>(val["time.of.prep.cessation"]) + 1.1);
+			PrepParameters prep(status, time_of_init, time_of_cess);
 			person->prep_ = prep;
 			prep_adherence_configurator.configurePerson(person);
 		}
