@@ -285,6 +285,35 @@ void init_trans_params(TransmissionParameters& params) {
 	params.prop_casual_sex_acts = Parameters::instance()->getDoubleParameter(PROP_CASUAL_SEX_ACTS) * size_of_time_step;
 }
 
+PrepUseData create_prep_data() {
+	/*struct PrepUseData {
+
+	double base_use_lt, base_use_gte;
+	double daily_stop_prob_lt, daily_stop_prob_gte;
+	double increment_lt, increment_gte;
+	int years_to_increase;
+};*/
+
+	/*
+	 * const std::string PREP_USE_PROP_LT = "prep.bl.use.prop.lt";
+const std::string PREP_USE_PROP_GTE = "prep.bl.use.prop.gte";
+const std::string PREP_DAILY_STOP_PROB_LT = "prep.daily.stop.prob.lt";
+const std::string PREP_DAILY_STOP_PROB_GTE = "prep.daily.stop.prob.gte";
+	 */
+
+	PrepUseData data;
+	data.base_use_lt = Parameters::instance()->getDoubleParameter(PREP_USE_PROP_LT);
+	data.base_use_gte = Parameters::instance()->getDoubleParameter(PREP_USE_PROP_GTE);
+	data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_LT);
+	data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_GTE);
+	data.increment_lt = Parameters::instance()->getDoubleParameter(PREP_YEARLY_INCREMENT_LT);
+	data.increment_gte = Parameters::instance()->getDoubleParameter(PREP_YEARLY_INCREMENT_GTE);
+	data.years_to_increase = Parameters::instance()->getDoubleParameter(PREP_YEARS_TO_INCREMENT);
+
+	return data;
+
+}
+
 ARTLagCalculator create_art_lag_calc() {
 	DayRangeCalculatorCreator creator;
 	vector<string> lag_keys;
@@ -306,11 +335,7 @@ ARTLagCalculator create_art_lag_calc() {
 	return ARTLagCalculator(upper, lower, age_threshold);
 }
 
-std::shared_ptr<GeometricDistribution> create_cessation_generator(const std::string& daily_stop_prob_key) {
-	double prob = Parameters::instance()->getDoubleParameter(daily_stop_prob_key);
-	// 1.1 so at least a day on prep, and .1 so after step loop.
-	return std::make_shared<GeometricDistribution>(prob, 1.1);
-}
+
 
 void add_condom_use_prob(CondomUseAssignerFactory& factory, PartnershipType ptype, int network_type,
 		const std::string& category_param, const std::string& use_param) {
@@ -383,8 +408,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
-				create_art_lag_calc() },  cessation_generator_lt { create_cessation_generator(PREP_DAILY_STOP_PROB_LT) },
-				cessation_generator_gte { create_cessation_generator(PREP_DAILY_STOP_PROB_GTE)},	condom_assigner { create_condom_use_assigner() },
+				create_art_lag_calc() },  prep_uptake_manager(create_prep_data()),	condom_assigner { create_condom_use_assigner() },
 				asm_runner { create_ASM_runner() }, age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)} {
 
 	// get initial stats
@@ -422,6 +446,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
 	runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::atEnd)));
+	runner.scheduleEvent(364.9, 365, Schedule::FunctorPtr(new MethodFunctor<Model>(prep_uptake_manager, &PrepUptakeManager::updateOnPrepProbability)));
 
 	initPrepCessation();
 	//write_edges(net, "./edges_at_1.csv");
@@ -542,19 +567,6 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
 	scheduler->addPerson(person);
 }
 
-// ASSUMES PERSON IS UNINFECTED
-void Model::updatePREPUse(double tick, double prob, PersonPtr person) {
-	if (!person->isOnPrep() && Random::instance()->nextDouble() <= prob) {
-		ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
-		double delay = person->age() < age_threshold ? cessation_generator_lt->next() : cessation_generator_gte->next();
-		double stop_time = tick + delay;
-		person->goOnPrep(tick, stop_time);
-		Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
-		Stats::instance()->personDataRecorder()->recordPREPStart(person, tick);
-		runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
-	}
-}
-
 void Model::updateDisease(PersonPtr person) {
 	if (person->isOnART()) {
 		float slope = viral_load_slope_calculator.calculateSlope(person->infectionParameters());
@@ -573,20 +585,10 @@ void Model::updateDisease(PersonPtr person) {
 	person->setInfectivity(infectivity);
 }
 
-double calc_on_prep_prob(const std::string& stop_prob_key, const std::string& prep_use_key) {
-	double p = Parameters::instance()->getDoubleParameter(stop_prob_key);
-	double k = Parameters::instance()->getDoubleParameter(prep_use_key);
-	return (p * k) / (1 - k);
-}
-
-
 void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
 	map<double, ARTScheduler*> art_map;
-
-	double on_prep_prob_lt = calc_on_prep_prob(PREP_DAILY_STOP_PROB_LT, PREP_USE_PROP_LT);
-	double on_prep_prob_gte = calc_on_prep_prob(PREP_DAILY_STOP_PROB_GTE, PREP_USE_PROP_GTE);
 
 	uninfected.reserve(net.vertexCount());
 
@@ -596,8 +598,7 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 		if (person->isInfected()) {
 			updateDisease(person);
 		} else {
-			double prob = person->age() < age_threshold ? on_prep_prob_lt : on_prep_prob_gte;
-			updatePREPUse(t, prob, person);
+			prep_uptake_manager.updateUse(t, age_threshold, person);
 		}
 
 		if (persons_to_log.find(person->id()) != persons_to_log.end()) {

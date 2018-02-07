@@ -27,6 +27,7 @@
 #include "CondomUseAssigner.h"
 #include "RangeWithProbability.h"
 #include "ARTLagCalculator.h"
+#include "PrepUptakeManager.h"
 
 namespace TransModel {
 
@@ -53,7 +54,7 @@ private:
 	PersonCreator person_creator;
 	TransmissionParameters trans_params;
 	ARTLagCalculator art_lag_calculator;
-	std::shared_ptr<GeometricDistribution> cessation_generator_lt, cessation_generator_gte;
+	PrepUptakeManager prep_uptake_manager;
 	CondomUseAssigner condom_assigner;
 	RangeWithProbability asm_runner;
 
@@ -83,11 +84,6 @@ private:
 	 * Initializes PrEP cessation events for the initial set of persons.
 	 */
 	void initPrepCessation();
-
-	/**
-	 * Put prep with the specified probability.
-	 */
-	void updatePREPUse(double tick, double prob, PersonPtr person);
 
 public:
 	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);

@@ -202,6 +202,9 @@ prep.bl.use.prop.gte <- 14.7/100
 prep.bl.use.prop <- (prep.bl.use.prop.lt + prep.bl.use.prop.gte)/2 #only needed for time 0
 prep.mean.days.usage.lt <- 180
 prep.mean.days.usage.gte <- 180
+prep.yearly.increment.lt <- 0.2
+prep.yearly.increment.gte <- 0.3
+prep.years.to.increment <- 5
 
 #####################
     ## Socioeconomic status
