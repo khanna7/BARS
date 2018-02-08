@@ -16,10 +16,10 @@ class GeometricDistribution {
 
 private:
 	boost::random::geometric_distribution<> dist;
-	int increment_;
+	double increment_;
 
 public:
-	GeometricDistribution(double p, int increment = 0);
+	GeometricDistribution(double p, double increment = 0);
 	virtual ~GeometricDistribution();
 
 	double next();

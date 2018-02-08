@@ -143,7 +143,6 @@ struct Counts {
 	void incrementInfectedExternal(PersonPtr& p);
 	void incrementUninfected(PersonPtr& p);
 	void incrementVertexCount(PersonPtr p);
-
 };
 
 class Stats {

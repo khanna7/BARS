@@ -32,7 +32,8 @@ CPP_SOURCE = Person.cpp \
 	ARTLagCalculator.cpp \
 	TestingConfigurator.cpp \
 	PREPAdherenceConfigurator.cpp \
-	Range.cpp
+	Range.cpp \
+	PrepUptakeManager.cpp
 	
 #	EventWriter.cpp \
 	

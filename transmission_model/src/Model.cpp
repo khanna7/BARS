@@ -446,7 +446,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
 	runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::atEnd)));
-	runner.scheduleEvent(364.9, 365, Schedule::FunctorPtr(new MethodFunctor<Model>(prep_uptake_manager, &PrepUptakeManager::updateOnPrepProbability)));
+	runner.scheduleEvent(364.9, 365, Schedule::FunctorPtr(new MethodFunctor<PrepUptakeManager>(&prep_uptake_manager, &PrepUptakeManager::updateOnPrepProbability)));
 
 	initPrepCessation();
 	//write_edges(net, "./edges_at_1.csv");

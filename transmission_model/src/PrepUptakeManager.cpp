@@ -23,17 +23,21 @@ PrepUptakeManager::PrepUptakeManager(PrepUseData data) : prep_data(data), prob_l
 PrepUptakeManager::~PrepUptakeManager() {
 }
 
-void PrepUptakeManager::updateOnPrepProbability() {
-	std::cout <<  RepastProcess::instance()->getScheduleRunner().currentTick() << ": updating prep prob" << std::endl;
-	if (year <= prep_data.years_to_increase) {
-		//double p = Parameters::instance()->getDoubleParameter(stop_prob_key);
-		//double k = Parameters::instance()->getDoubleParameter(prep_use_key
-		// //(p * k) / (1 - k);
-		double k = prep_data.base_use_lt + (prep_data.increment_lt * year);
-		prob_lt  = (prep_data.daily_stop_prob_lt * k) / (1 - k);
+double calc_prob(double use, double increment, double stop, int year) {
+	// double p = Parameters::instance()->getDoubleParameter(stop_prob_key);
+	// double k = Parameters::instance()->getDoubleParameter(prep_use_key
+	// (p * k) / (1 - k);
+	double k = use + (increment * year);
+	double val = (stop * k) / (1 - k);
+	//std::cout <<  RepastProcess::instance()->getScheduleRunner().currentTick() << ": year: " <<  year <<
+	//				", k: " << k << ", prob: " << val << std::endl;
+	return val;
+}
 
-		k =  prep_data.base_use_gte + (prep_data.increment_gte * year);
-		prob_gte = (prep_data.daily_stop_prob_gte * k)  / (1 - k);
+void PrepUptakeManager::updateOnPrepProbability() {
+	if (year <= prep_data.years_to_increase) {
+		prob_lt = calc_prob(prep_data.base_use_lt, prep_data.increment_lt, prep_data.daily_stop_prob_lt, year);
+		prob_gte = calc_prob(prep_data.base_use_gte, prep_data.increment_gte, prep_data.daily_stop_prob_gte, year);
 		++year;
 	}
 }
