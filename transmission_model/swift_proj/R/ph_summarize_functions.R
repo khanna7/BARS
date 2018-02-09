@@ -190,7 +190,7 @@ summarize_directory <- function(base_dir, ranges){
   prevs = list()
   incs = list()
   for(x in exp_dirs){
-    filename <- paste0(base_dir,"/",x,"/counts.csv")
+    filename <- paste0(base_dir,"/",x,"/output/counts.csv")
     if (file.exists(filename)){
       prevs[[x]] <- summarize_yearly_prev(filename, ranges)[,expid := x]    
       incs[[x]] <- summarize_yearly_inc(filename, ranges)[,expid := x]    
