@@ -181,7 +181,7 @@
 #gradual incrememnt of prep (for interventions)
 prep.yearly.increment.lt <- 0
 prep.yearly.increment.gte <- 0
-prep.years.to.increment <- 0
+prep.years.to.increment <- 1
 
 # days
 prep.decision.frequency <- 7
@@ -206,9 +206,6 @@ prep.bl.use.prop.gte <- 14.7/100
 prep.bl.use.prop <- (prep.bl.use.prop.lt + prep.bl.use.prop.gte)/2 #only needed for time 0
 prep.mean.days.usage.lt <- 180
 prep.mean.days.usage.gte <- 180
-prep.yearly.increment.lt <- 0.02
-prep.yearly.increment.gte <- 0.03
-prep.years.to.increment <- 0
 
 #####################
     ## Socioeconomic status
