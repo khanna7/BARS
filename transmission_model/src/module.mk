@@ -33,7 +33,9 @@ CPP_SOURCE = Person.cpp \
 	TestingConfigurator.cpp \
 	PREPAdherenceConfigurator.cpp \
 	Range.cpp \
-	PrepUptakeManager.cpp
+	IncrementingPrepUptakeManager.cpp \
+	PrepUptakeManager.cpp \
+	ProportionalPrepUptakeManager.cpp
 	
 #	EventWriter.cpp \
 	

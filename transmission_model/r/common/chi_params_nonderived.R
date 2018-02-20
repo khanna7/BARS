@@ -204,7 +204,12 @@ prep.mean.days.usage.lt <- 180
 prep.mean.days.usage.gte <- 180
 prep.yearly.increment.lt <- 0.02
 prep.yearly.increment.gte <- 0.03
-prep.years.to.increment <- 0
+prep.years.to.increment <- 3
+
+# If this is >= 0 then the intervention that puts persons on prep
+# using a probability of picking a young (y) vs old (o) person by a factor of alpha
+# will be performed.
+prep.young.old.alpha <- 2
 
 #####################
     ## Socioeconomic status

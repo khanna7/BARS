@@ -30,6 +30,8 @@
 #include "CondomUseAssigner.h"
 #include "PrepCessationEvent.h"
 #include "adherence_functions.h"
+#include "ProportionalPrepUptakeManager.h"
+#include "IncrementingPrepUptakeManager.h"
 
 #include "debug_utils.h"
 
@@ -285,21 +287,7 @@ void init_trans_params(TransmissionParameters& params) {
 	params.prop_casual_sex_acts = Parameters::instance()->getDoubleParameter(PROP_CASUAL_SEX_ACTS) * size_of_time_step;
 }
 
-PrepUseData create_prep_data() {
-	/*struct PrepUseData {
-
-	double base_use_lt, base_use_gte;
-	double daily_stop_prob_lt, daily_stop_prob_gte;
-	double increment_lt, increment_gte;
-	int years_to_increase;
-};*/
-
-	/*
-	 * const std::string PREP_USE_PROP_LT = "prep.bl.use.prop.lt";
-const std::string PREP_USE_PROP_GTE = "prep.bl.use.prop.gte";
-const std::string PREP_DAILY_STOP_PROB_LT = "prep.daily.stop.prob.lt";
-const std::string PREP_DAILY_STOP_PROB_GTE = "prep.daily.stop.prob.gte";
-	 */
+std::shared_ptr<PrepUptakeManager> create_prep_manager() {
 
 	PrepUseData data;
 	data.base_use_lt = Parameters::instance()->getDoubleParameter(PREP_USE_PROP_LT);
@@ -309,8 +297,14 @@ const std::string PREP_DAILY_STOP_PROB_GTE = "prep.daily.stop.prob.gte";
 	data.increment_lt = Parameters::instance()->getDoubleParameter(PREP_YEARLY_INCREMENT_LT);
 	data.increment_gte = Parameters::instance()->getDoubleParameter(PREP_YEARLY_INCREMENT_GTE);
 	data.years_to_increase = Parameters::instance()->getDoubleParameter(PREP_YEARS_TO_INCREMENT);
+	data.alpha = Parameters::instance()->getDoubleParameter(PREP_ALPHA);
 
-	return data;
+	float age_threshold = Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
+	if (data.alpha < 0) {
+		return std::make_shared<IncrementingPrepUptakeManager>(data, age_threshold);
+	} else {
+		return std::make_shared<ProportionalPrepUptakeManager>(data, age_threshold);
+	}
 
 }
 
@@ -408,7 +402,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
 				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
 				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
-				create_art_lag_calc() },  prep_uptake_manager(create_prep_data()),	condom_assigner { create_condom_use_assigner() },
+				create_art_lag_calc() },  prep_uptake_manager(create_prep_manager()),	condom_assigner { create_condom_use_assigner() },
 				asm_runner { create_ASM_runner() }, age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)} {
 
 	// get initial stats
@@ -446,7 +440,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 	runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
 	runner.scheduleEvent(1, 1, Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::step)));
 	runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(this, &Model::atEnd)));
-	runner.scheduleEvent(364.9, 365, Schedule::FunctorPtr(new MethodFunctor<PrepUptakeManager>(&prep_uptake_manager, &PrepUptakeManager::updateOnPrepProbability)));
+	runner.scheduleEvent(364.9, 365, Schedule::FunctorPtr(new MethodFunctor<PrepUptakeManager>(prep_uptake_manager.get(), &PrepUptakeManager::onYearEnded)));
 
 	initPrepCessation();
 	//write_edges(net, "./edges_at_1.csv");
@@ -597,8 +591,6 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 		// update viral load, cd4
 		if (person->isInfected()) {
 			updateDisease(person);
-		} else {
-			prep_uptake_manager.updateUse(t, age_threshold, person);
 		}
 
 		if (persons_to_log.find(person->id()) != persons_to_log.end()) {
@@ -628,14 +620,17 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			// don't count dead uninfected persons
 			if (!person->isInfected()) {
 				stats->currentCounts().incrementUninfected(person);
+				prep_uptake_manager->processPerson(t, person);
 				if (person->isOnPrep()) {
 					++stats->currentCounts().on_prep;
 				}
 				uninfected.push_back(person);
+
 			}
 			if (person->isOnART()) {
 				++stats->currentCounts().on_art;
 			}
+
 
 			if (crossed_thresh) {
 				person_creator.updateTesting(person, size_of_timestep);
@@ -644,6 +639,7 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			++iter;
 		}
 	}
+	prep_uptake_manager->run(t);
 }
 
 void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {

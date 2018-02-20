@@ -1,14 +1,15 @@
 /*
  * PrepUptakeManager.h
  *
- *  Created on: Feb 7, 2018
+ *  Created on: Feb 19, 2018
  *      Author: nick
  */
 
 #ifndef SRC_PREPUPTAKEMANAGER_H_
 #define SRC_PREPUPTAKEMANAGER_H_
 
-#include "GeometricDistribution.h"
+#include <memory>
+
 #include "Person.h"
 
 namespace TransModel {
@@ -19,22 +20,27 @@ struct PrepUseData {
 	double daily_stop_prob_lt, daily_stop_prob_gte;
 	double increment_lt, increment_gte;
 	int years_to_increase;
+	double alpha;
 };
+
 
 class PrepUptakeManager {
 
-private:
-	PrepUseData prep_data;
-	double prob_lt, prob_gte;
+protected:
 	GeometricDistribution cessation_generator_lt, cessation_generator_gte;
+	double age_threshold_;
 	int year;
+	PrepUseData prep_data;
+
+	void updateUse(double tick, std::shared_ptr<Person>& person);
 
 public:
-	PrepUptakeManager(PrepUseData data);
+	PrepUptakeManager(PrepUseData data, double age_threshold);
 	virtual ~PrepUptakeManager();
 
-	void updateOnPrepProbability();
-	void updateUse(double tick, double age_threshold, std::shared_ptr<Person>& person);
+	virtual void processPerson(double tick, std::shared_ptr<Person>& person) = 0;
+	virtual void run(double tick) = 0;
+	virtual void onYearEnded() = 0;
 };
 
 } /* namespace TransModel */

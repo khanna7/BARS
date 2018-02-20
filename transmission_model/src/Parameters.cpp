@@ -103,6 +103,7 @@ const std::string PREP_DAILY_STOP_PROB_GTE = "prep.daily.stop.prob.gte";
 const std::string PREP_YEARLY_INCREMENT_LT = "prep.yearly.increment.lt";
 const std::string PREP_YEARLY_INCREMENT_GTE = "prep.yearly.increment.gte";
 const std::string PREP_YEARS_TO_INCREMENT = "prep.years.to.increment";
+const std::string PREP_ALPHA = "prep.young.old.alpha";
 
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
