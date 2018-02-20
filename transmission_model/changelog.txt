@@ -1,3 +1,9 @@
+20 February 2018
+
+Version 0.30
+
+* Added skewing the probability of picking a young (y) vs old (o) person for PrEP use by a factor of alpha
+
 8 February 2018
 
 Version 0.29
