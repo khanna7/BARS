@@ -178,7 +178,11 @@
    
     #####################
     ## PrEP
- 
+#gradual incrememnt of prep (for interventions)
+prep.yearly.increment.lt <- 0
+prep.yearly.increment.gte <- 0
+prep.years.to.increment <- 1
+
 # days
 prep.decision.frequency <- 7
 
