@@ -59,7 +59,7 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 	return person;
 }
 
-PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
+PersonPtr PersonCreator::operator()(Rcpp::List& val, double model_tick, double burnin_last_tick) {
 	//std::cout << "------------" << std::endl;
 	//Rf_PrintValue(val);
 	float age = as<float>(val["age"]);
@@ -102,12 +102,12 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 			person->infection_parameters_.vl_art_traj_slope = as<float>(val["vl.art.traj.slope"]);
 			person->infection_parameters_.cd4_at_art_init = as<float>(val["cd4.at.art.initiation"]);
 			person->infection_parameters_.vl_at_art_init = as<float>(val["vl.at.art.initiation"]);
-			Stats::instance()->recordARTEvent(tick, person->id(), true);
+			Stats::instance()->recordARTEvent(model_tick, person->id(), true);
 
 			if (val.containsElementNamed("adherence.category")) {
-				initialize_art_adherence(person, tick, static_cast<AdherenceCategory>(as<int>(val["adherence.category"])));
+				initialize_art_adherence(person, model_tick, static_cast<AdherenceCategory>(as<int>(val["adherence.category"])));
 			} else {
-				initialize_art_adherence(person, tick);
+				initialize_art_adherence(person, model_tick);
 			}
 		}
 
@@ -116,7 +116,7 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 		//  the prep.status attribute only exists in uninfected persons in the R model
 		PrepStatus status = as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF;
 		if (status == PrepStatus::ON) {
-			Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
+			Stats::instance()->recordPREPEvent(model_tick, person->id(), static_cast<int>(PrepStatus::ON));
 		}
 
 		// same values as when a person is created from scratch
@@ -124,8 +124,20 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double tick) {
 		double time_of_cess = 0;
 		if (val.containsElementNamed("time.of.prep.initiation")) {
 			 time_of_init = as<double>(val["time.of.prep.initiation"]);
-			 // add 1 so they spend at least a day on prep and .1 so occurs after main loop
-			time_of_cess = as<double>(val["time.of.prep.cessation"]) + 1.1;
+			if (burnin_last_tick > 0) {
+				// how much time left to be on prep when carried over
+				// from burnin
+				time_of_cess = as<double>(val["time.of.prep.cessation"]);
+				double remaining = time_of_cess - burnin_last_tick;
+				//double tofi = time_of_init, tofc = time_of_cess;
+				time_of_init = 0;
+				time_of_cess = remaining;
+				//std::cout << "orig tofi: " << tofi << ", orig tofc: " << tofc <<
+				//		", burnin_last_tick: " << burnin_last_tick << ", new tofc: " << time_of_cess << std::endl;
+			} else {
+				// add 1 so they spend at least a day on prep and .1 so occurs after main loop
+				time_of_cess = as<double>(val["time.of.prep.cessation"]) + 1.1;
+			}
 		}
 
 		if (val.containsElementNamed("prep.adherence.category")) {

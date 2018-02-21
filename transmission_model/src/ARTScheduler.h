@@ -15,8 +15,9 @@
 namespace TransModel {
 
 /**
- * Schedulable functor that puts specified persons on ART.
- *
+ * Schedulable functor that puts specified persons on ART for the first time.
+ * Post the first time remaining on or going off is then handled by the
+ * ARTAdherenceCheckScheduler.
  */
 class ARTScheduler : public repast::Functor {
 private:

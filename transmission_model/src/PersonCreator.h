@@ -35,7 +35,7 @@ public:
 	PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window);
 	virtual ~PersonCreator();
 
-	PersonPtr operator()(Rcpp::List& val, double tick);
+	PersonPtr operator()(Rcpp::List& val, double model_tick, double burnin_last_tick);
 	PersonPtr operator()(double tick, float age);
 
 	void updateTesting(std::shared_ptr<Person> p, double size_of_timestep);

@@ -158,10 +158,17 @@ template<typename V, typename F, typename EdgeInit>
 void initialize_network(List& rnet, Network<V>& net, F& vertex_creator, EdgeInit& edge_initializer, int edge_type = 0) {
 	if (net.vertexCount() != 0)
 		throw std::invalid_argument("Cannot initialize network: network is not empty");
+
+	double burnin_last_tick = 0;
+	List gal = as<List>(rnet["gal"]);
+	if (gal.containsElementNamed("tick")) {
+		burnin_last_tick = as<double>(gal["tick"]);
+	}
+
 	List val = as<List>(rnet["val"]);
 	for (auto& sexp : val) {
 		List v = as<List>(sexp);
-		VertexPtr<V> vp = vertex_creator(v, 0);
+		VertexPtr<V> vp = vertex_creator(v, 0, burnin_last_tick);
 		net.addVertex(vp);
 	}
 
