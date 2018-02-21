@@ -1,3 +1,9 @@
+21 February 2018
+
+* PrEP and ART related fixes when creating persons from burnin networks. For example,
+prep time of cessation may be 30600 with initiation of 30500 from burnin and burnin ended at
+30550, so new time of cessation should be 50.
+
 20 February 2018
 
 Version 0.30
