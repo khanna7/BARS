@@ -36,6 +36,17 @@ public:
 	}
 };
 
+class ARTPostBurninScheduler : public repast::Functor {
+private:
+	float time_stamp_;
+	PersonPtr person;
+
+public:
+	ARTPostBurninScheduler(float time_stamp, PersonPtr p);
+	virtual ~ARTPostBurninScheduler() {}
+	void operator()();
+};
+
 } /* namespace TransModel */
 
 #endif /* SRC_ARTSCHEDULER_H_ */

@@ -41,4 +41,18 @@ void ARTScheduler::addPerson(PersonPtr person) {
 	persons.push_back(person);
 }
 
+
+ARTPostBurninScheduler::ARTPostBurninScheduler(float time_stamp, PersonPtr p) : time_stamp_(time_stamp), person(p) {}
+
+void ARTPostBurninScheduler::operator()() {
+	// person might be die in between ART is scheduled
+	// and actually going on ART.
+	if (!person->isDead()) {
+		initialize_art_adherence(person, time_stamp_);
+		person->goOnART(time_stamp_);
+		Stats::instance()->personDataRecorder()->recordARTStart(person, time_stamp_);
+		Stats::instance()->recordARTEvent(time_stamp_, person->id(), true);
+	}
+}
+
 } /* namespace TransModel */

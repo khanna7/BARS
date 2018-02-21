@@ -18,6 +18,7 @@
 #include "TransmissionRunner.h"
 #include "common.h"
 #include "GeometricDistribution.h"
+#include "ARTLagCalculator.h"
 
 namespace TransModel {
 
@@ -30,9 +31,10 @@ private:
 	TestingConfigurator testing_configurator;
 	PREPAdherenceConfigurator prep_adherence_configurator;
 	double detection_window_;
+	ARTLagCalculator art_lag_calculator;
 
 public:
-	PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window);
+	PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window,  ARTLagCalculator);
 	virtual ~PersonCreator();
 
 	PersonPtr operator()(Rcpp::List& val, double model_tick, double burnin_last_tick);

@@ -400,9 +400,9 @@ RangeWithProbability create_ASM_runner() {
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
 		R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
 				create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
-				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, person_creator { trans_runner,
-				Parameters::instance()->getDoubleParameter(DETECTION_WINDOW) }, trans_params { }, art_lag_calculator {
-				create_art_lag_calc() },  prep_uptake_manager(create_prep_manager()),	condom_assigner { create_condom_use_assigner() },
+				0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, trans_params { }, art_lag_calculator {
+				create_art_lag_calc() },  person_creator { trans_runner,
+					Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator}, prep_uptake_manager(create_prep_manager()),	condom_assigner { create_condom_use_assigner() },
 				asm_runner { create_ASM_runner() }, age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)} {
 
 	// get initial stats

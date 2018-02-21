@@ -5,20 +5,25 @@
  *      Author: nick
  */
 
+#include "repast_hpc/Schedule.h"
+#include "repast_hpc/RepastProcess.h"
+
 #include "Parameters.h"
 
 #include "PersonCreator.h"
 #include "adherence_functions.h"
 #include "Diagnoser.h"
 #include "Stats.h"
+#include "ARTScheduler.h"
 
 using namespace Rcpp;
 
 namespace TransModel {
 
-PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window) :
+PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window, ARTLagCalculator art_lag_calc) :
 		id(0), trans_runner_(trans_runner), testing_configurator(create_testing_configurator()),
-		prep_adherence_configurator(create_prep_adherence_configurator()), detection_window_(detection_window) {
+		prep_adherence_configurator(create_prep_adherence_configurator()), detection_window_(detection_window),
+		art_lag_calculator(art_lag_calc){
 }
 
 PersonCreator::~PersonCreator() {
@@ -74,12 +79,12 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double model_tick, double b
 	// float detection_window,  unsigned int test_count, test_prob
 	Diagnoser diagnoser(detection_window_, as<unsigned int>(val["number.of.tests"]), 0);
 	PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role_main, role_casual, diagnoser);
+	double size_of_timestep = Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP);
 	bool testable = !(as<bool>(val["non.testers"]));
 	if (val.containsElementNamed("testing.probability")) {
 		double test_prob = as<double>(val["testing.probability"]);
 		person->updateDiagnoser(test_prob, testable);
 	} else {
-		double size_of_timestep = Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP);
 		testing_configurator.configurePerson(person, size_of_timestep);
 		// update only the testable property to what's passed from R
 		person->updateDiagnoser(person->diagnoser().testingProbability(), testable);
@@ -109,6 +114,17 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double model_tick, double b
 			} else {
 				initialize_art_adherence(person, model_tick);
 			}
+		} else if (person->diagnosed_ && person->infection_parameters_.time_since_art_init == 0 && burnin_last_tick > 0) {
+			// diagnosed by never been on ART (i.e. time_since_art_init == 0, if have been on ART and went off then
+			// time_since_art_init would be equal to the init time.)
+
+			double lag = art_lag_calculator.calculateLag(person, size_of_timestep);
+			Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
+
+			double art_at_tick = lag + model_tick;
+			ARTPostBurninScheduler* scheduler = new ARTPostBurninScheduler(art_at_tick, person);
+			repast::RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick - 0.1,
+				repast::Schedule::FunctorPtr(scheduler));
 		}
 
 		person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
@@ -130,7 +146,7 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double model_tick, double b
 				time_of_cess = as<double>(val["time.of.prep.cessation"]);
 				double remaining = time_of_cess - burnin_last_tick;
 				//double tofi = time_of_init, tofc = time_of_cess;
-				time_of_init = 0;
+				time_of_init = -(burnin_last_tick - time_of_init);
 				time_of_cess = remaining;
 				//std::cout << "orig tofi: " << tofi << ", orig tofc: " << tofc <<
 				//		", burnin_last_tick: " << burnin_last_tick << ", new tofc: " << time_of_cess << std::endl;

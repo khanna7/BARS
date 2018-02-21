@@ -51,9 +51,9 @@ private:
 	unsigned int current_pop_size, previous_pop_size;
 	std::map<float, std::shared_ptr<Stage>> stage_map;
 	std::set<int> persons_to_log;
-	PersonCreator person_creator;
 	TransmissionParameters trans_params;
 	ARTLagCalculator art_lag_calculator;
+	PersonCreator person_creator;
 	std::shared_ptr<PrepUptakeManager> prep_uptake_manager;
 	CondomUseAssigner condom_assigner;
 	RangeWithProbability asm_runner;
