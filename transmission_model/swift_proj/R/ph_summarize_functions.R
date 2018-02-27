@@ -1,4 +1,5 @@
 require(data.table)
+require(gtools)
 
 create_dt_counts <- function(filename, ranges){
   dt_counts <- fread(filename)
@@ -15,7 +16,7 @@ create_dt_counts <- function(filename, ranges){
 
 summarize_yearly_prev <- function(filename = "counts.csv", ranges){
   dt_counts <- create_dt_counts(filename,ranges)
-
+  
   # Yearly prevalences 
   prev <- dt_counts[,lapply(c(mean,sd), function(x) x(100*(vertex_count - uninfected)/(vertex_count))),by = ycat]
   setnames(prev,c("V1","V2"),c("mean","sd"))
@@ -186,7 +187,7 @@ summarize_yearly_inc <- function(filename="counts.csv", ranges){
 }
 
 summarize_directory <- function(base_dir, ranges){
-  exp_dirs <- dir(base_dir)
+  exp_dirs <- mixedsort(dir(base_dir))
   prevs = list()
   incs = list()
   for(x in exp_dirs){
