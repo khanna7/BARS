@@ -1,4 +1,12 @@
+29 March 2018
+
+Version 0.32
+
+* Added "unbalanced" PrEP update scheme.
+
 21 February 2018
+
+Version 0.31
 
 * PrEP and ART related fixes when creating persons from burnin networks. For example,
 prep time of cessation may be 30600 with initiation of 30500 from burnin and burnin ended at
