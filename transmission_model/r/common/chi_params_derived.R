@@ -52,7 +52,7 @@
    #####################
    ## Network (casual)
       ## nedges
-         cas_tot_deg <- (0*cas_deg_seq[1])+(1*cas_deg_seq[2])+
+         fcas_tot_deg <- (0*cas_deg_seq[1])+(1*cas_deg_seq[2])+
                         (2*cas_deg_seq[3])
          cas_n_edges <- cas_tot_deg/2
       ## role

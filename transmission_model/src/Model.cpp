@@ -45,6 +45,8 @@ namespace fs = boost::filesystem;
 
 namespace TransModel {
 
+const std::string BALANCED = "balanced";
+
 PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
 	if (cod == CauseOfDeath::AGE)
 		return PartnershipEvent::PEventType::ENDED_AGING_OUT;
@@ -292,20 +294,31 @@ std::shared_ptr<PrepUptakeManager> create_prep_manager() {
 	PrepUseData data;
 	data.base_use_lt = Parameters::instance()->getDoubleParameter(PREP_USE_PROP_LT);
 	data.base_use_gte = Parameters::instance()->getDoubleParameter(PREP_USE_PROP_GTE);
-	data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_LT);
-	data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_GTE);
+
+	bool balanced = Parameters::instance()->getStringParameter(PREP_BALANCED_UNBALANCED) == BALANCED;
+
+	if (balanced) {
+		data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_LT);
+		data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_GTE);
+	} else {
+		data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(PREP_UNBALANCED_STARTING_PROB_LT);
+		data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(PREP_UNBALANCED_STARTING_PROB_GTE);
+	}
+
 	data.increment_lt = Parameters::instance()->getDoubleParameter(PREP_YEARLY_INCREMENT_LT);
 	data.increment_gte = Parameters::instance()->getDoubleParameter(PREP_YEARLY_INCREMENT_GTE);
 	data.years_to_increase = Parameters::instance()->getDoubleParameter(PREP_YEARS_TO_INCREMENT);
 	data.alpha = Parameters::instance()->getDoubleParameter(PREP_ALPHA);
 
 	float age_threshold = Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
-	if (data.alpha < 0) {
-		return std::make_shared<IncrementingPrepUptakeManager>(data, age_threshold);
-	} else {
+	if (data.alpha >= 0 && balanced) {
+		std::cout << "balanced and proportional uptake" << std::endl;
 		return std::make_shared<ProportionalPrepUptakeManager>(data, age_threshold);
+	} else {
+		std::cout << (balanced ? "balanced " : "unbalanced ") << "incrementing uptake: " << data.daily_p_prob_lt << ", "
+				<< data.daily_p_prob_gte << std::endl;
+		return std::make_shared<IncrementingPrepUptakeManager>(data, age_threshold);
 	}
-
 }
 
 ARTLagCalculator create_art_lag_calc() {
@@ -630,7 +643,6 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			if (person->isOnART()) {
 				++stats->currentCounts().on_art;
 			}
-
 
 			if (crossed_thresh) {
 				person_creator.updateTesting(person, size_of_timestep);

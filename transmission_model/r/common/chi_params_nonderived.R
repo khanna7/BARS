@@ -188,6 +188,13 @@ prep.years.to.increment <- 1
 # will be performed.
 prep.young.old.alpha <- -1
 
+# "balanced" - use prep uptake algorithm that "balances" uptake and cessation
+# "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
+prep.balanced.unbalanced <- "balanced"
+# used to determine uptake in "unbalanced" algorighm, otherwise ignored
+prep.unbalanced.starting.prob.lt <- 0.01
+prep.unbalanced.starting.prob.gte <- 0.01
+
 
 # days
 prep.decision.frequency <- 7
