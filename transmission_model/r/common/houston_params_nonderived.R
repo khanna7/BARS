@@ -3,7 +3,7 @@
    
    #####################
    ## NETWORK (steady)
-     n <- 3000
+     n <- 5000
 
    ## empirical edegree information
      ## 0 main partnerships = 56.6% of men
@@ -16,8 +16,7 @@
      Deg_seq <- c(63.71, 34.03, 1.89)*n/100        # TODO: not updated
      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
-     # QTN: Where is this (for both main/casual)?
-     duration <- 512 #TODO: not updated
+     duration <- 512 #from NHBS Houston (see excel sheet)
 
      ## role
      pr_insertive_main <- 0.25
