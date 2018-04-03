@@ -89,12 +89,13 @@ ProbDist<TestingDist> create_prob_dist(const std::string& key_prefix) {
 		for (auto& key : lag_keys) {
 			string val = Parameters::instance()->getStringParameter(key);
 			vector<string> tokens;
-			boost::split(tokens, val, boost::is_any_of(","));
+			boost::split(tokens, val, boost::is_any_of(":"));
 
 			if (tokens.size() != 2) {
 				throw std::invalid_argument("Bad testing.prob definition: " + val);
 			}
 
+ 			//std::cout << tokens[0] << ", " << tokens[1] << std::endl;
 			TestingDist dist = create_dist(tokens[0]);
 			double frac = stod(tokens[1]);
 			creator.addItem(frac, dist);

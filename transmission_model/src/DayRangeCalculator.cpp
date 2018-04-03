@@ -34,7 +34,7 @@ DayRangeCalculatorCreator::~DayRangeCalculatorCreator() {
 
 void DayRangeCalculatorCreator::addBin(const std::string& bin_definition) {
 	vector<string> tokens;
-	boost::split(tokens, bin_definition, boost::is_any_of(","));
+	boost::split(tokens, bin_definition, boost::is_any_of(":"));
 
 	if (tokens.size() != 2) {
 		throw std::invalid_argument("Bad bin definition: " + bin_definition);
@@ -42,6 +42,8 @@ void DayRangeCalculatorCreator::addBin(const std::string& bin_definition) {
 
 	double prob = stod(tokens[0]);
 	std::string range = tokens[1];
+
+	//std::cout << tokens[0] << ", " << tokens[1] << std::endl;
 
 	tokens.clear();
 	boost::split(tokens, range, boost::is_any_of("-"));
