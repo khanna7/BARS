@@ -49,8 +49,11 @@ void parse_parameters(std::map<string, double>& props, std::map<string, string>&
 		}
 		try {
 			//std::cout << key << ": " << val << std::endl;
-			props[key] = stod(val);
-			//std::cout << key << ": " << std::setprecision(10) << props[key] << std::endl;
+      if (val.find("|") != std::string::npos) {
+          string_props.emplace(key, val);
+      } else {
+			    props[key] = stod(val);
+      }
 		} catch (...) {
 			string_props.emplace(key, val);
 		}

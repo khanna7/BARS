@@ -1,6 +1,6 @@
 ## non-derived chicago parameters
 ## initial values of parameters
-   
+
    #####################
    ## NETWORK (steady)
      n <- 5000
@@ -10,7 +10,7 @@
      ## 1 main partnership = 41.2% of men
      ## 2 main partnerships = 1.8 % of men
      ## >=3 main partnerships = 0.3 % of men
-     deg_seq <- c(63.71, 34.03, 1.89)*n/100   
+     deg_seq <- c(63.71, 34.03, 1.89)*n/100
      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
      duration <- 512
@@ -19,20 +19,20 @@
      ## role
      pr_insertive_main <- 15/100
      pr_receptive_main <- 20/100
-       #28/35 partnerships match on infection status, 
-       #almost equal between susc-susc and inf-inf 
+       #28/35 partnerships match on infection status,
+       #almost equal between susc-susc and inf-inf
 
      ## agemixing
      absdiff.sqrtage.main <- 0.38 #not used
      absdiff.sqrtage.casual <- 0.43 #not used
      absdiff.main <- 2.9
      absdiff.casual <- 3.1
-   
+
 
    #####################
    ## TIMESTEP
    size.of.timestep <- 1 #currently set as 1 day
- 
+
    #####################
    ## DEMOGRAPHIC
    min.age <- 18
@@ -41,13 +41,13 @@
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
-   
+
    #####################
    ## BIOLOGICAL
    circum.rate <- 0.64 #in accordance with CDC circumcision data sent by Kiana (2016)
    init.hiv.prev <- 0.10
    init.hiv.prev.for.entries <- 1/100 # probability that an entering person will have HIV
-   # value prior to 10/19/2017: 0.001/100 
+   # value prior to 10/19/2017: 0.001/100
 
    acute.length <- 1:90 ## in daily time units
    chronic.length <- 91:3550
@@ -88,7 +88,7 @@
   untreated.cd4.daily.decline <- 0.14 # (for men and women)
 
    ## healthy level of CD4: sample from some distribution, or should it be the same for all uninfected men?
-   
+
   ## (viral load)
   undetectable.vl <- log(50, base=10)
 
@@ -97,7 +97,7 @@
    #baseline.art.coverage.rate <- 0.60 NOT NEEDED
    art.init.time <- 365 # currently set to one year, make more complex later NEEDED ONLY FOR TIME 0 INITIALIZATION
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month
-   
+
    ## ART adherence
    partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained
    art.prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
@@ -105,12 +105,12 @@
    art.prop.part.neg.adherent <- 0.30
 
    art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
-   
+
  	art.always.adherent.probability <- 0.95
 	art.never.adherent.probability <- 0.05
 	art.partial.pos.adherent.probability <- 0.66
 	art.partial.neg.adherent.probability <- 0.33
-   
+
    #####################
    ## Transmission Parameters
    ## Additional multiplier information: http://www.hiv.va.gov/provider/manual-primary-care/prevention-for-positives-table3.asp
@@ -119,7 +119,7 @@
    circum.mult <- 0.40 ## 40% is the multiplier. Circumcised insertive men are 0.60 times as infectious
    acute.mult.holling <- 26
    late.mult.holling <- 7
-   #min.chronic.infectivity.unadj <- 0.000497/2.89 
+   #min.chronic.infectivity.unadj <- 0.000497/2.89
    min.chronic.infectivity.unadj <- (0.00898+0.003379)/2 #jenness et al.
 
    ## relationship between viral load and chronic infectivity (hughes et al.)
@@ -133,10 +133,10 @@
    ## Casual (non-main)
       ## duration
       dur_cas <- 160
-      ##degree 
+      ##degree
         ## 0: 54.1%
         ## 1: 35.4%
-        ## 2: 7.6% 
+        ## 2: 7.6%
         ## 3: 2.9%
       cas_deg_seq <- c(58.9, 32.2, 6.8)*n/100
 
@@ -147,7 +147,7 @@
       pr_receptive_casual <- 19.4/100
 
       ## serosorting
-   
+
     #####################
     ## Testing, diagnosis and linkage-to-care
     detection.window <- 22
@@ -159,23 +159,23 @@
      # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    art.init.lag.lt.1 <- "0.1692857143:0-7"  
-    art.init.lag.lt.2 <- "0.314285714:7-30"  
-    art.init.lag.lt.3 <- "0.191285714:30-90"  
-    art.init.lag.lt.4 <- "0.067285714:90-180"  
-    art.init.lag.lt.5 <- "0.123285714:180-365"  
-    art.init.lag.lt.6 <- "0.089285714:365-730"
-    art.init.lag.lt.7 <- "0.045285714:1825-1825"
-    
-    art.init.lag.gte.1 <- "0.167125:0-7"  
-    art.init.lag.gte.2 <- "0.2621250:7-30"  
-    art.init.lag.gte.3 <- "0.095125:30-90"  
-    art.init.lag.gte.4 <- "0.143125:90-180"  
-    art.init.lag.gte.5 <- "0.143125:180-365"  
-    art.init.lag.gte.6 <- "0.071125:365-730"
-    art.init.lag.gte.7 <- "0.047125:730-1825"
-    art.init.lag.gte.8 <- "0.071125:1825-1825"
-   
+    art.init.lag.lt.1 <- "0.1692857143|0-7"
+    art.init.lag.lt.2 <- "0.314285714|7-30"
+    art.init.lag.lt.3 <- "0.191285714|30-90"
+    art.init.lag.lt.4 <- "0.067285714|90-180"
+    art.init.lag.lt.5 <- "0.123285714|180-365"
+    art.init.lag.lt.6 <- "0.089285714|365-730"
+    art.init.lag.lt.7 <- "0.045285714|1825-1825"
+
+    art.init.lag.gte.1 <- "0.167125|0-7"
+    art.init.lag.gte.2 <- "0.2621250|7-30"
+    art.init.lag.gte.3 <- "0.095125|30-90"
+    art.init.lag.gte.4 <- "0.143125|90-180"
+    art.init.lag.gte.5 <- "0.143125|180-365"
+    art.init.lag.gte.6 <- "0.071125|365-730"
+    art.init.lag.gte.7 <- "0.047125|730-1825"
+    art.init.lag.gte.8 <- "0.071125|1825-1825"
+
     #####################
     ## PrEP
 #gradual incrememnt of prep (for interventions)
@@ -211,9 +211,9 @@ prep.prop.part.neg.adherent.gte <- 0.07
 
 prep.always.adherent.trans.reduction <- 0.95
 prep.never.adherent.trans.reduction <- 0.0
-prep.partial.pos.adherent.trans.reduction <- 0.81 
+prep.partial.pos.adherent.trans.reduction <- 0.81
 prep.partial.neg.adherent.trans.reduction <- 0.31
-    
+
 prep.bl.use.prop.lt <- 12.7/100
 prep.bl.use.prop.gte <- 14.7/100
 prep.bl.use.prop <- (prep.bl.use.prop.lt + prep.bl.use.prop.gte)/2 #only needed for time 0
@@ -222,8 +222,8 @@ prep.mean.days.usage.gte <- 180
 
 #####################
     ## Socioeconomic status
-    ##insurance.prop <- 
-    ##incarceration.prop <- 
+    ##insurance.prop <-
+    ##incarceration.prop <-
 
 ######################
     ## Sexual Behavior
@@ -232,7 +232,7 @@ prep.mean.days.usage.gte <- 180
                                  #same as freq.of.sex parameter in data table
     prop.casual.sex.acts <- 0.053 #same as above, but for casual
     inf.red.w.condom <- 0.80
-    
+
 # sd -- sero-discordant
 # each partnership falls in one of these buckets with
 # specified probability
@@ -255,26 +255,26 @@ prep.mean.days.usage.gte <- 180
 	sd.steady.sometimes.use.condoms.prob <- 0.5
 	sd.steady.usually.use.condoms.prob <- 0.75
 	sd.steady.always.use.condoms.prob <- 1
-	
+
 	sd.casual.never.use.condoms.prob <- 0
 	sd.casual.rarely.use.condoms.prob <- 0.25
 	sd.casual.sometimes.use.condoms.prob <- 0.5
 	sd.casual.usually.use.condoms.prob <- 0.75
 	sd.casual.always.use.condoms.prob <- 1
-	
+
 	# sc sero-concordant
 	sc.steady.never.use.condoms <- 0.399082569
 	sc.steady.rarely.use.condoms <- 0.073394495
 	sc.steady.sometimes.use.condoms <- 0.133027523
 	sc.steady.usually.use.condoms <- 0.055045872
 	sc.steady.always.use.condoms <- 0.339449541
-	
+
 	sc.casual.never.use.condoms <- 0.401330377
 	sc.casual.rarely.use.condoms <- 0.019955654
 	sc.casual.sometimes.use.condoms <- 0.053215078
 	sc.casual.usually.use.condoms <- 0.033259424
 	sc.casual.always.use.condoms <- 0.492239468
-	
+
 	### probability that the partnership in the specified bucket
 	### will use a condom.
 	sc.steady.never.use.condoms.prob <- 0
@@ -282,18 +282,18 @@ prep.mean.days.usage.gte <- 180
 	sc.steady.sometimes.use.condoms.prob <- 0.5
 	sc.steady.usually.use.condoms.prob <- 0.75
 	sc.steady.always.use.condoms.prob <- 1
-	
+
 	sc.casual.never.use.condoms.prob <- 0
 	sc.casual.rarely.use.condoms.prob <- 0.25
 	sc.casual.sometimes.use.condoms.prob <- 0.5
 	sc.casual.usually.use.condoms.prob <- 0.75
 	sc.casual.always.use.condoms.prob <- 1
-	
-	
+
+
 	### Age Specific Mortality ###
-	### We don't strictly need all these age ranges, but 
+	### We don't strictly need all these age ranges, but
 	### they are here for completeness -- format is [min_max)
-	
+
 	asm.15_20 <- 0.002333 / (365 * 1)
 	asm.20_25 <- 0.002711  / (365 * 1)
 	asm.25_30 <- 0.0028 / (365 * 1)
@@ -305,14 +305,14 @@ prep.mean.days.usage.gte <- 180
 	asm.55_60 <- 0.01605 / (365 * 1)
 	asm.60_65 <- 0.022538 / (365 * 1)
 	asm.65_70 <- 0.030628 / (365 * 1)
-	
+
 # external infections per person days
 # we mult. this value by the number of uninfected persons
 # to get a probability of an infection for that day
 # numerator here is 100 person years which we convert into days
-# critical information is that: incidence is 5-9 per 100 py
+# critical information is that| incidence is 5-9 per 100 py
 # 28% of transmissions are linked to older BMSM
-# 50%-60% of those are likely incident from older to younger BMSM (i.e. 14% to 21%) 
+# 50%-60% of those are likely incident from older to younger BMSM (i.e. 14% to 21%)
 # 14%-21% of infections are incident externally
 # 5 * 14% = 0.7 (for min)
 # 9*21% = 1.9 (for max)
@@ -322,32 +322,30 @@ external.infections.per.person.day.max <- 1.9 / (100 * 365)
 
 # factor used to calculate age related external inf probability --
 # [19, 20) year old will be "factor" time more likely to get externally
-# infected than [18,19) yearolds. Similarly, (20,21) year olds will 
-# be factor times more likely to get infected than the [19, 20) year olds, 
+# infected than [18,19) yearolds. Similarly, (20,21) year olds will
+# be factor times more likely to get infected than the [19, 20) year olds,
 # and factor^2 times more likely to get infected than the [18, 19) so on.
 # external.infections.age.factor = 1.2
 external.infections.age.factor = 1 # changed to 1 to remove more external infections going to older age groups
 
 
 # range of number of tests in last two years min-max, fraction of the population
-testing.prob.lt.1 = "1-2:0.457377778"
-testing.prob.lt.2 = "3-4:0.299377778"
-testing.prob.lt.3 = "5-6:0.109377778"
-testing.prob.lt.4 = "7-8:0.055377778"
-testing.prob.lt.5 = "9-10:0.039377778"
-testing.prob.lt.6 = "11-12:0.012377778"
-testing.prob.lt.7 = "13-16:0.008877778"
-testing.prob.lt.8 = "17-20:0.010677778"
-testing.prob.lt.9 = "21-30:0.007177778"
+testing.prob.lt.1 = "1-2|0.457377778"
+testing.prob.lt.2 = "3-4|0.299377778"
+testing.prob.lt.3 = "5-6|0.109377778"
+testing.prob.lt.4 = "7-8|0.055377778"
+testing.prob.lt.5 = "9-10|0.039377778"
+testing.prob.lt.6 = "11-12|0.012377778"
+testing.prob.lt.7 = "13-16|0.008877778"
+testing.prob.lt.8 = "17-20|0.010677778"
+testing.prob.lt.9 = "21-30|0.007177778"
 
-testing.prob.gte.1 = "1-2:0.457377778"
-testing.prob.gte.2 = "3-4:0.299377778"
-testing.prob.gte.3 = "5-6:0.109377778"
-testing.prob.gte.4 = "7-8:0.055377778"
-testing.prob.gte.5 = "9-10:0.039377778"
-testing.prob.gte.6 = "11-12:0.012377778"
-testing.prob.gte.7 = "13-16:0.008877778"
-testing.prob.gte.8 = "17-20:0.010677778"
-testing.prob.gte.9 = "21-30:0.007177778"
-
-
+testing.prob.gte.1 = "1-2|0.457377778"
+testing.prob.gte.2 = "3-4|0.299377778"
+testing.prob.gte.3 = "5-6|0.109377778"
+testing.prob.gte.4 = "7-8|0.055377778"
+testing.prob.gte.5 = "9-10|0.039377778"
+testing.prob.gte.6 = "11-12|0.012377778"
+testing.prob.gte.7 = "13-16|0.008877778"
+testing.prob.gte.8 = "17-20|0.010677778"
+testing.prob.gte.9 = "21-30|0.007177778"
