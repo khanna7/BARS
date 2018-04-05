@@ -1,3 +1,10 @@
+5 April 2018
+
+Version 0.34
+
+* Fixed issue with unbalanced using incorrect stopping parameters
+* Fixed issue with string parsing from the command line
+
 3 April 2018
 
 Version 0.33
