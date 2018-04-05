@@ -1,3 +1,9 @@
+3 April 2018
+
+Version 0.33
+
+* Fixed issue with parsing multi-part string parameters from command line (e.g. art.init.lag)
+
 29 March 2018
 
 Version 0.32
