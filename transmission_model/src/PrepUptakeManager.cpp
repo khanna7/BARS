@@ -16,8 +16,8 @@ using namespace repast;
 
 namespace TransModel {
 
-PrepUptakeManager::PrepUptakeManager(PrepUseData data, double age_threshold) : cessation_generator_lt(data.daily_p_prob_lt, 1.1),
-		cessation_generator_gte(data.daily_p_prob_gte, 1.1), age_threshold_(age_threshold), year(1), prep_data(data) {
+PrepUptakeManager::PrepUptakeManager(PrepUseData data, double age_threshold) : cessation_generator_lt(data.daily_stop_prob_lt, 1.1),
+		cessation_generator_gte(data.daily_stop_prob_gte, 1.1), age_threshold_(age_threshold), year(1), prep_data(data) {
 }
 
 PrepUptakeManager::~PrepUptakeManager() {}

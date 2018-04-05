@@ -295,6 +295,9 @@ std::shared_ptr<PrepUptakeManager> create_prep_manager() {
 	data.base_use_lt = Parameters::instance()->getDoubleParameter(PREP_USE_PROP_LT);
 	data.base_use_gte = Parameters::instance()->getDoubleParameter(PREP_USE_PROP_GTE);
 
+	data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_LT);
+	data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_GTE);
+
 	bool balanced = Parameters::instance()->getStringParameter(PREP_BALANCED_UNBALANCED) == BALANCED;
 
 	if (balanced) {
