@@ -329,6 +329,7 @@ ARTLagCalculator create_art_lag_calc() {
 	vector<string> lag_keys;
 	Parameters::instance()->getKeys(ART_LAG_PREFIX_LT, lag_keys);
 	for (auto& key : lag_keys) {
+	    std::cout << key << ": " << Parameters::instance()->getStringParameter(key) << std::endl;
 		creator.addBin(Parameters::instance()->getStringParameter(key));
 	}
 	std::shared_ptr<DayRangeCalculator> lower = creator.createCalculator();
@@ -337,6 +338,7 @@ ARTLagCalculator create_art_lag_calc() {
 	lag_keys.clear();
 	Parameters::instance()->getKeys(ART_LAG_PREFIX_GTE, lag_keys);
 	for (auto& key : lag_keys) {
+	    std::cout << key << ": " << Parameters::instance()->getStringParameter(key) << std::endl;
 		creator.addBin(Parameters::instance()->getStringParameter(key));
 	}
 	std::shared_ptr<DayRangeCalculator> upper = creator.createCalculator();
