@@ -17,6 +17,7 @@ namespace TransModel {
 struct PrepUseData {
 
 	double base_use_lt, base_use_gte;
+	double daily_p_prob_lt, daily_p_prob_gte;
 	double daily_stop_prob_lt, daily_stop_prob_gte;
 	double increment_lt, increment_gte;
 	int years_to_increase;

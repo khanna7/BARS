@@ -16,6 +16,7 @@
 
      # Note: This data doesn't exist for Houston YMAP
      # using estimates from NHBS data
+     # Box Sync/BARS/Data-and-Summaries/Houston_Mean_Duration_of_Partnerships.xlsx
      duration <- 970 
 
      ## role

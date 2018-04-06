@@ -25,12 +25,12 @@ IncrementingPrepUptakeManager::IncrementingPrepUptakeManager(PrepUseData data, d
 IncrementingPrepUptakeManager::~IncrementingPrepUptakeManager() {
 }
 
-double calc_prob(double use, double increment, double stop, int year) {
+double calc_prob(double use, double increment, double p, int year) {
 	// double p = Parameters::instance()->getDoubleParameter(stop_prob_key);
 	// double k = Parameters::instance()->getDoubleParameter(prep_use_key
 	// (p * k) / (1 - k);
 	double k = use + (increment * year);
-	double val = (stop * k) / (1 - k);
+	double val = (p * k) / (1 - k);
 	//std::cout <<  RepastProcess::instance()->getScheduleRunner().currentTick() << ": year: " <<  year <<
 	//				", k: " << k << ", prob: " << val << std::endl;
 	return val;
@@ -38,12 +38,12 @@ double calc_prob(double use, double increment, double stop, int year) {
 
 void IncrementingPrepUptakeManager::onYearEnded() {
 	if (prep_data.years_to_increase == 0) {
-		prob_lt = calc_prob(prep_data.base_use_lt, prep_data.increment_lt, prep_data.daily_stop_prob_lt, 0);
-		prob_gte = calc_prob(prep_data.base_use_gte, prep_data.increment_gte, prep_data.daily_stop_prob_gte, 0);
+		prob_lt = calc_prob(prep_data.base_use_lt, prep_data.increment_lt, prep_data.daily_p_prob_lt, 0);
+		prob_gte = calc_prob(prep_data.base_use_gte, prep_data.increment_gte, prep_data.daily_p_prob_gte, 0);
 	} else if (year <= prep_data.years_to_increase) {
 		//std::cout << "Incrementing PUM " << year << std::endl;
-		prob_lt = calc_prob(prep_data.base_use_lt, prep_data.increment_lt, prep_data.daily_stop_prob_lt, year);
-		prob_gte = calc_prob(prep_data.base_use_gte, prep_data.increment_gte, prep_data.daily_stop_prob_gte, year);
+		prob_lt = calc_prob(prep_data.base_use_lt, prep_data.increment_lt, prep_data.daily_p_prob_lt, year);
+		prob_gte = calc_prob(prep_data.base_use_gte, prep_data.increment_gte, prep_data.daily_p_prob_gte, year);
 		++year;
 
 	}

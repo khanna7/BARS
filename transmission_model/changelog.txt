@@ -1,3 +1,23 @@
+3 April 2018
+
+Version 0.33
+
+* Fixed issue with parsing multi-part string parameters from command line (e.g. art.init.lag)
+
+29 March 2018
+
+Version 0.32
+
+* Added "unbalanced" PrEP update scheme.
+
+21 February 2018
+
+Version 0.31
+
+* PrEP and ART related fixes when creating persons from burnin networks. For example,
+prep time of cessation may be 30600 with initiation of 30500 from burnin and burnin ended at
+30550, so new time of cessation should be 50.
+
 20 February 2018
 
 Version 0.30

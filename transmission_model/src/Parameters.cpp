@@ -104,6 +104,9 @@ const std::string PREP_YEARLY_INCREMENT_LT = "prep.yearly.increment.lt";
 const std::string PREP_YEARLY_INCREMENT_GTE = "prep.yearly.increment.gte";
 const std::string PREP_YEARS_TO_INCREMENT = "prep.years.to.increment";
 const std::string PREP_ALPHA = "prep.young.old.alpha";
+const std::string PREP_BALANCED_UNBALANCED = "prep.balanced.unbalanced";
+const std::string PREP_UNBALANCED_STARTING_PROB_LT = "prep.unbalanced.starting.prob.lt";
+const std::string PREP_UNBALANCED_STARTING_PROB_GTE = "prep.unbalanced.starting.prob.gte";
 
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";

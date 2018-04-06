@@ -27,8 +27,9 @@ void PrepUptakeManager::updateUse(double tick, std::shared_ptr<Person>& person) 
 	double delay = person->age() < age_threshold_ ? cessation_generator_lt.next() : cessation_generator_gte.next();
 	double stop_time = tick + delay;
 	person->goOnPrep(tick, stop_time);
-	Stats::instance()->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
-	Stats::instance()->personDataRecorder()->recordPREPStart(person, tick);
+	Stats* stats = Stats::instance();
+	stats->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON));
+	stats->personDataRecorder()->recordPREPStart(person, tick);
 	runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
 }
 

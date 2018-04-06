@@ -17,7 +17,7 @@ namespace TransModel {
 
 ProportionalPrepUptakeManager::ProportionalPrepUptakeManager(PrepUseData& data, double age_threshold) : PrepUptakeManager(data, age_threshold),
 		uninfected_count(0), young(), old(), base_use((data.base_use_lt + data.base_use_gte) / 2),
-		stop_prob((data.daily_stop_prob_gte + data.daily_stop_prob_lt) / 2), k(0) {
+		stop_prob((data.daily_p_prob_gte + data.daily_p_prob_lt) / 2), k(0) {
 	onYearEnded();
 }
 
