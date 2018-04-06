@@ -1,3 +1,9 @@
+5 April 2018
+
+Version 0.34
+
+* Fixed issue with PrEP stopping probability for unbalanced models, and reading string error in art.init.lag
+
 3 April 2018
 
 Version 0.33
