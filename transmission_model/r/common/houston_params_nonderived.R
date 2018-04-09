@@ -11,12 +11,13 @@
      ## 2 main partnerships = 1.8 % of men
      ## >=3 main partnerships = 0.3 % of men
 
-     # QTN: Why aren't there any zero degree individuals?
-     # QTN: Why is the 2nd table not equal to 3rd+4th
-     Deg_seq <- c(63.71, 34.03, 1.89)*n/100        # TODO: not updated
+     deg_seq <- c(61.02, 34.65, 3.54)*n/100 
      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
-     duration <- 512 #from NHBS Houston (see excel sheet)
+     # Note: This data doesn't exist for Houston YMAP
+     # using estimates from NHBS data
+     # Box Sync/BARS/Data-and-Summaries/Houston_Mean_Duration_of_Partnerships.xlsx
+     duration <- 970 
 
      ## role
      pr_insertive_main <- 0.25
@@ -37,6 +38,7 @@
    min.age <- 18
    max.age <- 34
    # TODO: not updated
+   # we'll update later during the runs
    daily.entry.rate <- 0.75 # this is to balance out the exits from the population; makes sense to change this after other things
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
@@ -45,7 +47,7 @@
    #####################
    ## BIOLOGICAL
    circum.rate <- 0.64 #TODO: not updated
-   # QTN: what's the circumcision rate?
+   # QTN: what's the circumcision rate? Ask Nina/John
    
    # these are general background rates
    init.hiv.prev <- 0.10
@@ -132,15 +134,10 @@
    #####################
    ## Casual (non-main)
       ## duration
-      # QTN: dont have duration
-      dur_cas <- 160
-      # QTN: same issue with the degree sequence
-      ##degree 
-        ## 0: 54.1%
-        ## 1: 35.4%
-        ## 2: 7.6% 
-        ## 3: 2.9%
-      cas_deg_seq <- c(58.9, 32.2, 6.8)*n/100
+      # Note: computed from NHBS data
+      dur_cas <- 388
+      ## degree 
+      cas_deg_seq <- c(59, 25.68, 10.36)*n/100
 
       ## nedges
 
