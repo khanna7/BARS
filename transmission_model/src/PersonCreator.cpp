@@ -52,7 +52,7 @@ int calculate_role(int network_type) {
 PersonPtr PersonCreator::operator()(double tick, float age) {
 	int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
 	double size_of_timestep = Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP);
-	Diagnoser diagnoser(tick, detection_window_, 0);
+	Diagnoser diagnoser(detection_window_, 0);
 	PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(STEADY_NETWORK_TYPE),
 			calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
 	testing_configurator.configurePerson(person, size_of_timestep);

@@ -132,6 +132,8 @@ struct PersonToVAL {
 			vertex["vl.at.art.initiation"] = NA_REAL;
 		}
 
+		//std::cout << as<bool>(vertex["art.status"]) << std::endl;
+
 		return vertex;
 	}
 };
