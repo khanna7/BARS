@@ -1,8 +1,15 @@
 10 April 2018
 
-Version 0.34
+Version 0.35
 
 * Fixed diagnosis initialization code that caused ART uptake to drop to 0
+
+5 April 2018
+
+Version 0.34
+
+* Fixed issue with unbalanced using incorrect stopping parameters
+* Fixed issue with string parsing from the command line
 
 3 April 2018
 
