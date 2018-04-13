@@ -103,7 +103,8 @@
    
    ## ART adherence
    partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained
-   # QTN: double check these numbers since they seem high
+   # Note: double check these numbers since they seem high
+   # TODO: add in the new numbers from Jing, sanity check with John/Kayo
    art.prop.never.adherent <- 0.026 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
    art.prop.part.neg.adherent <- 0.026 + 0.5*0.11
    art.prop.part.plus.adherent <- 0.24 + 0.5*0.11
@@ -152,7 +153,7 @@
     detection.window <- 22
     mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY
     #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop.lt <- 0.078 # QTN: Don't know this for houston
+    non.testers.prop.lt <- 0.078 # Note: we don't know this for houston
     non.testers.prop.gte <- 0.023
 
     # lag between diagnosis and ART init
@@ -212,7 +213,7 @@ prep.mean.days.usage.gte <- 180
 ######################
     ## Sexual Behavior
     #num.sex.acts.base <- 2.4
-    # QTN: not there; might be hard to estimate
+    # TODO: there in Jing's word doc; need to add in
     prop.steady.sex.acts <- 0.093 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
                                  #same as freq.of.sex parameter in data table
     prop.casual.sex.acts <- 0.053 #same as above, but for casual
@@ -221,19 +222,18 @@ prep.mean.days.usage.gte <- 180
 # sd -- sero-discordant
 # each partnership falls in one of these buckets with
 # specified probability
-  # QTN: the numbers seem too high
-  # TODO: need to update these
-    sd.steady.never.use.condoms <- 0.261627907
-    sd.steady.rarely.use.condoms <- 0.046511628
-    sd.steady.sometimes.use.condoms <- 0.081395349
-    sd.steady.usually.use.condoms <- 0.087209302
-    sd.steady.always.use.condoms <- 0.523255814
+  # Note: these numbers are there but they're high
+    sd.steady.never.use.condoms <- 0
+    sd.steady.rarely.use.condoms <- 0.02941176
+    sd.steady.sometimes.use.condoms <- 0.17647059
+    sd.steady.usually.use.condoms <- 0.20941176
+    sd.steady.always.use.condoms <-0.58823529 
 
-    sd.casual.never.use.condoms <- 0.281420765
-    sd.casual.rarely.use.condoms <- 0.013661202
-    sd.casual.sometimes.use.condoms <- 0.043715847
-    sd.casual.usually.use.condoms <- 0.054644809
-    sd.casual.always.use.condoms <- 0.606557377
+    sd.casual.never.use.condoms <- 0.1034483
+    sd.casual.rarely.use.condoms <-0.0689655
+    sd.casual.sometimes.use.condoms <- 0.1034483
+    sd.casual.usually.use.condoms <- 0.137931
+    sd.casual.always.use.condoms <- 0.5862069
 
 	### probability that the partnership in the specified bucket
 	### will use a condom.
@@ -318,7 +318,7 @@ external.infections.age.factor = 1 # changed to 1 to remove more external infect
 
 
 # range of number of tests in last two years min-max, fraction of the population
-# QTN: need to break up by age?
+# TODO: In Jing's word doc, need to add it in
 testing.prob.lt.1 = "1-2,0.457377778"
 testing.prob.lt.2 = "3-4,0.299377778"
 testing.prob.lt.3 = "5-6,0.109377778"
