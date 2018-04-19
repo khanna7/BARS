@@ -122,7 +122,7 @@ summarize_yearly_inc <- function(filename="counts.csv", ranges){
   tot_inc <- dt_counts[,lapply(c(sum), function(x) x((infected_via_transmission))),by = ycat]
   setnames(tot_inc,c("V1"),c("tot_inc_sum"))
   
-  # Yearly incidence rates for ("infected_via_transmission_X") by age range
+  # Yearly incidence for ("infected_via_transmission_X") by age range
   tot_incs = list()
   for(i in 1:(length(ranges)/2)){
     x <- 2*i - 1
@@ -143,7 +143,7 @@ summarize_yearly_inc <- function(filename="counts.csv", ranges){
   tot_ex_inc <- dt_counts[,lapply(c(sum), function(x) x((infected_via_transmission + infected_externally))),by = ycat]
   setnames(tot_ex_inc,c("V1"),c("tot_ex_inc_sum"))
   
-  # Yearly incidence rates for ("infected_via_transmission_X") by age range
+  # Yearly incidence for ("infected_via_transmission_X") by age range
   tot_ex_incs = list()
   for(i in 1:(length(ranges)/2)){
     x <- 2*i - 1
@@ -165,7 +165,7 @@ summarize_yearly_inc <- function(filename="counts.csv", ranges){
   tot_ee_inc <- dt_counts[,lapply(c(sum), function(x) x((infected_via_transmission + infected_externally + infected_at_entry))),by = ycat]
   setnames(tot_ee_inc,c("V1"),c("tot_ee_inc_sum"))
   
-  # Yearly incidence rates for ("infected_via_transmission_X") by age range
+  # Yearly incidence for ("infected_via_transmission_X") by age range
   tot_ee_incs = list()
   for(i in 1:(length(ranges)/2)){
     x <- 2*i - 1
