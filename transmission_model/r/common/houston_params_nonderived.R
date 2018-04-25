@@ -47,7 +47,7 @@
    #####################
    ## BIOLOGICAL
    circum.rate <- 0.64 #TODO: not updated
-   # QTN: what's the circumcision rate? Ask Nina/John
+   # TODO: what's the circumcision rate? Ask Nina/John
    
    # these are general background rates
    init.hiv.prev <- 0.10
@@ -153,13 +153,13 @@
     detection.window <- 22
     mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY
     #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop.lt <- 0.078 # Note: we don't know this for houston
+    non.testers.prop.lt <- 0.078 # Note: 17.9% not tested in the last two years but that's very high for never-testers. Does last two mean really never?
     non.testers.prop.gte <- 0.023
 
     # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    # QTN: don't have any of this for houston
+    # Note: don't have any of this for houston
     art.init.lag.lt.1 <- "0.1692857143,0-7"  
     art.init.lag.lt.2 <- "0.314285714,7-30"  
     art.init.lag.lt.3 <- "0.191285714,30-90"  
@@ -183,7 +183,8 @@
 # days
 prep.decision.frequency <- 7
 
-# QTN: doesn't seem to be there
+# Note: Not there for Houston
+# TODO: follow up with Jing
 prep.prop.never.adherent.lt <- 0.211
 prep.prop.always.adherent.lt <- 0.619
 prep.prop.part.plus.adherent.lt <- 0.10
@@ -212,11 +213,12 @@ prep.mean.days.usage.gte <- 180
 
 ######################
     ## Sexual Behavior
-    #num.sex.acts.base <- 2.4
-    # TODO: there in Jing's word doc; need to add in
-    prop.steady.sex.acts <- 0.093 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
+    # num.sex.acts.base <- 2.4
+    # Note: from Jing's word doc (on 2018-03-14)
+    # Using a weighting of 1/3, 1/7, 1/14, 1/30
+    prop.steady.sex.acts <- 0.26 # of steady partnerships on a given day, in how many does a sex act (w or w/o condom) occur?
                                  #same as freq.of.sex parameter in data table
-    prop.casual.sex.acts <- 0.053 #same as above, but for casual
+    prop.casual.sex.acts <- 0.23 #same as above, but for casual
     inf.red.w.condom <- 0.80
     
 # sd -- sero-discordant
@@ -280,18 +282,22 @@ prep.mean.days.usage.gte <- 180
 	### Age Specific Mortality ###
 	### We don't strictly need all these age ranges, but 
 	### they are here for completeness -- format is [min_max)
-	# TODO: CDC wonder; look up; add in
-	asm.15_20 <- 0.002333 / (365 * 1)
-	asm.20_25 <- 0.002711  / (365 * 1)
-	asm.25_30 <- 0.0028 / (365 * 1)
-	asm.30_35 <- 0.003451 / (365 * 1)
-	asm.35_40 <- 0.003477 / (365 * 1)
-	asm.40_45 <- 0.004394 / (365 * 1)
-	asm.45_50 <- 0.006315 / (365 * 1)
-	asm.50_55 <- 0.010228 / (365 * 1)
-	asm.55_60 <- 0.01605 / (365 * 1)
-	asm.60_65 <- 0.022538 / (365 * 1)
-	asm.65_70 <- 0.030628 / (365 * 1)
+	# Note: 
+	# - Used CDC Wonder data for Harris Country
+	#   Because MSM would tend to congregate in cities
+	# - Calculations and query criteria are in
+	#   "Houston Mortality Calcs (from CDC Wonder).xslx"
+	asm.15_20 <- 0.000966 / (365 * 1)
+	asm.20_25 <- 0.001896 / (365 * 1)
+	asm.25_30 <- 0.001976 / (365 * 1)
+	asm.30_35 <- 0.001976 / (365 * 1)
+	asm.35_40 <- 0.003175 / (365 * 1)
+	asm.40_45 <- 0.003175 / (365 * 1)
+	asm.45_50 <- 0.006803 / (365 * 1)
+	asm.50_55 <- 0.006803 / (365 * 1)
+	asm.55_60 <- 0.017383 / (365 * 1)
+	asm.60_65 <- 0.017383 / (365 * 1)
+	asm.65_70 <- 0.033181 / (365 * 1)
 	
 # external infections per person days
 # we mult. this value by the number of uninfected persons
@@ -304,9 +310,13 @@ prep.mean.days.usage.gte <- 180
 # 5 * 14% = 0.7 (for min)
 # 9*21% = 1.9 (for max)
 
-# TODO: might need to recompute
-external.infections.per.person.day.min <- 0.7 / (100 * 365) #revised as per write up from 0.8 and 1.6 for lower and upper bounds on 09.07.17
-external.infections.per.person.day.max <- 1.9 / (100 * 365)
+# Note: Computed as:
+# 0.28*.5*5 = (linked inf between young and old black MSM)*(proportion of inf from older to younger)*(lower bound on incidence from YBMSM in Houston)
+# 0.28*.8*7
+# TODO: ask John/Kayo about the last number
+# May need to be updated
+external.infections.per.person.day.min <- 0.7 / (100 * 365) 
+external.infections.per.person.day.max <- 1.568 / (100 * 365)
 
 # factor used to calculate age related external inf probability --
 # [19, 20) year old will be "factor" time more likely to get externally
@@ -318,25 +328,25 @@ external.infections.age.factor = 1 # changed to 1 to remove more external infect
 
 
 # range of number of tests in last two years min-max, fraction of the population
-# TODO: In Jing's word doc, need to add it in
-testing.prob.lt.1 = "1-2,0.457377778"
-testing.prob.lt.2 = "3-4,0.299377778"
-testing.prob.lt.3 = "5-6,0.109377778"
-testing.prob.lt.4 = "7-8,0.055377778"
-testing.prob.lt.5 = "9-10,0.039377778"
-testing.prob.lt.6 = "11-12,0.012377778"
-testing.prob.lt.7 = "13-16,0.008877778"
-testing.prob.lt.8 = "17-20,0.010677778"
-testing.prob.lt.9 = "21-30,0.007177778"
+# Note: from Jing's word doc
+testing.prob.lt.1 = "1-2,0.50420168"
+testing.prob.lt.2 = "3-4,0.22689076"
+testing.prob.lt.3 = "5-6,0.15966387"
+testing.prob.lt.4 = "7-8,0.06722689"
+testing.prob.lt.5 = "9-10,0.00840336"
+testing.prob.lt.6 = "11-12,0.00840336"
+testing.prob.lt.7 = "13-16,0.02521008"
+testing.prob.lt.8 = "17-20,0"
+testing.prob.lt.9 = "21-30,0"
 
-testing.prob.gte.1 = "1-2,0.457377778"
-testing.prob.gte.2 = "3-4,0.299377778"
-testing.prob.gte.3 = "5-6,0.109377778"
-testing.prob.gte.4 = "7-8,0.055377778"
-testing.prob.gte.5 = "9-10,0.039377778"
-testing.prob.gte.6 = "11-12,0.012377778"
-testing.prob.gte.7 = "13-16,0.008877778"
-testing.prob.gte.8 = "17-20,0.010677778"
-testing.prob.gte.9 = "21-30,0.007177778"
+testing.prob.gte.1 = "1-2,0.35714286"
+testing.prob.gte.2 = "3-4,0.35714286"
+testing.prob.gte.3 = "5-6,0.11428571"
+testing.prob.gte.4 = "7-8,0.1"
+testing.prob.gte.5 = "9-10,0.01428571"
+testing.prob.gte.6 = "11-12,0.02857143"
+testing.prob.gte.7 = "13-16,0.02857143"
+testing.prob.gte.8 = "17-20,0"
+testing.prob.gte.9 = "21-30,0"
 
 
