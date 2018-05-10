@@ -144,6 +144,9 @@ extern const std::string PREP_NEVER_ADHERENT_TR;
 extern const std::string PREP_PARTIAL_POS_ADHERENT_TR;
 extern const std::string PREP_PARTIAL_NEG_ADHERENT_TR;
 
+extern const std::string ADDITIONAL_PREP_LT;
+extern const std::string ADDITIONAL_PREP_GTE;
+
 extern const std::string SD_STEADY_NEVER_USE_CONDOMS;
 extern const std::string SD_STEADY_RARELY_USE_CONDOMS;
 extern const std::string SD_STEADY_SOMETIMES_USE_CONDOMS;

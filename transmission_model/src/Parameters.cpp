@@ -107,6 +107,8 @@ const std::string PREP_ALPHA = "prep.young.old.alpha";
 const std::string PREP_BALANCED_UNBALANCED = "prep.balanced.unbalanced";
 const std::string PREP_UNBALANCED_STARTING_PROB_LT = "prep.unbalanced.starting.prob.lt";
 const std::string PREP_UNBALANCED_STARTING_PROB_GTE = "prep.unbalanced.starting.prob.gte";
+const std::string ADDITIONAL_PREP_LT = "prep.additional.lt";
+const std::string ADDITIONAL_PREP_GTE = "prep.additional.gte";
 
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";

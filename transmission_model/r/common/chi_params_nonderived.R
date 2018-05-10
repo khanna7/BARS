@@ -187,6 +187,13 @@ prep.years.to.increment <- 1
 # using a probability of picking a young (y) vs old (o) person by a factor of alpha
 # will be performed.
 prep.young.old.alpha <- -1
+# prep.addtional.* specifies how many more lt, gte persons to put on prep
+# the value is the fractional increment over the base rate. For example,
+# an lt value of 0.5 will add an additional amount of person on prep equal to
+# 0.5 the amount the base added. These values are only used if prep.young.old.alpha
+# is >= 0.
+prep.additional.lt <- 0
+prep.additional.gte <- 0
 
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
