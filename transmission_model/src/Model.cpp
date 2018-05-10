@@ -316,8 +316,11 @@ std::shared_ptr<PrepUptakeManager> create_prep_manager() {
 	data.alpha = Parameters::instance()->getDoubleParameter(PREP_ALPHA);
 
 	float age_threshold = Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
-	if (data.alpha >= 0 && balanced) {
-		std::cout << "balanced and proportional uptake" << std::endl;
+	if (data.alpha >= 0) {
+	    data.y_extra = Parameters::instance()->getDoubleParameter(ADDITIONAL_PREP_LT);
+	    data.o_extra = Parameters::instance()->getDoubleParameter(ADDITIONAL_PREP_GTE);
+
+		std::cout << "proportional uptake" << std::endl;
 		return std::make_shared<ProportionalPrepUptakeManager>(data, age_threshold);
 	} else {
 		std::cout << (balanced ? "balanced " : "unbalanced ") << "incrementing uptake: " << data.daily_p_prob_lt << ", "

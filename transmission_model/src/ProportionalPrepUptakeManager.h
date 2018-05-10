@@ -22,6 +22,7 @@ private:
 	int uninfected_count;
 	std::vector<PersonPtr> young, old;
 	double base_use, stop_prob, k;
+	double y_extra, o_extra;
 
 public:
 	ProportionalPrepUptakeManager(PrepUseData& data, double age_threshold);
@@ -30,6 +31,7 @@ public:
 	virtual void processPerson(double tick, std::shared_ptr<Person>& person) override;
 	virtual void run(double tick) override;
 	virtual void onYearEnded() override;
+
 };
 
 } /* namespace TransModel */

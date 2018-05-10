@@ -17,7 +17,7 @@ namespace TransModel {
 
 ProportionalPrepUptakeManager::ProportionalPrepUptakeManager(PrepUseData& data, double age_threshold) : PrepUptakeManager(data, age_threshold),
 		uninfected_count(0), young(), old(), base_use((data.base_use_lt + data.base_use_gte) / 2),
-		stop_prob((data.daily_p_prob_gte + data.daily_p_prob_lt) / 2), k(0) {
+		stop_prob((data.daily_p_prob_gte + data.daily_p_prob_lt) / 2), k(0), y_extra(data.y_extra), o_extra(data.o_extra) {
 	onYearEnded();
 }
 
@@ -57,21 +57,46 @@ void ProportionalPrepUptakeManager::run(double tick) {
 	//		threshold << std::endl;
 
 
+
 	repast::Random* rnd = repast::Random::instance();
+	int o_count = 0, y_count = 0;
+
+	std::random_shuffle(young.begin(), young.end(), &repast::uni_random);
+	std::random_shuffle(old.begin(), old.end(), &repast::uni_random);
+
 
 	for (int i = 0; i < n; ++i) {
 		double draw = rnd->nextDouble();
-		std::vector<PersonPtr>& vec = draw <= threshold ? young : old;
+		bool is_young = draw <= threshold;
+		std::vector<PersonPtr>& vec = is_young ? young : old;
 
-		repast::IntUniformGenerator gen = rnd->createUniIntGenerator(0, vec.size() - 1);
-		int idx = (int)gen.next();
-		PersonPtr& p = vec[idx];
-		while (p->isOnPrep()) {
-			int idx = (int)gen.next();
-			p = vec[idx];
-		}
+		PersonPtr& p = vec.back();
 		updateUse(tick, p);
+		vec.pop_back();
+
+		if (is_young) {
+		    ++y_count;
+		} else {
+		    ++o_count;
+		}
 	}
+
+	int y_extra_count = y_count * y_extra;
+	//std::cout << "adding y: " << y_count << ", " << y_extra << ", " << y_extra_count << std::endl;
+	for (int i = 0; i < y_extra_count && young.size() > 0; ++i) {
+        PersonPtr& p = young.back();
+        updateUse(tick, p);
+        young.pop_back();
+	}
+
+    int o_extra_count = o_count * o_extra;
+    //std::cout << "adding o: " << o_count << ", " << o_extra << ", " << o_extra_count << std::endl;
+    for (int i = 0; i < o_extra_count && old.size() > 0; ++i) {
+        PersonPtr& p = old.back();
+        updateUse(tick, p);
+        old.pop_back();
+    }
+
 	uninfected_count = 0;
 	young.clear();
 	old.clear();

@@ -22,6 +22,7 @@ struct PrepUseData {
 	double increment_lt, increment_gte;
 	int years_to_increase;
 	double alpha;
+	double y_extra, o_extra;
 };
 
 
