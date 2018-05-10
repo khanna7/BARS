@@ -46,8 +46,8 @@
    
    #####################
    ## BIOLOGICAL
-   circum.rate <- 0.64 #TODO: not updated
-   # TODO: what's the circumcision rate? Ask Nina/John
+   circum.rate <- 0.64
+   # Note: Using the nation-wide rate for black
    
    # these are general background rates
    init.hiv.prev <- 0.10
@@ -103,11 +103,10 @@
    
    ## ART adherence
    partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained
-   # Note: double check these numbers since they seem high
-   # TODO: add in the new numbers from Jing, sanity check with John/Kayo
-   art.prop.never.adherent <- 0.026 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   art.prop.part.neg.adherent <- 0.026 + 0.5*0.11
-   art.prop.part.plus.adherent <- 0.24 + 0.5*0.11
+   # Note: double checked with Nina
+   art.prop.never.adherent <- 0.2 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+   art.prop.part.neg.adherent <- 0.021 + 0.5*0.095
+   art.prop.part.plus.adherent <- 0.2 + 0.5*0.095
    art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
    
  	art.always.adherent.probability <- 0.95
@@ -183,8 +182,7 @@
 # days
 prep.decision.frequency <- 7
 
-# Note: Not there for Houston
-# TODO: follow up with Jing
+# Note: Not there for Houston, using Chicago numbers
 prep.prop.never.adherent.lt <- 0.211
 prep.prop.always.adherent.lt <- 0.619
 prep.prop.part.plus.adherent.lt <- 0.10
@@ -313,7 +311,7 @@ prep.mean.days.usage.gte <- 180
 # Note: Computed as:
 # 0.28*.5*5 = (linked inf between young and old black MSM)*(proportion of inf from older to younger)*(lower bound on incidence from YBMSM in Houston)
 # 0.28*.8*7
-# TODO: ask John/Kayo about the last number
+# Note: target incidence rate is 5-7 per 100 person-years
 # May need to be updated
 external.infections.per.person.day.min <- 0.7 / (100 * 365) 
 external.infections.per.person.day.max <- 1.568 / (100 * 365)
