@@ -33,6 +33,7 @@ struct PersonData {
 	unsigned int adhered_interval_count, non_adhered_interval_count;
 	double init_art_lag;
 	unsigned int infection_source;
+	double time_of_diagnosis;
 
 	PersonData(PersonPtr p, double time_of_birth);
 	void writeTo(FileOutput& out);
@@ -50,6 +51,7 @@ public:
 	virtual void recordARTStop(const PersonPtr& p, double ts) = 0;
 	virtual void recordPREPStart(const PersonPtr& p, double ts) = 0;
 	virtual void recordPREPStop(const Person* p, double ts, PrepStatus status) = 0;
+	virtual void recordDiagnosis(const Person* p, double ts) = 0;
 	virtual void recordInfection(const PersonPtr& p, double ts, InfectionSource source) = 0;
 	virtual void recordDeath(const PersonPtr& p, double ts) = 0;
 	virtual void recordInitialARTLag(const PersonPtr& p, double lag) = 0;
@@ -73,6 +75,7 @@ public:
 	void recordARTStop(const PersonPtr& p, double ts) override;
 	void recordPREPStart(const PersonPtr& p, double ts) override;
 	void recordPREPStop(const Person* p, double ts, PrepStatus status) override;
+	void recordDiagnosis(const Person* p, double ts) override;
 	void recordInfection(const PersonPtr& p, double ts, InfectionSource source) override;
 	void recordDeath(const PersonPtr& p, double ts) override;
 	void recordInitialARTLag(const PersonPtr& p, double lag) override;
@@ -94,6 +97,7 @@ public:
 	void recordPREPStart(const PersonPtr& p, double ts) override {}
 	void recordPREPStop(const Person* p, double ts, PrepStatus status) override {}
 	void recordInfection(const PersonPtr& p, double ts, InfectionSource source) override {}
+	void recordDiagnosis(const Person* p, double ts) override {}
 	void recordDeath(const PersonPtr& p, double ts) override {}
 	void recordInitialARTLag(const PersonPtr& p, double lag) override {}
 	void incrementNonAdheredIntervals(const PersonPtr& p) override {}

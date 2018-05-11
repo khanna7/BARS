@@ -46,6 +46,7 @@ namespace fs = boost::filesystem;
 namespace TransModel {
 
 const std::string BALANCED = "balanced";
+const double VS_VL_COUNT = std::log10(2) + 2;
 
 PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
 	if (cod == CauseOfDeath::AGE)
@@ -82,6 +83,11 @@ struct PersonToVAL {
 		vertex["circum.status"] = p->isCircumcised();
 
 		vertex["diagnosed"] = p->isDiagnosed();
+		if (p->isDiagnosed()) {
+		    vertex["time_of_diagnosis"] = p->infectionParameters().time_of_diagnosis;
+		} else {
+		    vertex["time_of_diagnosis"] = NA_REAL;
+		}
 		const Diagnoser& diagnoser = p->diagnoser();
 		vertex["number.of.tests"] = diagnoser.testCount();
 		vertex["testing.probability"] = diagnoser.testingProbability();
@@ -602,13 +608,15 @@ void Model::updateDisease(PersonPtr person) {
 	person->setInfectivity(infectivity);
 }
 
-void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
+void Model::updateVitals(double tick, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
 	unsigned int dead_count = 0;
 	Stats* stats = Stats::instance();
 	map<double, ARTScheduler*> art_map;
 
 	uninfected.reserve(net.vertexCount());
 
+	float time_to_full_supp = Parameters::instance()->getFloatParameter(TIME_TO_FULL_SUPP);
+	int vs_count = 0, inf_count = 0, diagnosed_count = 0;
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		PersonPtr person = (*iter);
 		// update viral load, cd4
@@ -617,24 +625,24 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 		}
 
 		if (persons_to_log.find(person->id()) != persons_to_log.end()) {
-			stats->recordBiomarker(t, person);
+			stats->recordBiomarker(tick, person);
 		}
 
 		if (person->isTestable() && !person->isDiagnosed()) {
-			if (person->diagnose(t)) {
-				schedulePostDiagnosisART(person, art_map, t, size_of_timestep);
+			if (person->diagnose(tick)) {
+				schedulePostDiagnosisART(person, art_map, tick, size_of_timestep);
 			}
 		}
 
 		bool crossed_thresh = person->step(size_of_timestep, age_threshold);
-		CauseOfDeath cod = dead(t, person, max_age);
+		CauseOfDeath cod = dead(tick, person, max_age);
 		if (cod != CauseOfDeath::NONE) {
 			vector<EdgePtr<Person>> edges;
 			PartnershipEvent::PEventType pevent_type = cod_to_PEvent(cod);
 			net.getEdges(person, edges);
 			for (auto edge : edges) {
 				//cout << edge->id() << "," << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
-				Stats::instance()->recordPartnershipEvent(t, edge->id(), edge->v1()->id(), edge->v2()->id(),
+				Stats::instance()->recordPartnershipEvent(tick, edge->id(), edge->v1()->id(), edge->v2()->id(),
 						pevent_type, edge->type());
 			}
 			iter = net.removeVertex(iter);
@@ -643,12 +651,26 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			// don't count dead uninfected persons
 			if (!person->isInfected()) {
 				stats->currentCounts().incrementUninfected(person);
-				prep_uptake_manager->processPerson(t, person);
+				prep_uptake_manager->processPerson(tick, person);
 				if (person->isOnPrep()) {
 					++stats->currentCounts().on_prep;
 				}
 				uninfected.push_back(person);
 
+			} else {
+
+			    float duration = tick - person->infectionParameters().time_of_infection;
+			    if (duration >= time_to_full_supp) {
+			        ++inf_count;
+			        if (person->infectionParameters().viral_load < VS_VL_COUNT) {
+			            ++vs_count;
+			        }
+			    }
+
+			    if (person->isDiagnosed() && !isnan(person->infectionParameters().time_of_diagnosis) &&
+			                    tick - person->infectionParameters().time_of_diagnosis >= time_to_full_supp) {
+			        ++diagnosed_count;
+			    }
 			}
 			if (person->isOnART()) {
 				++stats->currentCounts().on_art;
@@ -661,7 +683,10 @@ void Model::updateVitals(double t, float size_of_timestep, int max_age, vector<P
 			++iter;
 		}
 	}
-	prep_uptake_manager->run(t);
+
+	stats->currentCounts().vl_supp_per_positives = inf_count == 0 ? 0 : ((double)vs_count) / inf_count;
+	stats->currentCounts().vl_supp_per_diagnosis = diagnosed_count == 0 ? 0 : ((double)vs_count) / diagnosed_count;
+	prep_uptake_manager->run(tick);
 }
 
 void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {

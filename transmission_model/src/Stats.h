@@ -115,8 +115,6 @@ struct Counts {
 
 	static const std::string header;
 
-
-
 	double tick;
 	unsigned int main_edge_count, casual_edge_count,
 	//size, internal_infected, external_infected, infected_at_entry, uninfected,
@@ -134,6 +132,7 @@ struct Counts {
 	// internal_infected is infected by transmission
 	std::vector<unsigned int> uninfected, internal_infected, external_infected, infected_at_entry, vertex_count;
 	int min_age_;
+	double vl_supp_per_positives, vl_supp_per_diagnosis;
 
 	Counts(int min_age, int max_age);
 	void reset();

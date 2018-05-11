@@ -1,3 +1,11 @@
+11 May 2018
+
+Version 0.36
+
+* Enabled "unbalanced" age related prep uptake
+* Added viral suppression related stats
+* Added time of diagnosis as a stat
+
 10 April 2018
 
 Version 0.35

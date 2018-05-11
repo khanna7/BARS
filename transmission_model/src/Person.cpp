@@ -103,6 +103,10 @@ bool Person::deadOfInfection() {
 bool Person::diagnose(double tick) {
 	Result result = diagnoser_.test(tick, infection_parameters_);
 	diagnosed_ = result == Result::POSITIVE;
+	if (diagnosed_) {
+	    infection_parameters_.time_of_diagnosis = tick;
+	    Stats::instance()->personDataRecorder()->recordDiagnosis(this, tick);
+	}
 	if (result != Result::NO_TEST) {
 		Stats::instance()->recordTestingEvent(tick, id_, diagnosed_);
 		if (diagnosed_ && prep_.status() == PrepStatus::ON) {
