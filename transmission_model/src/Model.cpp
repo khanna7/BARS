@@ -616,7 +616,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 	uninfected.reserve(net.vertexCount());
 
 	float time_to_full_supp = Parameters::instance()->getFloatParameter(TIME_TO_FULL_SUPP);
-	int vs_count = 0, inf_count = 0, diagnosed_count = 0;
+	int vs_count = 0, inf_count = 0, diagnosed_count = 0, vs_pos_count = 0;
 	for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
 		PersonPtr person = (*iter);
 		// update viral load, cd4
@@ -660,7 +660,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 			} else {
 
 			    float duration = tick - person->infectionParameters().time_of_infection;
-			    if (duration >= time_to_full_supp) {
+			    if ( duration >= time_to_full_supp) {
 			        ++inf_count;
 			        if (person->infectionParameters().viral_load < VS_VL_COUNT) {
 			            ++vs_count;
@@ -670,6 +670,9 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 			    if (person->isDiagnosed() && !isnan(person->infectionParameters().time_of_diagnosis) &&
 			                    tick - person->infectionParameters().time_of_diagnosis >= time_to_full_supp) {
 			        ++diagnosed_count;
+                    if (person->infectionParameters().viral_load < VS_VL_COUNT) {
+                        ++vs_pos_count;
+                    }
 			    }
 			}
 			if (person->isOnART()) {
@@ -685,7 +688,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 	}
 
 	stats->currentCounts().vl_supp_per_positives = inf_count == 0 ? 0 : ((double)vs_count) / inf_count;
-	stats->currentCounts().vl_supp_per_diagnosis = diagnosed_count == 0 ? 0 : ((double)vs_count) / diagnosed_count;
+	stats->currentCounts().vl_supp_per_diagnosis = diagnosed_count == 0 ? 0 : ((double)vs_pos_count) / diagnosed_count;
 	prep_uptake_manager->run(tick);
 }
 
