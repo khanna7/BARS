@@ -85,8 +85,10 @@ struct PersonToVAL {
 		vertex["diagnosed"] = p->isDiagnosed();
 		if (p->isDiagnosed()) {
 		    vertex["time_of_diagnosis"] = p->infectionParameters().time_of_diagnosis;
+		    vertex["time_since_diagnosed"] = p->infectionParameters().time_since_diagnosed;
 		} else {
 		    vertex["time_of_diagnosis"] = NA_REAL;
+		    vertex["time_since_diagnosed"] = NA_REAL;
 		}
 		const Diagnoser& diagnoser = p->diagnoser();
 		vertex["number.of.tests"] = diagnoser.testCount();
@@ -659,16 +661,15 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 
 			} else {
 
-			    float duration = tick - person->infectionParameters().time_of_infection;
-			    if ( duration >= time_to_full_supp) {
+			    if ( person->infectionParameters().time_since_infection >= time_to_full_supp) {
 			        ++inf_count;
 			        if (person->infectionParameters().viral_load < VS_VL_COUNT) {
 			            ++vs_count;
 			        }
 			    }
 
-			    if (person->isDiagnosed() && !isnan(person->infectionParameters().time_of_diagnosis) &&
-			                    tick - person->infectionParameters().time_of_diagnosis >= time_to_full_supp) {
+			    if (person->isDiagnosed() && !isnan(person->infectionParameters().time_since_infection) &&
+			                    person->infectionParameters().time_since_infection >= time_to_full_supp) {
 			        ++diagnosed_count;
                     if (person->infectionParameters().viral_load < VS_VL_COUNT) {
                         ++vs_pos_count;
