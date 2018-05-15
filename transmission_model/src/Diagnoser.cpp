@@ -33,7 +33,7 @@ Result Diagnoser::test(double tick, const InfectionParameters& inf_params) {
 	if (repast::Random::instance()->nextDouble() <= test_prob) {
 		++test_count_;
 		last_test_at_ = tick;
-		if (inf_params.infection_status && tick - inf_params.time_of_infection >= detection_window_) {
+		if (inf_params.infection_status && inf_params.time_since_infection >= detection_window_) {
 			return Result::POSITIVE;
 		} else {
 			return Result::NEGATIVE;

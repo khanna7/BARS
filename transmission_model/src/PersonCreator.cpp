@@ -91,8 +91,9 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double model_tick, double b
 	}
 
 	person->diagnosed_ = as<bool>(val["diagnosed"]);
-	if (person->diagnosed_ && val.containsElementNamed("time_of_diagnosis")) {
+	if (person->diagnosed_ && val.containsElementNamed("time_since_diagnosed")) {
 	    person->infection_parameters_.time_of_diagnosis = as<float>(val["time_of_diagnosis"]);
+	    person->infection_parameters_.time_since_diagnosed = as<float>(val["time_since_diagnosed"]);
 	}
 	person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
 

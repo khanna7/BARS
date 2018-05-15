@@ -60,7 +60,7 @@ network in the model at the end of the timestep
 * on_art: the number of persons on ART at this time step.
 * on_prep: the number of persons on PrEP at this time.
 * vl_supp_per_positives: the number of virally suppressed individuals who have been infected for at least time.to.full.supp divided by the number of infected persons who have been infected for at least time.to.full.supp.
-* vl_supp_per_diagnosed: the number of virally suppressed individuals who have been infected for at least time.to.full.supp divided by the number of infected persons who have been diagnosed as positive for at least time.to.full.supp
+* vl_supp_per_diagnosed: the number of virally suppressed individuals who have been diagnosed as positive for at least time.to.full.supp divided by the number of persons who have been diagnosed as positive for at least time.to.full.supp
 
 
 ### Partnership Events

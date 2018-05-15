@@ -26,14 +26,14 @@ struct SharedViralLoadParameters {
 struct InfectionParameters {
 
 	bool infection_status, art_status;
-	float time_since_infection, time_since_art_init; //time_since_art_cessation;
+	float time_since_infection, time_since_art_init, time_since_diagnosed; //time_since_art_cessation;
 	float dur_inf, viral_load, vl_art_traj_slope, cd4_count;
 	float time_of_infection, age_at_infection, time_of_art_init, cd4_at_art_init,
 		vl_at_art_init;
 	float time_of_diagnosis;
 
 	InfectionParameters() : infection_status(false), art_status(false),
-			time_since_infection(NAN), time_since_art_init(NAN), /*time_since_art_cessation(NAN),*/
+			time_since_infection(NAN), time_since_art_init(NAN), time_since_diagnosed(NAN), /*time_since_art_cessation(NAN),*/
 			dur_inf(NAN), viral_load(0), vl_art_traj_slope(NAN), cd4_count(0),
 			time_of_infection(NAN), age_at_infection(NAN), time_of_art_init(NAN), cd4_at_art_init(NAN),
 			vl_at_art_init(NAN), time_of_diagnosis{NAN} {}

@@ -84,6 +84,10 @@ bool Person::step(float size_of_timestep, float threshold) {
 		++infection_parameters_.time_since_infection;
 	}
 
+	if (diagnosed_) {
+	    ++infection_parameters_.time_since_diagnosed;
+	}
+
 	if (infection_parameters_.art_status) {
 		++infection_parameters_.time_since_art_init;
 	}
