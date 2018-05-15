@@ -19,3 +19,4 @@
 * tergmLite R package v. 0.1.2
 * Rcpp R package v. 0.12.15+
 * RInside R package v. 0.2.14
+* networkDynamic R package v. 0.9.0
