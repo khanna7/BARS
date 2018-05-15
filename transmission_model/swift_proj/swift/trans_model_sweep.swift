@@ -28,8 +28,9 @@ if (file.exists(f)) {
   prev <- summarize_prev(f, ranges)
   inc <- summarize_inc(f, ranges)
   pop_size <- summarize_pop_size(f, ranges)
+  vl_supp <- summarize_vl_supp(f)
   a <- paste(paste(prev, collapse=','), paste(inc, collapse=','),
-    paste(pop_size, collapse=','), sep = ',')
+    paste(pop_size, collapse=','), paste(vl_supp, collapse=','), sep = ',')
 }
 """;
 
