@@ -59,6 +59,8 @@ network in the model at the end of the timestep
 * sc_steady_sex_without_condom: the number of sex acts between sero-concordant steady partners in which a condom was not used.
 * on_art: the number of persons on ART at this time step.
 * on_prep: the number of persons on PrEP at this time.
+* vl_supp_per_positives: the number of virally suppressed individuals who have been infected for at least time.to.full.supp divided by the number of infected persons who have been infected for at least time.to.full.supp.
+* vl_supp_per_diagnosed: the number of virally suppressed individuals who have been infected for at least time.to.full.supp divided by the number of infected persons who have been diagnosed as positive for at least time.to.full.supp
 
 
 ### Partnership Events
@@ -169,6 +171,7 @@ Person data recording collects the following attributes for each person in the m
   * 0 via internal edge transmission
   * 1 via the external infection mechanism
   * 2 N/A person is not infected
+* time_of_diagnosis: the time at which an individual is diagnosed or -1 if never diagnosed.
 
 ### Testing Events
 Testing events are recorded in the file defined by the *testing.events.file* property. Each time a 
