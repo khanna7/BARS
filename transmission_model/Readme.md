@@ -17,5 +17,5 @@
 * network R package v. 1.13.0 
 * tergm R package v. version 3.4.0
 * tergmLite R package v. 0.1.2
-* Rcpp R package v. 0.12.16
+* Rcpp R package v. 0.12.15+
 * RInside R package v. 0.2.14
