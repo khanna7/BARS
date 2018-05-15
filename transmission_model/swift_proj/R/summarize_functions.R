@@ -145,3 +145,12 @@ summarize_pop_size <- function(filename="counts.csv", ranges){
     
     return(unlist(c(tail(counts$vertex_count, 1), pop_sizes)))
 }
+
+summarize_vl_supp <- function(filename="counts.csv"){
+  counts <- read.csv(filename)
+  vl_supp_per_pos <- tail(counts$vl_supp_per_positives,1)
+  vl_supp_diag <- tail(counts$vl_supp_per_diagnosed,1)
+  return(c(vl_supp_per_pos, vl_supp_diag))
+  
+}
+
