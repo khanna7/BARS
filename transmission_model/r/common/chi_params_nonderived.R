@@ -64,7 +64,8 @@
    dur.inf <- duration.of.infection
    late.stage.viral.load <- 5.05 ## (max?)
 
-   time.to.full.supp <- 4*30/size.of.timestep ## 4 months
+   #time.to.full.supp <- 4*30/size.of.timestep ## old: 4 months
+   time.to.full.supp <- 1*30/size.of.timestep ## from DHHS (refer to John)
    undetectable.vl <- log(50, base=10)
 
    #uninfected.cd4.level <- 518 #(might draw uniformly from a range)
