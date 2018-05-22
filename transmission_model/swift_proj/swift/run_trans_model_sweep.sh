@@ -73,6 +73,8 @@ USER_VARS=("DAILY_ENTRY_RATE" "PREP_MEAN_DAYS_USAGE_LT" "PREP_MEAN_DAYS_USAGE_GT
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
 
+cp $EMEWS_PROJECT_ROOT/../config/model.props $TURBINE_OUTPUT/
+
 # echo's anything following this standard out
 set -x
 

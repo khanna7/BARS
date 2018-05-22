@@ -41,7 +41,7 @@ cd $instance_directory
 # TODO: Define the command to run the model
 VERSION="$(<$emews_root/../Release/version.txt)"
 APP=$emews_root/../Release/transmission_model-$VERSION
-PROPS_FILE=$emews_root/../config/model.props
+PROPS_FILE=$instance_directory/../model.props
 MODEL_CMD="mpirun -n 1 $APP $PROPS_FILE $param_line"
 
 # Turn bash error checking off. This is
