@@ -12,13 +12,18 @@
 
 * Source settings from [here](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/swift/settings.sh).
 
-* Make sure you have all underlying software packages from [here](https://github.com/khanna7/BARS/blob/development/transmission_model/Readme.md).  
+* Make sure you have all underlying software packages from [here](https://github.com/khanna7/BARS/blob/development/transmission_model/Readme.md).
 
 * To run one instance of the model from within the Release directory, use: 
 
-   `./transmission_model-0.0 ../config/config.props ../config/model.props`    
+   `./transmission_model-0.0 ../config/model.props`    
    
- * To run with swift, see instructions [here](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/README.md).  
+   See below for how the different files talk to each other.
+   
+ * To run with swift, see instructions [here](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/README.md). 
+ 
+ * The [swift submission script](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/swift/run_trans_model_sweep.sh) calls [model.props](https://github.com/khanna7/BARS/blob/development/transmission_model/config/model.props), which sources an [R file](https://github.com/khanna7/BARS/blob/development/transmission_model/r/network_model/transmission_model_tergmlite.R) which loads the population at time 0. To run with a post-burnin population, comment out the ```#main.network.file = ../r/network_model/main_network.RDS
+#casual.network.file = ../r/network_model/casual_network.RDS``` in [model.props](https://github.com/khanna7/BARS/blob/development/transmission_model/config/model.props). The [swift submission script](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/swift/run_trans_model_sweep.sh) calls the input data file, specified as a txt (see example [here](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/data/test_input_params.txt)).
 
 ### Other Notes
 
