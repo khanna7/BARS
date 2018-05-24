@@ -6,30 +6,27 @@
 
 * Copy the transmission model from my Release directory to your Release directory. The transmission model is:
 
-     `/home/ntcollie/src/BARS/transmission_model/Release/transmission_model-0.0`
+     `/home/ntcollie/midway2/repos/BARS/transmission_model/Release/transmission_model-*`
 
-* The following modules need to be loaded in order for it to work
+* Update the `version.txt` in your `Release` directory.
 
-   `module load mvapich2/2.0` 
-   `module load R`  
-   `module load netcdf/4.2`  
-   `module load gcc/4.8`
+* Source settings from [here](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/swift/settings.sh)
 
-* I had to install some R packages (ergm etc.) but I imagine you’ve got those already installed. I did have to export R_LIBS though:
+* Make sure you have all underlying software packages from [here](https://github.com/khanna7/BARS/blob/development/transmission_model/Readme.md).  
 
-   `export R_LIBS=/home/ntcollie/R/x86_64-unknown-linux-gnu-library/3.2`
-
-* Run the model from within the Release directory with 
+* To run one instance of the model from within the Release directory, use: 
 
    `./transmission_model-0.0 ../config/config.props ../config/model.props`    
    
-* Midway 2 executable: `/home/ntcollie/midway2/repos/BARS/transmission_model/Release/transmission_model-0.18`
+ * To run with swift, see instructions [here](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/README.md).  
+
+### Other Notes
 
 * To exclude bad nodes (nodes 54-60, for example) from Midway, do the following:
 
      in run_trans_model_sweep.sh, add `export TURBINE_SBATCH_ARGS="--exclude=midway2-[0054–0060]”`, after the line that reads: `export TURBINE_JOBNAME="${EXPID}_job”`    
 
-## previewing html docs from github
+### previewing html docs from github
 
 Link: http://htmlpreview.github.io/?[--insert-github-html-link]
 
