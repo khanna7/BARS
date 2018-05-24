@@ -10,7 +10,7 @@
 
 * Update the `version.txt` in your `Release` directory.
 
-* Source settings from [here](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/swift/settings.sh)
+* Source settings from [here](https://github.com/khanna7/BARS/blob/development/transmission_model/swift_proj/swift/settings.sh).
 
 * Make sure you have all underlying software packages from [here](https://github.com/khanna7/BARS/blob/development/transmission_model/Readme.md).  
 
