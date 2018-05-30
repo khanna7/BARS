@@ -199,10 +199,6 @@ prep.additional.gte <- 0
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
 prep.balanced.unbalanced <- "balanced"
-# used to determine uptake in "unbalanced" algorighm, otherwise ignored
-prep.unbalanced.starting.prob.lt <- 1 / 180
-prep.unbalanced.starting.prob.gte <- 1 / 180
-
 
 # days
 prep.decision.frequency <- 7
