@@ -203,6 +203,8 @@ default.prep.years.to.increment <- 0
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
 default.prep.balanced.unbalanced <- 'balanced'
 
+## End Default Parameters ##
+
 ## Young Old Ratio PrEP Uptake Parameters ##
 
 yor.prep.bl.use.prop <- 13.7/100
@@ -221,6 +223,8 @@ yor.prep.years.to.increment <- 5
 yor.prep.additional.lt <- 0.5
 yor.prep.additional.gte <- 0.4
 
+## End Young Old Ratio Parameters ##
+
 
 ## Serodiscordant PrEP Uptake Parameters ###
 
@@ -236,7 +240,7 @@ serodiscordant.prep.network.type <- 'main'
 serodiscordant.prep.yearly.increment <- 0.04
 serodiscordant.prep.years.to.increment <- 5
 
-## Serodiscordant Parameters ##
+## End Serodiscordant Parameters ##
 
 # days
 prep.decision.frequency <- 7
