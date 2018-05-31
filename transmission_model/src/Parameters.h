@@ -83,17 +83,38 @@ extern const std::string PEAK_VIRAL_LOAD;
 extern const std::string PER_DAY_CD4_RECOVERY;
 extern const std::string PREG_MULT;
 extern const std::string PREG_SUSC_MULT;
-extern const std::string PREP_USE_PROP_LT;
-extern const std::string PREP_USE_PROP_GTE;
-extern const std::string PREP_DAILY_STOP_PROB_LT;
-extern const std::string PREP_DAILY_STOP_PROB_GTE;
-extern const std::string PREP_YEARLY_INCREMENT_LT;
-extern const std::string PREP_YEARLY_INCREMENT_GTE;
-extern const std::string PREP_YEARS_TO_INCREMENT;
-extern const std::string PREP_ALPHA;
-extern const std::string PREP_BALANCED_UNBALANCED;
-extern const std::string PREP_UNBALANCED_STARTING_PROB_LT;
-extern const std::string PREP_UNBALANCED_STARTING_PROB_GTE;
+
+extern const std::string PREP_SCHEME;
+
+extern const std::string DEFAULT_PREP_USE_PROP_LT;
+extern const std::string DEFAULT_PREP_USE_PROP_GTE;
+extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_LT;
+extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_GTE;
+extern const std::string DEFAULT_PREP_YEARLY_INCREMENT_LT;
+extern const std::string DEFAULT_PREP_YEARLY_INCREMENT_GTE;
+extern const std::string DEFAULT_PREP_YEARS_TO_INCREMENT;
+extern const std::string DEFAULT_PREP_BALANCED_UNBALANCED;
+extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT;
+extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE;
+
+extern const std::string YOR_ADDITIONAL_PREP_LT;
+extern const std::string YOR_ADDITIONAL_PREP_GTE;
+extern const std::string YOR_PREP_ALPHA;
+extern const std::string YOR_PREP_USE_PROP;
+extern const std::string YOR_PREP_DAILY_STOP_PROB;
+extern const std::string YOR_PREP_YEARLY_INCREMENT;
+extern const std::string YOR_PREP_YEARS_TO_INCREMENT;
+
+extern const std::string SERO_PREP_USE_PROP_LT;
+extern const std::string SERO_PREP_USE_PROP_GTE;
+extern const std::string SERO_PREP_DAILY_STOP_PROB_LT;
+extern const std::string SERO_PREP_DAILY_STOP_PROB_GTE;
+extern const std::string SERO_PREP_DAILY_STOP_PROB;
+extern const std::string SERO_PREP_YEARLY_INCREMENT;
+extern const std::string SERO_PREP_YEARS_TO_INCREMENT;
+extern const std::string SERO_NET_TYPE;
+
+
 extern const std::string SET_POINT_VIRAL_LOAD;
 extern const std::string SIZE_OF_TIMESTEP;
 extern const std::string TIME_INFECTION_TO_LATE_STAGE;
@@ -143,9 +164,6 @@ extern const std::string PREP_ALWAYS_ADHERENT_TR;
 extern const std::string PREP_NEVER_ADHERENT_TR;
 extern const std::string PREP_PARTIAL_POS_ADHERENT_TR;
 extern const std::string PREP_PARTIAL_NEG_ADHERENT_TR;
-
-extern const std::string ADDITIONAL_PREP_LT;
-extern const std::string ADDITIONAL_PREP_GTE;
 
 extern const std::string SD_STEADY_NEVER_USE_CONDOMS;
 extern const std::string SD_STEADY_RARELY_USE_CONDOMS;

@@ -9,10 +9,9 @@
 #define SRC_PREPPARAMETERS_H_
 
 #include "AdherenceCategory.h"
+#include "PrepStatus.h"
 
 namespace TransModel {
-
-enum class PrepStatus { OFF, OFF_INFECTED, ON};
 
 class PrepParameters {
 

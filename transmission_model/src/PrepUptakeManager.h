@@ -11,19 +11,25 @@
 #include <memory>
 
 #include "Person.h"
+#include "Network.h"
 
 namespace TransModel {
 
 struct PrepUseData {
 
-	double base_use_lt, base_use_gte;
+	double base_use_lt, base_use_gte, base_use_yor;
 	double daily_p_prob_lt, daily_p_prob_gte;
-	double daily_stop_prob_lt, daily_stop_prob_gte;
-	double increment_lt, increment_gte;
+	double daily_stop_prob_lt, daily_stop_prob_gte, daily_stop_prob_sd;
+	double increment_lt, increment_gte, increment_sd, increment_yor;
 	int years_to_increase;
+
 	double alpha;
-	double y_extra, o_extra;
+	double yor_old_extra, yor_young_extra;
+
+    PrepUseData();
 };
+
+std::ostream& operator <<(std::ostream& stream, const PrepUseData& prep_data);
 
 
 class PrepUptakeManager {
@@ -40,7 +46,7 @@ public:
 	PrepUptakeManager(PrepUseData data, double age_threshold);
 	virtual ~PrepUptakeManager();
 
-	virtual void processPerson(double tick, std::shared_ptr<Person>& person) = 0;
+	virtual void processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) = 0;
 	virtual void run(double tick) = 0;
 	virtual void onYearEnded() = 0;
 };

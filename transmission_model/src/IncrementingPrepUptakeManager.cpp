@@ -49,7 +49,7 @@ void IncrementingPrepUptakeManager::onYearEnded() {
 	}
 }
 
-void IncrementingPrepUptakeManager::processPerson(double tick, std::shared_ptr<Person>& person) {
+void IncrementingPrepUptakeManager::processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) {
 	double prob = person->age() < age_threshold_ ? prob_lt : prob_gte;
 	if (!person->isOnPrep() && Random::instance()->nextDouble() <= prob) {
 		updateUse(tick, person);

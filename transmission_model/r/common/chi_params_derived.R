@@ -41,13 +41,28 @@
     
    #####################
    ## PrEP
-   prep.daily.stop.prob.lt <- 1/prep.mean.days.usage.lt
-   prep.daily.stop.prob.gte <- 1/prep.mean.days.usage.gte
-   prep.daily.stop.prob <- mean(c(prep.daily.stop.prob.lt, prep.daily.stop.prob.gte))
+   
+   ### Default PrEP intervention Parameters ###
+   
+   default.prep.daily.stop.prob.lt <- 1/default.prep.mean.days.usage.lt
+   default.prep.daily.stop.prob.gte <- 1/default.prep.mean.days.usage.gte
+   default.prep.daily.stop.prob <- mean(c(default.prep.daily.stop.prob.lt, default.prep.daily.stop.prob.gte))
 
    # used to determine uptake in "unbalanced" algorighm, otherwise ignored
-   prep.unbalanced.starting.prob.lt <- 1 / prep.mean.days.usage.lt
-   prep.unbalanced.starting.prob.gte <- 1 / prep.mean.days.usage.gte
+   default.prep.unbalanced.starting.prob.lt <- 1 / default.prep.mean.days.usage.lt
+   deafult.prep.unbalanced.starting.prob.gte <- 1 / default.prep.mean.days.usage.gte
+   
+ 
+   ### Young Old Ratio PrEP intervention parameters ###
+   
+   yor.prep.daily.stop.prob <- 1 / yor.prep.mean.days.usage
+   
+   ### Serodiscordant intervention parameters ###
+   
+   serodiscordant.prep.daily.stop.prob.lt <- 1 / serodiscordant.prep.mean.days.usage.lt
+   serodiscordant.prep.daily.stop.prob.gte <- 1 / serodiscordant.prep.mean.days.usage.gte
+   serodiscordant.prep.daily.stop.prob <- 1 / serodiscordant.prep.mean.days.usage
+   
 
    #####################
    ## Transmission Parameters

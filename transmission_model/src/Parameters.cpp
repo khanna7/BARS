@@ -96,19 +96,36 @@ const std::string PEAK_VIRAL_LOAD = "peak.viral.load";
 const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
 const std::string PREG_MULT = "preg.mult";
 const std::string PREG_SUSC_MULT = "preg.susc.mult";
-const std::string PREP_USE_PROP_LT = "prep.bl.use.prop.lt";
-const std::string PREP_USE_PROP_GTE = "prep.bl.use.prop.gte";
-const std::string PREP_DAILY_STOP_PROB_LT = "prep.daily.stop.prob.lt";
-const std::string PREP_DAILY_STOP_PROB_GTE = "prep.daily.stop.prob.gte";
-const std::string PREP_YEARLY_INCREMENT_LT = "prep.yearly.increment.lt";
-const std::string PREP_YEARLY_INCREMENT_GTE = "prep.yearly.increment.gte";
-const std::string PREP_YEARS_TO_INCREMENT = "prep.years.to.increment";
-const std::string PREP_ALPHA = "prep.young.old.alpha";
-const std::string PREP_BALANCED_UNBALANCED = "prep.balanced.unbalanced";
-const std::string PREP_UNBALANCED_STARTING_PROB_LT = "prep.unbalanced.starting.prob.lt";
-const std::string PREP_UNBALANCED_STARTING_PROB_GTE = "prep.unbalanced.starting.prob.gte";
-const std::string ADDITIONAL_PREP_LT = "prep.additional.lt";
-const std::string ADDITIONAL_PREP_GTE = "prep.additional.gte";
+
+const std::string PREP_SCHEME = "prep.uptake";
+
+const std::string DEFAULT_PREP_USE_PROP_LT = "default.prep.bl.use.prop.lt";
+const std::string DEFAULT_PREP_USE_PROP_GTE = "default.prep.bl.use.prop.gte";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_LT = "default.prep.daily.stop.prob.lt";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_GTE = "default.prep.daily.stop.prob.gte";
+const std::string DEFAULT_PREP_YEARLY_INCREMENT_LT = "default.prep.yearly.increment.lt";
+const std::string DEFAULT_PREP_YEARLY_INCREMENT_GTE = "default.prep.yearly.increment.gte";
+const std::string DEFAULT_PREP_YEARS_TO_INCREMENT = "default.prep.years.to.increment";
+const std::string DEFAULT_PREP_BALANCED_UNBALANCED = "default.prep.balanced.unbalanced";
+const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT = "default.prep.unbalanced.starting.prob.lt";
+const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE = "default.prep.unbalanced.starting.prob.gte";
+
+const std::string YOR_PREP_ALPHA = "yor.prep.alpha";
+const std::string YOR_PREP_USE_PROP = "yor.prep.bl.use.prop";
+const std::string YOR_PREP_DAILY_STOP_PROB = "yor.prep.daily.stop.prob";
+const std::string YOR_PREP_YEARLY_INCREMENT = "yor.prep.yearly.increment";
+const std::string YOR_PREP_YEARS_TO_INCREMENT = "yor.prep.years.to.increment";
+const std::string YOR_ADDITIONAL_PREP_LT = "yor.prep.additional.lt";
+const std::string YOR_ADDITIONAL_PREP_GTE = "yor.prep.additional.gte";
+
+const std::string SERO_PREP_USE_PROP_LT = "serodiscordant.prep.bl.use.prop.lt";
+const std::string SERO_PREP_USE_PROP_GTE = "serodiscordant.prep.bl.use.prop.gte";
+const std::string SERO_PREP_DAILY_STOP_PROB_LT = "serodiscordant.prep.daily.stop.prob.lt";
+const std::string SERO_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.prep.daily.stop.prob.gte";
+const std::string SERO_PREP_DAILY_STOP_PROB = "serodiscordant.prep.daily.stop.prob";
+const std::string SERO_PREP_YEARLY_INCREMENT = "serodiscordant.prep.yearly.increment";
+const std::string SERO_PREP_YEARS_TO_INCREMENT = "serodiscordant.prep.years.to.increment";
+const std::string SERO_NET_TYPE = "serodiscordant.prep.network.type";
 
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";

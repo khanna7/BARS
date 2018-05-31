@@ -6,6 +6,7 @@
  */
 
 #include <cmath>
+#include <exception>
 
 #include "boost/algorithm/string.hpp"
 #include "boost/filesystem.hpp"
@@ -32,6 +33,7 @@
 #include "adherence_functions.h"
 #include "ProportionalPrepUptakeManager.h"
 #include "IncrementingPrepUptakeManager.h"
+#include "SerodiscordantPrepUptakeManager.h"
 
 #include "debug_utils.h"
 
@@ -299,42 +301,89 @@ void init_trans_params(TransmissionParameters& params) {
 	params.prop_casual_sex_acts = Parameters::instance()->getDoubleParameter(PROP_CASUAL_SEX_ACTS) * size_of_time_step;
 }
 
+NetworkType find_net_type(std::string type) {
+    if (type == "main") return NetworkType::MAIN;
+    if (type == "casual") return NetworkType::CASUAL;
+    if (type == "all") return NetworkType::ALL;
+    throw std::invalid_argument("Unknown partnership type for PrEP serodiscordant intervention: '" + type + "'");
+}
+
+std::shared_ptr<SerodiscordantPrepUptakeManager> create_sero_prep_manager(float age_threshold) {
+    PrepUseData data;
+    data.base_use_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_USE_PROP_LT);
+    data.base_use_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_USE_PROP_GTE);
+
+    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_GTE);
+    data.daily_stop_prob_sd = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB);
+
+    data.increment_sd = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT);
+    data.years_to_increase = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARS_TO_INCREMENT);
+
+    string net_type = Parameters::instance()->getStringParameter(SERO_NET_TYPE);
+
+    std::cout << data << net_type << std::endl;
+
+    return std::make_shared<SerodiscordantPrepUptakeManager>(data, age_threshold, find_net_type(net_type));
+}
+
+std::shared_ptr<IncrementingPrepUptakeManager> create_default_prep_manager(float age_threshold) {
+    PrepUseData data;
+    data.base_use_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
+    data.base_use_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
+    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
+    data.increment_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_LT);
+    data.increment_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_GTE);
+    data.years_to_increase = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARS_TO_INCREMENT);
+
+    bool balanced = Parameters::instance()->getStringParameter(DEFAULT_PREP_BALANCED_UNBALANCED) == BALANCED;
+    if (balanced) {
+        data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
+        data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
+    } else {
+        data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
+        data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE);
+    }
+
+    std::cout << data << std::endl;
+
+    return std::make_shared<IncrementingPrepUptakeManager>(data, age_threshold);
+}
+
+std::shared_ptr<ProportionalPrepUptakeManager> create_yor_prep_manager(float age_threshold) {
+    PrepUseData data;
+
+    data.base_use_yor = Parameters::instance()->getDoubleParameter(YOR_PREP_USE_PROP);
+    // the cessation rnd generator uses lte and gte but that's not applicable for yor, so we
+    // just make them the same.
+    data.daily_stop_prob_lt =  Parameters::instance()->getDoubleParameter(YOR_PREP_DAILY_STOP_PROB);
+    data.daily_stop_prob_gte =  Parameters::instance()->getDoubleParameter(YOR_PREP_DAILY_STOP_PROB);
+    data.alpha = Parameters::instance()->getDoubleParameter(YOR_PREP_ALPHA);
+    data.increment_yor = Parameters::instance()->getDoubleParameter(YOR_PREP_YEARLY_INCREMENT);
+    data.years_to_increase = Parameters::instance()->getDoubleParameter(YOR_PREP_YEARS_TO_INCREMENT);
+    data.yor_old_extra = Parameters::instance()->getDoubleParameter(YOR_ADDITIONAL_PREP_GTE);
+    data.yor_young_extra = Parameters::instance()->getDoubleParameter(YOR_ADDITIONAL_PREP_LT);
+
+    std::cout << data << std::endl;
+
+    return std::make_shared<ProportionalPrepUptakeManager>(data, age_threshold);
+}
+
 std::shared_ptr<PrepUptakeManager> create_prep_manager() {
 
-	PrepUseData data;
-	data.base_use_lt = Parameters::instance()->getDoubleParameter(PREP_USE_PROP_LT);
-	data.base_use_gte = Parameters::instance()->getDoubleParameter(PREP_USE_PROP_GTE);
+    float age_threshold = Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
 
-	data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_LT);
-	data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_GTE);
-
-	bool balanced = Parameters::instance()->getStringParameter(PREP_BALANCED_UNBALANCED) == BALANCED;
-
-	if (balanced) {
-		data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_LT);
-		data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(PREP_DAILY_STOP_PROB_GTE);
-	} else {
-		data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(PREP_UNBALANCED_STARTING_PROB_LT);
-		data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(PREP_UNBALANCED_STARTING_PROB_GTE);
-	}
-
-	data.increment_lt = Parameters::instance()->getDoubleParameter(PREP_YEARLY_INCREMENT_LT);
-	data.increment_gte = Parameters::instance()->getDoubleParameter(PREP_YEARLY_INCREMENT_GTE);
-	data.years_to_increase = Parameters::instance()->getDoubleParameter(PREP_YEARS_TO_INCREMENT);
-	data.alpha = Parameters::instance()->getDoubleParameter(PREP_ALPHA);
-
-	float age_threshold = Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
-	if (data.alpha >= 0) {
-	    data.y_extra = Parameters::instance()->getDoubleParameter(ADDITIONAL_PREP_LT);
-	    data.o_extra = Parameters::instance()->getDoubleParameter(ADDITIONAL_PREP_GTE);
-
-		std::cout << "proportional uptake" << std::endl;
-		return std::make_shared<ProportionalPrepUptakeManager>(data, age_threshold);
-	} else {
-		std::cout << (balanced ? "balanced " : "unbalanced ") << "incrementing uptake: " << data.daily_p_prob_lt << ", "
-				<< data.daily_p_prob_gte << std::endl;
-		return std::make_shared<IncrementingPrepUptakeManager>(data, age_threshold);
-	}
+    string prep_scheme = Parameters::instance()->getStringParameter(PREP_SCHEME);
+    if (prep_scheme == "serodiscordant") {
+        return create_sero_prep_manager(age_threshold);
+    } else if (prep_scheme == "default") {
+        return create_default_prep_manager(age_threshold);
+    } else if (prep_scheme == "young_old_ratio") {
+        return create_yor_prep_manager(age_threshold);
+    } else {
+        throw invalid_argument("Invalid PrEP Uptake scheme: '" + prep_scheme + "'");
+    }
 }
 
 ARTLagCalculator create_art_lag_calc() {
@@ -653,7 +702,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 			// don't count dead uninfected persons
 			if (!person->isInfected()) {
 				stats->currentCounts().incrementUninfected(person);
-				prep_uptake_manager->processPerson(tick, person);
+				prep_uptake_manager->processPerson(tick, person, net);
 				if (person->isOnPrep()) {
 					++stats->currentCounts().on_prep;
 				}

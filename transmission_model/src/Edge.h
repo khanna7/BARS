@@ -63,6 +63,8 @@ public:
 	int type() const {
 		return type_;
 	}
+
+	bool isSerodiscordant() const;
 };
 
 template<typename V>
@@ -77,6 +79,11 @@ Edge<V>::~Edge() {
 template<typename V>
 bool Edge<V>::useCondom(double draw) const {
 	return draw <= condom_use_prob;
+}
+
+template<typename V>
+bool Edge<V>::isSerodiscordant() const {
+    return (v1_->isInfected() && !v2_->isInfected()) || (!v1_->isInfected() && v2_->isInfected());
 }
 
 } /* namespace TransModel */

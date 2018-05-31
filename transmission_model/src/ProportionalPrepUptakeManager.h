@@ -28,7 +28,7 @@ public:
 	ProportionalPrepUptakeManager(PrepUseData& data, double age_threshold);
 	virtual ~ProportionalPrepUptakeManager();
 
-	virtual void processPerson(double tick, std::shared_ptr<Person>& person) override;
+	virtual void processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) override;
 	virtual void run(double tick) override;
 	virtual void onYearEnded() override;
 
