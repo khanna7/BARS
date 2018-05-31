@@ -183,7 +183,7 @@
 ## PrEP Uptake Scheme ##
 
 # one of defaut, young_old_ratio, serodiscordant
-prep.uptake = 'young_old_ratio'
+prep.uptake <- 'default'
 
 ## Default PrEP  parameters ###
 
