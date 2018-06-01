@@ -38,7 +38,7 @@ EdgeFilterPtr choose_edge_filter(NetworkType type) {
 }
 
 SerodiscordantPrepUptakeManager::SerodiscordantPrepUptakeManager(PrepUseData data, double age_threshold, NetworkType type) : PrepUptakeManager(data, age_threshold),
-        prob_lt(0), prob_gte(0), prob_sd(0), neg_count(0), sero_couples(0), serodiscordants(),
+        prob_lt(0), prob_gte(0), prob_sd(0), neg_count(0), serodiscordants(),
         cessation_generator(data.daily_stop_prob_sd, 1.1), edge_filter(choose_edge_filter(type)) {
 
     // (p * k) / (1 - k) where k is use and is p_prob
@@ -89,6 +89,7 @@ void SerodiscordantPrepUptakeManager::run(double tick) {
         }
     }
     neg_count = 0;
+    serodiscordants.clear();
 }
 
 void SerodiscordantPrepUptakeManager::updateSDUse(double tick, std::shared_ptr<Person>& person) {

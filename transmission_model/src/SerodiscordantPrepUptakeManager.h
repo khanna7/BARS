@@ -20,7 +20,7 @@ class SerodiscordantPrepUptakeManager : public PrepUptakeManager {
 
 private:
     double prob_lt, prob_gte, prob_sd;
-    unsigned int neg_count, sero_couples;
+    unsigned int neg_count;
     std::vector<std::shared_ptr<Person>> serodiscordants;
     GeometricDistribution cessation_generator;
     EdgeFilterPtr edge_filter;
