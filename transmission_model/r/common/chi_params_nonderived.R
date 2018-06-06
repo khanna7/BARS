@@ -199,10 +199,6 @@ prep.additional.gte <- 0
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
 prep.balanced.unbalanced <- "balanced"
-# used to determine uptake in "unbalanced" algorighm, otherwise ignored
-prep.unbalanced.starting.prob.lt <- 1 / 180
-prep.unbalanced.starting.prob.gte <- 1 / 180
-
 
 # days
 prep.decision.frequency <- 7
@@ -225,8 +221,8 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 prep.bl.use.prop.lt <- 12.7/100
 prep.bl.use.prop.gte <- 14.7/100
 prep.bl.use.prop <- (prep.bl.use.prop.lt + prep.bl.use.prop.gte)/2 #only needed for time 0
-prep.mean.days.usage.lt <- 180
-prep.mean.days.usage.gte <- 180
+prep.mean.days.usage.lt <- 365 #updated 23may2018
+prep.mean.days.usage.gte <- 365
 
 #####################
     ## Socioeconomic status
@@ -320,13 +316,13 @@ prep.mean.days.usage.gte <- 180
 # numerator here is 100 person years which we convert into days
 # critical information is that| incidence is 5-9 per 100 py
 # 28% of transmissions are linked to older BMSM
-# 50%-60% of those are likely incident from older to younger BMSM (i.e. 14% to 21%)
+# 50%-80% of those are likely incident from older to younger BMSM (i.e. 14% to 21%)
 # 14%-21% of infections are incident externally
-# 5 * 14% = 0.7 (for min)
-# 9*21% = 1.9 (for max)
+# 5 * 28% * 50% = 0.7 (for min)
+# 7 * 28% * 80% = 1.568 (for max)
 
 external.infections.per.person.day.min <- 0.7 / (100 * 365) #revised as per write up from 0.8 and 1.6 for lower and upper bounds on 09.07.17
-external.infections.per.person.day.max <- 1.9 / (100 * 365)
+external.infections.per.person.day.max <- 1.568 / (100 * 365)
 
 # factor used to calculate age related external inf probability --
 # [19, 20) year old will be "factor" time more likely to get externally

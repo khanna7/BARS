@@ -201,8 +201,8 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 prep.bl.use.prop.lt <- 12.7/100
 prep.bl.use.prop.gte <- 14.7/100
 prep.bl.use.prop <- (prep.bl.use.prop.lt + prep.bl.use.prop.gte)/2 #only needed for time 0
-prep.mean.days.usage.lt <- 180
-prep.mean.days.usage.gte <- 180
+prep.mean.days.usage.lt <- 365
+prep.mean.days.usage.gte <- 365
 
 #####################
     ## Socioeconomic status
@@ -301,19 +301,14 @@ prep.mean.days.usage.gte <- 180
 # we mult. this value by the number of uninfected persons
 # to get a probability of an infection for that day
 # numerator here is 100 person years which we convert into days
-# critical information is that: incidence is 5-9 per 100 py
+# critical information is that: incidence is 5-7 per 100 py
 # 28% of transmissions are linked to older BMSM
-# 50%-60% of those are likely incident from older to younger BMSM (i.e. 14% to 21%) 
+# 50%-80% of those are likely incident from older to younger BMSM (i.e. 14% to 21%)
 # 14%-21% of infections are incident externally
-# 5 * 14% = 0.7 (for min)
-# 9*21% = 1.9 (for max)
+# 5 * 28% * 50% = 0.7 (for min)
+# 7 * 28% * 80% = 1.568 (for max)
 
-# Note: Computed as:
-# 0.28*.5*5 = (linked inf between young and old black MSM)*(proportion of inf from older to younger)*(lower bound on incidence from YBMSM in Houston)
-# 0.28*.8*7
-# Note: target incidence rate is 5-7 per 100 person-years
-# May need to be updated
-external.infections.per.person.day.min <- 0.7 / (100 * 365) 
+external.infections.per.person.day.min <- 0.7 / (100 * 365) #revised as per write up from 0.8 and 1.6 for lower and upper bounds on 09.07.17
 external.infections.per.person.day.max <- 1.568 / (100 * 365)
 
 # factor used to calculate age related external inf probability --
