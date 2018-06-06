@@ -154,3 +154,10 @@ summarize_vl_supp <- function(filename="counts.csv"){
   
 }
 
+summarize_prep <- function(filename= "counts.csv"){
+  counts <- read.csv(filename)
+  prep_usage <- tail(counts$on_prep, 1)
+  uninfected_pop <- tail(counts$uninfected, 1)
+  prep_pct <- prep_usage / uninfected_pop
+  return(prep_pct)
+}
