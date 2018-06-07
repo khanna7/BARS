@@ -3,7 +3,7 @@
 
 set -eu
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -ne 1 ]; then
   script_name=$(basename $0)
   echo "Usage: ${script_name} EXPERIMENT_ID SCENARIO_PARAMS_FILE (e.g. ${script_name} experiment_1 5K_params.sh)"
   exit 1
