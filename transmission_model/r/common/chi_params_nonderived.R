@@ -183,7 +183,7 @@
 ## PrEP Uptake Scheme ##
 
 # one of defaut, young_old_ratio, serodiscordant
-prep.uptake <- 'default'
+prep.uptake <- 'serodiscordant'
 
 ## Default PrEP  parameters ###
 
@@ -195,9 +195,9 @@ prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)
 default.prep.mean.days.usage.lt <- 365 #updated 23may2018
 default.prep.mean.days.usage.gte <- 365
 
-default.prep.yearly.increment.lt <- 0
-default.prep.yearly.increment.gte <- 0
-default.prep.years.to.increment <- 0
+default.prep.yearly.increment.lt <- 0.04
+default.prep.yearly.increment.gte <- 0.05
+default.prep.years.to.increment <- 5
 
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
