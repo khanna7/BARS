@@ -10,14 +10,14 @@ string turbine_output = getenv("TURBINE_OUTPUT");
 
 string model_sh_file = argv("model_sh");
 
-string daily_entry_rate = "daily.entry.rate=%s" % (argv("daily.entry.rate"));
-string prep_mean_days_usage_lt = "prep.mean.days.usage.lt=%s" % (argv("prep.mean.days.usage.lt"));
-string prep_mean_days_usage_gte = "prep.mean.days.usage.gte=%s" % (argv("prep.mean.days.usage.gte"));
-string prep_bl_use_prop_lt = "prep.bl.use.prop.lt=%s" % (argv("prep.bl.use.prop.lt"));
-string prep_bl_use_prop_gte = "prep.bl.use.prop.gte=%s" % (argv("prep.bl.use.prop.gte"));
-
-string param_args = "%s,%s,%s,%s,%s" % (daily_entry_rate, prep_mean_days_usage_lt, prep_mean_days_usage_gte,
-  prep_bl_use_prop_lt, prep_bl_use_prop_gte);
+//string daily_entry_rate = "daily.entry.rate=%s" % (argv("daily.entry.rate"));
+// string prep_mean_days_usage_lt = "prep.mean.days.usage.lt=%s" % (argv("prep.mean.days.usage.lt"));
+// string prep_mean_days_usage_gte = "prep.mean.days.usage.gte=%s" % (argv("prep.mean.days.usage.gte"));
+// string prep_bl_use_prop_lt = "prep.bl.use.prop.lt=%s" % (argv("prep.bl.use.prop.lt"));
+// string prep_bl_use_prop_gte = "prep.bl.use.prop.gte=%s" % (argv("prep.bl.use.prop.gte"));
+//
+// string param_args = "%s,%s,%s,%s,%s" % (daily_entry_rate, prep_mean_days_usage_lt, prep_mean_days_usage_gte,
+//   prep_bl_use_prop_lt, prep_bl_use_prop_gte);
 
 string summarize_template = """
 source('%s/R/summarize_functions.R')
@@ -76,7 +76,7 @@ run_prerequisites() => {
     make_dir(instance) => {
       file out <instance+"out.txt">;
       file err <instance+"err.txt">;
-      string params = param_args + "," + s;
+      string params = s; //param_args + "," + s;
       (out,err) = run_model(model_sh, params, instance) => {
         string summarize_code = summarize_template % (emews_root, instance + "output/counts.csv");
         string result = R(summarize_code, "a");

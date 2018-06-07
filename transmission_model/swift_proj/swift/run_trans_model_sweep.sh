@@ -58,18 +58,19 @@ if [ -n "$MACHINE" ]; then
 fi
 
 # source the params file
-SCENARIO_PARAMS_FILE=$THIS/$2
-source $SCENARIO_PARAMS_FILE
-
-PARAM_ARGS="-daily.entry.rate=$DAILY_ENTRY_RATE -prep.mean.days.usage.lt=$PREP_MEAN_DAYS_USAGE_LT "
-PARAM_ARGS+="-prep.mean.days.usage.gte=$PREP_MEAN_DAYS_USAGE_GTE -prep.bl.use.prop.lt=$PREP_BL_USE_PROP_LT "
-PARAM_ARGS+="-prep.bl.use.prop.gte=$PREP_BL_USE_PROP_GTE -model_sh=$MODEL_SH"
+# SCENARIO_PARAMS_FILE=$THIS/$2
+# source $SCENARIO_PARAMS_FILE
+#
+PARAM_ARGS="-model_sh=$MODEL_SH "
+# PARAM_ARGS+="-daily.entry.rate=$DAILY_ENTRY_RATE -prep.mean.days.usage.lt=$PREP_MEAN_DAYS_USAGE_LT "
+# PARAM_ARGS+="-prep.mean.days.usage.gte=$PREP_MEAN_DAYS_USAGE_GTE -prep.bl.use.prop.lt=$PREP_BL_USE_PROP_LT "
+# PARAM_ARGS+="-prep.bl.use.prop.gte=$PREP_BL_USE_PROP_GTE "
 
 # Add any script variables that you want to log as
 # part of the experiment meta data to the USER_VARS array,
 # for example, USER_VARS=("VAR_1" "VAR_2")
-USER_VARS=("DAILY_ENTRY_RATE" "PREP_MEAN_DAYS_USAGE_LT" "PREP_MEAN_DAYS_USAGE_GTE"
-  "PREP_BL_USE_PROP_LT" "PREP_BL_USE_PROP_GTE" "SCENARIO_PARAMS_FILE")
+# USER_VARS=("DAILY_ENTRY_RATE" "PREP_MEAN_DAYS_USAGE_LT" "PREP_MEAN_DAYS_USAGE_GTE"
+#   "PREP_BL_USE_PROP_LT" "PREP_BL_USE_PROP_GTE" "SCENARIO_PARAMS_FILE")
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
 
