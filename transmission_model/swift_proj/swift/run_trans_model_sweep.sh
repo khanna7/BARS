@@ -51,7 +51,7 @@ MODEL_SH=$EMEWS_PROJECT_ROOT/scripts/trans_model.sh
 
 # set machine to your schedule type (e.g. pbs, slurm, cobalt etc.),
 # or empty for an immediate non-queued unscheduled run
-MACHINE="slurm"
+MACHINE=""
 
 if [ -n "$MACHINE" ]; then
   MACHINE="-m $MACHINE"
@@ -74,13 +74,20 @@ PARAM_ARGS="-model_sh=$MODEL_SH "
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
 
+UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/test_input_params.txt
+UPF_NAME=$( basename $UPF_DATA_FILE )
+UPF_FILE=$TURBINE_OUTPUT/$UPF_NAME
+
+echo $UPF_FILE
+
 cp $EMEWS_PROJECT_ROOT/../config/model.props $TURBINE_OUTPUT/
+cp $UPF_DATA_FILE $TURBINE_OUTPUT/
+
 
 # echo's anything following this standard out
 set -x
 
-
-swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/test_input_params.txt" $PARAM_ARGS $CMD_LINE_ARGS
+swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$UPF_FILE" $PARAM_ARGS $CMD_LINE_ARGS
 
 
 #swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/trans_model_sweep.swift -f="$EMEWS_PROJECT_ROOT/data/upf_Morris_1_seeds1to10.txt" -model_sh=$MODEL_SH $CMD_LINE_ARGS
