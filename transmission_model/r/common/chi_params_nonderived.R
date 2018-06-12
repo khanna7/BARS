@@ -203,6 +203,10 @@ prep.balanced.unbalanced <- "balanced"
 # days
 prep.decision.frequency <- 7
 
+# prep initiation rate (needs to be decoupled from stopping rate for retention interventions)
+prep.unbalanced.starting.prob.lt <- 1 / 365
+prep.unbalanced.starting.prob.gte <- 1 / 365
+
 prep.prop.never.adherent.lt <- 0.211
 prep.prop.always.adherent.lt <- 0.619
 prep.prop.part.plus.adherent.lt <- 0.10
