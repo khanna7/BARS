@@ -15,15 +15,15 @@ namespace TransModel {
 class ViralLoadCalculator {
 
 private:
-	SharedViralLoadParameters vl_params;
-	float calculateViralLoadNoART(const InfectionParameters& infection_params);
-	float calculateViralLoadART(const InfectionParameters& infection_params);
+    SharedViralLoadParameters vl_params;
+    float calculateViralLoadNoART(const InfectionParameters& infection_params);
+    float calculateViralLoadART(const InfectionParameters& infection_params);
 
 public:
-	ViralLoadCalculator(SharedViralLoadParameters& params);
-	virtual ~ViralLoadCalculator();
+    ViralLoadCalculator(SharedViralLoadParameters& params);
+    virtual ~ViralLoadCalculator();
 
-	float calculateViralLoad(const InfectionParameters& infection_params);
+    float calculateViralLoad(const InfectionParameters& infection_params);
 };
 
 } /* namespace TransModel */

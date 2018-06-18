@@ -21,30 +21,30 @@ namespace TransModel {
  */
 class ARTScheduler : public repast::Functor {
 private:
-	float time_stamp_;
-	std::vector<PersonPtr> persons;
+    float time_stamp_;
+    std::vector<PersonPtr> persons;
 
 public:
-	ARTScheduler(float time_stamp);
-	virtual ~ARTScheduler();
-	void operator()();
+    ARTScheduler(float time_stamp);
+    virtual ~ARTScheduler();
+    void operator()();
 
-	void addPerson(PersonPtr person);
+    void addPerson(PersonPtr person);
 
-	float artAtTick() const {
-		return time_stamp_;
-	}
+    float artAtTick() const {
+        return time_stamp_;
+    }
 };
 
 class ARTPostBurninScheduler : public repast::Functor {
 private:
-	float time_stamp_;
-	PersonPtr person;
+    float time_stamp_;
+    PersonPtr person;
 
 public:
-	ARTPostBurninScheduler(float time_stamp, PersonPtr p);
-	virtual ~ARTPostBurninScheduler() {}
-	void operator()();
+    ARTPostBurninScheduler(float time_stamp, PersonPtr p);
+    virtual ~ARTPostBurninScheduler() {}
+    void operator()();
 };
 
 } /* namespace TransModel */

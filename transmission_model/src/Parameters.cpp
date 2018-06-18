@@ -234,14 +234,14 @@ const std::string EXTERNAL_INFECTION_AGE_FACTOR = "external.infections.age.facto
 Parameters* Parameters::instance_ = 0;
 
 std::ostream& operator<< (std::ostream& os, const Parameters* params) {
-	for (auto iter = params->props_.keys_begin(); iter != params->props_.keys_end(); ++iter) {
-		os << (*iter) << " : " << params->getStringParameter(*iter) << std::endl;
-	}
-	return os;
+    for (auto iter = params->props_.keys_begin(); iter != params->props_.keys_end(); ++iter) {
+        os << (*iter) << " : " << params->getStringParameter(*iter) << std::endl;
+    }
+    return os;
 }
 
 Parameters::Parameters(repast::Properties& props) :
-		props_(props)  {
+        props_(props)  {
 }
 
 Parameters::~Parameters() {
@@ -249,68 +249,68 @@ Parameters::~Parameters() {
 }
 
 void Parameters::initialize(Properties& props) {
-	if (instance_ != 0) {
-		delete instance_;
-	}
-	instance_ = new Parameters(props);
+    if (instance_ != 0) {
+        delete instance_;
+    }
+    instance_ = new Parameters(props);
 }
 
 Parameters* Parameters::instance() {
-	if (instance_ == 0)
-		throw std::domain_error("Parameters must be initialized before instance() is called");
+    if (instance_ == 0)
+        throw std::domain_error("Parameters must be initialized before instance() is called");
 
-	return instance_;
+    return instance_;
 }
 
 std::string Parameters::getStringParameter(const std::string& prop_name) const {
-	std::string val = props_.getProperty(prop_name);
-	if (val.length() == 0)
-		throw std::invalid_argument(
-				"Invalid property name '" + prop_name + "', no property found.");
-	return val;
+    std::string val = props_.getProperty(prop_name);
+    if (val.length() == 0)
+        throw std::invalid_argument(
+                "Invalid property name '" + prop_name + "', no property found.");
+    return val;
 }
 
 bool Parameters::contains(const std::string& prop_name) const {
-	return props_.contains(prop_name);
+    return props_.contains(prop_name);
 }
 
 int Parameters::getIntParameter(const std::string& prop_name) const {
-	return strToInt(getStringParameter(prop_name));
+    return strToInt(getStringParameter(prop_name));
 }
 
 float Parameters::getFloatParameter(const std::string& prop_name) const {
-	return std::stof(getStringParameter(prop_name));
+    return std::stof(getStringParameter(prop_name));
 }
 
 double Parameters::getDoubleParameter(const std::string& prop_name) const {
-	return std::stod(getStringParameter(prop_name));
+    return std::stod(getStringParameter(prop_name));
 }
 
 void Parameters::getKeys(const std::string& starts_with, std::vector<std::string>& keys) {
-	for (auto iter = props_.keys_begin(); iter != props_.keys_end(); ++iter) {
-		// std::cout << (*iter) << std::endl;
-		if (boost::starts_with(*iter, starts_with)) {
-			keys.push_back(*iter);
-		}
-	}
+    for (auto iter = props_.keys_begin(); iter != props_.keys_end(); ++iter) {
+        // std::cout << (*iter) << std::endl;
+        if (boost::starts_with(*iter, starts_with)) {
+            keys.push_back(*iter);
+        }
+    }
 }
 
 void Parameters::putParameter(const std::string& key, bool value) {
-	std::string val = value ? "true" : "false";
-	props_.putProperty(key, val);
+    std::string val = value ? "true" : "false";
+    props_.putProperty(key, val);
 }
 
 void Parameters::putParameter(const std::string& key, const std::string& value) {
-	props_.putProperty(key, value);
+    props_.putProperty(key, value);
 }
 
 void Parameters::putParameter(const std::string& key, double value) {
-	props_.putProperty(key, value);
+    props_.putProperty(key, value);
 }
 
 bool Parameters::getBooleanParameter(const std::string& prop_name) const {
-	std::string val = getStringParameter(prop_name);
-	return val == "true" || val == "TRUE";
+    std::string val = getStringParameter(prop_name);
+    return val == "true" || val == "TRUE";
 }
 
 } /* namespace mrsa */

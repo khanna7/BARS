@@ -23,9 +23,9 @@ template <typename T>
 class StatsWriterI {
 
 public:
-	StatsWriterI() {}
-	virtual ~StatsWriterI() {}
-	virtual void addOutput(const T& output) = 0;
+    StatsWriterI() {}
+    virtual ~StatsWriterI() {}
+    virtual void addOutput(const T& output) = 0;
 };
 
 // T is a struct that is accumulated by this
@@ -35,45 +35,45 @@ template <typename T>
 class StatsWriter : public StatsWriterI<T> {
 
 private:
-	FileOutput out;
-	std::vector<T> data;
-	unsigned int buffer_;
+    FileOutput out;
+    std::vector<T> data;
+    unsigned int buffer_;
 
-	void writeData();
+    void writeData();
 
 public:
-	StatsWriter(const std::string& fname, const std::string& header, unsigned int buffer);
-	virtual ~StatsWriter();
+    StatsWriter(const std::string& fname, const std::string& header, unsigned int buffer);
+    virtual ~StatsWriter();
 
-	void addOutput(const T& output) override;
+    void addOutput(const T& output) override;
 };
 
 template<typename T>
 StatsWriter<T>::StatsWriter(const std::string& fname, const std::string& header, unsigned int buffer) : StatsWriterI<T>{}, out{fname}, data{},
-	buffer_{buffer} {
-	out << header << "\n";
+    buffer_{buffer} {
+    out << header << "\n";
 }
 
 
 template<typename T>
 void StatsWriter<T>::addOutput(const T& output) {
-	data.push_back(output);
-	if (data.size() == buffer_) {
-		writeData();
-	}
+    data.push_back(output);
+    if (data.size() == buffer_) {
+        writeData();
+    }
 }
 
 template<typename T>
 void StatsWriter<T>::writeData() {
-	for (auto& item : data) {
-		item.writeTo(out);
-	}
-	data.clear();
+    for (auto& item : data) {
+        item.writeTo(out);
+    }
+    data.clear();
 }
 
 template<typename T>
 StatsWriter<T>::~StatsWriter() {
-	writeData();
+    writeData();
 }
 
 // T is a struct that is accumulated by this
@@ -83,10 +83,10 @@ template <typename T>
 class NullStatsWriter : public StatsWriterI<T> {
 
 public:
-	NullStatsWriter();
-	virtual ~NullStatsWriter() {}
+    NullStatsWriter();
+    virtual ~NullStatsWriter() {}
 
-	void addOutput(const T& output) override {}
+    void addOutput(const T& output) override {}
 };
 
 template <typename T>

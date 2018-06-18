@@ -16,16 +16,16 @@ namespace TransModel {
 class IncrementingPrepUptakeManager : public PrepUptakeManager {
 
 private:
-	double prob_lt, prob_gte;
+    double prob_lt, prob_gte;
 
 public:
-	IncrementingPrepUptakeManager(PrepUseData data, double age_threshold);
-	virtual ~IncrementingPrepUptakeManager();
+    IncrementingPrepUptakeManager(PrepUseData data, double age_threshold);
+    virtual ~IncrementingPrepUptakeManager();
 
-	virtual void processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) override;
-	virtual void run(double tick) override {}
+    virtual void processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) override;
+    virtual void run(double tick) override {}
 
-	virtual void onYearEnded() override;
+    virtual void onYearEnded() override;
 };
 
 } /* namespace TransModel */
