@@ -30,7 +30,7 @@ public:
     virtual ~SerodiscordantPrepUptakeManager();
 
     void processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) override;
-    void run(double tick) override;
+    void run(double tick, Network<Person>& net) override;
 
     void onYearEnded() override;
     void updateSDUse(double tick, std::shared_ptr<Person>& person);

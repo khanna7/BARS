@@ -62,7 +62,18 @@
    serodiscordant.prep.daily.stop.prob.lt <- 1 / serodiscordant.prep.mean.days.usage.lt
    serodiscordant.prep.daily.stop.prob.gte <- 1 / serodiscordant.prep.mean.days.usage.gte
    serodiscordant.prep.daily.stop.prob <- 1 / serodiscordant.prep.mean.days.usage
+
+   ### Eigen intervention parameters ###
    
+   eigen.prep.daily.stop.prob.lt <- 1 / eigen.prep.mean.days.usage.lt
+   eigen.prep.daily.stop.prob.gte <- 1 / eigen.prep.mean.days.usage.gte
+   eigen.prep.daily.stop.prob <- 1 / eigen.prep.mean.days.usage
+
+  ### Degree intervention parameters ###
+   
+   degree.prep.daily.stop.prob.lt <- 1 / degree.prep.mean.days.usage.lt
+   degree.prep.daily.stop.prob.gte <- 1 / degree.prep.mean.days.usage.gte
+   degree.prep.daily.stop.prob <- 1 / degree.prep.mean.days.usage
 
    #####################
    ## Transmission Parameters

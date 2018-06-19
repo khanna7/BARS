@@ -78,7 +78,7 @@ void SerodiscordantPrepUptakeManager::processPerson(double tick, std::shared_ptr
     }
 }
 
-void SerodiscordantPrepUptakeManager::run(double tick) {
+void SerodiscordantPrepUptakeManager::run(double tick, Network<Person>& net) {
     double sd_count = serodiscordants.size();
     if (sd_count > 0) {
         double p = prob_sd * (neg_count / sd_count);
@@ -98,7 +98,7 @@ void SerodiscordantPrepUptakeManager::updateSDUse(double tick, std::shared_ptr<P
     double stop_time = tick + delay;
     person->goOnPrep(tick, stop_time);
     Stats* stats = Stats::instance();
-    stats->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON_SERODISCORDANT));
+    stats->recordPREPEvent(tick, person->id(), static_cast<int>(PrepStatus::ON_INTERVENTION));
     stats->personDataRecorder()->recordPREPStart(person, tick);
     runner.scheduleEvent(stop_time, repast::Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
 }

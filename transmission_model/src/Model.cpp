@@ -34,6 +34,7 @@
 #include "ProportionalPrepUptakeManager.h"
 #include "IncrementingPrepUptakeManager.h"
 #include "SerodiscordantPrepUptakeManager.h"
+#include "NetStatPUManager.h"
 
 #include "debug_utils.h"
 
@@ -327,6 +328,43 @@ std::shared_ptr<SerodiscordantPrepUptakeManager> create_sero_prep_manager(float 
     return std::make_shared<SerodiscordantPrepUptakeManager>(data, age_threshold, find_net_type(net_type));
 }
 
+std::shared_ptr<EigenPUManager> create_eigen_prep_manager(float age_threshold) {
+    PrepUseData data;
+    data.base_use_lt = Parameters::instance()->getDoubleParameter(EIGEN_PREP_USE_PROP_LT);
+    data.base_use_gte = Parameters::instance()->getDoubleParameter(EIGEN_PREP_USE_PROP_GTE);
+
+    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB_GTE);
+    data.daily_stop_prob_netstat = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB);
+
+    data.increment_netstat = Parameters::instance()->getDoubleParameter(EIGEN_PREP_YEARLY_INCREMENT);
+    data.years_to_increase = Parameters::instance()->getDoubleParameter(EIGEN_PREP_YEARS_TO_INCREMENT);
+
+    float topn = (float)Parameters::instance()->getDoubleParameter(EIGEN_TOPN);
+
+    std::cout << data << topn << std::endl;
+    return std::make_shared<EigenPUManager>(data, age_threshold, topn);
+}
+
+std::shared_ptr<DegreePUManager> create_degree_prep_manager(float age_threshold) {
+    PrepUseData data;
+    data.base_use_lt = Parameters::instance()->getDoubleParameter(DEGREE_PREP_USE_PROP_LT);
+    data.base_use_gte = Parameters::instance()->getDoubleParameter(DEGREE_PREP_USE_PROP_GTE);
+
+    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB_GTE);
+    data.daily_stop_prob_netstat = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB);
+
+    data.increment_netstat = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARLY_INCREMENT);
+    data.years_to_increase = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARS_TO_INCREMENT);
+
+    float topn = (float)Parameters::instance()->getDoubleParameter(DEGREE_TOPN);
+
+    std::cout << data << topn << std::endl;
+    return std::make_shared<DegreePUManager>(data, age_threshold, topn);
+}
+
+
 std::shared_ptr<IncrementingPrepUptakeManager> create_default_prep_manager(float age_threshold) {
     PrepUseData data;
     data.base_use_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
@@ -381,6 +419,10 @@ std::shared_ptr<PrepUptakeManager> create_prep_manager() {
         return create_default_prep_manager(age_threshold);
     } else if (prep_scheme == "young_old_ratio") {
         return create_yor_prep_manager(age_threshold);
+    } else if (prep_scheme == "eigen") {
+        return create_eigen_prep_manager(age_threshold);
+    } else if (prep_scheme == "degree") {
+        return create_degree_prep_manager(age_threshold);
     } else {
         throw invalid_argument("Invalid PrEP Uptake scheme: '" + prep_scheme + "'");
     }
@@ -739,7 +781,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 
     stats->currentCounts().vl_supp_per_positives = inf_count == 0 ? 0 : ((double)vs_count) / inf_count;
     stats->currentCounts().vl_supp_per_diagnosis = diagnosed_count == 0 ? 0 : ((double)vs_pos_count) / diagnosed_count;
-    prep_uptake_manager->run(tick);
+    prep_uptake_manager->run(tick, net);
 }
 
 void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {

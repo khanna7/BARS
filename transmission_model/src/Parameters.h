@@ -114,6 +114,23 @@ extern const std::string SERO_PREP_YEARLY_INCREMENT;
 extern const std::string SERO_PREP_YEARS_TO_INCREMENT;
 extern const std::string SERO_NET_TYPE;
 
+extern const std::string EIGEN_PREP_USE_PROP_LT;
+extern const std::string EIGEN_PREP_USE_PROP_GTE;
+extern const std::string EIGEN_PREP_DAILY_STOP_PROB_LT;
+extern const std::string EIGEN_PREP_DAILY_STOP_PROB_GTE;
+extern const std::string EIGEN_PREP_DAILY_STOP_PROB;
+extern const std::string EIGEN_PREP_YEARLY_INCREMENT;
+extern const std::string EIGEN_PREP_YEARS_TO_INCREMENT;
+extern const std::string EIGEN_TOPN;
+
+extern const std::string DEGREE_PREP_USE_PROP_LT;
+extern const std::string DEGREE_PREP_USE_PROP_GTE;
+extern const std::string DEGREE_PREP_DAILY_STOP_PROB_LT;
+extern const std::string DEGREE_PREP_DAILY_STOP_PROB_GTE;
+extern const std::string DEGREE_PREP_DAILY_STOP_PROB;
+extern const std::string DEGREE_PREP_YEARLY_INCREMENT;
+extern const std::string DEGREE_PREP_YEARS_TO_INCREMENT;
+extern const std::string DEGREE_TOPN;
 
 extern const std::string SET_POINT_VIRAL_LOAD;
 extern const std::string SIZE_OF_TIMESTEP;

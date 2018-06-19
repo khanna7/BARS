@@ -45,7 +45,7 @@ void ProportionalPrepUptakeManager::processPerson(double tick, PersonPtr& person
     }
 }
 
-void ProportionalPrepUptakeManager::run(double tick) {
+void ProportionalPrepUptakeManager::run(double tick, Network<Person>& net) {
     int n = (int)(uninfected_count * k * stop_prob);
     double ny = young.size() * prep_data.alpha;
     double no = old.size();

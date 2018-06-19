@@ -127,6 +127,24 @@ const std::string SERO_PREP_YEARLY_INCREMENT = "serodiscordant.prep.yearly.incre
 const std::string SERO_PREP_YEARS_TO_INCREMENT = "serodiscordant.prep.years.to.increment";
 const std::string SERO_NET_TYPE = "serodiscordant.prep.network.type";
 
+const std::string EIGEN_PREP_USE_PROP_LT = "eigen.prep.bl.use.prop.lt";
+const std::string EIGEN_PREP_USE_PROP_GTE = "eigen.prep.bl.use.prop.gte";
+const std::string EIGEN_PREP_DAILY_STOP_PROB_LT = "eigen.prep.daily.stop.prob.lt";
+const std::string EIGEN_PREP_DAILY_STOP_PROB_GTE = "eigen.prep.daily.stop.prob.gte";
+const std::string EIGEN_PREP_DAILY_STOP_PROB = "eigen.prep.daily.stop.prob";
+const std::string EIGEN_PREP_YEARLY_INCREMENT = "eigen.prep.yearly.increment";
+const std::string EIGEN_PREP_YEARS_TO_INCREMENT = "eigen.prep.years.to.increment";
+const std::string EIGEN_TOPN = "eigen.prep.topn";
+
+const std::string DEGREE_PREP_USE_PROP_LT = "degree.prep.bl.use.prop.lt";
+const std::string DEGREE_PREP_USE_PROP_GTE = "degree.prep.bl.use.prop.gte";
+const std::string DEGREE_PREP_DAILY_STOP_PROB_LT = "degree.prep.daily.stop.prob.lt";
+const std::string DEGREE_PREP_DAILY_STOP_PROB_GTE = "degree.prep.daily.stop.prob.gte";
+const std::string DEGREE_PREP_DAILY_STOP_PROB = "degree.prep.daily.stop.prob";
+const std::string DEGREE_PREP_YEARLY_INCREMENT = "degree.prep.yearly.increment";
+const std::string DEGREE_PREP_YEARS_TO_INCREMENT = "degree.prep.years.to.increment";
+const std::string DEGREE_TOPN = "degree.prep.topn";
+
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
 const std::string TIME_INFECTION_TO_LATE_STAGE = "time.infection.to.late.stage";

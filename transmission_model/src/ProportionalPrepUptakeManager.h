@@ -29,7 +29,7 @@ public:
     virtual ~ProportionalPrepUptakeManager();
 
     virtual void processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) override;
-    virtual void run(double tick) override;
+    virtual void run(double tick, Network<Person>& net) override;
     virtual void onYearEnded() override;
 
 };

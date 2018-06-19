@@ -182,8 +182,8 @@
 
 ## PrEP Uptake Scheme ##
 
-# one of defaut, young_old_ratio, serodiscordant
-prep.uptake <- 'serodiscordant'
+# one of default, young_old_ratio, serodiscordant, eigen, or degree
+prep.uptake <- 'default'
 
 ## Default PrEP  parameters ###
 
@@ -241,6 +241,37 @@ serodiscordant.prep.yearly.increment <- 0.04
 serodiscordant.prep.years.to.increment <- 5
 
 ## End Serodiscordant Parameters ##
+
+## Eigen PrEP Uptake Parameters ###
+
+eigen.prep.bl.use.prop.lt <- 12.7/100
+eigen.prep.bl.use.prop.gte <- 14.7/100
+eigen.prep.mean.days.usage.lt <- 365 #updated 23may2018
+eigen.prep.mean.days.usage.gte <- 365
+eigen.prep.mean.days.usage <- 365
+
+eigen.prep.yearly.increment <- 0.04
+eigen.prep.years.to.increment <- 5
+# apply the intervention to the top N fraction of
+# persons ranked by eigen centrality
+eigen.prep.topn = 0.10
+## End Eigen Parameters ##
+
+## Degree PrEP Uptake Parameters ###
+
+degree.prep.bl.use.prop.lt <- 12.7/100
+degree.prep.bl.use.prop.gte <- 14.7/100
+degree.prep.mean.days.usage.lt <- 365 #updated 23may2018
+degree.prep.mean.days.usage.gte <- 365
+degree.prep.mean.days.usage <- 365
+
+degree.prep.yearly.increment <- 0.04
+degree.prep.years.to.increment <- 5
+# apply the intervention to the top N fraction of
+# persons ranked by degree centrality
+degree.prep.topn = 0.10
+
+## End Degree Parameters ##
 
 # days
 prep.decision.frequency <- 7
