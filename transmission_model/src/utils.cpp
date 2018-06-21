@@ -64,12 +64,21 @@ void param_string_to_R_vars(const std::string& param_string, Parameters* params,
     map<string, double> props;
     map<string, string> string_props;
     parse_parameters(props, string_props, param_string);
+    Rcpp::Environment env;
     for (auto item : props) {
+        // check if variable exists in env. If not,
+        // then might be derived param being overriden
+        if (!env.exists(item.first)) {
+            throw std::invalid_argument("WARNING: " + item.first + " is not a non-derived parameter but is being set from the command line.");
+        }
         (*R)[item.first] = item.second;
     }
 
     for (auto item : string_props) {
         //std::cout << item.first << ": " << item.second << std::endl;
+        if (!env.exists(item.first)) {
+            throw std::invalid_argument("WARNING: " + item.first + " is not a non-derived parameter but is being set from the command line.");
+        }
         (*R)[item.first] = item.second;
         //params->putParameter(item.first, item.second);
     }

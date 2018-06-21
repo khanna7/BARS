@@ -22,28 +22,28 @@ enum class Result {POSITIVE, NEGATIVE, NO_TEST};
 class Diagnoser {
 
 private:
-	float detection_window_;
-	double last_test_at_;
-	unsigned int test_count_;
-	double test_prob;
+    float detection_window_;
+    double last_test_at_;
+    unsigned int test_count_;
+    double test_prob;
 
 public:
-	Diagnoser(float detection_window, unsigned int test_count, double daily_proability);
-	Diagnoser(float detection_window, double daily_proability);
+    Diagnoser(float detection_window, unsigned int test_count, double daily_proability);
+    Diagnoser(float detection_window, double daily_proability);
 
-	Result test(double tick, const InfectionParameters& inf_params);
+    Result test(double tick, const InfectionParameters& inf_params);
 
-	unsigned int testCount() const;
+    unsigned int testCount() const;
 
-	double lastTestAt() const;
+    double lastTestAt() const;
 
-	double testingProbability() const {
-		return test_prob;
-	}
+    double testingProbability() const {
+        return test_prob;
+    }
 
-	void setTestingProbability(double prob) {
-		test_prob = prob;
-	}
+    void setTestingProbability(double prob) {
+        test_prob = prob;
+    }
 
 };
 

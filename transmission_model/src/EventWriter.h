@@ -18,36 +18,36 @@ namespace TransModel {
 
 struct Event {
 
-	double tick;
-	int person_id;
-	float time_of_infection;
-	float time_of_art_init;
-	const char* event_type;
+    double tick;
+    int person_id;
+    float time_of_infection;
+    float time_of_art_init;
+    const char* event_type;
 
 };
 
 class EventWriter {
 
 private:
-	static EventWriter* instance_;
+    static EventWriter* instance_;
 
-	H5::H5File* file;
-	H5::DataSet* dataset;
-	H5::CompType event_type;
-	unsigned int buffer_size_;
-	std::vector<Event> events;
-	hsize_t offset;
+    H5::H5File* file;
+    H5::DataSet* dataset;
+    H5::CompType event_type;
+    unsigned int buffer_size_;
+    std::vector<Event> events;
+    hsize_t offset;
 
-	void writeEvents();
+    void writeEvents();
 
-	EventWriter(const std::string& fname, unsigned int buffer_size);
+    EventWriter(const std::string& fname, unsigned int buffer_size);
 
 public:
-	~EventWriter();
-	static void initialize(const std::string& file_name, unsigned int buffer_size);
-	static EventWriter* instance();
+    ~EventWriter();
+    static void initialize(const std::string& file_name, unsigned int buffer_size);
+    static EventWriter* instance();
 
-	void addEvent(double t, const PersonPtr& person, const std::string & event);
+    void addEvent(double t, const PersonPtr& person, const std::string & event);
 
 };
 

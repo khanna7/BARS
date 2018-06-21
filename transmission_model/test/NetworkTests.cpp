@@ -11,6 +11,7 @@
 #include "Network.h"
 #include "network_utils.h"
 #include "StatsBuilder.h"
+#include "NetworkStats.h"
 
 using namespace TransModel;
 using namespace Rcpp;
@@ -70,12 +71,13 @@ protected:
 		builder.testingEventWriter("null");
 		builder.prepEventWriter("null");
 		builder.artEventWriter("null");
-		builder.createStatsSingleton(0);
+		builder.createStatsSingleton(0, 0);
 	}
 
 	virtual ~NetworkTests() {
 	}
 };
+
 
 TEST_F(NetworkTests, TestAdds) {
 	Network<Agent> net(false);
@@ -390,6 +392,95 @@ TEST_F(NetworkTests, TestRemovesByVertexIds) {
 
 }
 
+TEST_F(NetworkTests, TestStats) {
+	Network<Agent> net(false);
+
+	AgentPtr one = std::make_shared<Agent>(1, 1);
+	AgentPtr two = std::make_shared<Agent>(2, 1);
+	AgentPtr three = std::make_shared<Agent>(3, 1);
+	AgentPtr four = std::make_shared<Agent>(4, 1);
+	AgentPtr five = std::make_shared<Agent>(5, 1);
+	AgentPtr six = std::make_shared<Agent>(6, 1);
+
+	net.addVertex(one);
+	net.addVertex(two);
+	net.addVertex(three);
+	net.addVertex(four);
+	net.addVertex(five);
+	net.addVertex(six);
+
+	net.addEdge(three, four);
+	net.addEdge(three, five);
+	net.addEdge(two, one);
+	net.addEdge(six, three);
+	net.addEdge(one, three);
+
+	NetworkStats<Agent> stats(net);
+	std::vector<std::pair<AgentPtr, long>> results;
+	stats.degree(results);
+
+	std::map<int, long> expected{{1, 2}, {2, 1}, {3, 4}, {4, 1}, {5, 1}, {6, 1}};
+	ASSERT_EQ(results.size(), expected.size());
+
+	for (auto& p : results) {
+		int id = p.first->id(); 
+		long degree = p.second;
+		ASSERT_EQ(degree, expected.at(id));
+	}
+
+	results.clear();
+	stats.degree(results, 3);
+	ASSERT_EQ(results.size(), 3);
+
+	int i = 0;
+	for (auto& p : results) {
+		int id = p.first->id(); 
+		long degree = p.second;
+		if (i == 0) {
+			ASSERT_EQ(id, 3);
+			ASSERT_EQ(degree, 4);
+		} else if (i == 1) {
+			ASSERT_EQ(id, 1);
+			ASSERT_EQ(degree, 2);
+		} else {
+			ASSERT_EQ(degree, 1);
+		};
+		++i;
+	}
+
+	std::vector<std::pair<AgentPtr, double>> eigens;
+	stats.eigenCentrality(eigens);
+	ASSERT_EQ(net.vertexCount(), eigens.size());
+	
+	eigens.clear();
+	stats.eigenCentrality(eigens, 3);
+
+	i = 0;
+	double e = 10;
+	for (auto& p : results) {
+		int id = p.first->id(); 
+		double eigen = p.second;
+		if (i == 0) {
+			ASSERT_EQ(id, 3);
+			ASSERT_LE(eigen, e);
+		} else if (i == 1) {
+			ASSERT_EQ(id, 1);
+			ASSERT_LE(eigen, e);
+		} else {
+			ASSERT_EQ(eigen, 1);
+			ASSERT_LE(eigen, e);
+		};
+		++i;
+		e = eigen;
+	}
+
+	// for (auto& p : eigens) {
+	// 	int id = p.first->id(); 
+	// 	double e = p.second;
+	// 	std::cout << id << " " << e << std::endl;
+	// }
+}
+
 struct AgentCreator {
 
 	int id;
@@ -397,7 +488,7 @@ struct AgentCreator {
 			id(0) {
 	}
 
-	VertexPtr<Agent> operator()(List& val, double tick) {
+	VertexPtr<Agent> operator()(List& val, int model_tick, double tick) {
 		int age = as<int>(val["age"]);
 		return std::make_shared<Agent>(id++, age);
 	}
@@ -521,7 +612,6 @@ TEST_F(NetworkTests, InitNetTest) {
 	eiter = net.edgesBegin();
 	advance(eiter, 3);
 	edge = (*eiter);
-	std::cout << edge->id() << std::endl;
 	ASSERT_EQ(0, edge->v1()->id());
 	ASSERT_EQ(3, edge->v2()->id());
 	ASSERT_EQ(2, edge->type());

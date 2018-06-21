@@ -26,22 +26,22 @@ namespace TransModel {
 class PersonCreator {
 
 private:
-	int id;
-	std::shared_ptr<TransmissionRunner> trans_runner_;
-	TestingConfigurator testing_configurator;
-	PREPAdherenceConfigurator prep_adherence_configurator;
-	double detection_window_;
-	ARTLagCalculator art_lag_calculator;
+    int id;
+    std::shared_ptr<TransmissionRunner> trans_runner_;
+    TestingConfigurator testing_configurator;
+    PREPAdherenceConfigurator prep_adherence_configurator;
+    double detection_window_;
+    ARTLagCalculator art_lag_calculator;
 
 public:
-	PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window,  ARTLagCalculator);
-	virtual ~PersonCreator();
+    PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window,  ARTLagCalculator);
+    virtual ~PersonCreator();
 
-	PersonPtr operator()(Rcpp::List& val, double model_tick, double burnin_last_tick);
-	PersonPtr operator()(double tick, float age);
+    PersonPtr operator()(Rcpp::List& val, double model_tick, double burnin_last_tick);
+    PersonPtr operator()(double tick, float age);
 
-	void updateTesting(std::shared_ptr<Person> p, double size_of_timestep);
-	void updatePREPAdherence(std::shared_ptr<Person> p);
+    void updateTesting(std::shared_ptr<Person> p, double size_of_timestep);
+    void updatePREPAdherence(std::shared_ptr<Person> p);
 };
 
 } /* namespace TransModel */

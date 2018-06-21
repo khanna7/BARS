@@ -35,6 +35,8 @@ const int VERSATILE = 0;
 const int INSERTIVE = 1;
 const int RECEPTIVE = 2;
 
+enum class NetworkType {MAIN, CASUAL, ALL};
+
 }
 
 

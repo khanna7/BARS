@@ -17,17 +17,17 @@ namespace TransModel {
 
 std::string unique_file_name(const std::string& fname) {
 
-	fs::path filepath(fname);
-	int i = 1;
-	std::string stem = filepath.stem().string();
-	while (fs::exists(filepath)) {    // This will increment i until it hits a unique name
-		i++;
-		std::stringstream ss;
-		ss << stem << "_" << i << filepath.extension().string();
-		fs::path newName(filepath.parent_path() / ss.str());
-		filepath = newName;
-	}
-	return filepath.string();
+    fs::path filepath(fname);
+    int i = 1;
+    std::string stem = filepath.stem().string();
+    while (fs::exists(filepath)) {    // This will increment i until it hits a unique name
+        i++;
+        std::stringstream ss;
+        ss << stem << "_" << i << filepath.extension().string();
+        fs::path newName(filepath.parent_path() / ss.str());
+        filepath = newName;
+    }
+    return filepath.string();
 }
 
 }

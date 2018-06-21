@@ -19,14 +19,14 @@ namespace TransModel {
 
 class DayRangeBin {
 public:
-	DayRangeBin(double min, double max);
-	~DayRangeBin();
+    DayRangeBin(double min, double max);
+    ~DayRangeBin();
 
-	double calculateLag(float size_of_timestep);
+    double calculateLag(float size_of_timestep);
 private:
 
 
-	GeometricDistribution gen;
+    GeometricDistribution gen;
 };
 
 /**
@@ -34,33 +34,33 @@ private:
  */
 class DayRangeCalculator {
 private:
-	friend class DayRangeCalculatorCreator;
+    friend class DayRangeCalculatorCreator;
 
-	ProbDist<std::shared_ptr<DayRangeBin>> dist;
-	DayRangeCalculator(ProbDist<std::shared_ptr<DayRangeBin>> prob_dist);
+    ProbDist<std::shared_ptr<DayRangeBin>> dist;
+    DayRangeCalculator(ProbDist<std::shared_ptr<DayRangeBin>> prob_dist);
 
 public:
-	virtual ~DayRangeCalculator();
+    virtual ~DayRangeCalculator();
 
-	double calculateLag(float size_of_timestep);
+    double calculateLag(float size_of_timestep);
 };
 
 class DayRangeCalculatorCreator {
 
 private:
-	ProbDistCreator<std::shared_ptr<DayRangeBin>> pd_creator;
+    ProbDistCreator<std::shared_ptr<DayRangeBin>> pd_creator;
 
 public:
-	DayRangeCalculatorCreator();
-	virtual ~DayRangeCalculatorCreator();
+    DayRangeCalculatorCreator();
+    virtual ~DayRangeCalculatorCreator();
 
-	void addBin(const std::string& bin_definition);
+    void addBin(const std::string& bin_definition);
 
-	std::shared_ptr<DayRangeCalculator> createCalculator();
+    std::shared_ptr<DayRangeCalculator> createCalculator();
 
-	void clear() {
-		pd_creator.clear();
-	}
+    void clear() {
+        pd_creator.clear();
+    }
 };
 
 } /* namespace TransModel */

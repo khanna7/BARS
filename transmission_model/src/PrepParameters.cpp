@@ -10,19 +10,19 @@
 namespace TransModel {
 
 PrepParameters::PrepParameters(PrepStatus status, double start_time, double stop_time) : status_(status), start_time_(start_time),
-		stop_time_(stop_time), adherence(0, AdherenceCategory::NA) {
+        stop_time_(stop_time), adherence(0, AdherenceCategory::NA) {
 }
 
 PrepParameters::PrepParameters(PrepStatus status, double start_time, double stop_time, AdherenceData& data) : status_(status), start_time_(start_time),
-		stop_time_(stop_time), adherence(data) {
+        stop_time_(stop_time), adherence(data) {
 }
 
 PrepParameters::~PrepParameters() {}
 
 void PrepParameters::on(double start_time, double stop_time) {
-		status_ = PrepStatus::ON;
-		start_time_ = start_time;
-		stop_time_ = stop_time;
-	}
+        status_ = PrepStatus::ON;
+        start_time_ = start_time;
+        stop_time_ = stop_time;
+    }
 
 } /* namespace TransModel */

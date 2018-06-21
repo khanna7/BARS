@@ -18,14 +18,14 @@ namespace TransModel {
 class PrepCessationEvent : public repast::Functor {
 
 private:
-	PersonPtr person_;
-	double timestamp_;
+    PersonPtr person_;
+    double timestamp_;
 
 public:
-	PrepCessationEvent(std::shared_ptr<Person> person, double timestamp);
-	virtual ~PrepCessationEvent();
+    PrepCessationEvent(std::shared_ptr<Person> person, double timestamp);
+    virtual ~PrepCessationEvent();
 
-	void operator()();
+    void operator()();
 };
 
 } /* namespace TransModel */

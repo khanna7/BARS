@@ -13,7 +13,7 @@
 
 namespace TransModel {
 
-	void write_edges(Network<Person>& net, const std::string fname);
+    void write_edges(Network<Person>& net, const std::string fname);
 
 }
 
