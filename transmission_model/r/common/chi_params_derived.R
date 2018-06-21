@@ -45,10 +45,6 @@
    prep.daily.stop.prob.gte <- 1/prep.mean.days.usage.gte
    prep.daily.stop.prob <- mean(c(prep.daily.stop.prob.lt, prep.daily.stop.prob.gte))
 
-   # used to determine uptake in "unbalanced" algorighm, otherwise ignored
-   prep.unbalanced.starting.prob.lt <- 1 / prep.mean.days.usage.lt
-   prep.unbalanced.starting.prob.gte <- 1 / prep.mean.days.usage.gte
-
    #####################
    ## Transmission Parameters
    ## relationship between viral load and chronic infectivity (hughes et al.)
