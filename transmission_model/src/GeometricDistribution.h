@@ -15,14 +15,14 @@ namespace TransModel {
 class GeometricDistribution {
 
 private:
-	boost::random::geometric_distribution<> dist;
-	double increment_;
+    boost::random::geometric_distribution<> dist;
+    double increment_;
 
 public:
-	GeometricDistribution(double p, double increment = 0);
-	virtual ~GeometricDistribution();
+    GeometricDistribution(double p, double increment = 0);
+    virtual ~GeometricDistribution();
 
-	double next();
+    double next();
 };
 
 } /* namespace TransModel */

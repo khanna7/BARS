@@ -32,6 +32,10 @@ BOOST_INCLUDE = /usr/local/include
 BOOST_LIB_DIR = /usr/local/lib
 BOOST_LIBS = -lboost_mpi-mt -lboost_system-mt -lboost_filesystem-mt -boost_serialization-mt -lboost_timer-mt
 
+IGRAPH_INCLUDE = $(SFW)/igraph-0.7.1/include
+IGRAPH_LIB_DIR = $(SFW)/igraph-0.7.1/lib
+IGRAPH_LIB = igraph
+
 NET_CDF_LIB_DIR = 
 NET_CDF_LIB =
 
@@ -42,6 +46,7 @@ INCLUDES += -I $(REPAST_INCLUDE)
 INCLUDES += -I $(BOOST_INCLUDE)
 INCLUDES += -I $(HDF5_INCLUDE)
 INCLUDES += -I ../src
+INCLUDES += -I $(IGRAPH_INCLUDE)
 
 GTEST_HOME = /Users/nick/bin/googletest
 GTEST_LIB = $(GTEST_HOME)/libgtest.a
@@ -51,14 +56,16 @@ LIBS += -L $(R_USER_LIBS)/RInside/lib -l RInside
 LIBS += -L $(R_HOME)/lib -l R
 LIBS += -L $(REPAST_LIB_DIR) -l$(REPAST_LIB)
 LIBS += -L $(BOOST_LIB_DIR) $(BOOST_LIBS)
-LIBS += -L $(HDF5_LIB_DIR) $(HDF5_LIBS)
-LIBS += -L $(NET_CDF_LIB_DIR) -l$(NET_CDF_LIB)
+LIBS += -L $(IGRAPH_LIB_DIR) -l$(IGRAPH_LIB)
+#LIBS += -L $(HDF5_LIB_DIR) $(HDF5_LIBS)
+#LIBS += -L $(NET_CDF_LIB_DIR) -l$(NET_CDF_LIB)
 
 RPATHS += -Wl,-rpath -Wl,$(R_USER_LIBS)/RInside/lib
 RPATHS += -Wl,-rpath -Wl,$(R_HOME)/lib
 RPATHS += -Wl,-rpath -Wl,$(BOOST_LIB_DIR)
 RPATHS += -Wl,-rpath -Wl,$(REPAST_LIB_DIR)
-RPATHS += -Wl,-rpath -Wl,$(NET_CDF_LIB_DIR)
+#RPATHS += -Wl,-rpath -Wl,$(NET_CDF_LIB_DIR)
+RPATHS += -Wl,-rpath -Wl,$(IGRAPH_LIB_DIR)
 
 SRC_DIR=../src
 BUILD_DIR = ./build

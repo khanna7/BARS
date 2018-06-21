@@ -96,19 +96,54 @@ const std::string PEAK_VIRAL_LOAD = "peak.viral.load";
 const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
 const std::string PREG_MULT = "preg.mult";
 const std::string PREG_SUSC_MULT = "preg.susc.mult";
-const std::string PREP_USE_PROP_LT = "prep.bl.use.prop.lt";
-const std::string PREP_USE_PROP_GTE = "prep.bl.use.prop.gte";
-const std::string PREP_DAILY_STOP_PROB_LT = "prep.daily.stop.prob.lt";
-const std::string PREP_DAILY_STOP_PROB_GTE = "prep.daily.stop.prob.gte";
-const std::string PREP_YEARLY_INCREMENT_LT = "prep.yearly.increment.lt";
-const std::string PREP_YEARLY_INCREMENT_GTE = "prep.yearly.increment.gte";
-const std::string PREP_YEARS_TO_INCREMENT = "prep.years.to.increment";
-const std::string PREP_ALPHA = "prep.young.old.alpha";
-const std::string PREP_BALANCED_UNBALANCED = "prep.balanced.unbalanced";
-const std::string PREP_UNBALANCED_STARTING_PROB_LT = "prep.unbalanced.starting.prob.lt";
-const std::string PREP_UNBALANCED_STARTING_PROB_GTE = "prep.unbalanced.starting.prob.gte";
-const std::string ADDITIONAL_PREP_LT = "prep.additional.lt";
-const std::string ADDITIONAL_PREP_GTE = "prep.additional.gte";
+
+const std::string PREP_SCHEME = "prep.uptake";
+
+const std::string DEFAULT_PREP_USE_PROP_LT = "default.prep.bl.use.prop.lt";
+const std::string DEFAULT_PREP_USE_PROP_GTE = "default.prep.bl.use.prop.gte";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_LT = "default.prep.daily.stop.prob.lt";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_GTE = "default.prep.daily.stop.prob.gte";
+const std::string DEFAULT_PREP_YEARLY_INCREMENT_LT = "default.prep.yearly.increment.lt";
+const std::string DEFAULT_PREP_YEARLY_INCREMENT_GTE = "default.prep.yearly.increment.gte";
+const std::string DEFAULT_PREP_YEARS_TO_INCREMENT = "default.prep.years.to.increment";
+const std::string DEFAULT_PREP_BALANCED_UNBALANCED = "default.prep.balanced.unbalanced";
+const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT = "default.prep.unbalanced.starting.prob.lt";
+const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE = "default.prep.unbalanced.starting.prob.gte";
+
+const std::string YOR_PREP_ALPHA = "yor.prep.alpha";
+const std::string YOR_PREP_USE_PROP = "yor.prep.bl.use.prop";
+const std::string YOR_PREP_DAILY_STOP_PROB = "yor.prep.daily.stop.prob";
+const std::string YOR_PREP_YEARLY_INCREMENT = "yor.prep.yearly.increment";
+const std::string YOR_PREP_YEARS_TO_INCREMENT = "yor.prep.years.to.increment";
+const std::string YOR_ADDITIONAL_PREP_LT = "yor.prep.additional.lt";
+const std::string YOR_ADDITIONAL_PREP_GTE = "yor.prep.additional.gte";
+
+const std::string SERO_PREP_USE_PROP_LT = "serodiscordant.prep.bl.use.prop.lt";
+const std::string SERO_PREP_USE_PROP_GTE = "serodiscordant.prep.bl.use.prop.gte";
+const std::string SERO_PREP_DAILY_STOP_PROB_LT = "serodiscordant.prep.daily.stop.prob.lt";
+const std::string SERO_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.prep.daily.stop.prob.gte";
+const std::string SERO_PREP_DAILY_STOP_PROB = "serodiscordant.prep.daily.stop.prob";
+const std::string SERO_PREP_YEARLY_INCREMENT = "serodiscordant.prep.yearly.increment";
+const std::string SERO_PREP_YEARS_TO_INCREMENT = "serodiscordant.prep.years.to.increment";
+const std::string SERO_NET_TYPE = "serodiscordant.prep.network.type";
+
+const std::string EIGEN_PREP_USE_PROP_LT = "eigen.prep.bl.use.prop.lt";
+const std::string EIGEN_PREP_USE_PROP_GTE = "eigen.prep.bl.use.prop.gte";
+const std::string EIGEN_PREP_DAILY_STOP_PROB_LT = "eigen.prep.daily.stop.prob.lt";
+const std::string EIGEN_PREP_DAILY_STOP_PROB_GTE = "eigen.prep.daily.stop.prob.gte";
+const std::string EIGEN_PREP_DAILY_STOP_PROB = "eigen.prep.daily.stop.prob";
+const std::string EIGEN_PREP_YEARLY_INCREMENT = "eigen.prep.yearly.increment";
+const std::string EIGEN_PREP_YEARS_TO_INCREMENT = "eigen.prep.years.to.increment";
+const std::string EIGEN_TOPN = "eigen.prep.topn";
+
+const std::string DEGREE_PREP_USE_PROP_LT = "degree.prep.bl.use.prop.lt";
+const std::string DEGREE_PREP_USE_PROP_GTE = "degree.prep.bl.use.prop.gte";
+const std::string DEGREE_PREP_DAILY_STOP_PROB_LT = "degree.prep.daily.stop.prob.lt";
+const std::string DEGREE_PREP_DAILY_STOP_PROB_GTE = "degree.prep.daily.stop.prob.gte";
+const std::string DEGREE_PREP_DAILY_STOP_PROB = "degree.prep.daily.stop.prob";
+const std::string DEGREE_PREP_YEARLY_INCREMENT = "degree.prep.yearly.increment";
+const std::string DEGREE_PREP_YEARS_TO_INCREMENT = "degree.prep.years.to.increment";
+const std::string DEGREE_TOPN = "degree.prep.topn";
 
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
@@ -217,14 +252,14 @@ const std::string EXTERNAL_INFECTION_AGE_FACTOR = "external.infections.age.facto
 Parameters* Parameters::instance_ = 0;
 
 std::ostream& operator<< (std::ostream& os, const Parameters* params) {
-	for (auto iter = params->props_.keys_begin(); iter != params->props_.keys_end(); ++iter) {
-		os << (*iter) << " : " << params->getStringParameter(*iter) << std::endl;
-	}
-	return os;
+    for (auto iter = params->props_.keys_begin(); iter != params->props_.keys_end(); ++iter) {
+        os << (*iter) << " : " << params->getStringParameter(*iter) << std::endl;
+    }
+    return os;
 }
 
 Parameters::Parameters(repast::Properties& props) :
-		props_(props)  {
+        props_(props)  {
 }
 
 Parameters::~Parameters() {
@@ -232,68 +267,68 @@ Parameters::~Parameters() {
 }
 
 void Parameters::initialize(Properties& props) {
-	if (instance_ != 0) {
-		delete instance_;
-	}
-	instance_ = new Parameters(props);
+    if (instance_ != 0) {
+        delete instance_;
+    }
+    instance_ = new Parameters(props);
 }
 
 Parameters* Parameters::instance() {
-	if (instance_ == 0)
-		throw std::domain_error("Parameters must be initialized before instance() is called");
+    if (instance_ == 0)
+        throw std::domain_error("Parameters must be initialized before instance() is called");
 
-	return instance_;
+    return instance_;
 }
 
 std::string Parameters::getStringParameter(const std::string& prop_name) const {
-	std::string val = props_.getProperty(prop_name);
-	if (val.length() == 0)
-		throw std::invalid_argument(
-				"Invalid property name '" + prop_name + "', no property found.");
-	return val;
+    std::string val = props_.getProperty(prop_name);
+    if (val.length() == 0)
+        throw std::invalid_argument(
+                "Invalid property name '" + prop_name + "', no property found.");
+    return val;
 }
 
 bool Parameters::contains(const std::string& prop_name) const {
-	return props_.contains(prop_name);
+    return props_.contains(prop_name);
 }
 
 int Parameters::getIntParameter(const std::string& prop_name) const {
-	return strToInt(getStringParameter(prop_name));
+    return strToInt(getStringParameter(prop_name));
 }
 
 float Parameters::getFloatParameter(const std::string& prop_name) const {
-	return std::stof(getStringParameter(prop_name));
+    return std::stof(getStringParameter(prop_name));
 }
 
 double Parameters::getDoubleParameter(const std::string& prop_name) const {
-	return std::stod(getStringParameter(prop_name));
+    return std::stod(getStringParameter(prop_name));
 }
 
 void Parameters::getKeys(const std::string& starts_with, std::vector<std::string>& keys) {
-	for (auto iter = props_.keys_begin(); iter != props_.keys_end(); ++iter) {
-		// std::cout << (*iter) << std::endl;
-		if (boost::starts_with(*iter, starts_with)) {
-			keys.push_back(*iter);
-		}
-	}
+    for (auto iter = props_.keys_begin(); iter != props_.keys_end(); ++iter) {
+        // std::cout << (*iter) << std::endl;
+        if (boost::starts_with(*iter, starts_with)) {
+            keys.push_back(*iter);
+        }
+    }
 }
 
 void Parameters::putParameter(const std::string& key, bool value) {
-	std::string val = value ? "true" : "false";
-	props_.putProperty(key, val);
+    std::string val = value ? "true" : "false";
+    props_.putProperty(key, val);
 }
 
 void Parameters::putParameter(const std::string& key, const std::string& value) {
-	props_.putProperty(key, value);
+    props_.putProperty(key, value);
 }
 
 void Parameters::putParameter(const std::string& key, double value) {
-	props_.putProperty(key, value);
+    props_.putProperty(key, value);
 }
 
 bool Parameters::getBooleanParameter(const std::string& prop_name) const {
-	std::string val = getStringParameter(prop_name);
-	return val == "true" || val == "TRUE";
+    std::string val = getStringParameter(prop_name);
+    return val == "true" || val == "TRUE";
 }
 
 } /* namespace mrsa */

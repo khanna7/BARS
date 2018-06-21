@@ -8,6 +8,8 @@
 #ifndef SRC_EVENTS_H_
 #define SRC_EVENTS_H_
 
+#include <string>
+
 namespace TransModel {
 
 const std::string ON_ART = "on.art";

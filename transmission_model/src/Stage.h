@@ -16,49 +16,49 @@ namespace TransModel {
 class Stage {
 
 protected:
-	float baseline_infectivity_, multiplier_;
-	float vl_inc;
+    float baseline_infectivity_, multiplier_;
+    float vl_inc;
 
 private:
-	Range<float> range_;
+    Range<float> range_;
 
 public:
-	Stage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
-	virtual ~Stage();
+    Stage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
+    virtual ~Stage();
 
-	/**
-	 * Gets whether or not in this Stage given the time since
-	 * infection.
-	 */
-	bool in(float time_since_infection);
-	virtual float calculateInfectivity(const InfectionParameters& params) = 0;
+    /**
+     * Gets whether or not in this Stage given the time since
+     * infection.
+     */
+    bool in(float time_since_infection);
+    virtual float calculateInfectivity(const InfectionParameters& params) = 0;
 };
 
 class AcuteStage: public Stage {
 
 public:
-	AcuteStage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
-	virtual ~AcuteStage();
+    AcuteStage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
+    virtual ~AcuteStage();
 
-	virtual float calculateInfectivity(const InfectionParameters& params) override;
+    virtual float calculateInfectivity(const InfectionParameters& params) override;
 };
 
 class ChronicStage: public Stage {
 
 public:
-	ChronicStage(float baseline_infectivity, const Range<float>& range, float viral_load_increment);
-	virtual ~ChronicStage();
+    ChronicStage(float baseline_infectivity, const Range<float>& range, float viral_load_increment);
+    virtual ~ChronicStage();
 
-	virtual float calculateInfectivity(const InfectionParameters& params) override;
+    virtual float calculateInfectivity(const InfectionParameters& params) override;
 };
 
 class LateStage: public Stage {
 
 public:
-	LateStage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
-	virtual ~LateStage();
+    LateStage(float baseline_infectivity, float multiplier, const Range<float>& range, float viral_load_increment);
+    virtual ~LateStage();
 
-	virtual float calculateInfectivity(const InfectionParameters& params) override;
+    virtual float calculateInfectivity(const InfectionParameters& params) override;
 };
 
 } /* namespace TransModel */

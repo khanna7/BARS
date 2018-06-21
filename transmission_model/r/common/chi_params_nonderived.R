@@ -177,28 +177,101 @@
     art.init.lag.gte.7 <- "0.047125|730-1825"
     art.init.lag.gte.8 <- "0.071125|1825-1825"
 
-    #####################
-    ## PrEP
-#gradual incrememnt of prep (for interventions)
-prep.yearly.increment.lt <- 0
-prep.yearly.increment.gte <- 0
-prep.years.to.increment <- 1
+#####################
+## PrEP
 
-# If this is >= 0 then the intervention that puts persons on prep
-# using a probability of picking a young (y) vs old (o) person by a factor of alpha
-# will be performed.
-prep.young.old.alpha <- -1
-# prep.addtional.* specifies how many more lt, gte persons to put on prep
-# the value is the fractional increment over the base rate. For example,
-# an lt value of 0.5 will add an additional amount of person on prep equal to
-# 0.5 the amount the base added. These values are only used if prep.young.old.alpha
-# is >= 0.
-prep.additional.lt <- 0
-prep.additional.gte <- 0
+## PrEP Uptake Scheme ##
+
+# one of default, young_old_ratio, serodiscordant, eigen, or degree
+prep.uptake <- 'default'
+
+## Default PrEP  parameters ###
+
+default.prep.bl.use.prop.lt <- 12.7/100
+default.prep.bl.use.prop.gte <- 14.7/100
+
+prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)/2 #only needed for time 0
+
+default.prep.mean.days.usage.lt <- 365 #updated 23may2018
+default.prep.mean.days.usage.gte <- 365
+
+default.prep.yearly.increment.lt <- 0.04
+default.prep.yearly.increment.gte <- 0.05
+default.prep.years.to.increment <- 5
 
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
-prep.balanced.unbalanced <- "balanced"
+default.prep.balanced.unbalanced <- 'balanced'
+
+## End Default Parameters ##
+
+## Young Old Ratio PrEP Uptake Parameters ##
+
+yor.prep.bl.use.prop <- 13.7/100
+yor.prep.mean.days.usage <- 365
+
+# probability of picking a young (y) vs old (o) person by a factor of alpha
+yor.prep.alpha <- 0.3
+
+yor.prep.yearly.increment <- 0.2
+yor.prep.years.to.increment <- 5
+
+# prep.addtional.* specifies how many more lt, gte persons to put on prep
+# the value is the fractional increment over the base rate. For example,
+# an lt value of 0.5 will add an additional amount of person on prep equal to
+# 0.5 the amount the base added.
+yor.prep.additional.lt <- 0.5
+yor.prep.additional.gte <- 0.4
+
+## End Young Old Ratio Parameters ##
+
+
+## Serodiscordant PrEP Uptake Parameters ###
+
+serodiscordant.prep.bl.use.prop.lt <- 12.7/100
+serodiscordant.prep.bl.use.prop.gte <- 14.7/100
+serodiscordant.prep.mean.days.usage.lt <- 365 #updated 23may2018
+serodiscordant.prep.mean.days.usage.gte <- 365
+serodiscordant.prep.mean.days.usage <- 365
+
+# one of main, casual, or all
+serodiscordant.prep.network.type <- 'main'
+
+serodiscordant.prep.yearly.increment <- 0.04
+serodiscordant.prep.years.to.increment <- 5
+
+## End Serodiscordant Parameters ##
+
+## Eigen PrEP Uptake Parameters ###
+
+eigen.prep.bl.use.prop.lt <- 12.7/100
+eigen.prep.bl.use.prop.gte <- 14.7/100
+eigen.prep.mean.days.usage.lt <- 365 #updated 23may2018
+eigen.prep.mean.days.usage.gte <- 365
+eigen.prep.mean.days.usage <- 365
+
+eigen.prep.yearly.increment <- 0.04
+eigen.prep.years.to.increment <- 5
+# apply the intervention to the top N fraction of
+# persons ranked by eigen centrality
+eigen.prep.topn = 0.10
+## End Eigen Parameters ##
+
+## Degree PrEP Uptake Parameters ###
+
+degree.prep.bl.use.prop.lt <- 12.7/100
+degree.prep.bl.use.prop.gte <- 14.7/100
+degree.prep.mean.days.usage.lt <- 365 #updated 23may2018
+degree.prep.mean.days.usage.gte <- 365
+degree.prep.mean.days.usage <- 365
+
+degree.prep.yearly.increment <- 0.04
+degree.prep.years.to.increment <- 5
+# apply the intervention to the top N fraction of
+# persons ranked by degree centrality
+degree.prep.topn = 0.10
+
+## End Degree Parameters ##
 
 # days
 prep.decision.frequency <- 7
@@ -222,11 +295,6 @@ prep.never.adherent.trans.reduction <- 0.0
 prep.partial.pos.adherent.trans.reduction <- 0.81
 prep.partial.neg.adherent.trans.reduction <- 0.31
 
-prep.bl.use.prop.lt <- 12.7/100
-prep.bl.use.prop.gte <- 14.7/100
-prep.bl.use.prop <- (prep.bl.use.prop.lt + prep.bl.use.prop.gte)/2 #only needed for time 0
-prep.mean.days.usage.lt <- 365 #updated 23may2018
-prep.mean.days.usage.gte <- 365
 
 #####################
     ## Socioeconomic status

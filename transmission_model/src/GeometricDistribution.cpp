@@ -17,7 +17,7 @@ GeometricDistribution::~GeometricDistribution() {
 }
 
 double GeometricDistribution::next() {
-	return dist(repast::Random::instance()->engine()) + increment_;
+    return dist(repast::Random::instance()->engine()) + increment_;
 }
 
 } /* namespace TransModel */

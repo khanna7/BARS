@@ -19,18 +19,18 @@ namespace TransModel {
 class ProportionalPrepUptakeManager : public PrepUptakeManager {
 
 private:
-	int uninfected_count;
-	std::vector<PersonPtr> young, old;
-	double base_use, stop_prob, k;
-	double y_extra, o_extra;
+    int uninfected_count;
+    std::vector<PersonPtr> young, old;
+    double base_use, stop_prob, k;
+    double y_extra, o_extra;
 
 public:
-	ProportionalPrepUptakeManager(PrepUseData& data, double age_threshold);
-	virtual ~ProportionalPrepUptakeManager();
+    ProportionalPrepUptakeManager(PrepUseData& data, double age_threshold);
+    virtual ~ProportionalPrepUptakeManager();
 
-	virtual void processPerson(double tick, std::shared_ptr<Person>& person) override;
-	virtual void run(double tick) override;
-	virtual void onYearEnded() override;
+    virtual void processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) override;
+    virtual void run(double tick, Network<Person>& net) override;
+    virtual void onYearEnded() override;
 
 };
 

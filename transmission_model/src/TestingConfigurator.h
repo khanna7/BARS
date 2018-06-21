@@ -20,11 +20,11 @@ namespace TransModel {
 class TestingDist {
 
 private:
-	int min_, max_;
+    int min_, max_;
 
 public:
-	TestingDist(int min, int max);
-	double next(double size_of_timestep);
+    TestingDist(int min, int max);
+    double next(double size_of_timestep);
 };
 
 
@@ -33,17 +33,17 @@ public:
  */
 class TestingConfigurator {
 private:
-	ProbDist<TestingDist> lt_dist_, gte_dist_;
-	float threshold;
-	repast::NumberGenerator* lt_gen, *gte_gen;
+    ProbDist<TestingDist> lt_dist_, gte_dist_;
+    float threshold;
+    repast::NumberGenerator* lt_gen, *gte_gen;
 
 public:
-	TestingConfigurator(ProbDist<TestingDist>& lt_dist, ProbDist<TestingDist>& gte_dist,
-			float age_threshold, float lt_non_tester_rate, float gte_non_tester_rate);
-	virtual ~TestingConfigurator();
+    TestingConfigurator(ProbDist<TestingDist>& lt_dist, ProbDist<TestingDist>& gte_dist,
+            float age_threshold, float lt_non_tester_rate, float gte_non_tester_rate);
+    virtual ~TestingConfigurator();
 
-	void configurePerson(std::shared_ptr<Person> p, double size_of_timestep);
-	void configurePerson(std::shared_ptr<Person> p, double size_of_timestep, double rnd_draw);
+    void configurePerson(std::shared_ptr<Person> p, double size_of_timestep);
+    void configurePerson(std::shared_ptr<Person> p, double size_of_timestep, double rnd_draw);
 };
 
 ProbDist<TestingDist> create_prob_dist(const std::string& key_prefix);
