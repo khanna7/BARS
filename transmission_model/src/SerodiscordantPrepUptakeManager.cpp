@@ -44,6 +44,8 @@ SerodiscordantPrepUptakeManager::SerodiscordantPrepUptakeManager(PrepUseData dat
     // (p * k) / (1 - k) where k is use and is p_prob
     prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (1 - prep_data.base_use_lt);
     prob_gte =  (prep_data.daily_p_prob_gte * prep_data.base_use_gte) / (1 - prep_data.base_use_gte);
+    //std::cout << prob_lt << ", " << prep_data.daily_p_prob_lt << "," << prep_data.base_use_lt << std::endl;
+    //std::cout << prob_gte << ", " << prep_data.daily_p_prob_gte << "," << prep_data.base_use_gte << std::endl;
     onYearEnded();
 }
 
