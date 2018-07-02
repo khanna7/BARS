@@ -203,6 +203,12 @@ default.prep.years.to.increment <- 5
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
 default.prep.balanced.unbalanced <- 'balanced'
 
+# prep initiation rate (needs to be decoupled from stopping rate for retention interventions)
+
+ # used to determine uptake in "unbalanced" algorighm, otherwise ignored (these are fixed values, so non-derived)
+   default.prep.unbalanced.starting.prob.lt <- 1 / default.prep.mean.days.usage.lt
+   deafult.prep.unbalanced.starting.prob.gte <- 1 / default.prep.mean.days.usage.gte
+
 ## End Default Parameters ##
 
 ## Young Old Ratio PrEP Uptake Parameters ##
@@ -275,10 +281,6 @@ degree.prep.topn = 0.10
 
 # days
 prep.decision.frequency <- 7
-
-# prep initiation rate (needs to be decoupled from stopping rate for retention interventions)
-prep.unbalanced.starting.prob.lt <- 1 / 365
-prep.unbalanced.starting.prob.gte <- 1 / 365
 
 prep.prop.never.adherent.lt <- 0.211
 prep.prop.always.adherent.lt <- 0.619

@@ -47,11 +47,6 @@
    default.prep.daily.stop.prob.lt <- 1/default.prep.mean.days.usage.lt
    default.prep.daily.stop.prob.gte <- 1/default.prep.mean.days.usage.gte
    default.prep.daily.stop.prob <- mean(c(default.prep.daily.stop.prob.lt, default.prep.daily.stop.prob.gte))
-
-   # used to determine uptake in "unbalanced" algorighm, otherwise ignored
-   default.prep.unbalanced.starting.prob.lt <- 1 / default.prep.mean.days.usage.lt
-   deafult.prep.unbalanced.starting.prob.gte <- 1 / default.prep.mean.days.usage.gte
-   
  
    ### Young Old Ratio PrEP intervention parameters ###
    
