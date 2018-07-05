@@ -51,7 +51,7 @@ MODEL_SH=$EMEWS_PROJECT_ROOT/scripts/trans_model.sh
 
 # set machine to your schedule type (e.g. pbs, slurm, cobalt etc.),
 # or empty for an immediate non-queued unscheduled run
-MACHINE=""
+MACHINE="slurm" #may need to be changed if we run on other (i.e. non-Midway) systems
 
 if [ -n "$MACHINE" ]; then
   MACHINE="-m $MACHINE"
