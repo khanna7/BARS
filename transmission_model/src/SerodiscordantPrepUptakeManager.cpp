@@ -39,8 +39,8 @@ EdgeFilterPtr choose_edge_filter(NetworkType type) {
 
 SerodiscordantPrepUptakeManager::SerodiscordantPrepUptakeManager(PrepUseData data, double age_threshold, NetworkType type) : PrepUptakeManager(data, age_threshold),
         pu_base(prep_data, age_threshold), extra_lt(prep_data.increment_sd_lt, prep_data.daily_stop_prob_sd_lt), 
-        extra_gte(prep_data.increment_sd_lt, prep_data.daily_stop_prob_sd_lt), serodiscordants_lt(), serodiscordants_gte(),
-        cessation_generator(data.daily_stop_prob_sd, 1.1), edge_filter(choose_edge_filter(type)) {
+        extra_gte(prep_data.increment_sd_gte, prep_data.daily_stop_prob_sd_gte), serodiscordants_lt(), serodiscordants_gte(),
+        edge_filter(choose_edge_filter(type)) {
 
     onYearEnded();
 }
@@ -95,7 +95,7 @@ void SerodiscordantPrepUptakeManager::run(double tick, PUExtra& extra, std::vect
         extra.preRun(sd_count);
         for (auto person : serodiscordants) {
             if (extra.evaluate()) {
-                updateSDUse(tick, person);
+                updateSDUse(tick, person, extra.prepDelay());
             }
         }
     }
@@ -109,9 +109,8 @@ void SerodiscordantPrepUptakeManager::run(double tick, Network<Person>& net) {
     run(tick, extra_gte, serodiscordants_gte);
 }
 
-void SerodiscordantPrepUptakeManager::updateSDUse(double tick, std::shared_ptr<Person>& person) {
+void SerodiscordantPrepUptakeManager::updateSDUse(double tick, std::shared_ptr<Person>& person, double delay) {
     repast::ScheduleRunner& runner = repast::RepastProcess::instance()->getScheduleRunner();
-    double delay = cessation_generator.next();
     double stop_time = tick + delay;
     person->goOnPrep(tick, stop_time);
     Stats* stats = Stats::instance();

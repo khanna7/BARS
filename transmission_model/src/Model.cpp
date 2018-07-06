@@ -311,17 +311,21 @@ NetworkType find_net_type(std::string type) {
 
 std::shared_ptr<SerodiscordantPrepUptakeManager> create_sero_prep_manager(float age_threshold) {
     PrepUseData data;
-    data.base_use_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_USE_PROP_LT);
-    data.base_use_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_USE_PROP_GTE);
+    // used in PUBBase as k in prob calc
+    data.base_use_lt = Parameters::instance()->getDoubleParameter(SERO_BASE_PREP_USE_PROP_LT);
+    data.base_use_gte = Parameters::instance()->getDoubleParameter(SERO_BASE_PREP_USE_PROP_GTE);
 
-    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_LT);
-    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_GTE);
+    // used in PrepUptakeManager in cessation generators
+    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(SERO_BASE_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(SERO_BASE_PREP_DAILY_STOP_PROB_GTE);
 
-    data.daily_stop_prob_sd_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB);
-    data.daily_stop_prob_sd_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB);
+    // used in PUExtras to calculate base unboosted probability
+    data.daily_stop_prob_sd_lt = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_sd_gte = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_GTE);
 
-    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_LT);
-    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_GTE);
+    // used in PUBase to calculated base probabilities
+    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(SERO_BASE_PREP_DAILY_STOP_PROB_LT);
+    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(SERO_BASE_PREP_DAILY_STOP_PROB_GTE);
 
     data.increment_sd_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT_LT);
     data.increment_sd_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT_GTE);
@@ -343,8 +347,8 @@ std::shared_ptr<EigenPUManager> create_eigen_prep_manager(float age_threshold) {
     data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB_GTE);
     data.daily_stop_prob_netstat = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB);
 
-    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_LT);
-    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_GTE);
+    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB_LT);
+    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB_GTE);
 
     data.increment_netstat = Parameters::instance()->getDoubleParameter(EIGEN_PREP_YEARLY_INCREMENT);
     data.years_to_increase = Parameters::instance()->getDoubleParameter(EIGEN_PREP_YEARS_TO_INCREMENT);
@@ -364,8 +368,8 @@ std::shared_ptr<DegreePUManager> create_degree_prep_manager(float age_threshold)
     data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB_GTE);
     data.daily_stop_prob_netstat = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB);
 
-    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_LT);
-    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_GTE);
+    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB_LT);
+    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB_GTE);
 
     data.increment_netstat = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARLY_INCREMENT);
     data.years_to_increase = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARS_TO_INCREMENT);

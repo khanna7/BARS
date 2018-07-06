@@ -14,13 +14,29 @@
 
 using namespace repast;
 
+/*
+double base_use_lt, base_use_gte, base_use_yor;
+    double daily_p_prob_lt, daily_p_prob_gte;
+    double daily_stop_prob_lt, daily_stop_prob_gte, daily_stop_prob_sd_lt, daily_stop_prob_sd_gte, daily_stop_prob_netstat;
+    double increment_lt, increment_gte, increment_sd_lt, increment_sd_gte, increment_yor, increment_netstat;
+    int years_to_increase;
+
+    double alpha;
+    double yor_old_extra, yor_young_extra;
+    */
+
 namespace TransModel {
 
 PrepUseData::PrepUseData() : base_use_lt(-9999), base_use_gte(-9999), base_use_yor(-9999),
  daily_p_prob_lt(-9999), daily_p_prob_gte(-9999),
- daily_stop_prob_lt(-9999), daily_stop_prob_gte(-9999), daily_stop_prob_sd(-9999), daily_stop_prob_netstat(-9999),
- increment_lt(-9999), increment_gte(-9999), increment_sd(-9999), increment_yor(-9999), increment_netstat(-9999),
- years_to_increase(-9999), alpha(-9999), yor_old_extra(-9999), yor_young_extra(-9999) {}
+ daily_stop_prob_lt(-9999), daily_stop_prob_gte(-9999), 
+ daily_stop_prob_sd_lt(-9999), daily_stop_prob_sd_gte(-9999),
+ daily_stop_prob_netstat(-9999),
+ increment_lt(-9999), increment_gte(-9999), 
+ increment_sd_lt(-9999), increment_sd_gte(-9999),
+ increment_yor(-9999), increment_netstat(-9999),
+ years_to_increase(-9999), alpha(-9999), 
+ yor_old_extra(-9999), yor_young_extra(-9999) {}
 
 std::ostream& operator <<(std::ostream& out, const PrepUseData& data) {
     out << "base_use_lt: " << data.base_use_lt << "\n";
@@ -30,11 +46,13 @@ std::ostream& operator <<(std::ostream& out, const PrepUseData& data) {
     out << "daily_p_prob_gte: " << data.daily_p_prob_gte << "\n";
     out << "daily_stop_prob_lt: " << data.daily_stop_prob_lt << "\n";
     out << "daily_stop_prob_gte: " << data.daily_stop_prob_gte << "\n";
-    out << "daily_stop_prob_sd: " << data.daily_stop_prob_sd << "\n";
+    out << "daily_stop_prob_sd_lt: " << data.daily_stop_prob_sd_lt << "\n";
+    out << "daily_stop_prob_sd_gte: " << data.daily_stop_prob_sd_gte << "\n";
     out << "daily_stop_prob_netstat: " << data.daily_stop_prob_netstat << "\n";
     out << "increment_lt: " << data.increment_lt << "\n";
     out << "increment_gte: " << data.increment_gte << "\n";
-    out << "increment_sd: " << data.increment_sd << "\n";
+    out << "increment_sd_lt: " << data.increment_sd_lt << "\n";
+    out << "increment_sd_gte: " << data.increment_sd_lt << "\n";
     out << "increment_yor: " << data.increment_yor << "\n";
      out << "increment_netstat: " << data.increment_netstat << "\n";
     out << "years_to_increase: " << data.years_to_increase << "\n";

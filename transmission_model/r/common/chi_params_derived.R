@@ -54,9 +54,11 @@
    
    ### Serodiscordant intervention parameters ###
    
-   serodiscordant.prep.daily.stop.prob.lt <- 1 / serodiscordant.prep.mean.days.usage.lt
-   serodiscordant.prep.daily.stop.prob.gte <- 1 / serodiscordant.prep.mean.days.usage.gte
-   serodiscordant.prep.daily.stop.prob <- 1 / serodiscordant.prep.mean.days.usage
+   serodiscordant.base.prep.daily.stop.prob.lt <- 1 / serodiscordant.base.prep.mean.days.usage.lt
+   serodiscordant.base.prep.daily.stop.prob.gte <- 1 / serodiscordant.base.prep.mean.days.usage.gte
+
+   serodiscordant.intrv.prep.daily.stop.prob.lt <- 1 / serodiscordant.intrv.prep.mean.days.usage.lt
+   serodiscordant.intrv.prep.daily.stop.prob.gte <- 1 / serodiscordant.intrv.prep.mean.days.usage.gte
 
    ### Eigen intervention parameters ###
    

@@ -105,12 +105,15 @@ extern const std::string YOR_PREP_DAILY_STOP_PROB;
 extern const std::string YOR_PREP_YEARLY_INCREMENT;
 extern const std::string YOR_PREP_YEARS_TO_INCREMENT;
 
-extern const std::string SERO_PREP_USE_PROP_LT;
-extern const std::string SERO_PREP_USE_PROP_GTE;
-extern const std::string SERO_PREP_DAILY_STOP_PROB_LT;
-extern const std::string SERO_PREP_DAILY_STOP_PROB_GTE;
-extern const std::string SERO_PREP_DAILY_STOP_PROB;
-extern const std::string SERO_PREP_YEARLY_INCREMENT;
+extern const std::string SERO_BASE_PREP_USE_PROP_LT;
+extern const std::string SERO_BASE_PREP_USE_PROP_GTE;
+extern const std::string SERO_BASE_PREP_DAILY_STOP_PROB_LT;
+extern const std::string SERO_BASE_PREP_DAILY_STOP_PROB_GTE;
+
+extern const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_LT;
+extern const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_GTE;
+extern const std::string SERO_PREP_YEARLY_INCREMENT_LT;
+extern const std::string SERO_PREP_YEARLY_INCREMENT_GTE;
 extern const std::string SERO_PREP_YEARS_TO_INCREMENT;
 extern const std::string SERO_NET_TYPE;
 

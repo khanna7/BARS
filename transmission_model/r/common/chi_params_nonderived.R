@@ -183,7 +183,7 @@
 ## PrEP Uptake Scheme ##
 
 # one of default, young_old_ratio, serodiscordant, eigen, or degree
-prep.uptake <- 'default'
+prep.uptake <- 'serodiscordant'
 
 ## Default PrEP  parameters ###
 
@@ -228,16 +228,20 @@ yor.prep.additional.gte <- 0.4
 
 ## Serodiscordant PrEP Uptake Parameters ###
 
-serodiscordant.prep.bl.use.prop.lt <- 12.7/100
-serodiscordant.prep.bl.use.prop.gte <- 14.7/100
-serodiscordant.prep.mean.days.usage.lt <- 365 #updated 23may2018
-serodiscordant.prep.mean.days.usage.gte <- 365
-serodiscordant.prep.mean.days.usage <- 365
+serodiscordant.base.prep.bl.use.prop.lt <- 12.7/100
+serodiscordant.base.prep.bl.use.prop.gte <- 14.7/100
+serodiscordant.base.prep.mean.days.usage.lt <- 365 #updated 23may2018
+serodiscordant.base.prep.mean.days.usage.gte <- 365
+
+serodiscordant.intrv.prep.mean.days.usage.lt <- 365
+serodiscordant.intrv.prep.mean.days.usage.gte <- 365
 
 # one of main, casual, or all
 serodiscordant.prep.network.type <- 'main'
 
-serodiscordant.prep.yearly.increment <- 0.04
+serodiscordant.prep.yearly.increment.lt <- 0.04
+serodiscordant.prep.yearly.increment.gte <- 0.04
+
 serodiscordant.prep.years.to.increment <- 5
 
 ## End Serodiscordant Parameters ##
