@@ -119,7 +119,7 @@ const std::string YOR_ADDITIONAL_PREP_LT = "yor.prep.additional.lt";
 const std::string YOR_ADDITIONAL_PREP_GTE = "yor.prep.additional.gte";
 
 const std::string SERO_PREP_USE_PROP_LT = "serodiscordant.prep.bl.use.prop.lt";
-const std::string SERO_PREP_USE_PROP_GTE = "serodiscordant.prep.bl.use.prop.gte";
+const std::string SERO_PREP_USE_PROP_GTE = "serodiscordantprep.bl.use.prop.gte";
 const std::string SERO_PREP_DAILY_STOP_PROB_LT = "serodiscordant.prep.daily.stop.prob.lt";
 const std::string SERO_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.prep.daily.stop.prob.gte";
 const std::string SERO_PREP_DAILY_STOP_PROB = "serodiscordant.prep.daily.stop.prob";

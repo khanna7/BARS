@@ -11,6 +11,8 @@
 #include <memory>
 
 #include "PrepUptakeManager.h"
+#include "PUBase.h"
+#include "PUExtra.h"
 
 namespace TransModel {
 
@@ -19,11 +21,15 @@ using EdgeFilterPtr = bool(*)(EdgePtr<Person>);
 class SerodiscordantPrepUptakeManager : public PrepUptakeManager {
 
 private:
-    double prob_lt, prob_gte, prob_sd;
-    unsigned int neg_count;
-    std::vector<std::shared_ptr<Person>> serodiscordants;
+    PUBase pu_base;
+    PUExtra extra_lt, extra_gte;
+    std::vector<std::shared_ptr<Person>> serodiscordants_lt, serodiscordants_gte;
     GeometricDistribution cessation_generator;
     EdgeFilterPtr edge_filter;
+
+    PUExtra& selectPUExtra(double age);
+    void run(double tick, PUExtra& extra, std::vector<std::shared_ptr<Person>>& serodiscordants);
+    std::vector<std::shared_ptr<Person>>& selectVector(double age);
 
 public:
     SerodiscordantPrepUptakeManager(PrepUseData data, double age_threshold, NetworkType type);

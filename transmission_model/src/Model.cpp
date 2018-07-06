@@ -316,12 +316,15 @@ std::shared_ptr<SerodiscordantPrepUptakeManager> create_sero_prep_manager(float 
 
     data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_LT);
     data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_GTE);
-    data.daily_stop_prob_sd = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB);
+
+    data.daily_stop_prob_sd_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB);
+    data.daily_stop_prob_sd_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB);
 
     data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_LT);
     data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_DAILY_STOP_PROB_GTE);
 
-    data.increment_sd = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT);
+    data.increment_sd_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT_LT);
+    data.increment_sd_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT_GTE);
     data.years_to_increase = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARS_TO_INCREMENT);
 
     string net_type = Parameters::instance()->getStringParameter(SERO_NET_TYPE);

@@ -19,8 +19,8 @@ struct PrepUseData {
 
     double base_use_lt, base_use_gte, base_use_yor;
     double daily_p_prob_lt, daily_p_prob_gte;
-    double daily_stop_prob_lt, daily_stop_prob_gte, daily_stop_prob_sd, daily_stop_prob_netstat;
-    double increment_lt, increment_gte, increment_sd, increment_yor, increment_netstat;
+    double daily_stop_prob_lt, daily_stop_prob_gte, daily_stop_prob_sd_lt, daily_stop_prob_sd_gte, daily_stop_prob_netstat;
+    double increment_lt, increment_gte, increment_sd_lt, increment_sd_gte, increment_yor, increment_netstat;
     int years_to_increase;
 
     double alpha;

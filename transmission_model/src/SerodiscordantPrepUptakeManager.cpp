@@ -38,14 +38,10 @@ EdgeFilterPtr choose_edge_filter(NetworkType type) {
 }
 
 SerodiscordantPrepUptakeManager::SerodiscordantPrepUptakeManager(PrepUseData data, double age_threshold, NetworkType type) : PrepUptakeManager(data, age_threshold),
-        prob_lt(0), prob_gte(0), prob_sd(0), neg_count(0), serodiscordants(),
+        pu_base(prep_data, age_threshold), extra_lt(prep_data.increment_sd_lt, prep_data.daily_stop_prob_sd_lt), 
+        extra_gte(prep_data.increment_sd_lt, prep_data.daily_stop_prob_sd_lt), serodiscordants_lt(), serodiscordants_gte(),
         cessation_generator(data.daily_stop_prob_sd, 1.1), edge_filter(choose_edge_filter(type)) {
 
-    // (p * k) / (1 - k) where k is use and is p_prob
-    prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (1 - prep_data.base_use_lt);
-    prob_gte =  (prep_data.daily_p_prob_gte * prep_data.base_use_gte) / (1 - prep_data.base_use_gte);
-    //std::cout << prob_lt << ", " << prep_data.daily_p_prob_lt << "," << prep_data.base_use_lt << std::endl;
-    //std::cout << prob_gte << ", " << prep_data.daily_p_prob_gte << "," << prep_data.base_use_gte << std::endl;
     onYearEnded();
 }
 
@@ -54,25 +50,38 @@ SerodiscordantPrepUptakeManager::~SerodiscordantPrepUptakeManager() {
 
 void SerodiscordantPrepUptakeManager::onYearEnded() {
     if (year <= prep_data.years_to_increase) {
-        double k = prep_data.increment_sd * year;
-        double p = prep_data.daily_stop_prob_sd;
-        prob_sd = (p * k) / (1 - k);
+        extra_lt.updateBaseProbability(year);
+        extra_gte.updateBaseProbability(year);
+        //double k = prep_data.increment_sd * year;
+        //double p = prep_data.daily_stop_prob_sd;
+        //prob_sd = (p * k) / (1 - k);
+        //std::cout << "prob_sd: " <<  prob_sd << ", p: " << p << ", k: " << k << ", increment_sd: " << prep_data.increment_sd << ", year: " << year << std::endl;
         ++year;
     }
 }
 
+PUExtra& SerodiscordantPrepUptakeManager::selectPUExtra(double age) {
+    return age < age_threshold_ ? extra_lt : extra_gte;
+}
+
+std::vector<std::shared_ptr<Person>>& SerodiscordantPrepUptakeManager::selectVector(double age) {
+    return age < age_threshold_ ? serodiscordants_lt : serodiscordants_gte;
+}
+
 void SerodiscordantPrepUptakeManager::processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) {
     if (!person->isOnPrep()) {
-        ++neg_count;
-        double prob = person->age() < age_threshold_ ? prob_lt : prob_gte;
-        if (repast::Random::instance()->nextDouble() <= prob) {
+        double age = person->age();
+        PUExtra& pu = selectPUExtra(age);
+        pu.incrementNegativeCount();
+        if (pu_base.evaluate(age)) {
             updateUse(tick, person);
         } else {
             std::vector<EdgePtr<Person>> edges;
             network.getEdges(person, edges);
+            std::vector<std::shared_ptr<Person>>& vec = selectVector(age);
             for (auto edge : edges) {
                 if (edge_filter(edge)) {
-                    serodiscordants.push_back(person);
+                    vec.push_back(person);
                     break;
                 }
             }
@@ -80,18 +89,24 @@ void SerodiscordantPrepUptakeManager::processPerson(double tick, std::shared_ptr
     }
 }
 
-void SerodiscordantPrepUptakeManager::run(double tick, Network<Person>& net) {
+void SerodiscordantPrepUptakeManager::run(double tick, PUExtra& extra, std::vector<std::shared_ptr<Person>>& serodiscordants) {
     double sd_count = serodiscordants.size();
     if (sd_count > 0) {
-        double p = prob_sd * (neg_count / sd_count);
+        extra.preRun(sd_count);
         for (auto person : serodiscordants) {
-            if (repast::Random::instance()->nextDouble() <= p) {
+            if (extra.evaluate()) {
                 updateSDUse(tick, person);
             }
         }
     }
-    neg_count = 0;
+    
+    extra.postRun();
     serodiscordants.clear();
+}
+
+void SerodiscordantPrepUptakeManager::run(double tick, Network<Person>& net) {
+    run(tick, extra_lt, serodiscordants_lt);
+    run(tick, extra_gte, serodiscordants_gte);
 }
 
 void SerodiscordantPrepUptakeManager::updateSDUse(double tick, std::shared_ptr<Person>& person) {

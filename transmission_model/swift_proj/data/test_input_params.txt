@@ -1,6 +1,2 @@
-global.random.seed=123,stop.at=100,non.testers.prop=0.1,run.number=10
-global.random.seed=123,stop.at=100,non.testers.prop=0.15,run.number=12
-global.random.seed=123,stop.at=100,non.testers.prop=0.2,run.number=16
-global.random.seed=123,stop.at=100,non.testers.prop=0.25,run.number=2
-global.random.seed=123,stop.at=100,non.testers.prop=0.3,run.number=1
-global.random.seed=123,stop.at=100,non.testers.prop=0.35,run.number=111
+stop.at=4000,run.number=101,global.random.seed=1,prep.uptake=serodiscordant,serodiscordant.prep.network.type=main,prep.balanced.unbalanced=unbalanced,serodiscordant.prep.bl.use.prop.lt=0.6,acute.mult=5,late.mult=1,min.chronic.infectivity.unadj=0.000922913,prop.steady.sex.acts=0.1893571,prop.casual.sex.acts=0.053,circum.mult=1,serodiscordant.prep.bl.use.prop.gte=0.6
+stop.at=4000,run.number=1,global.random.seed=1,prep.uptake=serodiscordant,serodiscordant.prep.network.type=main,prep.balanced.unbalanced=unbalanced,serodiscordant.prep.bl.use.prop.lt=0.127,acute.mult=5,late.mult=1,min.chronic.infectivity.unadj=0.000922913,prop.steady.sex.acts=0.1893571,prop.casual.sex.acts=0.053,circum.mult=1,serodiscordant.prep.bl.use.prop.gte=0.147

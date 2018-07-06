@@ -37,7 +37,9 @@ CPP_SOURCE = Person.cpp \
     PrepUptakeManager.cpp \
     ProportionalPrepUptakeManager.cpp \
     SerodiscordantPrepUptakeManager.cpp \
-    NetStatPUManager.cpp
+    NetStatPUManager.cpp \
+    PUBase.cpp \
+    PUExtra.cpp
     
 #	EventWriter.cpp \
     
