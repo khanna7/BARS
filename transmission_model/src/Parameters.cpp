@@ -123,12 +123,12 @@ const std::string SERO_BASE_PREP_USE_PROP_GTE = "serodiscordant.base.prep.bl.use
 const std::string SERO_BASE_PREP_DAILY_STOP_PROB_LT = "serodiscordant.base.prep.daily.stop.prob.lt";
 const std::string SERO_BASE_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.base.prep.daily.stop.prob.gte";
 
-const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_LT = "serodiscordant.base.prep.daily.stop.prob.lt";
-const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.base.prep.daily.stop.prob.gte";
-const std::string SERO_PREP_YEARLY_INCREMENT_LT = "serodiscordant.prep.yearly.increment.lt";
-const std::string SERO_PREP_YEARLY_INCREMENT_GTE = "serodiscordant.prep.yearly.increment.lt";
-const std::string SERO_PREP_YEARS_TO_INCREMENT = "serodiscordant.prep.years.to.increment";
-const std::string SERO_NET_TYPE = "serodiscordant.prep.network.type";
+const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_LT = "serodiscordant.intrv.prep.daily.stop.prob.lt";
+const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.intrv.prep.daily.stop.prob.gte";
+const std::string SERO_PREP_YEARLY_INCREMENT_LT = "serodiscordant.intrv.prep.yearly.increment.lt";
+const std::string SERO_PREP_YEARLY_INCREMENT_GTE = "serodiscordant.intrv.prep.yearly.increment.lt";
+const std::string SERO_PREP_YEARS_TO_INCREMENT = "serodiscordant.intrv.prep.years.to.increment";
+const std::string SERO_NET_TYPE = "serodiscordant.intrv.prep.network.type";
 
 const std::string EIGEN_PREP_USE_PROP_LT = "eigen.prep.bl.use.prop.lt";
 const std::string EIGEN_PREP_USE_PROP_GTE = "eigen.prep.bl.use.prop.gte";

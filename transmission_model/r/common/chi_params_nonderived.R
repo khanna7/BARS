@@ -237,12 +237,12 @@ serodiscordant.intrv.prep.mean.days.usage.lt <- 365
 serodiscordant.intrv.prep.mean.days.usage.gte <- 365
 
 # one of main, casual, or all
-serodiscordant.prep.network.type <- 'main'
+serodiscordant.intrv.prep.network.type <- 'main'
 
-serodiscordant.prep.yearly.increment.lt <- 0.04
-serodiscordant.prep.yearly.increment.gte <- 0.04
+serodiscordant.intrv.prep.yearly.increment.lt <- 0.04
+serodiscordant.intrv.prep.yearly.increment.gte <- 0.04
 
-serodiscordant.prep.years.to.increment <- 5
+serodiscordant.intrv.prep.years.to.increment <- 5
 
 ## End Serodiscordant Parameters ##
 
