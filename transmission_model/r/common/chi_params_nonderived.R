@@ -85,7 +85,7 @@
   ## (time of infection)
 
   ## (cd4 decline)
-  cd4.at.infection.male <- 518 #cells/mm3
+  cd4.at.infection.male <- uninfected.cd4.level  #needs to be the same as `uninfected.cd4.level`
   untreated.cd4.daily.decline <- 0.14 # (for men and women)
 
    ## healthy level of CD4: sample from some distribution, or should it be the same for all uninfected men?
@@ -202,10 +202,6 @@ default.prep.years.to.increment <- 5
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
 default.prep.balanced.unbalanced <- 'balanced'
-
-# prep initiation rate (needs to be decoupled from stopping rate for retention interventions)
-default.prep.unbalanced.starting.prob.lt <- 1 / 365
-default.prep.unbalanced.starting.prob.gte <- 1 / 365
 
 ## End Default Parameters ##
 
