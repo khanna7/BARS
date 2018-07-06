@@ -1,3 +1,15 @@
+6 July 2018
+
+Version 0.40
+
+* Updated serodiscordant prep intervention to allow for age based increments
+
+2 July 2018
+
+Version 0.39
+
+* Added new prep interventions: serodiscordant, eigen, and degree
+
 15 May 2018
 
 Version 0.37
