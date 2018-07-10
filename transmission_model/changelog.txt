@@ -1,3 +1,9 @@
+10 July 2018
+
+Version 0.41
+
+* Updated degree and eigen prep intervention to allow for age based increments
+
 6 July 2018
 
 Version 0.40

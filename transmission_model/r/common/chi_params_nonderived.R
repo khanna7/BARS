@@ -263,7 +263,7 @@ eigen.intrv.prep.yearly.increment.gte <- 0.04
 eigen.intrv.prep.years.to.increment <- 5
 # apply the intervention to the top N fraction of
 # persons ranked by eigen centrality
-eigen.intrv.prep.topn = 0.10
+eigen.intrv.prep.topn <- 0.10
 ## End Eigen Parameters ##
 
 ## Degree PrEP Uptake Parameters ###
@@ -283,7 +283,7 @@ degree.intrv.prep.yearly.increment.gte <- 0.04
 degree.intrv.prep.years.to.increment <- 5
 # apply the intervention to the top N fraction of
 # persons ranked by degree
-degree.intrv.prep.topn = 0.10
+degree.intrv.prep.topn <- 0.10
 
 ## End Degree Parameters ##
 

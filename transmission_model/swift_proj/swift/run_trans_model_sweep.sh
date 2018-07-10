@@ -74,13 +74,13 @@ PARAM_ARGS="-model_sh=$MODEL_SH "
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
 
-UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/test_input_params.txt
+UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/eigen.txt
 UPF_NAME=$( basename $UPF_DATA_FILE )
 UPF_FILE=$TURBINE_OUTPUT/$UPF_NAME
 
 echo $UPF_FILE
 
-cp $EMEWS_PROJECT_ROOT/../config/model.props $TURBINE_OUTPUT/model.props
+cp $EMEWS_PROJECT_ROOT/../config/model_n5000.props $TURBINE_OUTPUT/model.props
 cp $UPF_DATA_FILE $TURBINE_OUTPUT/
 
 
