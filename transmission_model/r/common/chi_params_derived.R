@@ -62,15 +62,18 @@
 
    ### Eigen intervention parameters ###
    
-   eigen.prep.daily.stop.prob.lt <- 1 / eigen.prep.mean.days.usage.lt
-   eigen.prep.daily.stop.prob.gte <- 1 / eigen.prep.mean.days.usage.gte
-   eigen.prep.daily.stop.prob <- 1 / eigen.prep.mean.days.usage
+   eigen.base.prep.daily.stop.prob.lt <- 1 / eigen.base.prep.mean.days.usage.lt
+   eigen.base.prep.daily.stop.prob.gte <- 1 / eigen.base.prep.mean.days.usage.gte
+ 
+  eigen.intrv.prep.daily.stop.prob.lt <- 1 / eigen.intrv.prep.mean.days.usage.lt
+  eigen.intrv.prep.daily.stop.prob.gte <- 1 / eigen.intrv.prep.mean.days.usage.gte
 
   ### Degree intervention parameters ###
+   degree.base.prep.daily.stop.prob.lt <- 1 / degree.base.prep.mean.days.usage.lt
+   degree.base.prep.daily.stop.prob.gte <- 1 / degree.base.prep.mean.days.usage.gte
    
-   degree.prep.daily.stop.prob.lt <- 1 / degree.prep.mean.days.usage.lt
-   degree.prep.daily.stop.prob.gte <- 1 / degree.prep.mean.days.usage.gte
-   degree.prep.daily.stop.prob <- 1 / degree.prep.mean.days.usage
+  degree.intrv.prep.daily.stop.prob.lt <- 1 / degree.intrv.prep.mean.days.usage.lt
+  degree.intrv.prep.daily.stop.prob.gte <- 1 / degree.intrv.prep.mean.days.usage.gte
 
    #####################
    ## Transmission Parameters

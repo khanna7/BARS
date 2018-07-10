@@ -31,10 +31,11 @@ PrepUseData::PrepUseData() : base_use_lt(-9999), base_use_gte(-9999), base_use_y
  daily_p_prob_lt(-9999), daily_p_prob_gte(-9999),
  daily_stop_prob_lt(-9999), daily_stop_prob_gte(-9999), 
  daily_stop_prob_sd_lt(-9999), daily_stop_prob_sd_gte(-9999),
- daily_stop_prob_netstat(-9999),
+ daily_stop_prob_net_lt(-9999), daily_stop_prob_net_gte(-9999),
  increment_lt(-9999), increment_gte(-9999), 
  increment_sd_lt(-9999), increment_sd_gte(-9999),
- increment_yor(-9999), increment_netstat(-9999),
+ increment_net_lt(-9999), increment_net_gte(-9999),
+ increment_yor(-9999), 
  years_to_increase(-9999), alpha(-9999), 
  yor_old_extra(-9999), yor_young_extra(-9999) {}
 
@@ -48,13 +49,15 @@ std::ostream& operator <<(std::ostream& out, const PrepUseData& data) {
     out << "daily_stop_prob_gte: " << data.daily_stop_prob_gte << "\n";
     out << "daily_stop_prob_sd_lt: " << data.daily_stop_prob_sd_lt << "\n";
     out << "daily_stop_prob_sd_gte: " << data.daily_stop_prob_sd_gte << "\n";
-    out << "daily_stop_prob_netstat: " << data.daily_stop_prob_netstat << "\n";
+    out << "daily_stop_prob_net_lt: " << data.daily_stop_prob_net_lt << "\n";
+    out << "daily_stop_prob_net_gte: " << data.daily_stop_prob_net_gte << "\n";
     out << "increment_lt: " << data.increment_lt << "\n";
     out << "increment_gte: " << data.increment_gte << "\n";
     out << "increment_sd_lt: " << data.increment_sd_lt << "\n";
     out << "increment_sd_gte: " << data.increment_sd_lt << "\n";
     out << "increment_yor: " << data.increment_yor << "\n";
-     out << "increment_netstat: " << data.increment_netstat << "\n";
+    out << "increment_net_lt: " << data.increment_net_lt << "\n";
+    out << "increment_net_gte: " << data.increment_net_gte << "\n";
     out << "years_to_increase: " << data.years_to_increase << "\n";
     out << "alpha: " << data.alpha << "\n";
     out << "yor_old_extra: " << data.yor_old_extra << "\n";

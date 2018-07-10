@@ -419,6 +419,9 @@ TEST_F(NetworkTests, TestStats) {
 	std::vector<std::pair<AgentPtr, long>> results;
 	stats.degree(results);
 
+	std::vector<AgentPtr> agents;
+	stats.degree(agents);
+
 	std::map<int, long> expected{{1, 2}, {2, 1}, {3, 4}, {4, 1}, {5, 1}, {6, 1}};
 	ASSERT_EQ(results.size(), expected.size());
 
@@ -428,6 +431,12 @@ TEST_F(NetworkTests, TestStats) {
 		ASSERT_EQ(degree, expected.at(id));
 	}
 
+	ASSERT_EQ(results.size(), agents.size());
+	// 3 has highest followed by 1
+	ASSERT_EQ(3, agents[0]->id());
+	ASSERT_EQ(1, agents[1]->id());
+	agents.clear();
+	
 	results.clear();
 	stats.degree(results, 3);
 	ASSERT_EQ(results.size(), 3);
@@ -451,13 +460,23 @@ TEST_F(NetworkTests, TestStats) {
 	std::vector<std::pair<AgentPtr, double>> eigens;
 	stats.eigenCentrality(eigens);
 	ASSERT_EQ(net.vertexCount(), eigens.size());
-	
+
+	// for (auto& p : eigens) {
+	// 	int id = p.first->id(); 
+	// 	double e = p.second;
+	// 	std::cout << id << " " << e << std::endl;
+	// }
+
+	stats.eigenCentrality(agents);
+	ASSERT_EQ(3, agents[0]->id());
+	ASSERT_EQ(1, agents[1]->id());
+	ASSERT_EQ(2, agents[agents.size() - 1]->id());
 	eigens.clear();
 	stats.eigenCentrality(eigens, 3);
 
 	i = 0;
 	double e = 10;
-	for (auto& p : results) {
+	for (auto& p : eigens) {
 		int id = p.first->id(); 
 		double eigen = p.second;
 		if (i == 0) {
@@ -467,18 +486,11 @@ TEST_F(NetworkTests, TestStats) {
 			ASSERT_EQ(id, 1);
 			ASSERT_LE(eigen, e);
 		} else {
-			ASSERT_EQ(eigen, 1);
 			ASSERT_LE(eigen, e);
 		};
 		++i;
 		e = eigen;
 	}
-
-	// for (auto& p : eigens) {
-	// 	int id = p.first->id(); 
-	// 	double e = p.second;
-	// 	std::cout << id << " " << e << std::endl;
-	// }
 }
 
 struct AgentCreator {

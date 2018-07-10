@@ -8,14 +8,19 @@
 
 namespace TransModel {
 
+bool gte(PersonPtr person, double threshold) {
+    return person->age() >= threshold;
+}
+
+bool lt(PersonPtr person, double threshold) {
+    return person->age() < threshold;
+}
+
 
 NetStatPUManager::NetStatPUManager(PrepUseData data, double age_threshold, float topn) : PrepUptakeManager(data, age_threshold),
-        prob_lt(0), prob_gte(0), prob_selected(0), neg_count(0), top_n(topn),
-        cessation_generator(data.daily_stop_prob_netstat, 1.1) {
+        pu_base(prep_data, age_threshold), extra_lt(prep_data.increment_net_lt, prep_data.daily_stop_prob_net_lt), 
+        extra_gte(prep_data.increment_net_gte, prep_data.daily_stop_prob_net_gte), top_n(topn) {
 
-    // (p * k) / (1 - k) where k is use and is p_prob
-    prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (1 - prep_data.base_use_lt);
-    prob_gte =  (prep_data.daily_p_prob_gte * prep_data.base_use_gte) / (1 - prep_data.base_use_gte);
     onYearEnded();
 }
 
@@ -24,39 +29,71 @@ NetStatPUManager::~NetStatPUManager() {
 
 void NetStatPUManager::onYearEnded() {
     if (year <= prep_data.years_to_increase) {
-        double k = prep_data.increment_netstat * year;
-        double p = prep_data.daily_stop_prob_netstat;
-        prob_selected = (p * k) / (1 - k);
+        extra_lt.updateBaseProbability(year);
+        extra_gte.updateBaseProbability(year);
         ++year;
     }
 }
 
+PUExtra& NetStatPUManager::selectPUExtra(double age) {
+    return age < age_threshold_ ? extra_lt : extra_gte;
+}
+
 void NetStatPUManager::processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) {
     if (!person->isOnPrep()) {
-        ++neg_count;
-        double prob = person->age() < age_threshold_ ? prob_lt : prob_gte;
-        if (repast::Random::instance()->nextDouble() <= prob) {
+        double age = person->age();
+        PUExtra& pu = selectPUExtra(age);
+        pu.incrementNegativeCount();
+        if (pu_base.evaluate(age)) {
             updateUse(tick, person);
         } 
     }
 }
 
-void NetStatPUManager::run(double tick, Network<Person>& net) {
-    float selected_count = neg_count * top_n;
+void NetStatPUManager::run(double tick, PUExtra& extra, std::vector<std::shared_ptr<Person>>& results,
+    AgeFilterPtr filter) {
+    
+    float selected_count = extra.negativeCount() * top_n;
     if (selected_count > 0) {
-        double p = prob_selected * (neg_count / selected_count);
-        //std::cout << "p: " << p <<  ", nc: " << neg_count << ", topn: " << top_n << ", selected_count: " << selected_count << std::endl;
-        NetworkStats<Person> stats(net);
-        int threshold = (int)selected_count;
-        selectForPrep(tick, threshold, p, stats);
+        unsigned int threshold = (unsigned int)selected_count;
+        extra.preRun(selected_count);
+        unsigned int count = 0;
+        for (auto& person : results) {
+            if (!person->isOnPrep() && filter(person, age_threshold_)) {
+                if(extra.evaluate()) {
+                    updatePrepUse(tick, person, extra.prepDelay());
+                }
+                ++count;
+                if (count == threshold) {
+                    break;
+                }
+            }
+        }
     }
-    neg_count = 0;
+    extra.postRun();
 }
 
-void NetStatPUManager::updatePrepUse(double tick, std::shared_ptr<Person>& person) {
+void NetStatPUManager::run(double tick, Network<Person>& net) {
+    NetworkStats<Person> stats(net);
+    std::vector<std::shared_ptr<Person>> results;
+    selectForPrep(stats, results);
+    run(tick, extra_lt, results, &lt);
+    run(tick, extra_gte, results, &gte); 
+
+    // float selected_count = neg_count * top_n;
+    // if (selected_count > 0) {
+    //     double p = prob_selected * (neg_count / selected_count);
+    //     //std::cout << "p: " << p <<  ", nc: " << neg_count << ", topn: " << top_n << ", selected_count: " << selected_count << std::endl;
+    //     NetworkStats<Person> stats(net);
+    //     int threshold = (int)selected_count;
+    //     selectForPrep(tick, threshold, p, stats);
+    // }
+    // neg_count = 0;
+}
+
+void NetStatPUManager::updatePrepUse(double tick, std::shared_ptr<Person>& person, double delay) {
     //std::cout << "on prep" << std::endl;
     repast::ScheduleRunner& runner = repast::RepastProcess::instance()->getScheduleRunner();
-    double delay = cessation_generator.next();
     double stop_time = tick + delay;
     person->goOnPrep(tick, stop_time);
     Stats* stats = Stats::instance();
@@ -69,46 +106,16 @@ EigenPUManager::EigenPUManager(PrepUseData data, double age_threshold, float top
 
 EigenPUManager::~EigenPUManager() {}
 
-void EigenPUManager::selectForPrep(double tick, unsigned int threshold, double p, NetworkStats<Person>& stats) {
-    std::vector<std::pair<std::shared_ptr<Person>, double>> results;
+void EigenPUManager::selectForPrep(NetworkStats<Person>& stats, std::vector<std::shared_ptr<Person>>& results) {
     stats.eigenCentrality(results);
-    unsigned int count = 0;
-    for (auto result : results) {
-        if (!result.first->isOnPrep()) {
-            if (repast::Random::instance()->nextDouble() <= p) {
-                updatePrepUse(tick, result.first);
-            }
-
-            ++count;
-            if (count == threshold) {
-                break;
-            }
-        }
-    }
-   // std::cout << "count: " << count << std::endl;
 }
 
 DegreePUManager::DegreePUManager(PrepUseData data, double age_threshold, float topn) : NetStatPUManager(data, age_threshold, topn) {}
 
 DegreePUManager::~DegreePUManager() {}
 
-void DegreePUManager::selectForPrep(double tick, unsigned int threshold, double p, NetworkStats<Person>& stats) {
-    std::vector<std::pair<std::shared_ptr<Person>, long>> results;
+void DegreePUManager::selectForPrep(NetworkStats<Person>& stats, std::vector<std::shared_ptr<Person>>& results) {
     stats.degree(results);
-    int count = 0;
-    for (auto result : results) {
-        if (!result.first->isOnPrep()) {
-            if (repast::Random::instance()->nextDouble() <= p) {
-                updatePrepUse(tick, result.first);
-            }
-
-            ++count;
-            if (count == threshold) {
-                break;
-            }
-        }
-    }
-    //std::cout << "count: " << count << std::endl;
 }
 
 }

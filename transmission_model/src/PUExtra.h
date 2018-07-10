@@ -23,6 +23,10 @@ public:
     void postRun();
     bool evaluate();
     double prepDelay();
+
+    unsigned int negativeCount() {
+        return neg_count;
+    }
 };
 
 }

@@ -11,21 +11,30 @@
 #include "PrepUptakeManager.h"
 #include "Person.h"
 #include "NetworkStats.h"
+#include "PUBase.h"
+#include "PUExtra.h"
 
 namespace TransModel {
+
+
+using AgeFilterPtr = bool(*)(PersonPtr, double);
 
 class NetStatPUManager : public PrepUptakeManager {
     
     private:
 
-        double prob_lt, prob_gte, prob_selected;
-        unsigned int neg_count;
+        PUBase pu_base;
+        PUExtra extra_lt, extra_gte;
         float top_n;
-        GeometricDistribution cessation_generator;
+
+        PUExtra& selectPUExtra(double age);
+        void run(double tick, PUExtra& extra, std::vector<std::shared_ptr<Person>>& results,
+            AgeFilterPtr filter);
         
     protected:
-        virtual void selectForPrep(double tick, unsigned int threshold, double p, NetworkStats<Person>& stats) = 0;
-        void updatePrepUse(double tick, std::shared_ptr<Person>& person);
+        virtual void selectForPrep(NetworkStats<Person>& stats, std::vector<std::shared_ptr<Person>>& results) = 0;
+        void updatePrepUse(double tick, std::shared_ptr<Person>& person, double delay);
+        
 
     public:
         NetStatPUManager(PrepUseData data, double age_threshold, float topn);
@@ -40,7 +49,7 @@ class EigenPUManager : public NetStatPUManager {
 
 
     protected:
-        void selectForPrep(double tick, unsigned int threshold, double p, NetworkStats<Person>& stats);
+        void selectForPrep(NetworkStats<Person>& stats, std::vector<std::shared_ptr<Person>>& results) override;
     
     public:
         EigenPUManager(PrepUseData data, double age_threshold, float topn);
@@ -52,7 +61,7 @@ class DegreePUManager : public NetStatPUManager {
 
 
     protected:
-        void selectForPrep(double tick, unsigned int threshold, double p, NetworkStats<Person>& stats);
+        void selectForPrep(NetworkStats<Person>& stats, std::vector<std::shared_ptr<Person>>& results) override;
     
     public:
         DegreePUManager(PrepUseData data, double age_threshold, float topn);

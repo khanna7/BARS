@@ -340,17 +340,25 @@ std::shared_ptr<SerodiscordantPrepUptakeManager> create_sero_prep_manager(float 
 
 std::shared_ptr<EigenPUManager> create_eigen_prep_manager(float age_threshold) {
     PrepUseData data;
-    data.base_use_lt = Parameters::instance()->getDoubleParameter(EIGEN_PREP_USE_PROP_LT);
-    data.base_use_gte = Parameters::instance()->getDoubleParameter(EIGEN_PREP_USE_PROP_GTE);
 
-    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB_LT);
-    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB_GTE);
-    data.daily_stop_prob_netstat = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB);
+    // used in PUBBase as k in prob calc
+    data.base_use_lt = Parameters::instance()->getDoubleParameter(EIGEN_BASE_PREP_USE_PROP_LT);
+    data.base_use_gte = Parameters::instance()->getDoubleParameter(EIGEN_BASE_PREP_USE_PROP_GTE);
 
-    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB_LT);
-    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(EIGEN_PREP_DAILY_STOP_PROB_GTE);
+    // used in PrepUptakeManager in cessation generators
+    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(EIGEN_BASE_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(EIGEN_BASE_PREP_DAILY_STOP_PROB_GTE);
 
-    data.increment_netstat = Parameters::instance()->getDoubleParameter(EIGEN_PREP_YEARLY_INCREMENT);
+    // used in PUExtras to calculate base unboosted probability
+    data.daily_stop_prob_net_lt = Parameters::instance()->getDoubleParameter(EIGEN_INTRV_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_net_gte = Parameters::instance()->getDoubleParameter(EIGEN_INTRV_PREP_DAILY_STOP_PROB_LT);
+
+    // used in PUBase to calculated base probabilities
+    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(EIGEN_BASE_PREP_DAILY_STOP_PROB_LT);
+    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(EIGEN_BASE_PREP_DAILY_STOP_PROB_GTE);
+
+    data.increment_net_lt = Parameters::instance()->getDoubleParameter(EIGEN_PREP_YEARLY_INCREMENT_LT);
+    data.increment_net_gte = Parameters::instance()->getDoubleParameter(EIGEN_PREP_YEARLY_INCREMENT_GTE);
     data.years_to_increase = Parameters::instance()->getDoubleParameter(EIGEN_PREP_YEARS_TO_INCREMENT);
 
     float topn = (float)Parameters::instance()->getDoubleParameter(EIGEN_TOPN);
@@ -361,17 +369,25 @@ std::shared_ptr<EigenPUManager> create_eigen_prep_manager(float age_threshold) {
 
 std::shared_ptr<DegreePUManager> create_degree_prep_manager(float age_threshold) {
     PrepUseData data;
-    data.base_use_lt = Parameters::instance()->getDoubleParameter(DEGREE_PREP_USE_PROP_LT);
-    data.base_use_gte = Parameters::instance()->getDoubleParameter(DEGREE_PREP_USE_PROP_GTE);
 
-    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB_LT);
-    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB_GTE);
-    data.daily_stop_prob_netstat = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB);
+    // used in PUBBase as k in prob calc
+    data.base_use_lt = Parameters::instance()->getDoubleParameter(DEGREE_BASE_PREP_USE_PROP_LT);
+    data.base_use_gte = Parameters::instance()->getDoubleParameter(DEGREE_BASE_PREP_USE_PROP_GTE);
 
-    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB_LT);
-    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(DEGREE_PREP_DAILY_STOP_PROB_GTE);
+    // used in PrepUptakeManager in cessation generators
+    data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(DEGREE_BASE_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(DEGREE_BASE_PREP_DAILY_STOP_PROB_GTE);
 
-    data.increment_netstat = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARLY_INCREMENT);
+    // used in PUExtras to calculate base unboosted probability
+    data.daily_stop_prob_net_lt = Parameters::instance()->getDoubleParameter(DEGREE_INTRV_PREP_DAILY_STOP_PROB_LT);
+    data.daily_stop_prob_net_gte = Parameters::instance()->getDoubleParameter(DEGREE_INTRV_PREP_DAILY_STOP_PROB_LT);
+
+    // used in PUBase to calculated base probabilities
+    data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(DEGREE_BASE_PREP_DAILY_STOP_PROB_LT);
+    data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(DEGREE_BASE_PREP_DAILY_STOP_PROB_GTE);
+
+    data.increment_net_lt = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARLY_INCREMENT_LT);
+    data.increment_net_gte = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARLY_INCREMENT_GTE);
     data.years_to_increase = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARS_TO_INCREMENT);
 
     float topn = (float)Parameters::instance()->getDoubleParameter(DEGREE_TOPN);
