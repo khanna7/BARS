@@ -34,6 +34,8 @@ private:
     Diagnoser diagnoser_;
     AdherenceData art_adherence_;
 
+    double score_;
+
 public:
     Person(int id, float age, bool circum_status, int steady_role, int casual_role,
             Diagnoser diagnoser);
@@ -106,6 +108,12 @@ public:
     const AdherenceData artAdherence() const {
         return art_adherence_;
     }
+
+    double score() const {
+        return score_;
+    }
+
+    void setScore(double s);
 
     void setViralLoad(float viral_load);
 

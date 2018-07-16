@@ -21,11 +21,12 @@ class Agent {
 
 private:
 	unsigned int id_, age_;
+	double score_;
 
 public:
 
 	Agent(unsigned int id, unsigned int age) :
-			id_(id), age_(age) {
+			id_(id), age_(age), score_(0) {
 	}
 
 	unsigned int id() const {
@@ -38,6 +39,14 @@ public:
 
 	void setAge(int age) {
 		age_ = age;
+	}
+
+	double score() const {
+		return score_;
+	}
+
+	void setScore(double score) {
+		score_ = score;
 	}
 };
 
@@ -468,6 +477,11 @@ TEST_F(NetworkTests, TestStats) {
 	// }
 
 	stats.eigenCentrality(agents);
+
+	// for (auto& p : agents) {
+	// 	std::cout << p->id() << " " << p->score() << std::endl;
+	// }
+
 	ASSERT_EQ(3, agents[0]->id());
 	ASSERT_EQ(1, agents[1]->id());
 	ASSERT_EQ(2, agents[agents.size() - 1]->id());
