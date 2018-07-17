@@ -19,7 +19,7 @@ struct Comp {
 
     std::map<unsigned int, U> scores;
     Comp();
-    bool operator()(const std::shared_ptr<T>& p1, const std::shared_ptr<T>& p2); 
+    bool operator()(const std::shared_ptr<T>& p1, const std::shared_ptr<T>& p2);
 };
 
 template <typename T, typename U>
@@ -123,8 +123,8 @@ void NetworkStats<T>::degree(std::vector<std::shared_ptr<T>>& results) {
 
 template <typename T>
 void NetworkStats<T>::eigenCentrality(std::vector<std::shared_ptr<T>>& results) {
-    boost::timer::cpu_timer timer, eigen_timer;
-    eigen_timer.start();
+    //boost::timer::cpu_timer timer, eigen_timer;
+    //eigen_timer.start();
 
     igraph_vector_t eigens;
     igraph_vector_init(&eigens, igraph_vcount(&graph));
@@ -143,20 +143,20 @@ void NetworkStats<T>::eigenCentrality(std::vector<std::shared_ptr<T>>& results) 
     }
     igraph_vector_destroy(&eigens);
 
-    eigen_timer.stop();
-    std::cout << "Eigen Time: " << eigen_timer.format(6, "%t") << std::endl;
+    //eigen_timer.stop();
+    //std::cout << "Eigen Time: " << eigen_timer.format(6, "%t") << std::endl;
 
     // shuffle in case of ties
-    eigen_timer.start();
+    //eigen_timer.start();
     std::random_shuffle(results.begin(), results.end(), &repast::uni_random);
-    eigen_timer.stop();
-    std::cout << "Shuffle Time: " << eigen_timer.format(6, "%t") << std::endl;
-    eigen_timer.start();
+    //eigen_timer.stop();
+    //std::cout << "Shuffle Time: " << eigen_timer.format(6, "%t") << std::endl;
+    //eigen_timer.start();
     std::sort(results.begin(), results.end(), person_comp<T>);
-    eigen_timer.stop();
-    std::cout << "Sort Time: " << eigen_timer.format(6, "%t") << std::endl;
-    timer.stop();
-    std::cout << "Total Eigen Time: " << timer.format(6, "%t") << std::endl;
+    //eigen_timer.stop();
+    //std::cout << "Sort Time: " << eigen_timer.format(6, "%t") << std::endl;
+    //timer.stop();
+    //std::cout << "Total Eigen Time: " << timer.format(6, "%t") << std::endl;
 }
 
 template <typename T>
@@ -211,7 +211,7 @@ void NetworkStats<T>::eigenCentrality(std::vector<std::pair<std::shared_ptr<T>, 
     }
 }
 
-template <typename T> 
+template <typename T>
 NetworkStats<T>::~NetworkStats() {
     igraph_destroy(&graph);
 }
