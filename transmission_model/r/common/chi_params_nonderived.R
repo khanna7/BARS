@@ -199,6 +199,9 @@ default.prep.yearly.increment.lt <- 0.04
 default.prep.yearly.increment.gte <- 0.05
 default.prep.years.to.increment <- 5
 
+default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the 
+default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention
+
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
 default.prep.balanced.unbalanced <- 'balanced'
