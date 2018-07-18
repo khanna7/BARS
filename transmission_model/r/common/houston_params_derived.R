@@ -18,10 +18,6 @@
      theta.diss <- log(pg/(ps2-pg)) #adjusted for death rate, Run 
    
        
-   #####################
-   ## DEMOGRAPHIC
-   given.dur.inf.by.age <- 10*365/size.of.timestep #may not be needed CHECK WITH NICK
-   #####################
    ## BIOLOGICAL
 
   ## (cd4 decline)
