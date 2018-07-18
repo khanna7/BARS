@@ -91,7 +91,7 @@
    ## healthy level of CD4: sample from some distribution, or should it be the same for all uninfected men?
 
   ## (viral load)
-  undetectable.vl <- log(50, base=10)
+  ## undetectable.vl <- log(50, base=10) ##see above needs to set to 200
 
    #####################
    ## ART
