@@ -4,30 +4,24 @@
    ## NETWORK (steady)
 
      nedges <- n*mean_deg/2 
-
+      
      ## role
      pr_versatile_main <- 1-(pr_insertive_main + pr_receptive_main)
      nodematch.inf.status <- 0.75*nedges 
-       # not really used in the model
+       #28/35 partnerships match on infection status, 
        #almost equal between susc-susc and inf-inf 
 
      ## ergm parameters for dissolution 
-     d.rate <- 1/((max.age - min.age)*365) # death rate
-     pg <- (duration - 1)/duration 	   # P(partnership doesn't dissolve) on a given day
-     ps2 <- (1 - d.rate)^2 	   	   # no one involved dies
-     theta.diss <- log(pg/(ps2-pg)) 	   #dissolution rate, adjusted for death rate
+     d.rate <- 1/((max.age - min.age)*365)
+     pg <- (duration - 1)/duration
+     ps2 <- (1 - d.rate)^2
+     theta.diss <- log(pg/(ps2-pg)) #adjusted for death rate, Run 
    
-   #####################
-   ## DEMOGRAPHIC
-   given.dur.inf.by.age <- 10*365/size.of.timestep #(not age-specific yet)  
-   # if you're infected, and don't go on treatment, will live for 10 yrs
-   ##daily.entry.rate <- 0.00008
-   
-   #####################
+       
    ## BIOLOGICAL
 
   ## (cd4 decline)
-  untreated.cd4.perstep.decline <- untreated.cd4.daily.decline*
+   untreated.cd4.perstep.decline <- untreated.cd4.daily.decline*
                                    size.of.timestep
    ## healthy level of CD4: sample from some distribution, or should it be the same for all uninfected men?
 
@@ -40,9 +34,39 @@
     
    #####################
    ## PrEP
-   prep.daily.stop.prob.lt <- 1/prep.mean.days.usage.lt
-   prep.daily.stop.prob.gte <- 1/prep.mean.days.usage.gte
-   prep.daily.stop.prob <- mean(c(prep.daily.stop.prob.lt, prep.daily.stop.prob.gte))
+   
+   ### Default PrEP intervention Parameters ###
+   
+   default.prep.daily.stop.prob.lt <- 1/default.prep.mean.days.usage.lt
+   default.prep.daily.stop.prob.gte <- 1/default.prep.mean.days.usage.gte
+   default.prep.daily.stop.prob <- mean(c(default.prep.daily.stop.prob.lt, default.prep.daily.stop.prob.gte))
+ 
+   ### Young Old Ratio PrEP intervention parameters ###
+   
+   yor.prep.daily.stop.prob <- 1 / yor.prep.mean.days.usage
+   
+   ### Serodiscordant intervention parameters ###
+   
+   serodiscordant.base.prep.daily.stop.prob.lt <- 1 / serodiscordant.base.prep.mean.days.usage.lt
+   serodiscordant.base.prep.daily.stop.prob.gte <- 1 / serodiscordant.base.prep.mean.days.usage.gte
+
+   serodiscordant.intrv.prep.daily.stop.prob.lt <- 1 / serodiscordant.intrv.prep.mean.days.usage.lt
+   serodiscordant.intrv.prep.daily.stop.prob.gte <- 1 / serodiscordant.intrv.prep.mean.days.usage.gte
+
+   ### Eigen intervention parameters ###
+   
+   eigen.base.prep.daily.stop.prob.lt <- 1 / eigen.base.prep.mean.days.usage.lt
+   eigen.base.prep.daily.stop.prob.gte <- 1 / eigen.base.prep.mean.days.usage.gte
+ 
+  eigen.intrv.prep.daily.stop.prob.lt <- 1 / eigen.intrv.prep.mean.days.usage.lt
+  eigen.intrv.prep.daily.stop.prob.gte <- 1 / eigen.intrv.prep.mean.days.usage.gte
+
+  ### Degree intervention parameters ###
+   degree.base.prep.daily.stop.prob.lt <- 1 / degree.base.prep.mean.days.usage.lt
+   degree.base.prep.daily.stop.prob.gte <- 1 / degree.base.prep.mean.days.usage.gte
+   
+  degree.intrv.prep.daily.stop.prob.lt <- 1 / degree.intrv.prep.mean.days.usage.lt
+  degree.intrv.prep.daily.stop.prob.gte <- 1 / degree.intrv.prep.mean.days.usage.gte
 
    #####################
    ## Transmission Parameters
