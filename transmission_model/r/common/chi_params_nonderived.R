@@ -195,9 +195,9 @@ prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)
 default.prep.mean.days.usage.lt <- 365 #updated 23may2018
 default.prep.mean.days.usage.gte <- 365
 
-default.prep.yearly.increment.lt <- 0.04
-default.prep.yearly.increment.gte <- 0.05
-default.prep.years.to.increment <- 5
+default.prep.yearly.increment.lt <- 0
+default.prep.yearly.increment.gte <- 0
+default.prep.years.to.increment <- 0
 
 default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the 
 default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention
