@@ -8,8 +8,10 @@ namespace TransModel {
 class PUExtra {
 
 private:
+    friend std::ostream& operator <<(std::ostream& out, const PUExtra& extra);
     double increment_, p_;
     double base_prob, boosted_prob;
+    
     unsigned int neg_count;
     GeometricDistribution cessation_generator;
 
@@ -28,6 +30,8 @@ public:
         return neg_count;
     }
 };
+
+std::ostream& operator <<(std::ostream& out, const PUExtra& extra);
 
 }
 

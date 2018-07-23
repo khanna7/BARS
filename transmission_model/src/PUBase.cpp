@@ -14,4 +14,10 @@ bool PUBase::evaluate(double age) {
     return repast::Random::instance()->nextDouble() <= prob;
 }
 
+std::ostream& operator <<(std::ostream& out, const PUBase& pu) {
+    out << "PUBase.prob_lt: " << pu.prob_lt << ", PUBase.prob_gte: " <<
+        pu.prob_gte;
+    return out;
+}
+
 }

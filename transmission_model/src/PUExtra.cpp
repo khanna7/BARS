@@ -5,7 +5,7 @@
 namespace TransModel {
 
 PUExtra::PUExtra(double increment, double p, int year) : increment_{increment}, p_{p}, base_prob{0},
-    cessation_generator(p, 1.1) 
+    boosted_prob(0), neg_count(0), cessation_generator(p, 1.1) 
 {
     updateBaseProbability(year);
 }
@@ -37,5 +37,10 @@ double PUExtra::prepDelay() {
     return cessation_generator.next();
 }
 
+std::ostream& operator <<(std::ostream& out, const PUExtra& extra) {
+    out << "base_prob: " << extra.base_prob << ", boosted_prob: " <<
+        extra.boosted_prob;
+    return out;
+}
 
 }
