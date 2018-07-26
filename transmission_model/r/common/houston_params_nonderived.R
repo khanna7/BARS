@@ -332,7 +332,7 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
     sd.casual.rarely.use.condoms <-0.0689655
     sd.casual.sometimes.use.condoms <- 0.1034483
     sd.casual.usually.use.condoms <- 0.137931
-    sd.casually.always.use.condoms <- 1 - (sd.casually.never.use.condoms + sd.casually.rarely.use.condoms + sd.casually.sometimes.use.condoms + sd.casually.usually.use.condoms)
+    sd.casual.always.use.condoms <- 1 - (sd.casual.never.use.condoms + sd.casual.rarely.use.condoms + sd.casual.sometimes.use.condoms + sd.casual.usually.use.condoms)
 
 	### probability that the partnership in the specified bucket
 	### will use a condom.
