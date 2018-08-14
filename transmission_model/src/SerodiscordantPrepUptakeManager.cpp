@@ -98,12 +98,14 @@ void SerodiscordantPrepUptakeManager::run(double tick, PUExtra& extra, std::vect
     if (sd_count > 0) {
         extra.preRun(sd_count);
         for (auto person : serodiscordants) {
-            if (extra.evaluate()) {
-                updateSDUse(tick, person, extra.prepDelay());
-                ++count;
+            // person could be in list multiple times if has multiple partners
+            if (extra.evaluate() && !person->isOnPrep()) {
+                    updateSDUse(tick, person, extra.prepDelay());
+                    ++count;
             }
         }
     }
+    
 
     (*log) << "," << count << "," << extra.boostedProb();
     

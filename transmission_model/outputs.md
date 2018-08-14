@@ -199,3 +199,15 @@ When a person goes on or off PrEP, that event is recorded in the PrEP events fil
  * 1: off of PrEP because person has been diagnosed as infected
  * 2: on PrEP
 
+### Serodiscordant Intervention Logging
+
+If the *serodiscordant.log.file* property is defined in the properties file, then the following will be recorded in the file specified by that property.
+
+* tick: the time at which the data was recorded
+* lt_sd_count: the size of the "less than" pool of serodiscordants (i.e. persons not on PrEP, in serodiscordant relationship, and less than the age threshold).
+* lt_selected: the number of "lt" serodiscordant persons selected to go on PrEP
+* lt_probability: the probability used to select the "lt" serodiscordant persons to go on PrEP
+* gte_sd_count: the size of the "greater than or equal" pool of serodiscordants (i.e. persons not on PrEP, in serodiscordant relationship, and greater than or equal to the age threshold).
+* gte_selected: the number of "gte" serodiscordant persons selected to go on PrEP
+* gte_probability: the probability used to select the "gte" serodiscordant persons to go on PrEP
+
