@@ -189,9 +189,9 @@ prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)
 default.prep.mean.days.usage.lt <- 365 #updated 23may2018 #COMMON
 default.prep.mean.days.usage.gte <- 365 #COMMON
 
-default.prep.yearly.increment.lt <- 0.04 #COMMON
-default.prep.yearly.increment.gte <- 0.05 #COMMON
-default.prep.years.to.increment <- 5 #COMMON
+default.prep.yearly.increment.lt <- 0 #COMMON
+default.prep.yearly.increment.gte <- 0 #COMMON
+default.prep.years.to.increment <- 0 #COMMON
 
 default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the #COMMON
 default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention #COMMON
@@ -332,7 +332,7 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
     sd.casual.rarely.use.condoms <-0.0689655
     sd.casual.sometimes.use.condoms <- 0.1034483
     sd.casual.usually.use.condoms <- 0.137931
-    sd.casually.always.use.condoms <- 1 - (sd.casually.never.use.condoms + sd.casually.rarely.use.condoms + sd.casually.sometimes.use.condoms + sd.casually.usually.use.condoms)
+    sd.casual.always.use.condoms <- 1 - (sd.casual.never.use.condoms + sd.casual.rarely.use.condoms + sd.casual.sometimes.use.condoms + sd.casual.usually.use.condoms)
 
 	### probability that the partnership in the specified bucket
 	### will use a condom.

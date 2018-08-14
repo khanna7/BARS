@@ -40,6 +40,7 @@
    default.prep.daily.stop.prob.lt <- 1/default.prep.mean.days.usage.lt
    default.prep.daily.stop.prob.gte <- 1/default.prep.mean.days.usage.gte
    default.prep.daily.stop.prob <- mean(c(default.prep.daily.stop.prob.lt, default.prep.daily.stop.prob.gte))
+   prep.daily.stop.prob <- default.prep.daily.stop.prob.lt #needed only for time 0
  
    ### Young Old Ratio PrEP intervention parameters ###
    
