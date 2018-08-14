@@ -26,6 +26,10 @@ public:
     bool evaluate();
     double prepDelay();
 
+    double boostedProb() const {
+        return boosted_prob;
+    }
+
     unsigned int negativeCount() {
         return neg_count;
     }

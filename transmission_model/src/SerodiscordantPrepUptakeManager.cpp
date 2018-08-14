@@ -12,6 +12,7 @@
 #include "Stats.h"
 #include "SerodiscordantPrepUptakeManager.h"
 #include "PrepCessationEvent.h"
+#include "Logger.h"
 
 namespace TransModel {
 
@@ -91,22 +92,32 @@ void SerodiscordantPrepUptakeManager::processPerson(double tick, std::shared_ptr
 
 void SerodiscordantPrepUptakeManager::run(double tick, PUExtra& extra, std::vector<std::shared_ptr<Person>>& serodiscordants) {
     double sd_count = serodiscordants.size();
+    unsigned int count = 0;
+    shared_ptr<Log> log =  Logger::instance()->getLog(SERO_LOG);
+    (*log) << sd_count;
     if (sd_count > 0) {
         extra.preRun(sd_count);
         for (auto person : serodiscordants) {
             if (extra.evaluate()) {
                 updateSDUse(tick, person, extra.prepDelay());
+                ++count;
             }
         }
     }
+
+    (*log) << "," << count << "," << extra.boostedProb();
     
     extra.postRun();
     serodiscordants.clear();
 }
 
 void SerodiscordantPrepUptakeManager::run(double tick, Network<Person>& net) {
+    shared_ptr<Log> log =  Logger::instance()->getLog(SERO_LOG);
+    (*log) << tick << ",";
     run(tick, extra_lt, serodiscordants_lt);
+    (*log) << ",";
     run(tick, extra_gte, serodiscordants_gte);
+    (*log) << "\n";
 }
 
 void SerodiscordantPrepUptakeManager::updateSDUse(double tick, std::shared_ptr<Person>& person, double delay) {

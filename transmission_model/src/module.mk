@@ -39,9 +39,8 @@ CPP_SOURCE = Person.cpp \
     SerodiscordantPrepUptakeManager.cpp \
     NetStatPUManager.cpp \
     PUBase.cpp \
-    PUExtra.cpp
-    
-#	EventWriter.cpp \
+    PUExtra.cpp \
+    Logger.cpp
     
 
 c_source += $(C_SOURCE)

@@ -42,11 +42,12 @@ PUExtra& NetStatPUManager::selectPUExtra(double age) {
 void NetStatPUManager::processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) {
     if (!person->isOnPrep()) {
         double age = person->age();
-        PUExtra& pu = selectPUExtra(age);
-        pu.incrementNegativeCount();
         if (pu_base.evaluate(age)) {
             updateUse(tick, person);
-        } 
+        } else {
+            PUExtra& pu = selectPUExtra(age);
+            pu.incrementNegativeCount();
+        }
     }
 }
 

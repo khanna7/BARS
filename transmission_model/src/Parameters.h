@@ -36,6 +36,7 @@ extern const std::string NET_SAVE_FILE;
 extern const std::string CASUAL_NET_SAVE_FILE;
 extern const std::string NET_SAVE_AT;
 extern const std::string COUNT_OVERLAPS;
+extern const std::string SERO_LOG_FILE;
 
 extern const std::string EVENT_FILE;
 extern const std::string EVENT_FILE_BUFFER_SIZE;

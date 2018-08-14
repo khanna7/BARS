@@ -35,6 +35,7 @@
 #include "IncrementingPrepUptakeManager.h"
 #include "SerodiscordantPrepUptakeManager.h"
 #include "NetStatPUManager.h"
+#include "Logger.h"
 
 #include "debug_utils.h"
 
@@ -258,6 +259,18 @@ void init_stats() {
     builder.createStatsSingleton(min_age, max_age);
 }
 
+void init_logs() {
+    std::string out_dir = Parameters::instance()->getStringParameter(OUTPUT_DIR);
+    std::string fname = get_stats_filename(SERO_LOG_FILE);
+    if (fname.size() > 0 && Parameters::instance()->getStringParameter(PREP_SCHEME) == "serodiscordant") {
+        fname = out_dir + "/" + fname;
+        Logger::instance()->addLog(SERO_LOG, fname);
+        std::shared_ptr<Log> log = Logger::instance()->getLog(SERO_LOG);
+        // add header
+        (*log) << "tick,lt_sd_count,lt_selected,lt_probability,gte_sd_count,gte_selected,gte_probability\n";
+    }
+}
+
 void init_network_save(Model* model) {
     string save_prop = Parameters::instance()->getStringParameter(NET_SAVE_AT);
     vector<string> ats;
@@ -333,7 +346,7 @@ std::shared_ptr<SerodiscordantPrepUptakeManager> create_sero_prep_manager(float 
 
     string net_type = Parameters::instance()->getStringParameter(SERO_NET_TYPE);
 
-    std::cout << data << net_type << std::endl;
+    std::cout << "prep.update=serodiscordant" << "\n" << data << net_type << std::endl;
 
     return std::make_shared<SerodiscordantPrepUptakeManager>(data, age_threshold, find_net_type(net_type));
 }
@@ -562,6 +575,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     // get initial stats
     init_stats();
     init_trans_params(trans_params);
+    init_logs();
 
     List rnet = as<List>((*R)[net_var]);
     initialize_network(rnet, net, person_creator, condom_assigner, STEADY_NETWORK_TYPE);
@@ -623,6 +637,7 @@ void Model::atEnd() {
 
     // forces stat writing via destructors
     delete Stats::instance();
+    delete Logger::instance();
 
     //write_edges(net, "./edges_at_end.csv");
 }

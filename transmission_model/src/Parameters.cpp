@@ -50,6 +50,7 @@ const std::string NET_SAVE_FILE = "net.save.file";
 const std::string CASUAL_NET_SAVE_FILE = "casual.net.save.file";
 const std::string NET_SAVE_AT = "save.network.at";
 const std::string COUNT_OVERLAPS = "count.overlaps";
+const std::string SERO_LOG_FILE = "serodiscordant.log.file";
 
 //const std::string PREP_MULT = "prep.mult";
 
