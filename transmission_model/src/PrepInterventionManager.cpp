@@ -64,8 +64,9 @@ void PrepInterventionManager::processPerson(std::shared_ptr<Person>& person, Net
 }
 
 void PrepInterventionManager::run(double tick, Network<Person>& network) {
+    std::vector<PersonPtr> persons_put_on_prep;
     for (auto& intervention : interventions) {
-        intervention->run(tick, network);
+        intervention->run(tick, persons_put_on_prep, network);
     }
 }
 

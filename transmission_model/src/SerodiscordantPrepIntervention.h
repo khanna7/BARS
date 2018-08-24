@@ -2,11 +2,11 @@
 #define SRC_SERODISCORDANTPREPINTERVENTION_H_
 
 #include <vector>
+#include <map>
 
 #include "Network.h"
 #include "Person.h"
 #include "PrepInterventionManager.h"
-
 
 namespace TransModel {
 
@@ -15,12 +15,14 @@ using EdgeFilterPtr = bool(*)(EdgePtr<Person>);
 class SerodiscordantPrepIntervention : public PrepIntervention {
 
 private:
-    std::vector<std::shared_ptr<Person>> candidates;
+    std::map<unsigned int, std::shared_ptr<Person>> candidates;
     AgeFilterPtr filter_;
     double age_threshold_, k;
     PrepUptakeData prep_data_;
     unsigned int total_negatives;
     EdgeFilterPtr edge_filter;
+
+    void trimCandidates(std::vector<PersonPtr>& put_on_prep);
 
 public:
     SerodiscordantPrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold,
@@ -29,7 +31,7 @@ public:
 
     void reset() override;
     void processPerson(std::shared_ptr<Person>& person, Network<Person>& network) override;
-    void run(double tick, Network<Person>& network) override;
+    void run(double tick, std::vector<PersonPtr>& put_on_prep, Network<Person>& network) override;
     void onYearEnded() override;
 
 };

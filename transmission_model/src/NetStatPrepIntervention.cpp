@@ -29,8 +29,9 @@ void NetStatPrepIntervention::processPerson(std::shared_ptr<Person>& person, Net
     }
 }
 
-void NetStatPrepIntervention::run(double tick, std::vector<std::shared_ptr<Person>> ranked_persons) {
+void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_prep, std::vector<std::shared_ptr<Person>> ranked_persons) {
     // base_prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (lt_not_on_preps / lt_total_negs);
+    candidate_count -= put_on_prep.size();
     std::shared_ptr<Log> log =  Logger::instance()->getLog(NET_LOG);
     (*log) << tick << ",";
     (*log) << (unsigned int)candidate_count;
@@ -47,6 +48,7 @@ void NetStatPrepIntervention::run(double tick, std::vector<std::shared_ptr<Perso
             if (!person->isOnPrep() && filter_(person, age_threshold_) && 
                 repast::Random::instance()->nextDouble() <= prep_p) {
                 putOnPrep(tick, person, PrepStatus::ON_INTERVENTION);
+                put_on_prep.push_back(person);
                 ++count;
 
                 if (count == threshold) {
@@ -97,13 +99,13 @@ void CompositeNetStatPrepIntervention::processPerson(std::shared_ptr<Person>& pe
     }
 }
 
-void CompositeNetStatPrepIntervention::run(double tick, Network<Person>& network) {
+void CompositeNetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_prep, Network<Person>& network) {
     std::vector<std::shared_ptr<Person>> ranked_persons;
     NetworkStats<Person> stats(network);
     ranker_(stats, ranked_persons);
 
     for (auto& intervention : interventions) {
-        intervention->run(tick, ranked_persons);
+        intervention->run(tick, put_on_prep, ranked_persons);
     }
 }
 

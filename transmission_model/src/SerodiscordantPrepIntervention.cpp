@@ -52,7 +52,7 @@ void SerodiscordantPrepIntervention::processPerson(std::shared_ptr<Person>& pers
             network.getEdges(person, edges);
             for (auto edge : edges) {
                 if (edge_filter(edge)) {
-                    candidates.push_back(person);
+                    candidates.emplace(person->id(), person);
                     break;
                 }
             }
@@ -60,8 +60,15 @@ void SerodiscordantPrepIntervention::processPerson(std::shared_ptr<Person>& pers
     }
 }
 
-void SerodiscordantPrepIntervention::run(double tick, Network<Person>& network) {
+void SerodiscordantPrepIntervention::trimCandidates(std::vector<PersonPtr>& put_on_prep) {
+    for (auto& person : put_on_prep) {
+        candidates.erase(person->id());
+    }
+}
+
+void SerodiscordantPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_prep, Network<Person>& network) {
     // base_prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (lt_not_on_preps / lt_total_negs);
+    trimCandidates(put_on_prep);
     std::shared_ptr<Log> log =  Logger::instance()->getLog(SERO_LOG);
     (*log) << tick << ",";
     (*log) << (unsigned int)candidates.size();
@@ -72,14 +79,16 @@ void SerodiscordantPrepIntervention::run(double tick, Network<Person>& network) 
         prep_p = (prep_data_.stop * k) / (candidates.size() / (double)total_negatives);
         // boosted prob
         prep_p = prep_p * ((double)total_negatives / candidates.size());
-        for (auto& person : candidates) {
-            if (!person->isOnPrep() && repast::Random::instance()->nextDouble() <= prep_p) {
-                putOnPrep(tick, person, PrepStatus::ON_INTERVENTION);
+        for (auto& kv : candidates) {
+            // don't need to check if not on prep as the candiates should 
+            // not longer contain those
+            if (repast::Random::instance()->nextDouble() <= prep_p) {
+                putOnPrep(tick, kv.second, PrepStatus::ON_INTERVENTION);
+                put_on_prep.push_back(kv.second);
                 ++count;
             }
         }
     }
-
     (*log) << "," << count << "," << prep_p << "\n";
 }
 

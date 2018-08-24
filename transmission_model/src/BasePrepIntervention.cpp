@@ -29,7 +29,7 @@ void BasePrepIntervention::processPerson(std::shared_ptr<Person>& person, Networ
     }
 }
 
-void BasePrepIntervention::run(double tick, Network<Person>& network) {
+void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep, Network<Person>& network) {
     // base_prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (lt_not_on_preps / lt_total_negs);
     std::shared_ptr<Log> log = Logger::instance()->getLog(BASE_LOG);
     (*log) << tick << ",";
@@ -41,6 +41,7 @@ void BasePrepIntervention::run(double tick, Network<Person>& network) {
         for (auto& person : candidates) {
             if (repast::Random::instance()->nextDouble() <= prep_p) {
                 putOnPrep(tick, person, PrepStatus::ON);
+                put_on_prep.push_back(person);
                 ++count;
             }
         }

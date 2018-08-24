@@ -35,7 +35,7 @@ public:
 
     virtual void reset() = 0;
     virtual void processPerson(std::shared_ptr<Person>& person, Network<Person>& network) = 0;
-    virtual void run(double tick, Network<Person>& network) = 0;
+    virtual void run(double tick, std::vector<PersonPtr>& put_on_prep, Network<Person>& network) = 0;
     virtual void onYearEnded() = 0;
 };
 
@@ -54,7 +54,7 @@ public:
 
     virtual void reset() = 0;
     virtual void processPerson(std::shared_ptr<Person>& person, Network<Person>& network) = 0;
-    virtual void run(double tick, Network<Person>& network) = 0;
+    virtual void run(double tick,  std::vector<PersonPtr>& put_on_prep, Network<Person>& network) = 0;
     virtual void onYearEnded() = 0;
 
     void putOnPrep(double tick, std::shared_ptr<Person>& person, PrepStatus cause);

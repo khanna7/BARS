@@ -1,3 +1,17 @@
+24 August 2018
+
+Verson 0.43
+
+* Updated prep intervention denominator
+* Composite chain scheme for prep interventions
+* Additional prep loggings
+
+17 July 2018
+
+Version 0.42
+
+* Improved network intervention performance
+
 10 July 2018
 
 Version 0.41

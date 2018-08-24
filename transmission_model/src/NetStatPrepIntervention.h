@@ -29,8 +29,8 @@ public:
 
     void reset() override;
     void processPerson(std::shared_ptr<Person>& person, Network<Person>& network) override;
-    void run(double tick, Network<Person>& network) override {}
-    void run(double tick, std::vector<std::shared_ptr<Person>> ranked_persons);
+    void run(double tick, std::vector<PersonPtr>& on_prep, Network<Person>& network) override {}
+    void run(double tick, std::vector<PersonPtr>& on_prep, std::vector<std::shared_ptr<Person>> ranked_persons);
     void onYearEnded() override;
 };
 
@@ -52,7 +52,7 @@ public:
     void addNetIntervention(std::shared_ptr<NetStatPrepIntervention> intervention);
     void reset() override;
     void processPerson(std::shared_ptr<Person>& person, Network<Person>& network) override;
-    void run(double tick, Network<Person>& network) override;
+    void run(double tick, std::vector<PersonPtr>& put_on_prep, Network<Person>& network) override;
     void onYearEnded() override;
 };
 

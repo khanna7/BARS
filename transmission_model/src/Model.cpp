@@ -262,10 +262,10 @@ void init_stats() {
     builder.createStatsSingleton(min_age, max_age);
 }
 
-void add_log(const std::string& fname, const std::string& prep_scheme, const std::string& header, 
+void add_log(const std::string& fname, const std::string& header, 
     const std::string& out_dir, int LOG_TAG) {
         
-     if (fname.size() > 0 && Parameters::instance()->getStringParameter(PREP_SCHEME) == prep_scheme) {
+     if (fname.size() > 0) {
         std::string full_fname = out_dir + "/" + fname;
         Logger::instance()->addLog(LOG_TAG, full_fname);
         std::shared_ptr<Log> log = Logger::instance()->getLog(LOG_TAG);
@@ -279,14 +279,14 @@ void init_logs() {
     std::string out_dir = Parameters::instance()->getStringParameter(OUTPUT_DIR);
     
     std::string fname = get_stats_filename(SERO_LOG_FILE);
-    add_log(fname, "serodiscordant", " tick,candiate_count,selected,probability", out_dir, SERO_LOG);
+    add_log(fname, "tick,candiate_count,selected,probability", out_dir, SERO_LOG);
 
     fname = get_stats_filename(BASE_LOG_FILE);
-    add_log(fname, "default", " tick,candiate_count,selected,probability", out_dir, BASE_LOG);
+    add_log(fname, "tick,candiate_count,selected,probability", out_dir, BASE_LOG);
 
     fname = get_stats_filename(NET_LOG_FILE);
-    add_log(fname, "eigen", " tick,candiate_count,top_n_count,selected,probability", out_dir, NET_LOG);
-    add_log(fname, "degree", " tick,candiate_count,top_n_count,selected,probability", out_dir, NET_LOG);
+    add_log(fname, "tick,candiate_count,top_n_count,selected,probability", out_dir, NET_LOG);
+    add_log(fname, "tick,candiate_count,top_n_count,selected,probability", out_dir, NET_LOG);
 }
 
 void init_network_save(Model* model) {
