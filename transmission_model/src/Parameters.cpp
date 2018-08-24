@@ -50,7 +50,10 @@ const std::string NET_SAVE_FILE = "net.save.file";
 const std::string CASUAL_NET_SAVE_FILE = "casual.net.save.file";
 const std::string NET_SAVE_AT = "save.network.at";
 const std::string COUNT_OVERLAPS = "count.overlaps";
-const std::string SERO_LOG_FILE = "serodiscordant.log.file";
+
+const std::string SERO_LOG_FILE = "serodiscordant.prep.log.file";
+const std::string BASE_LOG_FILE = "default.prep.log.file";
+const std::string NET_LOG_FILE = "network.prep.log.file";
 
 //const std::string PREP_MULT = "prep.mult";
 
@@ -127,7 +130,7 @@ const std::string SERO_BASE_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.base.prep
 const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_LT = "serodiscordant.intrv.prep.daily.stop.prob.lt";
 const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.intrv.prep.daily.stop.prob.gte";
 const std::string SERO_PREP_YEARLY_INCREMENT_LT = "serodiscordant.intrv.prep.yearly.increment.lt";
-const std::string SERO_PREP_YEARLY_INCREMENT_GTE = "serodiscordant.intrv.prep.yearly.increment.lt";
+const std::string SERO_PREP_YEARLY_INCREMENT_GTE = "serodiscordant.intrv.prep.yearly.increment.gte";
 const std::string SERO_PREP_YEARS_TO_INCREMENT = "serodiscordant.intrv.prep.years.to.increment";
 const std::string SERO_NET_TYPE = "serodiscordant.intrv.prep.network.type";
 

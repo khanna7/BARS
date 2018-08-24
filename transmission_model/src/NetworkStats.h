@@ -52,8 +52,8 @@ class NetworkStats {
 
 template <typename T>
 NetworkStats<T>::NetworkStats(Network<T> &network) : graph(), g_to_p() {
-    boost::timer::cpu_timer timer;
-    timer.start();
+    //boost::timer::cpu_timer timer;
+    //timer.start();
 
     std::map<int, long> n_to_g;
     long i = 0;
@@ -77,8 +77,8 @@ NetworkStats<T>::NetworkStats(Network<T> &network) : graph(), g_to_p() {
     }
     igraph_create(&graph, &edges, network.vertexCount(), 0);
     igraph_vector_destroy(&edges);
-    timer.stop();
-    std::cout << "Format Time: " << timer.format(6, "%t") << std::endl;
+    //timer.stop();
+    //std::cout << "Format Time: " << timer.format(6, "%t") << std::endl;
 }
 
 template <typename T>

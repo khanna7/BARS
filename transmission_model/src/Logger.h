@@ -11,7 +11,9 @@
 namespace TransModel {
 
 // SERO_LOG should always be the max
-const size_t SERO_LOG = 0;
+const size_t BASE_LOG = 0;
+const size_t NET_LOG = 1;
+const size_t SERO_LOG = 2;
 
 class Log {
 
@@ -41,6 +43,7 @@ public:
     Log& operator<<(float val) override;
     Log& operator<<(unsigned int val) override;
     Log& operator<<(int val) override;
+
     void close() override;
 
 };
@@ -63,6 +66,8 @@ public:
     Log& operator<<(int val) override  {
         return *this;
     }
+   
+
     void close() override {}
 
 };

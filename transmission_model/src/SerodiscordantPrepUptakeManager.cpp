@@ -70,6 +70,15 @@ std::vector<std::shared_ptr<Person>>& SerodiscordantPrepUptakeManager::selectVec
 }
 
 void SerodiscordantPrepUptakeManager::processPerson(double tick, std::shared_ptr<Person>& person, Network<Person>& network) {
+    PUBase& base = selectBase(age);
+    base.incrementTotalNegatives();
+    if (!person->isOnPrep()) {
+        base.incrementNotOnPreps();
+        persons.push_back(person);
+    }
+
+
+    // old
     if (!person->isOnPrep()) {
         double age = person->age();
         PUExtra& pu = selectPUExtra(age);
@@ -91,6 +100,20 @@ void SerodiscordantPrepUptakeManager::processPerson(double tick, std::shared_ptr
 }
 
 void SerodiscordantPrepUptakeManager::run(double tick, PUExtra& extra, std::vector<std::shared_ptr<Person>>& serodiscordants) {
+    base_prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (lt_not_on_preps / lt_total_negs);
+    base_prob_gte = (prep_data.daily_p_prob_gte * prep_data.base_use_gte) / (gte_not_on_preps / gte_total_negs);
+
+    for (auto& person : persons) {
+        if base.evaluate(person) {
+             
+        } else if (person.id in serodiscordants) {
+            // do the serodiscordant 
+        }
+
+
+    }
+
+
     double sd_count = serodiscordants.size();
     unsigned int count = 0;
     shared_ptr<Log> log =  Logger::instance()->getLog(SERO_LOG);
