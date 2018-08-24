@@ -277,16 +277,19 @@ void add_log(const std::string& fname, const std::string& header,
 
 void init_logs() {
     std::string out_dir = Parameters::instance()->getStringParameter(OUTPUT_DIR);
-    
-    std::string fname = get_stats_filename(SERO_LOG_FILE);
-    add_log(fname, "tick,candiate_count,selected,probability", out_dir, SERO_LOG);
 
-    fname = get_stats_filename(BASE_LOG_FILE);
+    std::string fname = get_stats_filename(BASE_LOG_FILE);
     add_log(fname, "tick,candiate_count,selected,probability", out_dir, BASE_LOG);
 
-    fname = get_stats_filename(NET_LOG_FILE);
-    add_log(fname, "tick,candiate_count,top_n_count,selected,probability", out_dir, NET_LOG);
-    add_log(fname, "tick,candiate_count,top_n_count,selected,probability", out_dir, NET_LOG);
+    const std::string prep_scheme = Parameters::instance()->getStringParameter(PREP_SCHEME);
+
+    if (prep_scheme == "serodiscordant") {
+        fname = get_stats_filename(SERO_LOG_FILE);
+        add_log(fname, "tick,candiate_count,selected,probability", out_dir, SERO_LOG);
+    } else if (prep_scheme == "eigen" || prep_scheme == "degree") {
+        fname = get_stats_filename(NET_LOG_FILE);
+        add_log(fname, "tick,candiate_count,top_n_count,selected,probability", out_dir, NET_LOG);
+    }
 }
 
 void init_network_save(Model* model) {

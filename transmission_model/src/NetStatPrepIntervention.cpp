@@ -35,22 +35,28 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
     std::shared_ptr<Log> log =  Logger::instance()->getLog(NET_LOG);
     (*log) << tick << ",";
     (*log) << (unsigned int)candidate_count;
+
     double prep_p = 0;
-    unsigned int count = 0;
+    unsigned int prep_count = 0;
     float selected_count = candidate_count * top_n_;
+
     if (selected_count > 0) {
+        unsigned int count = 0;
         // unboosted
         prep_p = (prep_data_.stop * k) / (candidate_count / (double)total_negatives);
         // boosted
         prep_p = prep_p * ((double)total_negatives / selected_count);
         unsigned int threshold = (unsigned int)selected_count;
         for (auto& person : ranked_persons) {
-            if (!person->isOnPrep() && filter_(person, age_threshold_) && 
-                repast::Random::instance()->nextDouble() <= prep_p) {
-                putOnPrep(tick, person, PrepStatus::ON_INTERVENTION);
-                put_on_prep.push_back(person);
-                ++count;
 
+            if (!person->isOnPrep() && filter_(person, age_threshold_)) {
+                ++count;
+                if (repast::Random::instance()->nextDouble() <= prep_p) {
+                    putOnPrep(tick, person, PrepStatus::ON_INTERVENTION);
+                    put_on_prep.push_back(person);
+                    ++prep_count;
+                }
+            
                 if (count == threshold) {
                     break;
                 }
@@ -58,7 +64,7 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
         }
     }
     
-    (*log) << "," << ((unsigned int)selected_count) << "," << count << "," << prep_p << "\n";
+    (*log) << "," << ((unsigned int)selected_count) << "," << prep_count << "," << prep_p << "\n";
 }
 
 void NetStatPrepIntervention::onYearEnded() {
