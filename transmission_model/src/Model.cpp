@@ -368,7 +368,8 @@ void init_sero_prep_manager(PrepInterventionManager& prep_manager, float age_thr
 
 
     PrepUptakeData lt_sd, gte_sd;
-    lt_sd.use = gte_sd.use = 0;
+    lt_sd.use = lt_base_data.use;
+    gte_sd.use = gte_base_data.use;
 
     lt_sd.stop = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_LT);
     gte_sd.stop = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_GTE);
@@ -433,7 +434,8 @@ void init_eigen_prep_manager(PrepInterventionManager& prep_manager, float age_th
     prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(gte_base_data, &gte, age_threshold));
 
     PrepUptakeData lt_data, gte_data;
-    lt_data.use = gte_data.use = 0;
+    lt_data.use = lt_base_data.use;
+    gte_data.use = gte_base_data.use;
 
     lt_data.stop = Parameters::instance()->getDoubleParameter(EIGEN_INTRV_PREP_DAILY_STOP_PROB_LT);
     gte_data.stop = Parameters::instance()->getDoubleParameter(EIGEN_INTRV_PREP_DAILY_STOP_PROB_GTE);
@@ -539,7 +541,8 @@ void init_degree_prep_manager(PrepInterventionManager& prep_manager, float age_t
     prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(gte_base_data, &gte, age_threshold));
 
     PrepUptakeData lt_data, gte_data;
-    lt_data.use = gte_data.use = 0;
+    lt_data.use = lt_base_data.use;
+    gte_data.use = gte_base_data.use;
 
     lt_data.stop = Parameters::instance()->getDoubleParameter(DEGREE_INTRV_PREP_DAILY_STOP_PROB_LT);
     gte_data.stop = Parameters::instance()->getDoubleParameter(DEGREE_INTRV_PREP_DAILY_STOP_PROB_GTE);

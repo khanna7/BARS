@@ -42,13 +42,12 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
 
     if (selected_count > 0) {
         unsigned int count = 0;
-        // unboosted
-        prep_p = (prep_data_.stop * k) / (candidate_count / (double)total_negatives);
-        // boosted
-        prep_p = prep_p * ((double)total_negatives / selected_count);
+        // k = (intervention only coverage), for that year
+        // prop = k * p / (d / total_negatives)
+        // d = top_n number of persons from candidates
+        prep_p = (k * prep_data_.stop) / (selected_count / (double)total_negatives);
         unsigned int threshold = (unsigned int)selected_count;
         for (auto& person : ranked_persons) {
-
             if (!person->isOnPrep() && filter_(person, age_threshold_)) {
                 ++count;
                 if (repast::Random::instance()->nextDouble() <= prep_p) {
@@ -69,10 +68,8 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
 
 void NetStatPrepIntervention::onYearEnded() {
     if (year <= prep_data_.years_to_increment) {
-        //double old_k = k;
-        k = prep_data_.increment * year;
+        k = ((prep_data_.increment * prep_data_.years_to_increment) - prep_data_.use) / prep_data_.years_to_increment * year;
         ++year;
-        //std::cout << "on year ended: " << old_k << ", " << k << std::endl;
     }
 }
 

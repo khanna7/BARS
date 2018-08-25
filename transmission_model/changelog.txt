@@ -1,3 +1,9 @@
+25 August 2018
+
+Version 0.44
+
+* Fixed intervention algorithms
+
 24 August 2018
 
 Verson 0.43
