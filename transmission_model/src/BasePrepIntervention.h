@@ -18,6 +18,7 @@ private:
     double age_threshold_;
     PrepUptakeData prep_data_;
     unsigned int total_negatives;
+    double orig_k;
 
 public:
     BasePrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold);

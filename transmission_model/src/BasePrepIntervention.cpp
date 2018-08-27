@@ -7,7 +7,7 @@
 namespace TransModel {
 
 BasePrepIntervention::BasePrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold) : PrepIntervention(prep_data),
-    candidates(), filter_(filter), age_threshold_(age_threshold), prep_data_(prep_data), total_negatives(0) {
+    candidates(), filter_(filter), age_threshold_(age_threshold), prep_data_(prep_data), total_negatives(0), orig_k(prep_data.use) {
         onYearEnded();
 }
     
@@ -52,7 +52,8 @@ void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep
 
 void BasePrepIntervention::onYearEnded() {
     if (year <= prep_data_.years_to_increment) {
-        prep_data_.use += prep_data_.increment * year;
+        double increment = (((prep_data_.increment * prep_data_.years_to_increment) - orig_k) / prep_data_.years_to_increment) * year;
+        prep_data_.use += increment;
         ++year;
     }
 }

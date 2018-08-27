@@ -1,3 +1,10 @@
+
+27 August 2018
+
+Version 0.45
+
+* Fixed default intervention incrementation algorithm
+
 25 August 2018
 
 Version 0.44
