@@ -40,7 +40,7 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
     unsigned int prep_count = 0;
     float selected_count = candidate_count * top_n_;
 
-    if (selected_count > 0) {
+    if (selected_count > 0 && k > 0) {
         unsigned int count = 0;
         // k = (intervention only coverage), for that year
         // prop = k * p / (d / total_negatives)
@@ -67,8 +67,8 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
 }
 
 void NetStatPrepIntervention::onYearEnded() {
-    if (year <= prep_data_.years_to_increment) {
-        k = (((prep_data_.increment * prep_data_.years_to_increment) - prep_data_.use) / prep_data_.years_to_increment) * year;
+    if (year <= prep_data_.years_to_increment && prep_data_.increment > 0) {
+        k = ((prep_data_.increment * prep_data_.years_to_increment) / prep_data_.years_to_increment) * year;
         ++year;
     }
 }

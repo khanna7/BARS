@@ -74,7 +74,7 @@ void SerodiscordantPrepIntervention::run(double tick, std::vector<PersonPtr>& pu
     (*log) << (unsigned int)candidates.size();
     unsigned int count = 0;
     double prep_p = 0;
-    if (candidates.size() > 0) {
+    if (candidates.size() > 0 && k > 0) {
         // k = (intervention only coverage), for that year
         // prop = k * p / (d / total_negatives)
         // d = total number of serodiscordants not on prep in the serodiscorant case
@@ -93,8 +93,8 @@ void SerodiscordantPrepIntervention::run(double tick, std::vector<PersonPtr>& pu
 }
 
 void SerodiscordantPrepIntervention::onYearEnded() {
-    if (year <= prep_data_.years_to_increment) {
-        k = (((prep_data_.increment * prep_data_.years_to_increment) - prep_data_.use) / prep_data_.years_to_increment) * year;
+    if (year <= prep_data_.years_to_increment && prep_data_.increment > 0) {
+        k = ((prep_data_.increment * prep_data_.years_to_increment) / prep_data_.years_to_increment) * year;
         ++year;
     }
 }
