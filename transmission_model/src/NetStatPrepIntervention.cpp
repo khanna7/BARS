@@ -15,10 +15,15 @@ NetStatPrepIntervention::NetStatPrepIntervention(PrepUptakeData& prep_data, AgeF
     
 NetStatPrepIntervention::~NetStatPrepIntervention() {}
 
+bool NetStatPrepIntervention::isOn() {
+    return top_n_ > 0 && prep_data_.increment > 0 && prep_data_.years_to_increment > 0;
+}
+
 void NetStatPrepIntervention::reset() {
     total_negatives = 0;
     candidate_count = 0;
 }
+
 
 void NetStatPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
     if (filter_(person, age_threshold_)) {
@@ -29,9 +34,17 @@ void NetStatPrepIntervention::processPerson(std::shared_ptr<Person>& person, Net
     }
 }
 
+ unsigned int NetStatPrepIntervention::adjustCandidateCount(std::vector<PersonPtr>& put_on_prep) {
+    for (auto& person : put_on_prep) {
+        if (filter_(person, age_threshold_)) {
+            --candidate_count;
+        }
+    }
+ }
+
 void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_prep, std::vector<std::shared_ptr<Person>> ranked_persons) {
     // base_prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (lt_not_on_preps / lt_total_negs);
-    candidate_count -= put_on_prep.size();
+    adjustCandidateCount(put_on_prep);
     std::shared_ptr<Log> log =  Logger::instance()->getLog(NET_LOG);
     (*log) << tick << ",";
     (*log) << (unsigned int)candidate_count;
@@ -104,11 +117,15 @@ void CompositeNetStatPrepIntervention::processPerson(std::shared_ptr<Person>& pe
 
 void CompositeNetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_prep, Network<Person>& network) {
     std::vector<std::shared_ptr<Person>> ranked_persons;
-    NetworkStats<Person> stats(network);
-    ranker_(stats, ranked_persons);
 
     for (auto& intervention : interventions) {
-        intervention->run(tick, put_on_prep, ranked_persons);
+        if (intervention->isOn()) {
+            if (ranked_persons.size() == 0) {
+                NetworkStats<Person> stats(network);
+                ranker_(stats, ranked_persons);
+            }
+            intervention->run(tick, put_on_prep, ranked_persons);
+        }
     }
 }
 

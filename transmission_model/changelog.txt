@@ -1,3 +1,11 @@
+28 August 2018
+
+Version 0.47
+
+* Updated so network stats are never calculated for base case network PrEP intervention (i.e. top_n = 0, increment is 0, or years to increment is 0)
+* Fixed candidate count adjustment in network PrEP intervention to account for age.
+* Removed obsolete PrEP intervention code
+
 
 27 August 2018
 

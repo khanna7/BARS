@@ -31,13 +31,9 @@
 #include "CondomUseAssigner.h"
 #include "PrepCessationEvent.h"
 #include "adherence_functions.h"
-//#include "ProportionalPrepUptakeManager.h"
-//#include "IncrementingPrepUptakeManager.h"
-//#include "SerodiscordantPrepUptakeManager.h"
 #include "BasePrepIntervention.h"
 #include "SerodiscordantPrepIntervention.h"
 #include "NetStatPrepIntervention.h"
-#include "NetStatPUManager.h"
 #include "Logger.h"
 
 #include "debug_utils.h"

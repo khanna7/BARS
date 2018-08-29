@@ -22,6 +22,8 @@ private:
     float top_n_;
     unsigned int candidate_count;
 
+    unsigned int adjustCandidateCount(std::vector<PersonPtr>& put_on_prep);
+
 public:
     NetStatPrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold,
         float top_n);
@@ -31,6 +33,7 @@ public:
     void processPerson(std::shared_ptr<Person>& person, Network<Person>& network) override;
     void run(double tick, std::vector<PersonPtr>& on_prep, Network<Person>& network) override {}
     void run(double tick, std::vector<PersonPtr>& on_prep, std::vector<std::shared_ptr<Person>> ranked_persons);
+    bool isOn();
     void onYearEnded() override;
 };
 
