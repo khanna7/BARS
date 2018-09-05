@@ -201,12 +201,12 @@ When a person goes on or off PrEP, that event is recorded in the PrEP events fil
 
 ### PrEP Intervention Logging
 
-The intervention logging is defined in 3 properties:  *default.prep.log.file*, *serodiscordant.prep.log.file*, *network.prep.log.file*. When
+The intervention logging is defined in 3 properties:  *default.prep.log.file*, *serodiscordant.prep.log.file*, *network.prep.log.file*, and *random.selection.prep.log.file*. When
 these are defined in the properties, the detailed logging for that intervention type will be activated. When running serodiscordant or
 network interventions, the *base* part of the intervention will be recorded in the *default.prep.log.file* and the intervention in appropriate
 file.
 
-For the *default* and *serodiscordant*, the following will be recorded.
+For the *default*, *random.selection.prep.log.file*, and *serodiscordant*, the following will be recorded.
 
 * tick: the time at which the data was recorded
 * count: the number of possible candidates for the intevention (e.g  persons not on PrEP and in serodiscordant relationship). 
