@@ -13,7 +13,8 @@ namespace TransModel {
 // SERO_LOG should always be the max
 const size_t BASE_LOG = 0;
 const size_t NET_LOG = 1;
-const size_t SERO_LOG = 2;
+const size_t RANDOM_SELECTION_LOG = 2;
+const size_t SERO_LOG = 3;
 
 class Log {
 

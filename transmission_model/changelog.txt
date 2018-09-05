@@ -1,3 +1,10 @@
+5 September 2018
+
+Version 0.48
+
+* Fixed random selection intervention by splitting into base and random selection.
+
+
 28 August 2018
 
 Version 0.47

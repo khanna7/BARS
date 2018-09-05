@@ -34,6 +34,7 @@
 #include "BasePrepIntervention.h"
 #include "SerodiscordantPrepIntervention.h"
 #include "NetStatPrepIntervention.h"
+#include "RandomSelectionPrepIntervention.h"
 #include "Logger.h"
 
 #include "debug_utils.h"
@@ -285,6 +286,9 @@ void init_logs() {
     } else if (prep_scheme == "eigen" || prep_scheme == "degree") {
         fname = get_stats_filename(NET_LOG_FILE);
         add_log(fname, "tick,candiate_count,top_n_count,selected,probability", out_dir, NET_LOG);
+    } else if (prep_scheme == "default") {
+        fname = get_stats_filename(RANDOM_SELECTION_LOG_FILE);
+        add_log(fname,  "tick,candiate_count,selected,probability", out_dir, RANDOM_SELECTION_LOG);
     }
 }
 
@@ -564,33 +568,52 @@ void init_degree_prep_manager(PrepInterventionManager& prep_manager, float age_t
     std::cout << "DEGREE Intrv gte: " << gte_data << "\n";
 }
 
-
 void init_default_prep_manager(PrepInterventionManager& prep_manager, float age_threshold) {
-    PrepUptakeData lt_data, gte_data;
-    lt_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
-    gte_data.use =  Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
-    lt_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-    gte_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
+    // Add the base
+    PrepUptakeData lt_base_data, gte_base_data;
+    lt_base_data.years_to_increment = 0;
+    gte_base_data.years_to_increment = 0;
+    lt_base_data.increment = 0;
+    gte_base_data.increment =0;    
+
+    lt_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
+    gte_base_data.use =  Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
+    lt_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
+    gte_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
 
     bool balanced = Parameters::instance()->getStringParameter(DEFAULT_PREP_BALANCED_UNBALANCED) == BALANCED;
     if (balanced) {
-        lt_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-        gte_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
+        lt_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
+        gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
     } else {
-        lt_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
-        gte_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE);
+        lt_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
+        gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE);
     }
+
+    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(lt_base_data, &lt, age_threshold));
+    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(gte_base_data, &gte, age_threshold));
+
+    // Add the intervention
+    PrepUptakeData lt_data, gte_data;
+    lt_data.use = lt_base_data.use;
+    gte_data.use = gte_base_data.use;
+
+    lt_data.stop = lt_base_data.stop;
+    gte_data.stop = gte_base_data.stop;
+    lt_data.cessation_stop = lt_base_data.cessation_stop;
+    gte_data.cessation_stop = gte_base_data.cessation_stop;
 
     lt_data.increment = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_LT);
     gte_data.increment = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_GTE);
     lt_data.years_to_increment = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARS_TO_INCREMENT);
     gte_data.years_to_increment = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARS_TO_INCREMENT);
 
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(lt_data, &lt, age_threshold));
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(gte_data, &gte, age_threshold));
+    prep_manager.addIntervention(std::make_shared<RandomSelectionPrepIntervention>(lt_data, &lt, age_threshold));
+    prep_manager.addIntervention(std::make_shared<RandomSelectionPrepIntervention>(gte_data, &gte, age_threshold));
+
     
-    std::cout << "Default lt: " << lt_data << "\n";
-    std::cout << "Default gte: " << gte_data << "\n";
+    std::cout << "Random Selection lt: " << lt_data << "\n";
+    std::cout << "Random Selection gte: " << gte_data << "\n";
     
     // PrepUseData data;
     // data.base_use_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);

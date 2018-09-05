@@ -40,6 +40,7 @@ extern const std::string COUNT_OVERLAPS;
 extern const std::string SERO_LOG_FILE;
 extern const std::string BASE_LOG_FILE;
 extern const std::string NET_LOG_FILE;
+extern const std::string RANDOM_SELECTION_LOG_FILE;
 
 extern const std::string EVENT_FILE;
 extern const std::string EVENT_FILE_BUFFER_SIZE;

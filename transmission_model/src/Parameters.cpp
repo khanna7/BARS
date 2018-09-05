@@ -54,6 +54,7 @@ const std::string COUNT_OVERLAPS = "count.overlaps";
 const std::string SERO_LOG_FILE = "serodiscordant.prep.log.file";
 const std::string BASE_LOG_FILE = "default.prep.log.file";
 const std::string NET_LOG_FILE = "network.prep.log.file";
+const std::string RANDOM_SELECTION_LOG_FILE = "random.selection.prep.log.file";
 
 //const std::string PREP_MULT = "prep.mult";
 

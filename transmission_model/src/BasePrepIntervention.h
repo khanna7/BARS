@@ -27,7 +27,7 @@ public:
     void reset() override;
     void processPerson(std::shared_ptr<Person>& person, Network<Person>& network) override;
     void run(double tick, std::vector<PersonPtr>& put_on_prep, Network<Person>& network) override;
-    void onYearEnded() override;
+    void onYearEnded() override {}
 
 };
 

@@ -81,7 +81,7 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
 
 void NetStatPrepIntervention::onYearEnded() {
     if (year <= prep_data_.years_to_increment && prep_data_.increment > 0) {
-        k = ((prep_data_.increment * prep_data_.years_to_increment) / prep_data_.years_to_increment) * year;
+        k = prep_data_.increment * year;
         ++year;
     }
 }

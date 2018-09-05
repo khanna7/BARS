@@ -46,16 +46,7 @@ void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep
             }
         }
     }
-     (*log) << "," << count << "," << prep_p << "\n";
-
-}
-
-void BasePrepIntervention::onYearEnded() {
-    if (year <= prep_data_.years_to_increment && prep_data_.increment > 0) {
-        double increment = ((prep_data_.increment * prep_data_.years_to_increment) / prep_data_.years_to_increment) * year;
-        prep_data_.use += increment;
-        ++year;
-    }
+    (*log) << "," << count << "," << prep_p << "\n";
 }
 
 }
