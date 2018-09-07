@@ -14,8 +14,8 @@ namespace TransModel {
 
 using AgeFilterPtr = bool(*)(PersonPtr, double);
 
-bool gte(PersonPtr person, double threshold); 
-bool lt(PersonPtr person, double threshold); 
+//bool gte(PersonPtr person, double threshold); 
+//bool lt(PersonPtr person, double threshold); 
 
 struct PrepUptakeData {
     // k, p

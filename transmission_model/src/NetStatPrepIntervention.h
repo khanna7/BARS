@@ -8,6 +8,7 @@
 #include "Person.h"
 #include "NetworkStats.h"
 #include "PrepInterventionManager.h"
+#include "PrepAgeFilter.h"
 
 
 namespace TransModel {
@@ -15,18 +16,17 @@ namespace TransModel {
 class NetStatPrepIntervention : public PrepIntervention {
 
 private:
-    AgeFilterPtr filter_;
-    double age_threshold_, k;
+    std::shared_ptr<PrepAgeFilter> filter_;
+    double k;
     PrepUptakeData prep_data_;
     unsigned int total_negatives;
     float top_n_;
     unsigned int candidate_count;
 
-    unsigned int adjustCandidateCount(std::vector<PersonPtr>& put_on_prep);
+    void adjustCandidateCount(std::vector<PersonPtr>& put_on_prep);
 
 public:
-    NetStatPrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold,
-        float top_n);
+    NetStatPrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter, float top_n);
     virtual ~NetStatPrepIntervention();
 
     void reset() override;

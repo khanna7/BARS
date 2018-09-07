@@ -6,8 +6,8 @@
 
 namespace TransModel {
 
-BasePrepIntervention::BasePrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold) : PrepIntervention(prep_data),
-    candidates(), filter_(filter), age_threshold_(age_threshold), prep_data_(prep_data), total_negatives(0), orig_k(prep_data.use) {
+BasePrepIntervention::BasePrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter) : PrepIntervention(prep_data),
+    candidates(), filter_(filter), prep_data_(prep_data), total_negatives(0)  {
         onYearEnded();
 }
     
@@ -21,7 +21,7 @@ void BasePrepIntervention::reset() {
 }
 
 void BasePrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
-    if (filter_(person, age_threshold_)) {
+    if (filter_->apply(person)) {
         ++total_negatives;
         if (!person->isOnPrep()) {
             candidates.push_back(person);
@@ -30,14 +30,16 @@ void BasePrepIntervention::processPerson(std::shared_ptr<Person>& person, Networ
 }
 
 void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep, Network<Person>& network) {
-    // base_prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (lt_not_on_preps / lt_total_negs);
     std::shared_ptr<Log> log = Logger::instance()->getLog(BASE_LOG);
     (*log) << tick << ",";
     (*log) << (unsigned int)candidates.size();
     double prep_p = 0;
     unsigned int count = 0;
+    double adjustment = filter_->calcPrepStopAdjustment();
     if (candidates.size() > 0) {
-        prep_p = (prep_data_.stop * prep_data_.use) / (candidates.size() / (double)total_negatives);
+        // lt:  prep_p = (prep_data_.use * (prep_data_.stop  + 0)) / (candidates.size() / (double)total_negatives);
+        // gte: prep_p = (prep_data_.use * (prep_data_.stop  + 1/((max_age - threshold_age)*365))) / (candidates.size() / (double)total_negatives);
+        prep_p = (prep_data_.use * (prep_data_.stop  + adjustment)) / (candidates.size() / (double)total_negatives);
         for (auto& person : candidates) {
             if (repast::Random::instance()->nextDouble() <= prep_p) {
                 putOnPrep(tick, person, PrepStatus::ON);
@@ -46,7 +48,7 @@ void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep
             }
         }
     }
-    (*log) << "," << count << "," << prep_p << "\n";
+    (*log) << "," << count << "," << adjustment << "," << prep_p << "\n";
 }
 
 }

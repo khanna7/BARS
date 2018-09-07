@@ -7,6 +7,7 @@
 #include "Network.h"
 #include "Person.h"
 #include "PrepInterventionManager.h"
+#include "PrepAgeFilter.h"
 
 namespace TransModel {
 
@@ -16,8 +17,8 @@ class SerodiscordantPrepIntervention : public PrepIntervention {
 
 private:
     std::map<unsigned int, std::shared_ptr<Person>> candidates;
-    AgeFilterPtr filter_;
-    double age_threshold_, k;
+    std::shared_ptr<PrepAgeFilter> filter_;
+    double k;
     PrepUptakeData prep_data_;
     unsigned int total_negatives;
     EdgeFilterPtr edge_filter;
@@ -25,7 +26,7 @@ private:
     void trimCandidates(std::vector<PersonPtr>& put_on_prep);
 
 public:
-    SerodiscordantPrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold,
+    SerodiscordantPrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter,
         NetworkType type);
     virtual ~SerodiscordantPrepIntervention();
 

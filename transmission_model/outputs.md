@@ -211,6 +211,7 @@ For the *default*, *random.selection.prep.log.file*, and *serodiscordant*, the f
 * tick: the time at which the data was recorded
 * count: the number of possible candidates for the intevention (e.g  persons not on PrEP and in serodiscordant relationship). 
 * selected: the number of persons from the candidate pool selected to go on PrEP
+* off_prep_adjustment: the amount added to the stop term in the probability calculation in order to account for persons going off prep due to exiting the model etc.
 * probability: the probability used to select persons to go on PrEP
 
 Each iteration will record two rows of the above data, one for the *lt* case and one for the *gte* case.
@@ -221,5 +222,6 @@ For the *network* intervention, the following will be recorded.
 * count: the number of possible candidates for the intevention (e.g  persons not on PrEP and in serodiscordant relationship). 
 * top_n_count: the top_n * count number of persons to select
 * selected: the number of persons from the candidate pool selected to go on PrEP
+* off_prep_adjustment: the amount added to the stop term in the probability calculation in order to account for persons going off prep due to exiting the model etc.
 * probability: the probability used to select persons to go on PrEP
 

@@ -6,9 +6,9 @@
 
 namespace TransModel {
 
-NetStatPrepIntervention::NetStatPrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold,
+NetStatPrepIntervention::NetStatPrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter, 
     float top_n) : PrepIntervention(prep_data),
-    filter_(filter), age_threshold_(age_threshold), k(0), prep_data_(prep_data), total_negatives(0),
+    filter_(filter), k(0), prep_data_(prep_data), total_negatives(0),
     top_n_(top_n), candidate_count(0) {
         onYearEnded();
 }
@@ -26,7 +26,7 @@ void NetStatPrepIntervention::reset() {
 
 
 void NetStatPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
-    if (filter_(person, age_threshold_)) {
+    if (filter_->apply(person)) {
         ++total_negatives;
         if (!person->isOnPrep()) {
             ++candidate_count;
@@ -34,9 +34,9 @@ void NetStatPrepIntervention::processPerson(std::shared_ptr<Person>& person, Net
     }
 }
 
- unsigned int NetStatPrepIntervention::adjustCandidateCount(std::vector<PersonPtr>& put_on_prep) {
+ void NetStatPrepIntervention::adjustCandidateCount(std::vector<PersonPtr>& put_on_prep) {
     for (auto& person : put_on_prep) {
-        if (filter_(person, age_threshold_)) {
+        if (filter_->apply(person)) {
             --candidate_count;
         }
     }
@@ -52,16 +52,18 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
     double prep_p = 0;
     unsigned int prep_count = 0;
     float selected_count = candidate_count * top_n_;
-
+    double adjustment = filter_->calcPrepStopAdjustment();
     if (selected_count > 0 && k > 0) {
         unsigned int count = 0;
         // k = (intervention only coverage), for that year
         // prop = k * p / (d / total_negatives)
         // d = top_n number of persons from candidates
-        prep_p = (k * prep_data_.stop) / (selected_count / (double)total_negatives);
+        // lt:  prep_p = (k * (prep_data_.stop  + 0)) / (selected_count / (double)total_negatives);
+        // gte: prep_p = (k * (prep_data_.stop  + 1/((max_age - threshold_age)*365))) / (selected_count / (double)total_negatives);
+        prep_p = (k * (prep_data_.stop  + adjustment)) / (selected_count / (double)total_negatives);
         unsigned int threshold = (unsigned int)selected_count;
         for (auto& person : ranked_persons) {
-            if (!person->isOnPrep() && filter_(person, age_threshold_)) {
+            if (!person->isOnPrep() && filter_->apply(person)) {
                 ++count;
                 if (repast::Random::instance()->nextDouble() <= prep_p) {
                     putOnPrep(tick, person, PrepStatus::ON_INTERVENTION);
@@ -76,7 +78,7 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
         }
     }
     
-    (*log) << "," << ((unsigned int)selected_count) << "," << prep_count << "," << prep_p << "\n";
+    (*log) << "," << ((unsigned int)selected_count) << "," << prep_count << "," << adjustment << "," << prep_p << "\n";
 }
 
 void NetStatPrepIntervention::onYearEnded() {

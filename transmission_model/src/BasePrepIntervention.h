@@ -6,6 +6,7 @@
 #include "Network.h"
 #include "Person.h"
 #include "PrepInterventionManager.h"
+#include "PrepAgeFilter.h"
 
 
 namespace TransModel {
@@ -14,14 +15,12 @@ class BasePrepIntervention : public PrepIntervention {
 
 private:
     std::vector<std::shared_ptr<Person>> candidates;
-    AgeFilterPtr filter_;
-    double age_threshold_;
+    std::shared_ptr<PrepAgeFilter> filter_;
     PrepUptakeData prep_data_;
     unsigned int total_negatives;
-    double orig_k;
 
 public:
-    BasePrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold);
+    BasePrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter);
     virtual ~BasePrepIntervention();
 
     void reset() override;

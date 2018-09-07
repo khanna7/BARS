@@ -18,6 +18,7 @@ std::ostream& operator <<(std::ostream& stream, const PrepUptakeData& prep_data)
     stream << "PrepUptakeData [\nUse (k): " << prep_data.use << "\nStop (p): " << prep_data.stop << "\nCessation Stop: " << 
     prep_data.cessation_stop << "\nIncrement: " << prep_data.increment << "\nYears to Increment: " << 
     prep_data.years_to_increment << "\n]";
+    return stream;
 }
 
 

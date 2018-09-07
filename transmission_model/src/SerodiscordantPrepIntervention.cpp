@@ -28,9 +28,9 @@ EdgeFilterPtr choose_edge_filter(NetworkType type) {
     }
 }
 
-SerodiscordantPrepIntervention::SerodiscordantPrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold, NetworkType type) :
+SerodiscordantPrepIntervention::SerodiscordantPrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter, NetworkType type) :
  PrepIntervention(prep_data),
-    candidates(), filter_(filter), age_threshold_(age_threshold), k(0), prep_data_(prep_data), total_negatives(0),
+    candidates(), filter_(filter), k(0), prep_data_(prep_data), total_negatives(0),
     edge_filter(choose_edge_filter(type)) {
         onYearEnded();
 }
@@ -45,7 +45,7 @@ void SerodiscordantPrepIntervention::reset() {
 }
 
 void SerodiscordantPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
-    if (filter_(person, age_threshold_)) {
+    if (filter_->apply(person)) {
         ++total_negatives;
         if (!person->isOnPrep()) {
             std::vector<EdgePtr<Person>> edges;
@@ -74,11 +74,14 @@ void SerodiscordantPrepIntervention::run(double tick, std::vector<PersonPtr>& pu
     (*log) << (unsigned int)candidates.size();
     unsigned int count = 0;
     double prep_p = 0;
+    double adjustment = filter_->calcPrepStopAdjustment();
     if (candidates.size() > 0 && k > 0) {
         // k = (intervention only coverage), for that year
         // prop = k * p / (d / total_negatives)
         // d = total number of serodiscordants not on prep in the serodiscorant case
-        prep_p = (k * prep_data_.stop) / (candidates.size() / (double)total_negatives);
+        // lt:  prep_p = (k * (prep_data_.stop  + 0)) / (candidates.size() / (double)total_negatives);
+        // gte: prep_p = (k * (prep_data_.stop  + 1/((max_age - threshold_age)*365))) / (candidates.size() / (double)total_negatives);
+        prep_p = (k * (prep_data_.stop + adjustment)) / (candidates.size() / (double)total_negatives);
         for (auto& kv : candidates) {
             // don't need to check if not on prep as the candiates should 
             // not longer contain those
@@ -89,7 +92,7 @@ void SerodiscordantPrepIntervention::run(double tick, std::vector<PersonPtr>& pu
             }
         }
     }
-    (*log) << "," << count << "," << prep_p << "\n";
+    (*log) << "," << count << "," << adjustment << "," << prep_p << "\n";
 }
 
 void SerodiscordantPrepIntervention::onYearEnded() {

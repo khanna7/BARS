@@ -6,8 +6,8 @@
 
 namespace TransModel {
 
-RandomSelectionPrepIntervention::RandomSelectionPrepIntervention(PrepUptakeData& prep_data, AgeFilterPtr filter, double age_threshold) : PrepIntervention(prep_data),
-    candidates(), filter_(filter), age_threshold_(age_threshold), k(0), prep_data_(prep_data), total_negatives(0) {
+RandomSelectionPrepIntervention::RandomSelectionPrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter) : PrepIntervention(prep_data),
+    candidates(), filter_(filter), k(0), prep_data_(prep_data), total_negatives(0) {
         onYearEnded();
 }
     
@@ -19,7 +19,7 @@ void RandomSelectionPrepIntervention::reset() {
 }
 
 void RandomSelectionPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
-    if (filter_(person, age_threshold_)) {
+    if (filter_->apply(person)) {
         ++total_negatives;
         if (!person->isOnPrep()) {
             candidates.emplace(person->id(), person);
@@ -41,8 +41,11 @@ void RandomSelectionPrepIntervention::run(double tick,  std::vector<PersonPtr>& 
     (*log) << (unsigned int)candidates.size();
     double prep_p = 0;
     unsigned int count = 0;
+    double adjustment = filter_->calcPrepStopAdjustment();
     if (candidates.size() > 0 && k > 0) {
-        prep_p = (k * prep_data_.stop) / (candidates.size() / (double)total_negatives);
+        // lt:  prep_p = (k * (prep_data_.stop  + 0)) / (candidates.size() / (double)total_negatives);
+        // gte: prep_p = (k * (prep_data_.stop  + 1/((max_age - threshold_age)*365))) / (candidates.size() / (double)total_negatives);
+        prep_p = (k * (prep_data_.stop  + adjustment)) / (candidates.size() / (double)total_negatives);
         for (auto& kv : candidates) {
             if (repast::Random::instance()->nextDouble() <= prep_p) {
                 putOnPrep(tick, kv.second, PrepStatus::ON_INTERVENTION);
@@ -51,7 +54,8 @@ void RandomSelectionPrepIntervention::run(double tick,  std::vector<PersonPtr>& 
             }
         }
     }
-     (*log) << "," << count << "," << prep_p << "\n";
+    
+    (*log) << "," << count << "," << adjustment << "," << prep_p << "\n";
 }
 
 void RandomSelectionPrepIntervention::onYearEnded() {

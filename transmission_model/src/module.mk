@@ -38,6 +38,7 @@ CPP_SOURCE = Person.cpp \
     SerodiscordantPrepIntervention.cpp \
     NetStatPrepIntervention.cpp \
     RandomSelectionPrepIntervention.cpp \
+    PrepAgeFilter.cpp \
     Logger.cpp 
     
 
