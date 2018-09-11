@@ -76,12 +76,7 @@ void SerodiscordantPrepIntervention::run(double tick, std::vector<PersonPtr>& pu
     double prep_p = 0;
     double adjustment = filter_->calcPrepStopAdjustment();
     if (candidates.size() > 0 && k > 0) {
-        // k = (intervention only coverage), for that year
-        // prop = k * p / (d / total_negatives)
-        // d = total number of serodiscordants not on prep in the serodiscorant case
-        // lt:  prep_p = (k * (prep_data_.stop  + 0)) / (candidates.size() / (double)total_negatives);
-        // gte: prep_p = (k * (prep_data_.stop  + 1/((max_age - threshold_age)*365))) / (candidates.size() / (double)total_negatives);
-        prep_p = (k * (prep_data_.stop + adjustment)) / (candidates.size() / (double)total_negatives);
+        prep_p = ((k * prep_data_.stop) + adjustment) / (candidates.size() / (double)total_negatives);
         for (auto& kv : candidates) {
             // don't need to check if not on prep as the candiates should 
             // not longer contain those

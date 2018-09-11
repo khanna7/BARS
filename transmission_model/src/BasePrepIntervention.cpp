@@ -37,9 +37,7 @@ void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep
     unsigned int count = 0;
     double adjustment = filter_->calcPrepStopAdjustment();
     if (candidates.size() > 0) {
-        // lt:  prep_p = (prep_data_.use * (prep_data_.stop  + 0)) / (candidates.size() / (double)total_negatives);
-        // gte: prep_p = (prep_data_.use * (prep_data_.stop  + 1/((max_age - threshold_age)*365))) / (candidates.size() / (double)total_negatives);
-        prep_p = (prep_data_.use * (prep_data_.stop  + adjustment)) / (candidates.size() / (double)total_negatives);
+        prep_p = ((prep_data_.use * prep_data_.stop) + adjustment) / (candidates.size() / (double)total_negatives);
         for (auto& person : candidates) {
             if (repast::Random::instance()->nextDouble() <= prep_p) {
                 putOnPrep(tick, person, PrepStatus::ON);

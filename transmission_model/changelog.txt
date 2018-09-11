@@ -1,3 +1,9 @@
+11 September 2018
+
+Version 0.50
+
+* Fixed prep uptake equation to correctly incorporate the gte adjustment
+
 7 September 2018
 
 Version 0.49

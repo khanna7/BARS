@@ -688,7 +688,7 @@ void initialize_prep_interventions(PrepInterventionManager& prep_manager) {
 
     float age_threshold = Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
     float max_age =  Parameters::instance()->getFloatParameter(MAX_AGE);
-    std::cout << "max age: " << max_age << std::endl;
+    
     string prep_scheme = Parameters::instance()->getStringParameter(PREP_SCHEME);
 
     if (prep_scheme == "default") {

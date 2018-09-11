@@ -24,7 +24,7 @@ double LTPrepAgeFilter::calcPrepStopAdjustment() {
 }
 
 
-GTEPrepAgeFilter::GTEPrepAgeFilter(double age_threshold, double max_age) : PrepAgeFilter(age_threshold), gte_adjustment(1.0 / ((max_age - age_threshold) * 365)) {}
+GTEPrepAgeFilter::GTEPrepAgeFilter(double age_threshold, double max_age) : PrepAgeFilter(age_threshold), gte_adjustment((1.0 / 365) * (1 / (max_age - age_threshold))) {}
 
 GTEPrepAgeFilter::~GTEPrepAgeFilter() {}
 

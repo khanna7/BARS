@@ -55,12 +55,8 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
     double adjustment = filter_->calcPrepStopAdjustment();
     if (selected_count > 0 && k > 0) {
         unsigned int count = 0;
-        // k = (intervention only coverage), for that year
-        // prop = k * p / (d / total_negatives)
-        // d = top_n number of persons from candidates
-        // lt:  prep_p = (k * (prep_data_.stop  + 0)) / (selected_count / (double)total_negatives);
-        // gte: prep_p = (k * (prep_data_.stop  + 1/((max_age - threshold_age)*365))) / (selected_count / (double)total_negatives);
-        prep_p = (k * (prep_data_.stop  + adjustment)) / (selected_count / (double)total_negatives);
+        //prep_p = (k * (prep_data_.stop + adjustment)) / (selected_count / (double)total_negatives);
+        prep_p = ((k * prep_data_.stop) + adjustment) / (selected_count / (double)total_negatives);
         unsigned int threshold = (unsigned int)selected_count;
         for (auto& person : ranked_persons) {
             if (!person->isOnPrep() && filter_->apply(person)) {
