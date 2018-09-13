@@ -31,8 +31,10 @@ GTEPrepAgeFilter::~GTEPrepAgeFilter() {}
 bool GTEPrepAgeFilter::apply(PersonPtr person) {
     return person->age() >= age_threshold_;
 }
+
 double GTEPrepAgeFilter::calcPrepStopAdjustment() {
     return gte_adjustment;
 }
 
 }
+

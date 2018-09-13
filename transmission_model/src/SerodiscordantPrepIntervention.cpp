@@ -76,7 +76,7 @@ void SerodiscordantPrepIntervention::run(double tick, std::vector<PersonPtr>& pu
     double prep_p = 0;
     double adjustment = filter_->calcPrepStopAdjustment();
     if (candidates.size() > 0 && k > 0) {
-        prep_p = ((k * prep_data_.stop) + adjustment) / (candidates.size() / (double)total_negatives);
+        prep_p = ((double)total_negatives * k * (prep_data_.stop + adjustment)) / candidates.size();
         for (auto& kv : candidates) {
             // don't need to check if not on prep as the candiates should 
             // not longer contain those

@@ -43,9 +43,7 @@ void RandomSelectionPrepIntervention::run(double tick,  std::vector<PersonPtr>& 
     unsigned int count = 0;
     double adjustment = filter_->calcPrepStopAdjustment();
     if (candidates.size() > 0 && k > 0) {
-        // lt:  prep_p = (k * (prep_data_.stop  + 0)) / (candidates.size() / (double)total_negatives);
-        // gte: prep_p = (k * (prep_data_.stop  + 1/((max_age - threshold_age)*365))) / (candidates.size() / (double)total_negatives);
-        prep_p = ((k* prep_data_.stop) + adjustment) / (candidates.size() / (double)total_negatives);
+        prep_p = ((double)total_negatives * k * (prep_data_.stop + adjustment)) / candidates.size();
         for (auto& kv : candidates) {
             if (repast::Random::instance()->nextDouble() <= prep_p) {
                 putOnPrep(tick, kv.second, PrepStatus::ON_INTERVENTION);
