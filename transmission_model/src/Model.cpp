@@ -569,7 +569,7 @@ void init_degree_prep_manager(PrepInterventionManager& prep_manager, float age_t
     lt_data.years_to_increment = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARS_TO_INCREMENT);
     gte_data.years_to_increment = Parameters::instance()->getDoubleParameter(DEGREE_PREP_YEARS_TO_INCREMENT);
 
-    std::shared_ptr<CompositeNetStatPrepIntervention> intervention = std::make_shared<CompositeNetStatPrepIntervention>(&eigen_ranker);
+    std::shared_ptr<CompositeNetStatPrepIntervention> intervention = std::make_shared<CompositeNetStatPrepIntervention>(&degree_ranker);
     float top_n = (float)Parameters::instance()->getDoubleParameter(DEGREE_TOPN);
 
     // these are immutable so we could reuse them, but they may not remain so in the future
