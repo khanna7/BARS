@@ -337,16 +337,16 @@
 
    #####################
    ## SIMULATE (for testing)
-#     hetdeg.diag.sim <- simulate(n0,
-#                                 formation=formation.n0,
-#                                 dissolution=dissolution,
-#                                 coef.form=theta.form, 
-#                                 coef.diss=theta.diss,
-#                                 time.slices=2e4,
-#                                 #time.slices=1e2,
-#                                 constraints=constraints,
-#                                 monitor=~edges+degree(0:5)
-#                                 )
+    # hetdeg.diag.sim <- simulate(n0,
+    #                             formation=formation.n0,
+    #                             dissolution=dissolution,
+    #                             coef.form=theta.form,
+    #                             coef.diss=theta.diss,
+    #                             time.slices=2e4,
+    #                             #time.slices=1e2,
+    #                             constraints=constraints,
+    #                             monitor=~edges+degree(0:5)
+    #                             )
 # 
 #    #####################
 #    ## TEST
@@ -361,5 +361,5 @@
    
    #####################
    ## SAVE BINARY
-   save.image(file="initialized-model_n5000.RData")
+   save.image(file="initialized-model_n10000.RData")
    
