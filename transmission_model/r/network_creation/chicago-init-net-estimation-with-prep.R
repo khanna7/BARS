@@ -310,6 +310,8 @@
       table(n0%v%"prep.status")/sum(table(n0%v%"prep.status"))
 
       ## assign time for stoppage
+      prep.daily.stop.prob <- mean(default.prep.unbalanced.starting.prob.lt,
+                                   default.prep.unbalanced.starting.prob.gte)
       on.prep <- which(n0%v%"prep.status" == 1)
       set.vertex.attribute(n0, "time.of.prep.cessation",
                            rgeom(length(on.prep), prep.daily.stop.prob),
