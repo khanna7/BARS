@@ -80,6 +80,6 @@
 
    #####################
    ## SAVE BINARY
-   save.image(file="cas_net.RData")
+   save.image(file="cas_net_n10000.RData")
 
    
