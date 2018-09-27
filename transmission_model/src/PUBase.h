@@ -8,6 +8,7 @@ namespace TransModel {
 class PUBase {
 
 private:
+    friend std::ostream& operator <<(std::ostream& out, const PUBase& pu);
     double prob_lt, prob_gte, threshold;
 
 public:
@@ -16,6 +17,8 @@ public:
 
     bool evaluate(double age);
 };
+
+std::ostream& operator <<(std::ostream& out, const PUBase& pu);
 
 }
 

@@ -199,3 +199,29 @@ When a person goes on or off PrEP, that event is recorded in the PrEP events fil
  * 1: off of PrEP because person has been diagnosed as infected
  * 2: on PrEP
 
+### PrEP Intervention Logging
+
+The intervention logging is defined in 3 properties:  *default.prep.log.file*, *serodiscordant.prep.log.file*, *network.prep.log.file*, and *random.selection.prep.log.file*. When
+these are defined in the properties, the detailed logging for that intervention type will be activated. When running serodiscordant or
+network interventions, the *base* part of the intervention will be recorded in the *default.prep.log.file* and the intervention in appropriate
+file.
+
+For the *default*, *random.selection.prep.log.file*, and *serodiscordant*, the following will be recorded.
+
+* tick: the time at which the data was recorded
+* count: the number of possible candidates for the intevention (e.g  persons not on PrEP and in serodiscordant relationship). 
+* selected: the number of persons from the candidate pool selected to go on PrEP
+* off_prep_adjustment: the amount added to the stop term in the probability calculation in order to account for persons going off prep due to exiting the model etc.
+* probability: the probability used to select persons to go on PrEP
+
+Each iteration will record two rows of the above data, one for the *lt* case and one for the *gte* case.
+
+For the *network* intervention, the following will be recorded.
+
+* tick: the time at which the data was recorded
+* count: the number of possible candidates for the intevention (e.g  persons not on PrEP and in serodiscordant relationship). 
+* top_n_count: the top_n * count number of persons to select
+* selected: the number of persons from the candidate pool selected to go on PrEP
+* off_prep_adjustment: the amount added to the stop term in the probability calculation in order to account for persons going off prep due to exiting the model etc.
+* probability: the probability used to select persons to go on PrEP
+

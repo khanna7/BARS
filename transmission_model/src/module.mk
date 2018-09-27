@@ -33,16 +33,22 @@ CPP_SOURCE = Person.cpp \
     TestingConfigurator.cpp \
     PREPAdherenceConfigurator.cpp \
     Range.cpp \
-    IncrementingPrepUptakeManager.cpp \
-    PrepUptakeManager.cpp \
-    ProportionalPrepUptakeManager.cpp \
-    SerodiscordantPrepUptakeManager.cpp \
-    NetStatPUManager.cpp \
-    PUBase.cpp \
-    PUExtra.cpp
-    
-#	EventWriter.cpp \
+    PrepInterventionManager.cpp \
+    BasePrepIntervention.cpp \
+    SerodiscordantPrepIntervention.cpp \
+    NetStatPrepIntervention.cpp \
+    RandomSelectionPrepIntervention.cpp \
+    PrepAgeFilter.cpp \
+    Logger.cpp 
     
 
 c_source += $(C_SOURCE)
 cpp_source += $(CPP_SOURCE)
+
+# IncrementingPrepUptakeManager.cpp \
+# PrepUptakeManager.cpp \
+# ProportionalPrepUptakeManager.cpp \
+# SerodiscordantPrepUptakeManager.cpp \
+# NetStatPUManager.cpp \
+# PUBase.cpp \
+# PUExtra.cpp \

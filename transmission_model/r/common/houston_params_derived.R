@@ -18,10 +18,6 @@
      theta.diss <- log(pg/(ps2-pg)) #adjusted for death rate, Run 
    
        
-   #####################
-   ## DEMOGRAPHIC
-   given.dur.inf.by.age <- 10*365/size.of.timestep #may not be needed CHECK WITH NICK
-   #####################
    ## BIOLOGICAL
 
   ## (cd4 decline)
@@ -44,6 +40,7 @@
    default.prep.daily.stop.prob.lt <- 1/default.prep.mean.days.usage.lt
    default.prep.daily.stop.prob.gte <- 1/default.prep.mean.days.usage.gte
    default.prep.daily.stop.prob <- mean(c(default.prep.daily.stop.prob.lt, default.prep.daily.stop.prob.gte))
+   prep.daily.stop.prob <- default.prep.daily.stop.prob.lt #needed only for time 0
  
    ### Young Old Ratio PrEP intervention parameters ###
    

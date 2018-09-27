@@ -3,7 +3,7 @@
 
    #####################
    ## NETWORK (steady)
-     n <- 5000
+     n <- 10000
 
    ## empirical edegree information
      ## 0 main partnerships = 56.6% of men
@@ -37,7 +37,9 @@
    ## DEMOGRAPHIC
    min.age <- 18
    max.age <- 34
-   daily.entry.rate <- 1.0 #rate for n=5000
+   #daily.entry.rate <- 1.0 #rate for n=5000
+   daily.entry.rate <- 2.0 #rate for n=10000
+
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
@@ -195,9 +197,9 @@ prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)
 default.prep.mean.days.usage.lt <- 365 #updated 23may2018
 default.prep.mean.days.usage.gte <- 365
 
-default.prep.yearly.increment.lt <- 0.04
-default.prep.yearly.increment.gte <- 0.05
-default.prep.years.to.increment <- 5
+default.prep.yearly.increment.lt <- 0
+default.prep.yearly.increment.gte <- 0
+default.prep.years.to.increment <- 0
 
 default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the 
 default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention

@@ -5,6 +5,8 @@
 #include <utility>
 #include <algorithm>
 
+#include "boost/timer/timer.hpp"
+
 #include "Network.h"
 #include "Person.h"
 
@@ -17,7 +19,7 @@ struct Comp {
 
     std::map<unsigned int, U> scores;
     Comp();
-    bool operator()(const std::shared_ptr<T>& p1, const std::shared_ptr<T>& p2); 
+    bool operator()(const std::shared_ptr<T>& p1, const std::shared_ptr<T>& p2);
 };
 
 template <typename T, typename U>
@@ -35,9 +37,6 @@ class NetworkStats {
     igraph_t graph;
     std::map<long, std::shared_ptr<T>> g_to_p;
 
-    void degree(std::vector<std::shared_ptr<T>> &results, std::map<unsigned int, long>& scores);
-    void eigenCentrality(std::vector<std::shared_ptr<T>> &results, std::map<unsigned int, double>& scores);
-
   public:
     NetworkStats(Network<T> &network);
     ~NetworkStats();
@@ -53,6 +52,9 @@ class NetworkStats {
 
 template <typename T>
 NetworkStats<T>::NetworkStats(Network<T> &network) : graph(), g_to_p() {
+    //boost::timer::cpu_timer timer;
+    //timer.start();
+
     std::map<int, long> n_to_g;
     long i = 0;
     for (auto iter = network.verticesBegin(); iter != network.verticesEnd();
@@ -75,6 +77,8 @@ NetworkStats<T>::NetworkStats(Network<T> &network) : graph(), g_to_p() {
     }
     igraph_create(&graph, &edges, network.vertexCount(), 0);
     igraph_vector_destroy(&edges);
+    //timer.stop();
+    //std::cout << "Format Time: " << timer.format(6, "%t") << std::endl;
 }
 
 template <typename T>
@@ -94,8 +98,14 @@ bool rcomp(const std::pair<std::shared_ptr<T>, U>& p1, const std::pair<std::shar
     return p1.second > p2.second;
 }
 
+template<typename T>
+bool person_comp(const std::shared_ptr<T>& p1, const std::shared_ptr<T>& p2) {
+    return p1->score() > p2->score();
+}
+
+
 template <typename T>
-void NetworkStats<T>::degree(std::vector<std::shared_ptr<T>> &results, std::map<unsigned int, long>& scores) {
+void NetworkStats<T>::degree(std::vector<std::shared_ptr<T>>& results) {
     igraph_vector_t degs;
     igraph_vector_init(&degs, igraph_vcount(&graph));
     igraph_degree(&graph, &degs, igraph_vss_all(), IGRAPH_ALL, 0);
@@ -103,22 +113,19 @@ void NetworkStats<T>::degree(std::vector<std::shared_ptr<T>> &results, std::map<
     for (long i = 0, n = igraph_vector_size(&degs); i < n;  ++i) {
         std::shared_ptr<T>& p = g_to_p[i];
         results.push_back(p);
-        scores.emplace(p->id(), (long) VECTOR(degs)[i]);
+        p->setScore((double) VECTOR(degs)[i]);
     }
     igraph_vector_destroy(&degs);
-}
-
-template <typename T>
-void NetworkStats<T>::degree(std::vector<std::shared_ptr<T>>& results) {
-    Comp<T, long> comp;
-    degree(results, comp.scores);
     // shuffle in case of ties
     std::random_shuffle(results.begin(), results.end(), &repast::uni_random);
-    std::sort(results.begin(), results.end(), comp);
+    std::sort(results.begin(), results.end(), person_comp<T>);
 }
 
 template <typename T>
-void NetworkStats<T>::eigenCentrality(std::vector<std::shared_ptr<T>> &results, std::map<unsigned int, double>& scores) {
+void NetworkStats<T>::eigenCentrality(std::vector<std::shared_ptr<T>>& results) {
+    //boost::timer::cpu_timer timer, eigen_timer;
+    //eigen_timer.start();
+
     igraph_vector_t eigens;
     igraph_vector_init(&eigens, igraph_vcount(&graph));
 
@@ -132,18 +139,24 @@ void NetworkStats<T>::eigenCentrality(std::vector<std::shared_ptr<T>> &results, 
     for (long i = 0, n = igraph_vector_size(&eigens); i < n;  ++i) {
         std::shared_ptr<T>& p = g_to_p[i];
         results.push_back(p);
-        scores.emplace(p->id(), (double) VECTOR(eigens)[i]);
+        p->setScore((double) VECTOR(eigens)[i]);
     }
     igraph_vector_destroy(&eigens);
-}
 
-template <typename T>
-void NetworkStats<T>::eigenCentrality(std::vector<std::shared_ptr<T>>& results) {
-    Comp<T, double> comp;
-    eigenCentrality(results, comp.scores);
+    //eigen_timer.stop();
+    //std::cout << "Eigen Time: " << eigen_timer.format(6, "%t") << std::endl;
+
     // shuffle in case of ties
+    //eigen_timer.start();
     std::random_shuffle(results.begin(), results.end(), &repast::uni_random);
-    std::sort(results.begin(), results.end(), comp);
+    //eigen_timer.stop();
+    //std::cout << "Shuffle Time: " << eigen_timer.format(6, "%t") << std::endl;
+    //eigen_timer.start();
+    std::sort(results.begin(), results.end(), person_comp<T>);
+    //eigen_timer.stop();
+    //std::cout << "Sort Time: " << eigen_timer.format(6, "%t") << std::endl;
+    //timer.stop();
+    //std::cout << "Total Eigen Time: " << timer.format(6, "%t") << std::endl;
 }
 
 template <typename T>
@@ -198,7 +211,7 @@ void NetworkStats<T>::eigenCentrality(std::vector<std::pair<std::shared_ptr<T>, 
     }
 }
 
-template <typename T> 
+template <typename T>
 NetworkStats<T>::~NetworkStats() {
     igraph_destroy(&graph);
 }

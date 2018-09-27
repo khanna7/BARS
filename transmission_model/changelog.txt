@@ -1,3 +1,75 @@
+19 September 2018
+
+Version 0.52
+
+* Made sure that net intervention does not put infecteds on prep
+
+13 September 2018
+
+Version 0.51
+
+* Undid prep fix from version 0.50
+
+11 September 2018
+
+Version 0.50
+
+* Fixed prep uptake equation to correctly incorporate the gte adjustment
+
+7 September 2018
+
+Version 0.49
+
+* Updated prep uptake probability algorithm to account for persons going off prep due to aging out of model"
+
+
+5 September 2018
+
+Version 0.48
+
+* Fixed random selection intervention by splitting into base and random selection.
+
+ 29 August 2018
+
+Version 0.47
+
+* Updated so network stats are never calculated for base case network PrEP intervention (i.e. top_n = 0, increment is 0, or years to increment is 0)
+* Fixed candidate count adjustment in network PrEP intervention to account for age.
+* Removed obsolete PrEP intervention code
+
+
+27 August 2018
+
+Version 0.46
+
+* Removed subtraction of base use as its not part of increment
+
+27 August 2018
+
+Version 0.45
+
+* Fixed default intervention incrementation algorithm
+
+25 August 2018
+
+Version 0.44
+
+* Fixed intervention algorithms
+
+24 August 2018
+
+Verson 0.43
+
+* Updated prep intervention denominator
+* Composite chain scheme for prep interventions
+* Additional prep loggings
+
+17 July 2018
+
+Version 0.42
+
+* Improved network intervention performance
+
 10 July 2018
 
 Version 0.41

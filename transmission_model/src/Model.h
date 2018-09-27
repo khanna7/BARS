@@ -27,7 +27,7 @@
 #include "CondomUseAssigner.h"
 #include "RangeWithProbability.h"
 #include "ARTLagCalculator.h"
-#include "IncrementingPrepUptakeManager.h"
+#include "PrepInterventionManager.h"
 
 namespace TransModel {
 
@@ -54,7 +54,7 @@ private:
     TransmissionParameters trans_params;
     ARTLagCalculator art_lag_calculator;
     PersonCreator person_creator;
-    std::shared_ptr<PrepUptakeManager> prep_uptake_manager;
+    PrepInterventionManager prep_manager;
     CondomUseAssigner condom_assigner;
     RangeWithProbability asm_runner;
 

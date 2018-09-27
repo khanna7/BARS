@@ -24,7 +24,7 @@ export TURBINE_OUTPUT=$EMEWS_PROJECT_ROOT/experiments/$EXPID
 check_directory_exists
 
 # TODO edit the number of processes as required.
-export PROCS=28
+export PROCS=2
 
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
@@ -51,7 +51,7 @@ MODEL_SH=$EMEWS_PROJECT_ROOT/scripts/trans_model.sh
 
 # set machine to your schedule type (e.g. pbs, slurm, cobalt etc.),
 # or empty for an immediate non-queued unscheduled run
-MACHINE="slurm" #may need to be changed if we run on other (i.e. non-Midway) systems
+MACHINE="" #may need to be changed if we run on other (i.e. non-Midway) systems
 
 if [ -n "$MACHINE" ]; then
   MACHINE="-m $MACHINE"
@@ -74,13 +74,13 @@ PARAM_ARGS="-model_sh=$MODEL_SH "
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
 
-UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/eigen.txt
+UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/base_random.txt
 UPF_NAME=$( basename $UPF_DATA_FILE )
 UPF_FILE=$TURBINE_OUTPUT/$UPF_NAME
 
 echo $UPF_FILE
 
-cp $EMEWS_PROJECT_ROOT/../config/model_n5000.props $TURBINE_OUTPUT/model.props
+cp $EMEWS_PROJECT_ROOT/../config/eigen_test.props $TURBINE_OUTPUT/model.props
 cp $UPF_DATA_FILE $TURBINE_OUTPUT/
 
 
