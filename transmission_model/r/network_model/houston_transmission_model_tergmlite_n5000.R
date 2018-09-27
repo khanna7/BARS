@@ -6,7 +6,9 @@ suppressMessages(library(tergmLite))
 suppressMessages(library(network))
 suppressMessages(library(networkDynamic))
 
-load(file="../r/network_model/houston_cas_net_n5000.RData")
+#load(file="../r/network_model/cas_net.RData")
+#load(file="../r/network_model/cas_net_n5000.RData")
+load("../r/network_model/houston_cas_net_n5000.RData")
 
 nw <- fit$network
 formation <- fit$formula
