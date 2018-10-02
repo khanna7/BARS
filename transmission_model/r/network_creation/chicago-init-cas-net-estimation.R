@@ -10,11 +10,8 @@
    library(network)
    library(networkDynamic)
    library(tergm)
-   #library(parallel)
 
-   load(file="initialized-model.RData")
-   #source("../common/chicago_parameters.R")
-   #np <- detectCores()
+   load(file="initialized-model_n10000.RData")
 
    #####################
    ## MODEL SETUP
@@ -27,7 +24,7 @@
    #theta.diss_cas <- should be 5.13 when assuming 160-day ptshp duration and 16-year life expectancy. See `derived` param file for details.
    target.stats_cas <- c(cas_n_edges,
                          cas_deg_seq[1:3],
-                         cas_n_edges*absdiff.casual
+                         cas_n_edges*absdiff.casual 
                          )
 
 
@@ -74,12 +71,12 @@
    net.f <- network.collapse(cas_sim_test, at=1000)
    network.size(net.f)
    network.edgecount(net.f)
-   degreedist(net.f) 
+   degreedist(net.f)/sum(degreedist(net.f)) 
    
    #####################
 
    #####################
    ## SAVE BINARY
-   save.image(file="cas_net.RData")
+   save.image(file="cas_net_n10000.RData")
 
    

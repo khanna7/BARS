@@ -310,6 +310,8 @@
       table(n0%v%"prep.status")/sum(table(n0%v%"prep.status"))
 
       ## assign time for stoppage
+      prep.daily.stop.prob <- mean(default.prep.unbalanced.starting.prob.lt,
+                                   default.prep.unbalanced.starting.prob.gte)
       on.prep <- which(n0%v%"prep.status" == 1)
       set.vertex.attribute(n0, "time.of.prep.cessation",
                            rgeom(length(on.prep), prep.daily.stop.prob),
@@ -335,16 +337,16 @@
 
    #####################
    ## SIMULATE (for testing)
-#     hetdeg.diag.sim <- simulate(n0,
-#                                 formation=formation.n0,
-#                                 dissolution=dissolution,
-#                                 coef.form=theta.form, 
-#                                 coef.diss=theta.diss,
-#                                 time.slices=2e4,
-#                                 #time.slices=1e2,
-#                                 constraints=constraints,
-#                                 monitor=~edges+degree(0:5)
-#                                 )
+    # hetdeg.diag.sim <- simulate(n0,
+    #                             formation=formation.n0,
+    #                             dissolution=dissolution,
+    #                             coef.form=theta.form,
+    #                             coef.diss=theta.diss,
+    #                             time.slices=2e4,
+    #                             #time.slices=1e2,
+    #                             constraints=constraints,
+    #                             monitor=~edges+degree(0:5)
+    #                             )
 # 
 #    #####################
 #    ## TEST
@@ -359,5 +361,5 @@
    
    #####################
    ## SAVE BINARY
-   save.image(file="initialized-model_n5000.RData")
+   save.image(file="initialized-model_n10000.RData")
    

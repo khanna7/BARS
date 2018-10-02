@@ -1,12 +1,14 @@
 global.random.seed=42
 
-stop.at = 50000
+#stop.at = 36500 # 100 years
+#stop.at = 3650 # 10 years
+stop.at = 7300 # 20 years
 
 net.variable.name = nw
 casual.net.variable.name = n_cas
 
-r.parameters.non.derived = ../r/common/chi_params_nonderived.R
-r.parameters.derived = ../r/common/chi_params_derived.R
+r.parameters.non.derived = ../r/common/houston_params_nonderived.R
+r.parameters.derived = ../r/common/houston_params_derived.R
 
 r.file = ../r/network_model/transmission_model_tergmlite.R
 
