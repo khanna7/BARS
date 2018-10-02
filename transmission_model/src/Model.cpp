@@ -313,19 +313,21 @@ void init_network_save(Model* model) {
 }
 
 void init_biomarker_logging(Network<Person>& net, std::set<int>& ids_to_log) {
-    int number_to_log = Parameters::instance()->getIntParameter(BIOMARKER_LOG_COUNT);
-    std::vector<PersonPtr> persons;
-    for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
-        persons.push_back(*iter);
-    }
-
-    IntUniformGenerator gen = Random::instance()->createUniIntGenerator(0, persons.size() - 1);
-    for (int i = 0; i < number_to_log; ++i) {
-        int id = (int) gen.next();
-        while (ids_to_log.find(id) != ids_to_log.end()) {
-            id = (int) gen.next();
+    if (Parameters::instance()->contains(BIOMARKER_LOG_COUNT)) {
+        int number_to_log = Parameters::instance()->getIntParameter(BIOMARKER_LOG_COUNT);
+        std::vector<PersonPtr> persons;
+        for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+            persons.push_back(*iter);
         }
-        ids_to_log.emplace(id);
+
+        IntUniformGenerator gen = Random::instance()->createUniIntGenerator(0, persons.size() - 1);
+        for (int i = 0; i < number_to_log; ++i) {
+            int id = (int) gen.next();
+            while (ids_to_log.find(id) != ids_to_log.end()) {
+                id = (int) gen.next();
+            }
+            ids_to_log.emplace(id);
+        }
     }
 }
 
