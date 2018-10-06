@@ -5,7 +5,7 @@
 
      nedges <- n*mean_deg/2 
 
-     deg_seq <- c(56.6, 41.2, 1.8)*n/100   
+     #deg_seq <- c(56.6, 41.2, 1.8)*n/100   
      #duration <- (562+1260)/2
       
      ## role
