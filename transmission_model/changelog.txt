@@ -1,3 +1,10 @@
+16 October 2018
+
+Version 0.53
+
+* Added cd4 count related mortality
+* Updated bio marker logging init to avoid crash when not using
+
 19 September 2018
 
 Version 0.52
