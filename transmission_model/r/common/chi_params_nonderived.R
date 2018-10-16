@@ -397,6 +397,22 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 	asm.60_65 <- 0.022538 / (365 * 1)
 	asm.65_70 <- 0.030628 / (365 * 1)
 
+  ### CD4 Mortality ###
+  ### Format is [min_max)
+cd4m_untreated.0_50	<- 43.2 / (1000 * 365)
+cd4m_untreated.50_100 <- 43.2 / (1000 * 365)
+cd4m_untreated.100_200 <- 11.2 / (1000 * 365)
+cd4m_untreated.200_300 <- 3.3 / (1000 * 365)
+cd4m_untreated.300_350 <- 3.3 / (1000 * 365)
+cd4m_untreated.350_1000 <- 0
+
+cd4m_treated.0_50	<- 38.6 / (1000 * 365)
+cd4m_treated.50_100 <- 12.8 / (1000 * 365)
+cd4m_treated.100_200 <- 5.4 / (1000 * 365)
+cd4m_treated.200_300 <- 2.7 / (1000 * 365)
+cd4m_treated.300_350 <- 2.0 / (1000 * 365)
+cd4m_treated.350_1000 <- 0
+
 # external infections per person days
 # we mult. this value by the number of uninfected persons
 # to get a probability of an infection for that day

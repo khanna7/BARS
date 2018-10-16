@@ -35,6 +35,7 @@ const std::string DeathEvent::header("\"tick\",\"p_id\",\"age\",\"art_status\",\
 const std::string DeathEvent::AGE("AGE");
 const std::string DeathEvent::INFECTION("INFECTION");
 const std::string DeathEvent::ASM("ASM");
+const std::string DeathEvent::CD4M("CD4M");
 
 void DeathEvent::writeTo(FileOutput& out) {
     out << tick << "," << p_id << "," << age << "," << art_status << "," << cause << "\n";
@@ -102,7 +103,7 @@ const std::string Counts::header(
         "steady_sex_acts,"
         "sd_steady_sex_with_condom,sd_steady_sex_without_condom,"
         "sc_steady_sex_with_condom,sc_steady_sex_without_condom,"
-        "on_art,on_prep,vl_supp_per_positives,vl_supp_per_diagnosed");
+        "on_art,on_prep,vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths");
 
 void write_vector_out(std::vector<unsigned int>& vec, FileOutput& out) {
     out << "," << std::accumulate(vec.begin(), vec.end(), 0);
@@ -125,7 +126,7 @@ void Counts::writeTo(FileOutput& out) {
     << steady_sex_acts << ","
     << sd_steady_sex_with_condom << "," << sd_steady_sex_without_condom << ","
     << sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom << ","
-    << on_art << "," << on_prep << "," << vl_supp_per_positives << "," << vl_supp_per_diagnosis << "\n";
+    << on_art << "," << on_prep << "," << vl_supp_per_positives << "," << vl_supp_per_diagnosis << "," << cd4m_deaths << "\n";
 }
 
 Counts::Counts(int min_age, int max_age) :
@@ -136,14 +137,14 @@ Counts::Counts(int min_age, int max_age) :
                 sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
                 on_art{0}, on_prep{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
-                vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}
+                vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}
 
 {
 }
 
 void Counts::reset() {
     tick = 0;
-    main_edge_count = casual_edge_count = entries = age_deaths = infection_deaths = asm_deaths =
+    main_edge_count = casual_edge_count = entries = age_deaths = infection_deaths = asm_deaths = cd4m_deaths = 0;
     sex_acts = 0, casual_sex_acts = 0, steady_sex_acts = 0;
     sd_casual_sex_with_condom = sd_casual_sex_without_condom = 0;
     sd_steady_sex_with_condom = sd_steady_sex_without_condom = 0;

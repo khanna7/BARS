@@ -69,6 +69,20 @@ void RangeWithProbabilityCreator::addBin(const std::string& bin_definition, doub
 
 }
 
+std::ostream& operator<< (std::ostream& os, const RangeWithProbability& rp) {
+    os << "RangeWithProbability[";
+    bool not_first = false;
+    for (auto& bin : rp.bins) {
+        if (not_first) {
+            os << ",";
+        }
+        os << bin.min << "-" << bin.max << ": " << bin.prob;
+        not_first = true;
+    }
+    os << "]";
+    return os;
+}
+
 void RangeWithProbabilityCreator::addBin(float min, float max, double prob) {
     bins.push_back( { min, max, prob });
 }

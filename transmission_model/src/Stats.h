@@ -69,7 +69,7 @@ struct Biomarker {
 struct DeathEvent {
 
     static const std::string header;
-    static const std::string AGE, INFECTION, ASM;
+    static const std::string AGE, INFECTION, ASM, CD4M;
 
     double tick;
     int p_id;
@@ -98,7 +98,7 @@ struct PartnershipEvent {
 
     static const std::string header;
 
-    enum PEventType {ENDED_DISSOLUTION, STARTED, ENDED_DEATH_INFECTION, ENDED_DEATH_ASM, ENDED_AGING_OUT};
+    enum PEventType {ENDED_DISSOLUTION, STARTED, ENDED_DEATH_INFECTION, ENDED_DEATH_ASM, ENDED_AGING_OUT, ENDED_DEATH_CD4M};
 
     double tick_;
     unsigned int edge_id_;
@@ -132,7 +132,7 @@ struct Counts {
     // internal_infected is infected by transmission
     std::vector<unsigned int> uninfected, internal_infected, external_infected, infected_at_entry, vertex_count;
     int min_age_;
-    double vl_supp_per_positives, vl_supp_per_diagnosis;
+    double vl_supp_per_positives, vl_supp_per_diagnosis, cd4m_deaths;
 
     Counts(int min_age, int max_age);
     void reset();

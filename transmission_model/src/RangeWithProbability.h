@@ -23,6 +23,7 @@ class RangeWithProbability {
 
 private:
     friend class RangeWithProbabilityCreator;
+    friend std::ostream& operator<< (std::ostream& stream, const RangeWithProbability& params);
     std::vector<RangeBin> bins;
 
     RangeWithProbability(std::vector<RangeBin> range_bins);
