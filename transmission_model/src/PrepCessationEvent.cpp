@@ -16,7 +16,7 @@ PrepCessationEvent::PrepCessationEvent(std::shared_ptr<Person> person, double ti
 }
 
 void PrepCessationEvent::operator()() {
-    // might be dead and may have gone off prep  by becomig infected
+    // might be dead or may have gone off prep by becoming infected
     // prior to this event occuring
     if (!person_->isDead() && person_->isOnPrep()) {
         person_->goOffPrep(PrepStatus::OFF);

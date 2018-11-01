@@ -928,27 +928,39 @@ void Model::step() {
     Stats* stats = Stats::instance();
     stats->currentCounts().tick = t;
 
+    // PersonToVAL: a function that translates our Person objects into 
+    // "Vertex Attribute Lists" -- R's statnet network vertex representation
     PersonToVALForSimulate p2val;
     float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
     float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
 
     if ((int) t % 100 == 0)
         std::cout << " ---- " << t << " ---- " << std::endl;
+    
+    // updates (i.e. simulates) the partner network
     simulate(R, net, p2val, condom_assigner, t);
     if (Parameters::instance()->getBooleanParameter(COUNT_OVERLAPS)) {
         countOverlap();
     } else {
         stats->currentCounts().overlaps = -1;
     }
+
+    // introduce new persons into the model
     entries(t, size_of_timestep);
+    // run the HIV transmission algorithm 
     runTransmission(t);
+
     vector<PersonPtr> uninfected;
+    // update the physiological etc. (vital) attributes of the population
+    // updating cd4 counts, checking for death, diagnosing persons, etc.
     updateVitals(t, size_of_timestep, max_survival, uninfected);
+
+    // select members of the population for infection from external sources
     runExternalInfections(uninfected, t);
     previous_pop_size = current_pop_size;
     current_pop_size = net.vertexCount();
 
-    //std::cout << "pop sizes: " << previous_pop_size << ", " << current_pop_size << std::endl;
+    // the R statnet network update code needs these updated every iteration
     updateThetaForm("theta.form");
     updateThetaForm("theta.form_cas");
 
@@ -1007,6 +1019,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 
     float time_to_full_supp = Parameters::instance()->getFloatParameter(TIME_TO_FULL_SUPP);
     int vs_count = 0, inf_count = 0, diagnosed_count = 0, vs_pos_count = 0;
+
+    // iterate through all the network vertices (i.e. the persons)
     for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
         PersonPtr person = (*iter);
         // update viral load, cd4
@@ -1018,6 +1032,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             stats->recordBiomarker(tick, person);
         }
 
+        // diagnose person and schedule for ART 
         if (person->isTestable() && !person->isDiagnosed()) {
             if (person->diagnose(tick)) {
                 schedulePostDiagnosisART(person, art_map, tick, size_of_timestep);
@@ -1025,8 +1040,10 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
         }
 
         bool crossed_thresh = person->step(size_of_timestep, age_threshold);
+        // check person for "death" -- aging out, death by infection.
         CauseOfDeath cod = dead(tick, person, max_age);
         if (cod != CauseOfDeath::NONE) {
+            // person died -- remove them from model, network, etc.
             vector<EdgePtr<Person>> edges;
             PartnershipEvent::PEventType pevent_type = cod_to_PEvent(cod);
             net.getEdges(person, edges);
@@ -1041,6 +1058,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             // don't count dead uninfected persons
             if (!person->isInfected()) {
                 stats->currentCounts().incrementUninfected(person);
+                // accumulate persons who may potentially go on PrEP
                 prep_manager.processPerson(person, net);
                 if (person->isOnPrep()) {
                     ++stats->currentCounts().on_prep;
@@ -1069,6 +1087,9 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             }
 
             if (crossed_thresh) {
+                // crossed_thresh means Person crossed from less than to greater than equal
+                // age category so testing and adherece parameters need to be updated to
+                // reflect that
                 person_creator.updateTesting(person, size_of_timestep);
                 person_creator.updatePREPAdherence(person);
             }
@@ -1078,7 +1099,9 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 
     stats->currentCounts().vl_supp_per_positives = inf_count == 0 ? 0 : ((double)vs_count) / inf_count;
     stats->currentCounts().vl_supp_per_diagnosis = diagnosed_count == 0 ? 0 : ((double)vs_pos_count) / diagnosed_count;
+    // Select from accumulated potential persons those to put on PrEP.
     prep_manager.run(tick, net);
+    // Reset the prep uptake for next round
     prep_manager.reset();
 }
 

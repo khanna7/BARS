@@ -187,8 +187,6 @@ public:
 
     bool diagnose(double tick);
 
-    double timeUntilNextTest(double tick) const;
-
     /**
      * Updates the diagnoser component with new test_prob etc.
      */
