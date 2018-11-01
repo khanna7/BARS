@@ -35,7 +35,7 @@ const std::string DeathEvent::header("\"tick\",\"p_id\",\"age\",\"art_status\",\
 const std::string DeathEvent::AGE("AGE");
 const std::string DeathEvent::INFECTION("INFECTION");
 const std::string DeathEvent::ASM("ASM");
-const std::string DeathEvent::CD4M("CD4M");
+const std::string DeathEvent::ASM_CD4("ASM+CD4");
 
 void DeathEvent::writeTo(FileOutput& out) {
     out << tick << "," << p_id << "," << age << "," << art_status << "," << cause << "\n";

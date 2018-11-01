@@ -36,7 +36,7 @@ struct TransmissionParameters {
 };
 
 enum class CauseOfDeath {
-    NONE, AGE, INFECTION, ASM, CD4M
+    NONE, AGE, INFECTION, ASM, ASM_CD4
 };
 
 class Model {
@@ -56,7 +56,7 @@ private:
     PersonCreator person_creator;
     PrepInterventionManager prep_manager;
     CondomUseAssigner condom_assigner;
-    RangeWithProbability asm_runner, cd4m_untreated_runner, cd4m_treated_runner;
+    RangeWithProbability asm_runner, cd4m_treated_runner;
 
     float age_threshold;
 

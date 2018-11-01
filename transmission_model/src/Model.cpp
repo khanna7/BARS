@@ -59,8 +59,8 @@ PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
         return PartnershipEvent::PEventType::ENDED_DEATH_ASM;
     else if (cod == CauseOfDeath::INFECTION)
         return PartnershipEvent::PEventType::ENDED_DEATH_INFECTION;
-    else if (cod == CauseOfDeath::CD4M)
-        return PartnershipEvent::PEventType::ENDED_DEATH_CD4M;
+    else if (cod == CauseOfDeath::ASM_CD4) 
+        return PartnershipEvent::PEventType::ENDED_DEATH_ASM_CD4;
     else {
         throw std::invalid_argument("No PEvent for specified CauseOfDeath");
     }
@@ -816,11 +816,10 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
                 create_art_lag_calc() },  person_creator { trans_runner,
                     Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator}, prep_manager(),	
                 condom_assigner { create_condom_use_assigner() },
-                asm_runner { create_ASM_runner() }, cd4m_untreated_runner { create_cd4m_runner(CD4M_UNTREATED_PREFIX)}, 
-                cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)}, age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)} {
+                asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)}, 
+                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)} {
 
     std::cout << "treated: " << cd4m_treated_runner << std::endl;
-    std::cout << "untreated: " << cd4m_untreated_runner << std::endl;
     // get initial stats
     init_stats();
     init_trans_params(trans_params);
@@ -1234,24 +1233,26 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
     }
 
     if (cod == CauseOfDeath::NONE) { 
-        if (asm_runner.run(person->age(), Random::instance()->nextDouble())) {
+        double increase = 0;
+        if (person->isOnART()) {
+            increase = cd4m_treated_runner.lookup(person->infectionParameters().cd4_count);
+        }
+
+        if (asm_runner.run(person->age(), increase, Random::instance()->nextDouble())) {
             // asm deaths
             ++death_count;
-            ++Stats::instance()->currentCounts().asm_deaths;
-            Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
             Stats::instance()->personDataRecorder()->recordDeath(person, tick);
-            cod = CauseOfDeath::ASM;
-        } else if (person->isInfected()) {
-            RangeWithProbability* runner = person->isOnART() ? &cd4m_treated_runner : &cd4m_untreated_runner;
-        
-            if (runner->run(person->infectionParameters().cd4_count, Random::instance()->nextDouble())) {
-                ++death_count;
+            if (increase > 0) {
                 ++Stats::instance()->currentCounts().cd4m_deaths;
-                Stats::instance()->recordDeathEvent(tick, person, DeathEvent::CD4M);
+                Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4);
+                cod = CauseOfDeath::ASM_CD4;
+            } else {
+                ++Stats::instance()->currentCounts().asm_deaths;
+                Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
                 Stats::instance()->personDataRecorder()->recordDeath(person, tick);
-                cod = CauseOfDeath::CD4M;
+                cod = CauseOfDeath::ASM;
             }
-        }
+        } 
     }
 
     person->setDead(cod != CauseOfDeath::NONE);

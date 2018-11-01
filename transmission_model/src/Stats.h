@@ -69,7 +69,7 @@ struct Biomarker {
 struct DeathEvent {
 
     static const std::string header;
-    static const std::string AGE, INFECTION, ASM, CD4M;
+    static const std::string AGE, INFECTION, ASM, ASM_CD4;
 
     double tick;
     int p_id;
@@ -98,7 +98,7 @@ struct PartnershipEvent {
 
     static const std::string header;
 
-    enum PEventType {ENDED_DISSOLUTION, STARTED, ENDED_DEATH_INFECTION, ENDED_DEATH_ASM, ENDED_AGING_OUT, ENDED_DEATH_CD4M};
+    enum PEventType {ENDED_DISSOLUTION, STARTED, ENDED_DEATH_INFECTION, ENDED_DEATH_ASM, ENDED_AGING_OUT, ENDED_DEATH_ASM_CD4};
 
     double tick_;
     unsigned int edge_id_;

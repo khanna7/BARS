@@ -23,9 +23,18 @@ RangeWithProbability::~RangeWithProbability() {
 }
 
 bool RangeWithProbability::run(float rangeValue, double draw) {
+    return draw <= lookup(rangeValue);
+}
+
+bool RangeWithProbability::run(float rangeValue, double increase, double draw) {
+    double prob = lookup(rangeValue);
+    return draw <= (prob + (prob * increase));
+}
+
+double RangeWithProbability::lookup(float rangeValue) {
     for (auto& bin : bins) {
         if (bin.min <= rangeValue && bin.max > rangeValue) {
-            return draw <= bin.prob;
+            return bin.prob;
         }
     }
     throw std::domain_error("Error in RangeWithProbabilty::run: rangeValue " + std::to_string(rangeValue) + " is not within any bin range");

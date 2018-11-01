@@ -31,6 +31,8 @@ private:
 public:
     virtual ~RangeWithProbability();
     bool run(float rangeValue, double draw);
+    bool run(float rangeValue, double increase, double draw);
+    double lookup(float rangeValue);
 };
 
 class RangeWithProbabilityCreator {

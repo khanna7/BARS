@@ -185,7 +185,6 @@ const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
 const std::string ART_LAG_PREFIX_LT = "art.init.lag.lt";
 const std::string ART_LAG_PREFIX_GTE = "art.init.lag.gte";
 const std::string ASM_PREFIX = "asm.";
-const std::string CD4M_UNTREATED_PREFIX = "cd4m_untreated.";
 const std::string CD4M_TREATED_PREFIX = "cd4m_treated.";
 
 const std::string TESTING_PROB_PREFIX_LT = "testing.prob.lt";

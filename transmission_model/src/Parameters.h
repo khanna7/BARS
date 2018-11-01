@@ -174,7 +174,6 @@ extern const std::string ART_LAG_PREFIX_LT;
 extern const std::string ART_LAG_PREFIX_GTE;
 extern const std::string ASM_PREFIX;
 extern const std::string CD4M_TREATED_PREFIX;
-extern const std::string CD4M_UNTREATED_PREFIX;
 extern const std::string TESTING_PROB_PREFIX_LT;
 extern const std::string TESTING_PROB_PREFIX_GTE;
 
