@@ -1,3 +1,9 @@
+02 November 2018
+
+Version 0.54
+
+* Updated cd4 count related mortality to new model
+
 16 October 2018
 
 Version 0.53
