@@ -57,15 +57,18 @@ void initialize_art_adherence(std::shared_ptr<Person> person, double first_art_a
 }
 
 void schedule_art_adherence(std::shared_ptr<Person> person, double first_art_at_tick) {
-    double duration = Parameters::instance()->getDoubleParameter(PARTIAL_ART_ADHER_WINDOW_LENGTH);
+    double window_length = Parameters::instance()->getDoubleParameter(PARTIAL_ART_ADHER_WINDOW_LENGTH);
+    double remainder = window_length;
     if (person->isOnART()) {
         // can be on ART from burnin in which case need to schedule for the remaining time.
-        duration = duration - person->infectionParameters().time_since_art_init;
-        if (duration < 0) {
-            duration = 1;
+        remainder = window_length - (((int)person->infectionParameters().time_since_art_init) % ((int)window_length));
+        if (remainder < 0) {
+            remainder = 1;
+        } else if (remainder > window_length) {
+            remainder = window_length;
         }
     }
-    double adherence_check_at = first_art_at_tick + duration;
+    double adherence_check_at = first_art_at_tick + remainder;
     ARTAdherenceCheckScheduler* ac_scheduler = new ARTAdherenceCheckScheduler(person, adherence_check_at);
     repast::RepastProcess::instance()->getScheduleRunner().scheduleEvent(adherence_check_at - 0.1,
             repast::Schedule::FunctorPtr(ac_scheduler));
