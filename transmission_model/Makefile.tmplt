@@ -20,9 +20,9 @@ R_HOME = /Library/Frameworks/R.framework/Versions/3.2/Resources
 #R_USER_LIBS = ~/Library/R/3.2/library
 R_USER_LIBS = /Library/Frameworks/R.framework/Versions/3.2/Resources/library
 
-REPAST_LIB_DIR = /Users/nick/bin/repast_hpc/lib
+REPAST_LIB_DIR = $(HOME)/sfw/repast_hpc/lib
 REPAST_LIB = repast_hpc-2.1
-REPAST_INCLUDE = /Users/nick/bin/repast_hpc/include
+REPAST_INCLUDE = $(HOME)/sfw/repast_hpc/include
 
 HDF5_INCLUDE = /usr/local/include
 HDF5_LIB_DIR = /usr/local/lib
@@ -48,7 +48,7 @@ INCLUDES += -I $(HDF5_INCLUDE)
 INCLUDES += -I ../src
 INCLUDES += -I $(IGRAPH_INCLUDE)
 
-GTEST_HOME = /Users/nick/bin/googletest
+GTEST_HOME = $(HOME)/sfw/googletest
 GTEST_LIB = $(GTEST_HOME)/libgtest.a
 TEST_INCLUDES = $(INCLUDES) -I $(GTEST_HOME)/include
 
@@ -106,7 +106,7 @@ transmission_model : $(EXEC_DEPS) $(EXEC_OBJECTS)
 	$(CXXLD) $(filter-out %.d, $^)  $(LIBS) $(RPATHS) -o $(NAME)
 	
 tests : $(TEST_DEPS) $(TEST_OBJECTS)
-	$(CXXLD) $(filter-out %.d, $^) $(LIBS) $(RPATHS) $(GTEST_LIB) -o $(TEST_NAME)
+	$(CXXLD) $(filter-out %.d, $^) $(LIBS) -lpthread -lm $(RPATHS) $(GTEST_LIB) -o $(TEST_NAME)
 	
 $(BUILD_DIR)/%.o : %.cpp
 	@-mkdir -p $(dir $@)
