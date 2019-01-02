@@ -935,15 +935,9 @@ void Model::step() {
 
     if ((int) t % 100 == 0)
         std::cout << " ---- " << t << " ---- " << std::endl;
-    
-    boost::timer::cpu_timer timer;
-    timer.start();
-
+   
     // updates (i.e. simulates) the partner network
     simulate(R, net, p2val, condom_assigner, t);
-
-    timer.stop();
-    std::cout << "R Network Simulate Time: " << timer.format(6, "%t") << std::endl;
 
     if (Parameters::instance()->getBooleanParameter(COUNT_OVERLAPS)) {
         countOverlap();
@@ -958,15 +952,9 @@ void Model::step() {
 
     vector<PersonPtr> uninfected;
 
-    timer.start();
-
     // update the physiological etc. (vital) attributes of the population
     // updating cd4 counts, checking for death, diagnosing persons, etc.
     updateVitals(t, size_of_timestep, max_survival, uninfected);
-
-    timer.stop();
-    std::cout << "Update Vitals Time: " << timer.format(6, "%t") << std::endl;
-
 
     // select members of the population for infection from external sources
     runExternalInfections(uninfected, t);

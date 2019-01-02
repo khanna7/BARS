@@ -100,50 +100,27 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
     // rn vertex to n vertex
     std::map<unsigned int, unsigned int> idx_map;
 
-    boost::timer::cpu_timer timer;
-    timer.start();
-
     List rnet;
     create_r_network(time, rnet, net, idx_map, attributes_setter, STEADY_NETWORK_TYPE);
-
-    timer.stop();
-    std::cout << "Main Create Network Time: " << timer.format(6, "%t") << std::endl;
 
     //Rf_PrintValue(rnet);
     //as<Function>((*R)["nw_save"])(rnet, "network_for_profiling.rds", 1);
 
-    timer.start();
 
     SEXP changes = as<Function>((*R)["nw_simulate"])(rnet);
 
-    timer.stop();
-    std::cout << "Main Simulate Network Time: " << timer.format(6, "%t") << std::endl;
-
-    timer.start();
-
+   
     reset_network_edges(changes, net, idx_map, time, assigner, STEADY_NETWORK_TYPE);
-    timer.stop();
-    std::cout << "Main Update Network Time: " << timer.format(6, "%t") << std::endl;
-
+    
     List cas_net;
     idx_map.clear();
 
-    timer.start();
     create_r_network(time, cas_net, net, idx_map, attributes_setter, CASUAL_NETWORK_TYPE);
-    timer.stop();
-    std::cout << "Casual Create Network Time: " << timer.format(6, "%t") << std::endl;
-
-    timer.start();
+    
+    
     changes = as<Function>((*R)["n_cas_simulate"])(cas_net);
-    timer.stop();
-    std::cout << "Casual Simulate Network Time: " << timer.format(6, "%t") << std::endl;
-
-
-    timer.start();
+    
     reset_network_edges(changes, net, idx_map, time, assigner, CASUAL_NETWORK_TYPE);
-    timer.stop();
-    std::cout << "Casual Update Network Time: " << timer.format(6, "%t") << std::endl;
-
 }
 
 template<typename V, typename EdgeInit>

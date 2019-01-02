@@ -7,10 +7,10 @@ stop.at = 7300 # 20 years
 net.variable.name = nw
 casual.net.variable.name = n_cas
 
-r.parameters.non.derived = ../r/common/houston_params_nonderived.R
-r.parameters.derived = ../r/common/houston_params_derived.R
+r.parameters.non.derived = ../r/common/chi_params_nonderived.R
+r.parameters.derived = ../r/common/chi_params_derived.R
 
-r.file = ../r/network_model/transmission_model_tergmlite.R
+r.file = ../r/network_model/chi_transmission_model_tergmlite.R
 
 # if these properties are not commented out
 # then these networks will replace existing ones
@@ -23,7 +23,7 @@ per.tick.counts.output.file = counts.csv
 #infection.events.file = infection_events.csv
 
 #biomarker.log.file = biomarker_log.csv
-biomarker.number.of.persons.to.log = 100
+# biomarker.number.of.persons.to.log = 100
 
 #death.events.file = exit_events.csv
 #person.data.file = person_data.csv
