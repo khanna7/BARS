@@ -1,4 +1,0 @@
-## example with vital dynamics
-
-   
-

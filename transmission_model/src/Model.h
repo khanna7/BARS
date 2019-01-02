@@ -22,76 +22,77 @@
 #include "ViralLoadCalculator.h"
 #include "ViralLoadSlopeCalculator.h"
 #include "PersonCreator.h"
-#include "DayRangeCalculator.h"
+//#include "DayRangeCalculator.h"
 #include "ARTScheduler.h"
 #include "CondomUseAssigner.h"
 #include "RangeWithProbability.h"
+#include "ARTLagCalculator.h"
+#include "PrepInterventionManager.h"
 
 namespace TransModel {
 
 struct TransmissionParameters {
-	double prop_steady_sex_acts, prop_casual_sex_acts;
+    double prop_steady_sex_acts, prop_casual_sex_acts;
 };
 
-
-enum class CauseOfDeath { NONE, AGE, INFECTION, ASM};
+enum class CauseOfDeath {
+    NONE, AGE, INFECTION, ASM, ASM_CD4
+};
 
 class Model {
 
 private:
-	std::shared_ptr<RInside> R;
-	Network<Person> net;
-	std::shared_ptr<TransmissionRunner> trans_runner;
-	CD4Calculator cd4_calculator;
-	ViralLoadCalculator viral_load_calculator;
-	ViralLoadSlopeCalculator viral_load_slope_calculator;
-	unsigned int current_pop_size, previous_pop_size;
-	std::map<float, std::shared_ptr<Stage>> stage_map;
-	std::set<int> persons_to_log;
-	PersonCreator person_creator;
-	TransmissionParameters trans_params;
-	std::shared_ptr<DayRangeCalculator> art_lag_calculator;
-	std::shared_ptr<GeometricDistribution> cessation_generator;
-	CondomUseAssigner condom_assigner;
-	RangeWithProbability asm_runner;
+    std::shared_ptr<RInside> R;
+    Network<Person> net;
+    std::shared_ptr<TransmissionRunner> trans_runner;
+    CD4Calculator cd4_calculator;
+    ViralLoadCalculator viral_load_calculator;
+    ViralLoadSlopeCalculator viral_load_slope_calculator;
+    unsigned int current_pop_size, previous_pop_size;
+    std::map<float, std::shared_ptr<Stage>> stage_map;
+    std::set<int> persons_to_log;
+    TransmissionParameters trans_params;
+    ARTLagCalculator art_lag_calculator;
+    PersonCreator person_creator;
+    PrepInterventionManager prep_manager;
+    CondomUseAssigner condom_assigner;
+    RangeWithProbability asm_runner, cd4m_treated_runner;
 
-	void runTransmission(double timestamp);
-	CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
-	void entries(double tick, float size_of_time_step);
-	void deactivateEdges(int id, double time);
+    float age_threshold;
 
-	/**
-	 * @param uninfected empty vector into which the uninfected are placed
-	 */
-	void updateVitals(double time, float size_of_time_step, int max_survival,std::vector<PersonPtr>& uninfected);
-	void runExternalInfections(std::vector<PersonPtr>& uninfected, double time);
+    void runTransmission(double timestamp);
+    CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
+    void entries(double tick, float size_of_time_step);
+    void deactivateEdges(int id, double time);
 
-	void infectPerson(PersonPtr& person, double time_stamp);
-	void updateThetaForm(const std::string& var_name);
-	void countOverlap();
+    /**
+     * @param uninfected empty vector into which the uninfected are placed
+     */
+    void updateVitals(double time, float size_of_time_step, int max_survival, std::vector<PersonPtr>& uninfected);
+    void updateDisease(PersonPtr person);
+    void runExternalInfections(std::vector<PersonPtr>& uninfected, double time);
 
-	bool hasSex(int type);
-	void schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick, float size_of_timestep);
+    void infectPerson(PersonPtr& person, double time_stamp);
+    void updateThetaForm(const std::string& var_name);
+    void countOverlap();
 
-	/**
-	 * Initializes PrEP cessation events for the initial set of persons.
-	 */
-	void initPrepCessation();
+    bool hasSex(int type);
+    void schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
+            float size_of_timestep);
 
-	/**
-	 * Put prep with the specified probability.
-	 */
-	void updatePREPUse(double tick, double prob, PersonPtr person);
+    /**
+     * Initializes PrEP cessation events for the initial set of persons.
+     */
+    void initPrepCessation();
 
 public:
-	Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);
-	virtual ~Model();
+    Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);
+    virtual ~Model();
 
-	void step();
-	void atEnd();
-	void saveRNetwork();
+    void step();
+    void atEnd();
+    void saveRNetwork();
 };
-
 
 } /* namespace TransModel */
 

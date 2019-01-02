@@ -11,13 +11,13 @@
 
 namespace TransModel {
 
-GeometricDistribution::GeometricDistribution(double p, int increment) : dist(p), increment_{increment} {}
+GeometricDistribution::GeometricDistribution(double p, double increment) : dist(p), increment_{increment} {}
 
 GeometricDistribution::~GeometricDistribution() {
 }
 
 double GeometricDistribution::next() {
-	return dist(repast::Random::instance()->engine()) + increment_;
+    return dist(repast::Random::instance()->engine()) + increment_;
 }
 
 } /* namespace TransModel */

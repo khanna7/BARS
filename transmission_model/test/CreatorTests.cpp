@@ -35,7 +35,7 @@ protected:
 		builder.testingEventWriter("null");
 		builder.prepEventWriter("null");
 		builder.artEventWriter("null");
-		builder.createStatsSingleton();
+		builder.createStatsSingleton(0);
 
 		repast::Properties props("../test_data/test.props");
 		Parameters::initialize(props);
@@ -44,11 +44,6 @@ protected:
 
 		repast::Random::initialize(1);
 		repast::RepastProcess::init("");
-
-		float non_tester_rate = Parameters::instance()->getDoubleParameter(NON_TESTERS_PROP);
-		BinomialGen coverage(repast::Random::instance()->engine(),
-				boost::random::binomial_distribution<>(1, non_tester_rate));
-		repast::Random::instance()->putGenerator(NON_TESTERS_BINOMIAL, new repast::DefaultNumberGenerator<BinomialGen>(coverage));
 
 		float circum_rate = Parameters::instance()->getDoubleParameter(CIRCUM_RATE);
 		BinomialGen rate(repast::Random::instance()->engine(), boost::random::binomial_distribution<>(1, circum_rate));
@@ -70,16 +65,14 @@ TEST_F(CreatorTests, TestInfectedPersonCreationNoART) {
 	ASSERT_NEAR(61.87456, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, 1, dur_inf);
-	PersonCreator creator(runner, 0.5, 1);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
+	PersonCreator creator(runner, 1);
 	PersonPtr person = creator(p_list, 1);
 	ASSERT_FALSE(person->isCircumcised());
 	ASSERT_TRUE(person->isInfected());
 	ASSERT_EQ(0, person->steady_role());
 	ASSERT_NEAR(61.87456f, person->age(), 0.00001);
 	ASSERT_FALSE(person->isDiagnosed());
-	// created at tick 1 so 43 from tick 1
-	ASSERT_EQ(43, person->timeUntilNextTest(1));
 	ASSERT_TRUE(person->isTestable());
 	ASSERT_FALSE(person->isOnPrep());
 
@@ -107,8 +100,8 @@ TEST_F(CreatorTests, TestUninfectedPersonCreation) {
 	ASSERT_NEAR(43.92679, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, 1, dur_inf);
-	PersonCreator creator(runner, 0.5, 1);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
+	PersonCreator creator(runner, 1);
 	PersonPtr person = creator(p_list, 1);
 	ASSERT_FALSE(person->isCircumcised());
 	ASSERT_FALSE(person->isInfected());
@@ -147,8 +140,8 @@ TEST_F(CreatorTests, TestInfectedPersonCreationART) {
 	ASSERT_NEAR(17.89907, as<double>(p_list["age"]), 0.00001);
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, 1, dur_inf);
-	PersonCreator creator(runner, 0.5, 1);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
+	PersonCreator creator(runner, 1);
 	PersonPtr person = creator(p_list, 1);
 	ASSERT_FALSE(person->isCircumcised());
 	ASSERT_TRUE(person->isInfected());
@@ -156,8 +149,6 @@ TEST_F(CreatorTests, TestInfectedPersonCreationART) {
 	ASSERT_NEAR(17.89907f, person->age(), 0.00001);
 
 	ASSERT_TRUE(person->isDiagnosed());
-	// should always be 0 for diagnosed person
-	ASSERT_EQ(0, person->timeUntilNextTest(1));
 	ASSERT_TRUE(person->isTestable());
 	ASSERT_FALSE(person->isOnPrep());
 
@@ -180,8 +171,8 @@ TEST_F(CreatorTests, TestCreatorFromSavedNet) {
 	RInstance::rptr->parseEvalQ(cmd);
 	List rnet = as<List>((*RInstance::rptr)["n0"]);
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, 1, dur_inf);
-	PersonCreator creator(runner, 0.5, 1);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
+	PersonCreator creator(runner, 1);
 	List val = as<List>(rnet["val"]);
 
 	// will throw exception if there's an issue
@@ -201,10 +192,10 @@ TEST_F(CreatorTests, TestDiagnosis) {
 	p_list["lag.bet.diagnosis.and.art.init"] = 0;
 
 	std::vector<float> dur_inf { 10, 20, 30, 40 };
-	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, 1, dur_inf);
+	std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, dur_inf);
 
 	// detection window = 10
-	PersonCreator creator(runner, 0.5, 10);
+	PersonCreator creator(runner, 10);
 	double tick = 2;
 	PersonPtr person = creator(p_list, tick);
 
@@ -213,25 +204,21 @@ TEST_F(CreatorTests, TestDiagnosis) {
 	person->infect(50, tick);
 //	// person should diagnose true at next_text_at, detection window is 10 which is long
 //	// before next_test_at
-	Stats::instance()->personDataRecorder().initRecord(person, 0);
+	Stats::instance()->personDataRecorder()->initRecord(person, 0);
 	ASSERT_FALSE(person->diagnose(100));
 	ASSERT_FALSE(person->diagnose(next_test_at - 1));
 	ASSERT_TRUE(person->diagnose(next_test_at));
 
 	p_list["time.until.next.test"] = 5;
 	PersonPtr p2 = creator(p_list, tick);
-	Stats::instance()->personDataRecorder().initRecord(p2, 0);
+	Stats::instance()->personDataRecorder()->initRecord(p2, 0);
 	p2->infect(50, tick);
-	ASSERT_EQ(4, p2->timeUntilNextTest(3));
 	// test should be false at next_test_at (7)
 	// because detection window not yet reached
 	ASSERT_FALSE(p2->diagnose(7));
-	next_test_at = p2->timeUntilNextTest(7);
 	// do the next test at the max of the next testing data
 	// or the detection window to insure a positive test
 	double test_at = std::max(7 + next_test_at, 12.0f);
 	ASSERT_TRUE(p2->diagnose(test_at));
-	// should always be 0 if diagnosed
-	ASSERT_EQ(0, p2->timeUntilNextTest(50));
 	ASSERT_TRUE(p2->isDiagnosed());
 }

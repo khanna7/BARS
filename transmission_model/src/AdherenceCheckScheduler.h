@@ -15,15 +15,15 @@
 
 namespace TransModel {
 
-class AdherenceCheckScheduler : public repast::Functor {
+class ARTAdherenceCheckScheduler : public repast::Functor {
 private:
-	PersonPtr person_;
-	double timestamp_;
+    PersonPtr person_;
+    double timestamp_;
 public:
-	AdherenceCheckScheduler(std::shared_ptr<Person> person, double timestamp);
-	virtual ~AdherenceCheckScheduler();
+    ARTAdherenceCheckScheduler(std::shared_ptr<Person> person, double timestamp);
+    virtual ~ARTAdherenceCheckScheduler();
 
-	void operator()();
+    void operator()();
 };
 
 } /* namespace TransModel */

@@ -16,15 +16,13 @@
    source("common-functions.R")
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:2)+
-                  nodematch("role_main", keep=c(2:3), diff=TRUE)#+
-                  ## nodemix("diagnosed", base=c(1,3))
+   formation <- ~edges+degree(0:2)+absdiff("age")
 
    dissolution <- ~offset(edges)
    #theta.diss <- log(duration-1)
-    theta.diss <- 6.43 #adjusted for death rate
+   # theta.diss <- should be 6.43 (corresponding to duration of 512 and death correction with 16-year life expectancy). set in derived param file
 
-   target.stats <- c(nedges, deg_seq[1:3], 0, 0)
+   target.stats <- c(nedges, deg_seq[1:3], absdiff.main*nedges)  
    constraints <- ~.
 
    formation.n0 <- update.formula(formation, n0~.)
@@ -123,12 +121,25 @@
     n0 %v% "cd4.count.today" <- cd4.count.today
 
    ## non-testers
-   non.tester <- rbinom(n, 1, non.testers.prop)
-   testers <- which(non.tester == 0)
-   n0 %v% "non.testers" <- non.tester
+   age.threshold <- 26
 
+   lt.msm <- which(age < age.threshold) #lt = "less than"
+   gte.msm <- which(age >= age.threshold) #gte = "greater than equal to"
+   
+   non.tester.lt <- rbinom(length(lt.msm), 1, non.testers.prop.lt)
+   non.tester.gte <- rbinom(length(gte.msm), 1, non.testers.prop.gte)
+   
+   set.vertex.attribute(n0, "non.testers", non.tester.lt, v=lt.msm)
+   set.vertex.attribute(n0, "non.testers", non.tester.gte, v=gte.msm)
+   
+   age.lt26 <- age #test if above construction worked
+   age.lt26[lt.msm] <- 1
+   age.lt26[gte.msm] <- 0
+   
+   xtabs(~age.lt26 + n0%v%"non.testers") #7.8% (2.3%) of <26y (>=26y) have never testerd
+   
    ## ART coverage 
-   art.covered <- 1-non.tester
+   art.covered <- 1-(n0%v%"non.testers")
    set.vertex.attribute(n0, "art.covered", art.covered)
 
    ## ART status
@@ -299,6 +310,8 @@
       table(n0%v%"prep.status")/sum(table(n0%v%"prep.status"))
 
       ## assign time for stoppage
+      prep.daily.stop.prob <- mean(default.prep.unbalanced.starting.prob.lt,
+                                   default.prep.unbalanced.starting.prob.gte)
       on.prep <- which(n0%v%"prep.status" == 1)
       set.vertex.attribute(n0, "time.of.prep.cessation",
                            rgeom(length(on.prep), prep.daily.stop.prob),
@@ -324,29 +337,29 @@
 
    #####################
    ## SIMULATE (for testing)
-    hetdeg.diag.sim <- simulate(n0,
-                                formation=formation.n0,
-                                dissolution=dissolution,
-                                coef.form=theta.form, 
-                                coef.diss=theta.diss,
-                                time.slices=2e4,
-                                #time.slices=1e2,
-                                constraints=constraints,
-                                monitor=~edges+degree(0:5)
-                                )
-
-   #####################
-   ## TEST
-   net.f <- network.collapse(hetdeg.diag.sim, at=20000)
-   network.size(net.f)
-   network.edgecount(net.f)
-   degreedist(net.f) /network.size(net.f)
-
-   get.edge.activity(net.f)
+    # hetdeg.diag.sim <- simulate(n0,
+    #                             formation=formation.n0,
+    #                             dissolution=dissolution,
+    #                             coef.form=theta.form,
+    #                             coef.diss=theta.diss,
+    #                             time.slices=2e4,
+    #                             #time.slices=1e2,
+    #                             constraints=constraints,
+    #                             monitor=~edges+degree(0:5)
+    #                             )
+# 
+#    #####################
+#    ## TEST
+#    net.f <- network.collapse(hetdeg.diag.sim, at=20000)
+#    network.size(net.f)
+#    network.edgecount(net.f)
+#    degreedist(net.f) /network.size(net.f)
+# 
+#    get.edge.activity(net.f)
    ## To compute partnership metrics from network data, see 
    ## https://github.com/khanna7/sero-discordant-couples/blob/master/Code/Engine/function_sdp_identify_d1.R
    
    #####################
    ## SAVE BINARY
-   save.image(file="initialized-model.RData")
+   save.image(file="initialized-model_n10000.RData")
    

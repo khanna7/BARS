@@ -52,25 +52,25 @@ namespace TransModel {
 class FileOutput {
 public:
 
-	std::ostream& operator<<(const std::string& val);
-	std::ostream& operator<<(double val);
-	std::ostream& operator<<(float val);
-	std::ostream& operator<<(unsigned int val);
-	std::ostream& operator<<(int val);
+    std::ostream& operator<<(const std::string& val);
+    std::ostream& operator<<(double val);
+    std::ostream& operator<<(float val);
+    std::ostream& operator<<(unsigned int val);
+    std::ostream& operator<<(int val);
 
-	std::ostream& ostream();
+    std::ostream& ostream();
 
-	FileOutput(const std::string& filename);
-	virtual ~FileOutput();
+    FileOutput(const std::string& filename);
+    virtual ~FileOutput();
 
-	/**
-	 * Closes the recorder and writes any unwritten data to the file.
-	 */
-	void close();
+    /**
+     * Closes the recorder and writes any unwritten data to the file.
+     */
+    void close();
 
 private:
-	std::ofstream out;
-	bool open;
+    std::ofstream out;
+    bool open;
 };
 
 } /* namespace mrsa */

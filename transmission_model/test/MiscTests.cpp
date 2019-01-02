@@ -5,6 +5,8 @@
  *      Author: nick
  */
 
+#include <random>
+
 #include "gtest/gtest.h"
 
 #include "repast_hpc/Random.h"
@@ -16,27 +18,76 @@
 #include "StatsBuilder.h"
 #include "DayRangeCalculator.h"
 #include "RangeWithProbability.h"
-
+#include "AdherenceCategory.h"
 #include "GeometricDistribution.h"
+#include "TestingConfigurator.h"
+#include "PREPAdherenceConfigurator.h"
+#include "Person.h"
 
 using namespace TransModel;
 using namespace Rcpp;
 
 /*
  Sanity check that this is working as I thought it would.
-TEST(GeometricDistTests, GeometricDistTest) {
-	repast::Random::initialize(1);
-	GeometricDistribution dist(1 / 500.0, 0);
-	double sum = 0;
-	for (int i = 0; i < 2000; ++i) {
-		sum += dist.next();
+ TEST(GeometricDistTests, GeometricDistTest) {
+ repast::Random::initialize(1);
+ GeometricDistribution dist(1 / 500.0, 0);
+ double sum = 0;
+ for (int i = 0; i < 2000; ++i) {
+ sum += dist.next();
+ }
+ std::cout << (sum / 2000) << std::endl;
+
+ }
+ */
+
+TEST(MiscTests, TestProbDist) {
+	/*
+	 * prep.prop.never.adherent <- 0.211
+prep.prop.always.adherent <- 0.619
+prep.prop.part.plus.adherent <- 0.10
+prep.prop.part.neg.adherent <- 0.07
+	 */
+	double always = 0.619;
+	double never = 0.211;
+	double partial_plus = 0.10;
+	double partial_minus = 0.07;
+
+	//std::cout << "prep: " << always << "," << never << "," << partial_plus << ", " << partial_minus << std::endl;
+
+	ProbDistCreator<AdherenceData> creator;
+	creator.addItem(always, AdherenceData(0, AdherenceCategory::ALWAYS));
+	creator.addItem(never, AdherenceData(0, AdherenceCategory::NEVER));
+	creator.addItem(partial_plus, AdherenceData(0, AdherenceCategory::PARTIAL_PLUS));
+	creator.addItem(partial_minus, AdherenceData(0, AdherenceCategory::PARTIAL_MINUS));
+
+	std::map<AdherenceCategory, int> map;
+	map.emplace(AdherenceCategory::ALWAYS, 0);
+	map.emplace(AdherenceCategory::NEVER, 0);
+	map.emplace(AdherenceCategory::PARTIAL_PLUS, 0);
+	map.emplace(AdherenceCategory::PARTIAL_MINUS, 0);
+
+	ProbDist<AdherenceData> dist = creator.createProbDist();
+
+	for (int i = 0; i < 100000; ++i) {
+		AdherenceData data = dist.draw(repast::Random::instance()->nextDouble());
+		int val = map[data.category];
+		map[data.category] = ++val;
 	}
-	std::cout << (sum / 2000) << std::endl;
 
+	int always_count = map[AdherenceCategory::ALWAYS];
+	int never_count = map[AdherenceCategory::NEVER];
+	int pp_count = map[AdherenceCategory::PARTIAL_PLUS];
+	int pm_count = map[AdherenceCategory::PARTIAL_MINUS];
+
+	double sum = always_count + never_count + pp_count + pm_count;
+	std::cout << "always: " << always_count / sum << std::endl;
+	std::cout << "never: " << never_count / sum << std::endl;
+	std::cout << "pp: " << pp_count / sum << std::endl;
+	std::cout << "pm: " << pm_count / sum << std::endl;
 }
-*/
 
-TEST(RangeWithProbTests, TestRangeWithProb) {
+TEST(MiscTests, TestRangeWithProb) {
 	RangeWithProbabilityCreator creator;
 	creator.addBin(12, 15, 0.3);
 	creator.addBin(16, 20, 0.8);
@@ -64,13 +115,14 @@ TEST(RangeWithProbTests, TestRangeWithProb) {
 	ASSERT_FALSE(rp.run(29, 0.9));
 }
 
-TEST(DayRangeCalcTests, TestCreator) {
+TEST(MiscTests, TestCreator) {
 	DayRangeCalculatorCreator creator;
 
 	try {
 		creator.createCalculator();
 		FAIL();
-	} catch (...) {}
+	} catch (...) {
+	}
 
 	creator.clear();
 	try {
@@ -118,39 +170,7 @@ void test_calc(std::shared_ptr<DayRangeCalculator> calc, double min, double max,
 	ASSERT_LE(c2, 550);
 }
 
-TEST(DayRangeCalcTests, TestLagCalculator) {
-	repast::Random::initialize(1);
-	DayRangeCalculatorCreator creator;
-
-	creator.addBin("1,1-7");
-	creator.addBin("0,7-30");
-	creator.addBin("0,5-5");
-	std::shared_ptr<DayRangeCalculator> calc = creator.createCalculator();
-	test_calc(calc, 1, 7);
-	creator.clear();
-
-	creator.addBin("0,1-7");
-	creator.addBin("1,7-30");
-	creator.addBin("0,5-5");
-	calc = creator.createCalculator();
-	test_calc(calc, 7, 30);
-	creator.clear();
-
-	creator.addBin("0,1-7");
-	creator.addBin("0,7-30");
-	creator.addBin("1,5-5");
-	calc = creator.createCalculator();
-	test_calc(calc, 5, 5);
-	creator.clear();
-
-	creator.addBin("0,1-7");
-	creator.addBin("0.5,7-30");
-	creator.addBin("0.5,5-5");
-	calc = creator.createCalculator();
-	test_calc(calc, 5, 5, 7, 30);
-}
-
-TEST(ParametersTests, TestCreateFromR) {
+TEST(MiscTests, TestCreateFromR) {
 	//RInstance::rptr
 	repast::Properties props("../test_data/test.props");
 	Parameters::initialize(props);
@@ -174,7 +194,7 @@ TEST(ParametersTests, TestCreateFromR) {
 	ASSERT_NEAR(1 / 90.0, params->getDoubleParameter("prep.daily.stop.prob"), 0.001);
 }
 
-TEST(ParametersTests, TestParameterParsing) {
+TEST(MiscTests, TestParameterParsing) {
 	std::string params("run=1,num.foo=3.5,x.y.z=4.2");
 	repast::Properties props("../test_data/test.props");
 	Parameters::initialize(props);
@@ -184,14 +204,7 @@ TEST(ParametersTests, TestParameterParsing) {
 	ASSERT_EQ(4.2, as<double>((*RInstance::rptr)["x.y.z"]));
 }
 
-struct MockGen {
-
-	double next() {
-		return 3;
-	}
-};
-
-TEST(DiagnoserTests, TestDiagnosis) {
+TEST(MiscTests, TestDiagnosis) {
 	StatsBuilder builder("/dev");
 	builder.countsWriter("null");
 	builder.partnershipEventWriter("null");
@@ -202,34 +215,28 @@ TEST(DiagnoserTests, TestDiagnosis) {
 	builder.testingEventWriter("null");
 	builder.prepEventWriter("null");
 	builder.artEventWriter("null");
-	builder.createStatsSingleton();
+	builder.createStatsSingleton(0);
 
-	std::shared_ptr<MockGen> gen = std::make_shared<MockGen>();
-	// window is 2, next_test at 5
-	Diagnoser<MockGen> diagnoser(2, 5, 0, gen);
+	// window is 5, test count 0, prob of test is 0
+	Diagnoser diagnoser(5, 0, 0);
 
-	ASSERT_EQ(5, diagnoser.timeUntilNextTest(0));
 	ASSERT_EQ(0, diagnoser.testCount());
 	ASSERT_EQ(-1, diagnoser.lastTestAt());
 
 	InfectionParameters infection_params;
 	infection_params.infection_status = false;
-	for (int i = 1; i < 5; ++i) {
+	for (int i = 1; i < 100; ++i) {
 		ASSERT_TRUE(diagnoser.test(i, infection_params) == Result::NO_TEST);
 		ASSERT_EQ(0, diagnoser.testCount());
 	}
+
+	diagnoser = Diagnoser(5, 0, 1);
 
 	// next test at 5 so increase test count, but
 	// diagnosis is false because status is false
 	ASSERT_TRUE(diagnoser.test(5, infection_params) == Result::NEGATIVE);
 	ASSERT_EQ(5, diagnoser.lastTestAt());
 	ASSERT_EQ(1, diagnoser.testCount());
-
-	// next test should be at 8 (5 + 3).
-	for (int i = 1; i < 3; ++i) {
-		ASSERT_TRUE(diagnoser.test(5 + i, infection_params) == Result::NO_TEST);
-		ASSERT_EQ(1, diagnoser.testCount());
-	}
 
 	infection_params.infection_status = true;
 	infection_params.time_of_infection = 8;
@@ -238,11 +245,173 @@ TEST(DiagnoserTests, TestDiagnosis) {
 	ASSERT_EQ(8, diagnoser.lastTestAt());
 	ASSERT_EQ(2, diagnoser.testCount());
 
-	// window passed but not time for next test
-	ASSERT_EQ(Result::NO_TEST, diagnoser.test(10, infection_params));
-	ASSERT_EQ(2, diagnoser.testCount());
-
 	// time for next test and window has passed
-	ASSERT_EQ(Result::POSITIVE, diagnoser.test(11, infection_params));
+	ASSERT_EQ(Result::POSITIVE, diagnoser.test(13, infection_params));
 	ASSERT_EQ(3, diagnoser.testCount());
+}
+
+TEST(MiscTests, testTestingFunc) {
+	repast::Properties props("../test_data/testing_ranges.props");
+	Parameters::initialize(props);
+	// testing.prob.1 = 1-3,0.4
+	// testing.prob.2 = 4-6,0.3
+	// testing.prob.3 = 7-8,0.3
+	ProbDist<TestingDist> dist = create_prob_dist("testing.prob.lt");
+	std::default_random_engine generator;
+
+	// 730 -- days in 2 years
+	double exp_min = 1 / 730.0;
+	double exp_max = 3 / 730.0;
+	std::uniform_real_distribution<double> r(0.0,0.4);
+	for (int i = 0; i < 1000; ++i) {
+		double val = dist.draw(r(generator)).next(1);
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+	}
+
+	exp_min = 4 / 730.0;
+	exp_max = 6 / 730.0;
+	std::uniform_real_distribution<double> r1(0.4,0.7);
+	for (int i = 0; i < 1000; ++i) {
+		double val = dist.draw(r1(generator)).next(1);
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+	}
+
+	exp_min = 7 / 730.0;
+	exp_max = 8 / 730.0;
+	std::uniform_real_distribution<double> r2(0.7,1.0);
+	for (int i = 0; i < 1000; ++i) {
+		double val = dist.draw(r2(generator)).next(1);
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+	}
+
+	Diagnoser diagnoser(0, 0);
+	PersonPtr person = std::make_shared<Person>(1, 27, true, 1, 1, diagnoser);
+	TestingConfigurator config = create_testing_configurator();
+
+	exp_min = 1 / 730.0;
+	exp_max = 3 / 730.0;
+	std::uniform_real_distribution<double> g(0.0,0.2);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g(generator);
+		config.configurePerson(person, 1, draw);
+		double val = person->diagnoser().testingProbability();
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+		ASSERT_TRUE(!person->isTestable());
+	}
+
+	exp_min = 4 / 730.0;
+	exp_max = 6 / 730.0;
+	std::uniform_real_distribution<double> g1(0.2, 0.3);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g1(generator);
+		config.configurePerson(person, 1, draw);
+		double val = person->diagnoser().testingProbability();
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+		ASSERT_TRUE(!person->isTestable());
+	}
+
+	exp_min = 7 / 730.0;
+	exp_max = 8 / 730.0;
+	std::uniform_real_distribution<double> g2(0.3, 1.0);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g2(generator);
+		config.configurePerson(person, 1, draw);
+		double val = person->diagnoser().testingProbability();
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+		ASSERT_TRUE(!person->isTestable());
+	}
+
+	exp_min = 1 / 730.0;
+	exp_max = 3 / 730.0;
+	person->setAge(25);
+	std::uniform_real_distribution<double> g3(0.0, 0.4);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g3(generator);
+		config.configurePerson(person, 1, draw);
+		double val = person->diagnoser().testingProbability();
+		ASSERT_GE(val, exp_min);
+		ASSERT_LE(val, exp_max);
+		ASSERT_TRUE(person->isTestable());
+	}
+}
+
+TEST(MiscTests, testPrepAdherenceConfig) {
+
+	Diagnoser diagnoser(0, 0);
+	PersonPtr person = std::make_shared<Person>(1, 25.9, true, 1, 1, diagnoser);
+	PREPAdherenceConfigurator config = create_prep_adherence_configurator();
+
+	/*
+	 * prep.prop.always.adherent.lt = 0.619
+	 * prep.prop.never.adherent.lt = 0.211
+prep.prop.part.plus.adherent.lt = 0.10
+prep.prop.part.neg.adherent.lt = 0.07
+	 */
+	double exp_tr = 0.95;
+	AdherenceCategory exp_cat = AdherenceCategory::ALWAYS;
+	double max = 0.619;
+	double min = 0.0;
+	std::uniform_real_distribution<double> g(min, max);
+	std::default_random_engine generator;
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
+	}
+
+	exp_tr = 0.0;
+	exp_cat = AdherenceCategory::NEVER;
+	min = max;
+	max += 0.211;
+	std::uniform_real_distribution<double> g1(min, max);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g1(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
+	}
+
+	exp_tr = 0.81;
+	exp_cat = AdherenceCategory::PARTIAL_PLUS;
+	min = max;
+	max += 0.1;
+	std::uniform_real_distribution<double> g2(min, max);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g2(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
+	}
+
+	exp_tr = 0.31;
+	exp_cat = AdherenceCategory::PARTIAL_MINUS;
+	min = max;
+	max = 1.0;
+	std::uniform_real_distribution<double> g3(min, max);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g3(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
+	}
+
+	person->setAge(26.1);
+	exp_tr = 0.0;
+	exp_cat = AdherenceCategory::NEVER;
+	min = 0.8;
+	max = 0.9;
+	std::uniform_real_distribution<double> g4(min, max);
+	for (int i = 0; i < 1000; ++i) {
+		double draw = g4(generator);
+		config.configurePerson(person, draw);
+		ASSERT_EQ(person->prepParameters().adherenceCagegory(), exp_cat);
+		ASSERT_EQ(person->prepParameters().prepEffectiveness(), exp_tr);
+	}
 }

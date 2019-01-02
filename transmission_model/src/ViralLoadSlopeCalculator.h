@@ -14,17 +14,17 @@ namespace TransModel {
 
 class ViralLoadSlopeCalculator {
 private:
-	float undetectable_vl_, time_to_full_supp_;
+    float undetectable_vl_, time_to_full_supp_;
 
 public:
-	ViralLoadSlopeCalculator(float undetectable_vl_, float time_to_full_supp_);
-	virtual ~ViralLoadSlopeCalculator();
+    ViralLoadSlopeCalculator(float undetectable_vl_, float time_to_full_supp_);
+    virtual ~ViralLoadSlopeCalculator();
 
-	/**
-	 * Calculates the viral load on art trajectory slope for the given infection parameters.
-	 * This assumes the associated person is on ART.
-	 */
-	float calculateSlope(const InfectionParameters& params);
+    /**
+     * Calculates the viral load on art trajectory slope for the given infection parameters.
+     * This assumes the associated person is on ART.
+     */
+    float calculateSlope(const InfectionParameters& params);
 };
 
 } /* namespace TransModel */

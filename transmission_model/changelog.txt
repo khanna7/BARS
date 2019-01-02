@@ -1,3 +1,260 @@
+02 November 2018
+
+Version 0.54
+
+* Updated cd4 count related mortality to new model
+* Fixed ART scheduling issue for burn-in persons
+
+16 October 2018
+
+Version 0.53
+
+* Added cd4 count related mortality
+* Updated bio marker logging init to avoid crash when not using
+
+19 September 2018
+
+Version 0.52
+
+* Made sure that net intervention does not put infecteds on prep
+
+13 September 2018
+
+Version 0.51
+
+* Undid prep fix from version 0.50
+
+11 September 2018
+
+Version 0.50
+
+* Fixed prep uptake equation to correctly incorporate the gte adjustment
+
+7 September 2018
+
+Version 0.49
+
+* Updated prep uptake probability algorithm to account for persons going off prep due to aging out of model"
+
+
+5 September 2018
+
+Version 0.48
+
+* Fixed random selection intervention by splitting into base and random selection.
+
+ 29 August 2018
+
+Version 0.47
+
+* Updated so network stats are never calculated for base case network PrEP intervention (i.e. top_n = 0, increment is 0, or years to increment is 0)
+* Fixed candidate count adjustment in network PrEP intervention to account for age.
+* Removed obsolete PrEP intervention code
+
+
+27 August 2018
+
+Version 0.46
+
+* Removed subtraction of base use as its not part of increment
+
+27 August 2018
+
+Version 0.45
+
+* Fixed default intervention incrementation algorithm
+
+25 August 2018
+
+Version 0.44
+
+* Fixed intervention algorithms
+
+24 August 2018
+
+Verson 0.43
+
+* Updated prep intervention denominator
+* Composite chain scheme for prep interventions
+* Additional prep loggings
+
+17 July 2018
+
+Version 0.42
+
+* Improved network intervention performance
+
+10 July 2018
+
+Version 0.41
+
+* Updated degree and eigen prep intervention to allow for age based increments
+
+6 July 2018
+
+Version 0.40
+
+* Updated serodiscordant prep intervention to allow for age based increments
+
+2 July 2018
+
+Version 0.39
+
+* Added new prep interventions: serodiscordant, eigen, and degree
+
+15 May 2018
+
+Version 0.37
+
+* Updated viral suppression per diagnosed to stat using new defintion
+
+11 May 2018
+
+Version 0.36
+
+* Enabled "unbalanced" age related prep uptake
+* Added viral suppression related stats
+* Added time of diagnosis as a stat
+
+10 April 2018
+
+Version 0.35
+
+* Fixed diagnosis initialization code that caused ART uptake to drop to 0
+
+5 April 2018
+
+Version 0.34
+
+* Fixed issue with unbalanced using incorrect stopping parameters
+* Fixed issue with string parsing from the command line
+
+3 April 2018
+
+Version 0.33
+
+* Fixed issue with parsing multi-part string parameters from command line (e.g. art.init.lag)
+
+29 March 2018
+
+Version 0.32
+
+* Added "unbalanced" PrEP update scheme.
+
+21 February 2018
+
+Version 0.31
+
+* PrEP and ART related fixes when creating persons from burnin networks. For example,
+prep time of cessation may be 30600 with initiation of 30500 from burnin and burnin ended at
+30550, so new time of cessation should be 50.
+
+20 February 2018
+
+Version 0.30
+
+* Added skewing the probability of picking a young (y) vs old (o) person for PrEP use by a factor of alpha
+
+8 February 2018
+
+Version 0.29
+
+* Added ability to increment PrEP yearly uptake. 
+
+30 January 2018
+
+Version 0.28
+
+* Fixes for starting from a serialized network.
+
+22 January 2018
+
+Version 0.27
+
+* Added by age aggregate per timestep stats
+
+19 January 2018
+
+Version 0.26
+
+* Parameters that appear later in the input parameter string will override those with the same name
+that appear earlier in the string
+
+21 December 2017
+
+Version 0.25
+
+* Updated to use duration.of.infection parameter rather than dur.inf.by.age
+
+11 November 2017
+
+Version 0.24
+
+* Added range-based age specific output
+* Input age parmameter is specifiable
+
+19 October 2017
+
+Version 0.23
+
+* Added additional outputs tracking u26 and gte26 external and entry infections.
+* Updated summarize_functions to calculate incidence using other infection sources (entry and external).
+
+
+16 October 2017
+
+Version 0.22
+
+* Testing prob category not assigned if person is not testable
+
+12 October 2017
+
+Version 0.21
+
+* Age specific parameters and ability to disable specific outputs.
+	* non.testers.prop
+	* testing.prob
+	* art.init.lag
+	* prep.bl.use.prop
+	* prep.mean.days.usage
+	* prep.prop.*.adherent
+
+26 September 2017
+
+Version 0.20
+
+* Added new output to record stats by age group (under 26, 26 and over).
+
+12 September 2017
+
+Version 0.19
+
+* Updated testing frequency to match empirical distribution
+
+22 August 2017
+
+Version 0.18
+
+* Fixed issue with random seed not being set properly from a command line parameter
+
+16 June 2017
+
+* Implemented PrEP v3: Persons on PrEP avg of 60 days with prep effectiveness
+determined by the person’s adherence category
+
+31 May 2017
+
+Version 0.16
+
+* Added prep and art counts to count stats
+
+23 May 2017
+
+Version 0.15:
+
+* External infection probability is age dependent (older persons more likely)
+* PrEP adherence checked weekly and in 4 categories (always, never, partial plus, and partial minus).
+
 20 April 2017
 
 Version 0.14:

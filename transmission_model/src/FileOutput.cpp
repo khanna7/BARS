@@ -51,78 +51,78 @@ namespace fs = boost::filesystem;
 namespace TransModel {
 
 FileOutput::FileOutput(const std::string& filename) :
-		out(), open(true) {
+        out(), open(true) {
 
-	std::string fname = unique_file_name(filename);
-	fs::path filepath(fname);
-	if (!fs::exists(filepath.parent_path()))
-		fs::create_directories(filepath.parent_path());
-	out.open(filepath.string().c_str());
+    std::string fname = unique_file_name(filename);
+    fs::path filepath(fname);
+    if (!fs::exists(filepath.parent_path()))
+        fs::create_directories(filepath.parent_path());
+    out.open(filepath.string().c_str());
 }
 
 
 void FileOutput::close() {
-	if (open) {
-		out.flush();
-		out.close();
-		open = false;
-	}
+    if (open) {
+        out.flush();
+        out.close();
+        open = false;
+    }
 }
 
 FileOutput::~FileOutput() {
-	close();
+    close();
 }
 
 std::ostream& FileOutput::ostream() {
-	if (!open) {
-		throw std::logic_error("Cannot write to closed FileOutput");
-	}
-	return out;
+    if (!open) {
+        throw std::logic_error("Cannot write to closed FileOutput");
+    }
+    return out;
 }
 
 std::ostream& FileOutput::operator<<(const std::string& val) {
-	if (open) {
-		out << val;
-	} else {
-		throw std::logic_error("Cannot write to closed FileOutput");
-	}
-	return out;
+    if (open) {
+        out << val;
+    } else {
+        throw std::logic_error("Cannot write to closed FileOutput");
+    }
+    return out;
 }
 
 std::ostream& FileOutput::operator<<(unsigned int val) {
-	if (open) {
-		out << val;
-	} else {
-		throw std::logic_error("Cannot write to closed FileOutput");
-	}
-	return out;
+    if (open) {
+        out << val;
+    } else {
+        throw std::logic_error("Cannot write to closed FileOutput");
+    }
+    return out;
 }
 
 std::ostream& FileOutput::operator<<(int val) {
-	if (open) {
-		out << val;
-	} else {
-		throw std::logic_error("Cannot write to closed FileOutput");
-	}
-	return out;
+    if (open) {
+        out << val;
+    } else {
+        throw std::logic_error("Cannot write to closed FileOutput");
+    }
+    return out;
 }
 
 std::ostream& FileOutput::operator<<(double val) {
-	if (open) {
-		out << val;
-	} else {
-		throw std::logic_error("Cannot write to closed FileOutput");
-	}
-	return out;
+    if (open) {
+        out << val;
+    } else {
+        throw std::logic_error("Cannot write to closed FileOutput");
+    }
+    return out;
 }
 
 std::ostream& FileOutput::operator<<(float val) {
-	if (open) {
-		out << val;
-	} else {
-		throw std::logic_error("Cannot write to closed FileOutput");
-	}
-	return out;
+    if (open) {
+        out << val;
+    } else {
+        throw std::logic_error("Cannot write to closed FileOutput");
+    }
+    return out;
 }
 
 } /* namespace mrsa */

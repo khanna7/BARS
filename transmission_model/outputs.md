@@ -26,15 +26,25 @@ Parameters.txt contains the parameter values for a model run. It is written out 
 The aggregate data consist of various aggregate per time step stats (e.g. the total number of persons infected during a timestep). These are recorded in the file defined by *per.tick.counts.output.file* in the model properties file. The format is csv with each row recording the stats for that timestep. The columns are:
 * tick: the timestep at which the stats were generated
 * entries: the number of persons who entered the simulation at that timestep
-* old_age_deaths: the number of persons who died from old age (person's age > max age) at that timestep
+* max_age_exits: the number of persons who exited the model due to age (person's age > max age) at that timestep
 * infection_deaths: the number of persons who died from infection at that timestep
-* infected_via_transmission: the number of persons infected via transmission at that timestep
-* infected_externally: the number of persons infected via "external infection" at that timestep
-* infected_at_entry: the number of persons who were infected when entering the model
+* asm_deaths: the number of persons who died due to ASM at that timestep
+* infected_via_transmission: the total number of persons infected via transmission at that timestep
+* infected_via_transmission_N: the total number of persons of age N infected via transmission at that timestep. N is currently
+18 - 34 with one column for each age.
+* infected_externally: the number of persons infected via external infection at that timestep
+* infected_external_N: the total number of persons of age N infected externally at that timestep. N is currently
+18 - 34 with one column for each age.
+* infected_at_entry: the number of persons who were infected when entering the model at that timestep.
+* infected_at_entry_N: the total number of persons of age N infected when entering the model at that timestep. N is currently
+18 - 34 with one column for each age.
 * uninfected: the number of uninfected persons at that timestep. This includes uninfected entering persons and uninfected persons who have died during this timestep
+* uninfected_N: the number of uninfected persons of age N at that timestep. N is currently 18 - 34 with one column for each age.
 * steady_edge_count: the number of edges in the steady partner network in the model at the end of the timestep
-* casual_edge_count: the number of edges in the casual partner network in the model at the end of the timestep
+* casual_edge_count: the number of edges in the casual partner
+network in the model at the end of the timestep
 * vertex_count: the total number of vertices at the end of the timestep. This takes into account adding entries and subtracting deaths.
+* vertex_count_N:  the total number of vertices of age N at the end of the timestep.  N is currently 18 - 34 with one column for each age.
 * overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false.
 * sex_acts: the number of sex acts that occured at that timestep.
 * casual_sex_acts: the number of sex acts that occurred between casual partners.
@@ -47,6 +57,10 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * sd_steady_sex_without_condom: the number of sex acts between sero-discordant steady partners in which a condom was not used.
 * sc_steady_sex_with_condom: the number of sex acts between sero-concordant steady partners in which a condom was used.
 * sc_steady_sex_without_condom: the number of sex acts between sero-concordant steady partners in which a condom was not used.
+* on_art: the number of persons on ART at this time step.
+* on_prep: the number of persons on PrEP at this time.
+* vl_supp_per_positives: the number of virally suppressed individuals who have been infected for at least time.to.full.supp divided by the number of infected persons who have been infected for at least time.to.full.supp.
+* vl_supp_per_diagnosed: the number of virally suppressed individuals who have been diagnosed as positive for at least time.to.full.supp divided by the number of persons who have been diagnosed as positive for at least time.to.full.supp
 
 
 ### Partnership Events
@@ -140,17 +154,24 @@ Person data recording collects the following attributes for each person in the m
   * 0: undiagnosed
   * 1: diagnosed
 * init_art_lag: the time lag between being diagnosed and going on ART. If never on ART, then -1. If diagnosis status is 1, and this is -999999 then the person is in the never going on ART.
-* adherence_category: the person's adherence category.
-  * 0: Never going on ART
-  * 1: Always on ART
-  * 2: ART adherence is re-evalatuted at some parameterized interval.
-  * 3: None of the above. Person is either not infected, or not yet diagnosed, and so ART adherence doesn't apply.
+* prep_adherence_category: the person's PrEP adherence category.
+  * 0: Never
+  * 1: Always (almost)
+  * 2: Partial Plus
+  * 3: Partial Minus
+* art_adherence_category: the person's adherence category.
+  * 0: Never
+  * 1: Always (almost)
+  * 2: Partial Plus
+  * 3: Partial Minus
+  * 4: None of the above. Person is either not infected, or not yet diagnosed, and so ART adherence doesn't apply.
 * adhered_interval_count: the number of intervals during which a partially adherent person is on ART.
 * non_adhered_interval_count: the number of intervals during which a partially adherent person is not on ART.
 * infection_source: the "source" of the infection
   * 0 via internal edge transmission
   * 1 via the external infection mechanism
   * 2 N/A person is not infected
+* time_of_diagnosis: the time at which an individual is diagnosed or -1 if never diagnosed.
 
 ### Testing Events
 Testing events are recorded in the file defined by the *testing.events.file* property. Each time a 
@@ -177,4 +198,30 @@ When a person goes on or off PrEP, that event is recorded in the PrEP events fil
  * 0: off of PrEP
  * 1: off of PrEP because person has been diagnosed as infected
  * 2: on PrEP
+
+### PrEP Intervention Logging
+
+The intervention logging is defined in 3 properties:  *default.prep.log.file*, *serodiscordant.prep.log.file*, *network.prep.log.file*, and *random.selection.prep.log.file*. When
+these are defined in the properties, the detailed logging for that intervention type will be activated. When running serodiscordant or
+network interventions, the *base* part of the intervention will be recorded in the *default.prep.log.file* and the intervention in appropriate
+file.
+
+For the *default*, *random.selection.prep.log.file*, and *serodiscordant*, the following will be recorded.
+
+* tick: the time at which the data was recorded
+* count: the number of possible candidates for the intevention (e.g  persons not on PrEP and in serodiscordant relationship). 
+* selected: the number of persons from the candidate pool selected to go on PrEP
+* off_prep_adjustment: the amount added to the stop term in the probability calculation in order to account for persons going off prep due to exiting the model etc.
+* probability: the probability used to select persons to go on PrEP
+
+Each iteration will record two rows of the above data, one for the *lt* case and one for the *gte* case.
+
+For the *network* intervention, the following will be recorded.
+
+* tick: the time at which the data was recorded
+* count: the number of possible candidates for the intevention (e.g  persons not on PrEP and in serodiscordant relationship). 
+* top_n_count: the top_n * count number of persons to select
+* selected: the number of persons from the candidate pool selected to go on PrEP
+* off_prep_adjustment: the amount added to the stop term in the probability calculation in order to account for persons going off prep due to exiting the model etc.
+* probability: the probability used to select persons to go on PrEP
 

@@ -19,6 +19,11 @@ namespace TransModel {
 
 const std::string RUN_NUMBER = "run";
 
+const std::string INPUT_AGE_THRESHOLD = "input.age.threshold";
+
+const std::string LT_SUFFIX = ".lt";
+const std::string GTE_SUFFIX = ".gte";
+
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";
 
@@ -46,6 +51,11 @@ const std::string CASUAL_NET_SAVE_FILE = "casual.net.save.file";
 const std::string NET_SAVE_AT = "save.network.at";
 const std::string COUNT_OVERLAPS = "count.overlaps";
 
+const std::string SERO_LOG_FILE = "serodiscordant.prep.log.file";
+const std::string BASE_LOG_FILE = "default.prep.log.file";
+const std::string NET_LOG_FILE = "network.prep.log.file";
+const std::string RANDOM_SELECTION_LOG_FILE = "random.selection.prep.log.file";
+
 //const std::string PREP_MULT = "prep.mult";
 
 // generated from parameters.R
@@ -53,7 +63,6 @@ const std::string ACUTE_LENGTH_MIN = "acute.length.min";
 const std::string ACUTE_LENGTH_MAX = "acute.length.max";
 const std::string ACUTE_MULT = "acute.mult";
 const std::string ACUTE_MULT_HOLLING = "acute.mult.holling";
-const std::string ART_INIT_TIME = "art.init.time";
 const std::string B1_REF = "b1.ref";
 const std::string B2_AFRICAN = "b2.african";
 const std::string B3_FEMALE = "b3.female";
@@ -71,11 +80,9 @@ const std::string CHRONIC_LENGTH_MAX = "chronic.length.max";
 const std::string CIRCUM_MULT = "circum.mult";
 const std::string CIRCUM_RATE = "circum.rate";
 const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
-const std::string DAILY_TESTING_PROB = "daily.testing.prob";
 const std::string DETECTION_WINDOW = "detection.window";
 const std::string DUR_INF = "dur.inf";
 const std::string DURATION_OF_INFECTION = "duration.of.infection";
-const std::string DUR_INF_BY_AGE = "given.dur.inf.by.age";
 const std::string INIT_HIV_PREV = "init.hiv.prev";
 const std::string INIT_HIV_PREV_ENTRIES = "init.hiv.prev.for.entries";
 const std::string INFECTIVE_INSERTIVE_MULT = "inf.part.insertive.mult";
@@ -87,15 +94,71 @@ const std::string LATE_STAGE_VIRAL_LOAD = "late.stage.viral.load";
 const std::string MAX_AGE = "max.age";
 const std::string MIN_AGE = "min.age";
 const std::string MIN_CHRONIC_INFECTIVITY_UNADJ = "min.chronic.infectivity.unadj";
-const std::string NON_TESTERS_PROP = "non.testers.prop";
+const std::string NON_TESTERS_PROP_LT = "non.testers.prop.lt";
+const std::string NON_TESTERS_PROP_GTE = "non.testers.prop.gte";
 const std::string NUM_SEX_ACTS_PER_TIMESTEP = "num.sex.acts.per.timestep";
 const std::string PEAK_VIRAL_LOAD = "peak.viral.load";
 const std::string PER_DAY_CD4_RECOVERY = "per.day.cd4.recovery";
 const std::string PREG_MULT = "preg.mult";
 const std::string PREG_SUSC_MULT = "preg.susc.mult";
-const std::string PREP_TRANS_REDUCTION = "prep.transm.red";
-const std::string PREP_USE_PROP = "prep.bl.use.prop";
-const std::string PREP_DAILY_STOP_PROB = "prep.daily.stop.prob";
+
+const std::string PREP_SCHEME = "prep.uptake";
+
+const std::string DEFAULT_PREP_USE_PROP_LT = "default.prep.bl.use.prop.lt";
+const std::string DEFAULT_PREP_USE_PROP_GTE = "default.prep.bl.use.prop.gte";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_LT = "default.prep.daily.stop.prob.lt";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_GTE = "default.prep.daily.stop.prob.gte";
+const std::string DEFAULT_PREP_YEARLY_INCREMENT_LT = "default.prep.yearly.increment.lt";
+const std::string DEFAULT_PREP_YEARLY_INCREMENT_GTE = "default.prep.yearly.increment.gte";
+const std::string DEFAULT_PREP_YEARS_TO_INCREMENT = "default.prep.years.to.increment";
+const std::string DEFAULT_PREP_BALANCED_UNBALANCED = "default.prep.balanced.unbalanced";
+const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT = "default.prep.unbalanced.starting.prob.lt";
+const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE = "default.prep.unbalanced.starting.prob.gte";
+
+const std::string YOR_PREP_ALPHA = "yor.prep.alpha";
+const std::string YOR_PREP_USE_PROP = "yor.prep.bl.use.prop";
+const std::string YOR_PREP_DAILY_STOP_PROB = "yor.prep.daily.stop.prob";
+const std::string YOR_PREP_YEARLY_INCREMENT = "yor.prep.yearly.increment";
+const std::string YOR_PREP_YEARS_TO_INCREMENT = "yor.prep.years.to.increment";
+const std::string YOR_ADDITIONAL_PREP_LT = "yor.prep.additional.lt";
+const std::string YOR_ADDITIONAL_PREP_GTE = "yor.prep.additional.gte";
+
+const std::string SERO_BASE_PREP_USE_PROP_LT = "serodiscordant.base.prep.bl.use.prop.lt";
+const std::string SERO_BASE_PREP_USE_PROP_GTE = "serodiscordant.base.prep.bl.use.prop.gte";
+const std::string SERO_BASE_PREP_DAILY_STOP_PROB_LT = "serodiscordant.base.prep.daily.stop.prob.lt";
+const std::string SERO_BASE_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.base.prep.daily.stop.prob.gte";
+
+const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_LT = "serodiscordant.intrv.prep.daily.stop.prob.lt";
+const std::string SERO_INTRV_PREP_DAILY_STOP_PROB_GTE = "serodiscordant.intrv.prep.daily.stop.prob.gte";
+const std::string SERO_PREP_YEARLY_INCREMENT_LT = "serodiscordant.intrv.prep.yearly.increment.lt";
+const std::string SERO_PREP_YEARLY_INCREMENT_GTE = "serodiscordant.intrv.prep.yearly.increment.gte";
+const std::string SERO_PREP_YEARS_TO_INCREMENT = "serodiscordant.intrv.prep.years.to.increment";
+const std::string SERO_NET_TYPE = "serodiscordant.intrv.prep.network.type";
+
+const std::string EIGEN_BASE_PREP_USE_PROP_LT = "eigen.base.prep.bl.use.prop.lt";
+const std::string EIGEN_BASE_PREP_USE_PROP_GTE = "eigen.base.prep.bl.use.prop.gte";
+const std::string EIGEN_BASE_PREP_DAILY_STOP_PROB_LT = "eigen.base.prep.daily.stop.prob.lt";
+const std::string EIGEN_BASE_PREP_DAILY_STOP_PROB_GTE = "eigen.base.prep.daily.stop.prob.gte";
+
+const std::string EIGEN_INTRV_PREP_DAILY_STOP_PROB_LT = "eigen.intrv.prep.daily.stop.prob.lt";
+const std::string EIGEN_INTRV_PREP_DAILY_STOP_PROB_GTE = "eigen.intrv.prep.daily.stop.prob.gte";
+const std::string EIGEN_PREP_YEARLY_INCREMENT_LT = "eigen.intrv.prep.yearly.increment.lt";
+const std::string EIGEN_PREP_YEARLY_INCREMENT_GTE = "eigen.intrv.prep.yearly.increment.gte";
+const std::string EIGEN_PREP_YEARS_TO_INCREMENT = "eigen.intrv.prep.years.to.increment";
+const std::string EIGEN_TOPN = "eigen.intrv.prep.topn";
+
+const std::string DEGREE_BASE_PREP_USE_PROP_LT = "degree.base.prep.bl.use.prop.lt";
+const std::string DEGREE_BASE_PREP_USE_PROP_GTE = "degree.base.prep.bl.use.prop.gte";
+const std::string DEGREE_BASE_PREP_DAILY_STOP_PROB_LT = "degree.base.prep.daily.stop.prob.lt";
+const std::string DEGREE_BASE_PREP_DAILY_STOP_PROB_GTE = "degree.base.prep.daily.stop.prob.gte";
+
+const std::string DEGREE_INTRV_PREP_DAILY_STOP_PROB_LT = "degree.intrv.prep.daily.stop.prob.lt";
+const std::string DEGREE_INTRV_PREP_DAILY_STOP_PROB_GTE = "degree.intrv.prep.daily.stop.prob.gte";
+const std::string DEGREE_PREP_YEARLY_INCREMENT_LT = "degree.intrv.prep.yearly.increment.lt";
+const std::string DEGREE_PREP_YEARLY_INCREMENT_GTE = "degree.intrv.prep.yearly.increment.gte";
+const std::string DEGREE_PREP_YEARS_TO_INCREMENT = "degree.intrv.prep.years.to.increment";
+const std::string DEGREE_TOPN = "degree.intrv.prep.topn";
+
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";
 const std::string TIME_INFECTION_TO_LATE_STAGE = "time.infection.to.late.stage";
@@ -119,20 +182,34 @@ const std::string PROP_STEADY_SEX_ACTS = "prop.steady.sex.acts";
 const std::string PROP_CASUAL_SEX_ACTS = "prop.casual.sex.acts";
 const std::string INFECTIVITY_REDUCTION_CONDOM = "inf.red.w.condom";
 
-const std::string ART_LAG_PREFIX = "art.init.lag";
+const std::string ART_LAG_PREFIX_LT = "art.init.lag.lt";
+const std::string ART_LAG_PREFIX_GTE = "art.init.lag.gte";
 const std::string ASM_PREFIX = "asm.";
+const std::string CD4M_TREATED_PREFIX = "cd4m_treated.";
+
+const std::string TESTING_PROB_PREFIX_LT = "testing.prob.lt";
+const std::string TESTING_PROB_PREFIX_GTE = "testing.prob.gte";
 
 const std::string PARTIAL_ART_ADHER_WINDOW_LENGTH = "partial.art_adher.window.length";
-const std::string PROP_NEVER_ADHERENT = "prop.never.adherent";
-const std::string PROP_ALWAYS_ADHERENT = "prop.always.adherent";
-const std::string PROP_PARTIAL_POS_ADHERENT = "prop.part.plus.adherent";
-const std::string PROP_PARTIAL_NEG_ADHERENT = "prop.part.neg.adherent";
+const std::string ART_PROP_NEVER_ADHERENT = "art.prop.never.adherent";
+const std::string ART_PROP_ALWAYS_ADHERENT = "art.prop.always.adherent";
+const std::string ART_PROP_PARTIAL_POS_ADHERENT = "art.prop.part.plus.adherent";
+const std::string ART_PROP_PARTIAL_NEG_ADHERENT = "art.prop.part.neg.adherent";
 
-const std::string ALWAYS_ADHERENT_PROB = "always.adherent.probability";
-const std::string NEVER_ADHERENT_PROB = "never.adherent.probability";
-const std::string PARTIAL_POS_ADHERENT_PROB = "partial.pos.adherent.probability";
-const std::string PARTIAL_NEG_ADHERENT_PROB = "partial.neg.adherent.probability";
+const std::string ART_ALWAYS_ADHERENT_PROB = "art.always.adherent.probability";
+const std::string ART_NEVER_ADHERENT_PROB = "art.never.adherent.probability";
+const std::string ART_PARTIAL_POS_ADHERENT_PROB = "art.partial.pos.adherent.probability";
+const std::string ART_PARTIAL_NEG_ADHERENT_PROB = "art.partial.neg.adherent.probability";
 
+const std::string PREP_PROP_NEVER_ADHERENT = "prep.prop.never.adherent";
+const std::string PREP_PROP_ALWAYS_ADHERENT = "prep.prop.always.adherent";
+const std::string PREP_PROP_PARTIAL_POS_ADHERENT = "prep.prop.part.plus.adherent";
+const std::string PREP_PROP_PARTIAL_NEG_ADHERENT = "prep.prop.part.neg.adherent";
+
+const std::string PREP_ALWAYS_ADHERENT_TR = "prep.always.adherent.trans.reduction";
+const std::string PREP_NEVER_ADHERENT_TR = "prep.never.adherent.trans.reduction";
+const std::string PREP_PARTIAL_POS_ADHERENT_TR = "prep.partial.pos.adherent.trans.reduction";
+const std::string PREP_PARTIAL_NEG_ADHERENT_TR = "prep.partial.neg.adherent.trans.reduction";
 
 const std::string SD_STEADY_NEVER_USE_CONDOMS = "sd.steady.never.use.condoms";
 const std::string SD_STEADY_RARELY_USE_CONDOMS = "sd.steady.rarely.use.condoms";
@@ -184,19 +261,20 @@ const std::string SC_CASUAL_ALWAYS_USE_CONDOMS_PROB = "sc.casual.always.use.cond
 
 const std::string EXTERNAL_INFECTION_RATE_MIN = "external.infections.per.person.day.min";
 const std::string EXTERNAL_INFECTION_RATE_MAX = "external.infections.per.person.day.max";
+const std::string EXTERNAL_INFECTION_AGE_FACTOR = "external.infections.age.factor";
 
 
 Parameters* Parameters::instance_ = 0;
 
 std::ostream& operator<< (std::ostream& os, const Parameters* params) {
-	for (auto iter = params->props_.keys_begin(); iter != params->props_.keys_end(); ++iter) {
-		os << (*iter) << " : " << params->getStringParameter(*iter) << std::endl;
-	}
-	return os;
+    for (auto iter = params->props_.keys_begin(); iter != params->props_.keys_end(); ++iter) {
+        os << (*iter) << " : " << params->getStringParameter(*iter) << std::endl;
+    }
+    return os;
 }
 
 Parameters::Parameters(repast::Properties& props) :
-		props_(props)  {
+        props_(props)  {
 }
 
 Parameters::~Parameters() {
@@ -204,68 +282,68 @@ Parameters::~Parameters() {
 }
 
 void Parameters::initialize(Properties& props) {
-	if (instance_ != 0) {
-		delete instance_;
-	}
-	instance_ = new Parameters(props);
+    if (instance_ != 0) {
+        delete instance_;
+    }
+    instance_ = new Parameters(props);
 }
 
 Parameters* Parameters::instance() {
-	if (instance_ == 0)
-		throw std::domain_error("Parameters must be initialized before instance() is called");
+    if (instance_ == 0)
+        throw std::domain_error("Parameters must be initialized before instance() is called");
 
-	return instance_;
+    return instance_;
 }
 
 std::string Parameters::getStringParameter(const std::string& prop_name) const {
-	std::string val = props_.getProperty(prop_name);
-	if (val.length() == 0)
-		throw std::invalid_argument(
-				"Invalid property name '" + prop_name + "', no property found.");
-	return val;
+    std::string val = props_.getProperty(prop_name);
+    if (val.length() == 0)
+        throw std::invalid_argument(
+                "Invalid property name '" + prop_name + "', no property found.");
+    return val;
 }
 
 bool Parameters::contains(const std::string& prop_name) const {
-	return props_.contains(prop_name);
+    return props_.contains(prop_name);
 }
 
 int Parameters::getIntParameter(const std::string& prop_name) const {
-	return strToInt(getStringParameter(prop_name));
+    return strToInt(getStringParameter(prop_name));
 }
 
 float Parameters::getFloatParameter(const std::string& prop_name) const {
-	return std::stof(getStringParameter(prop_name));
+    return std::stof(getStringParameter(prop_name));
 }
 
 double Parameters::getDoubleParameter(const std::string& prop_name) const {
-	return strToDouble(getStringParameter(prop_name));
+    return std::stod(getStringParameter(prop_name));
 }
 
 void Parameters::getKeys(const std::string& starts_with, std::vector<std::string>& keys) {
-	for (auto iter = props_.keys_begin(); iter != props_.keys_end(); ++iter) {
-		// std::cout << (*iter) << std::endl;
-		if (boost::starts_with(*iter, starts_with)) {
-			keys.push_back(*iter);
-		}
-	}
+    for (auto iter = props_.keys_begin(); iter != props_.keys_end(); ++iter) {
+        // std::cout << (*iter) << std::endl;
+        if (boost::starts_with(*iter, starts_with)) {
+            keys.push_back(*iter);
+        }
+    }
 }
 
 void Parameters::putParameter(const std::string& key, bool value) {
-	std::string val = value ? "true" : "false";
-	props_.putProperty(key, val);
+    std::string val = value ? "true" : "false";
+    props_.putProperty(key, val);
 }
 
 void Parameters::putParameter(const std::string& key, const std::string& value) {
-	props_.putProperty(key, value);
+    props_.putProperty(key, value);
 }
 
 void Parameters::putParameter(const std::string& key, double value) {
-	props_.putProperty(key, value);
+    props_.putProperty(key, value);
 }
 
 bool Parameters::getBooleanParameter(const std::string& prop_name) const {
-	std::string val = getStringParameter(prop_name);
-	return val == "true" || val == "TRUE";
+    std::string val = getStringParameter(prop_name);
+    return val == "true" || val == "TRUE";
 }
 
 } /* namespace mrsa */

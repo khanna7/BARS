@@ -10,26 +10,22 @@
    library(network)
    library(networkDynamic)
    library(tergm)
-   #library(parallel)
 
-   load(file="initialized-model.RData")
-   #source("../common/chicago_parameters.R")
-   #np <- detectCores()
+   load(file="initialized-model_n10000.RData")
 
    #####################
    ## MODEL SETUP
    net <- fit$network
-   formation_cas <- net~edges+degree(0:2)+
-                          nodematch("role_casual", keep=c(2:3), diff=TRUE)
+   formation_cas <- net~edges+degree(0:2)+absdiff("age")
                        
 
    dissolution_cas <- net~offset(edges)
    #theta.diss_cas <- log(dur_cas - 1)
-   theta.diss_cas <- 5.13 #adjusted for deaths
+   #theta.diss_cas <- should be 5.13 when assuming 160-day ptshp duration and 16-year life expectancy. See `derived` param file for details.
    target.stats_cas <- c(cas_n_edges,
                          cas_deg_seq[1:3],
-                         c(0,0)
-                    )
+                         cas_n_edges*absdiff.casual 
+                         )
 
 
    constraints_cas <- ~.
@@ -75,12 +71,12 @@
    net.f <- network.collapse(cas_sim_test, at=1000)
    network.size(net.f)
    network.edgecount(net.f)
-   degreedist(net.f) 
+   degreedist(net.f)/sum(degreedist(net.f)) 
    
    #####################
 
    #####################
    ## SAVE BINARY
-   save.image(file="cas_net.RData")
+   save.image(file="cas_net_n10000.RData")
 
    
