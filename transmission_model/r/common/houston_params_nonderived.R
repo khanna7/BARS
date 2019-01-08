@@ -3,16 +3,15 @@
 
    #####################
    ## NETWORK (steady)
-     n <- 5000
+     n <- 10000
 
    ## empirical edegree information
-   ## empirical edegree information
-      ## 0 main partnerships = 56.6% of men
-      ## 1 main partnership = 41.2% of men
-      ## 2 main partnerships = 1.8 % of men
-      ## >=3 main partnerships = 0.3 % of men
-      deg_seq <- c(61.02, 34.65, 3.54)*n/100 
-      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
+     ## 0 main partnerships = 56.6% of men
+     ## 1 main partnership = 41.2% of men
+     ## 2 main partnerships = 1.8 % of men
+     ## >=3 main partnerships = 0.3 % of men
+     deg_seq <- c(61.02, 34.65, 3.54)*n/100 
+     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
      # Note: This data doesn't exist for Houston YMAP
      # using estimates from NHBS data
@@ -394,6 +393,15 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 	asm.55_60 <- 0.017383 / (365 * 1)
 	asm.60_65 <- 0.017383 / (365 * 1)
 	asm.65_70 <- 0.033181 / (365 * 1)
+
+### CD4 Mortality ###
+### Format is [min_max)
+# for treated persons within the specified range
+# ASM is increased by the specified amount
+cd4m_treated.0_50	<- 51 / 100
+cd4m_treated.50_100 <- 37 / 100
+cd4m_treated.100_200 <- 26 / 100
+cd4m_treated.200_1000 <- 0
 
 # external infections per person days
 # we mult. this value by the number of uninfected persons
