@@ -19,6 +19,7 @@ extern const std::string STOP_AT;
 extern const std::string R_PARAMETERS_DERIVED;
 extern const std::string R_PARAMETERS_NON_DERIVED;
 extern const std::string R_FILE;
+extern const std::string INIT_DATA_FILE;
 extern const std::string MAIN_NETWORK_FILE;
 extern const std::string CASUAL_NETWORK_FILE;
 extern const std::string OUTPUT_DIR;

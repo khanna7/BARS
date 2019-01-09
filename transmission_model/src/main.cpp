@@ -78,7 +78,8 @@ void run(std::string propsFile, int argc, char** argv) {
     props.putProperty("global.random.seed", Parameters::instance()->getIntParameter("global.random.seed"));
     repast::initializeRandom(props);
 
-    init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE));
+    init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE), 
+        TransModel::Parameters::instance()->getStringParameter(INIT_DATA_FILE));
 
     std::string net_var = Parameters::instance()->getStringParameter(NET_VAR);
     std::string cas_net_var = Parameters::instance()->getStringParameter(CASUAL_NET_VAR);

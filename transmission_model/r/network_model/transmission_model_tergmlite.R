@@ -7,7 +7,7 @@ suppressMessages(library(network))
 suppressMessages(library(networkDynamic))
 
 trans_model_init <- function(init_net) {
-  load(file=init_net)
+  load(file=init_net, envir=.GlobalEnv)
 
   nw <<- fit$network
   formation <<- fit$formula
