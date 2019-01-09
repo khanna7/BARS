@@ -6,11 +6,15 @@ suppressMessages(library(tergmLite))
 suppressMessages(library(network))
 suppressMessages(library(networkDynamic))
 
-load(file="../r/network_model/cas_net_n5000.RData")
+trans_model_init <- function(init_net) {
+  load(file=init_net)
 
-nw <- fit$network
-formation <- fit$formula
-dissolution <- dissolution
+  nw <<- fit$network
+  formation <<- fit$formula
+  dissolution <<- dissolution
+
+  n_cas <<- cas_fit$network
+}
 
 nw_simulate <- function(net_for_sim) {
   class(net_for_sim) <- "network"
@@ -21,8 +25,6 @@ nw_simulate <- function(net_for_sim) {
   z <- simulate_network(p, el, coef.form=theta.form, coef.diss=theta.diss, save.changes=T)
   return(attr(z, 'changes'))
 }
-
-n_cas <- cas_fit$network
 
 n_cas_simulate <- function(cas_net) {
   class(cas_net) <- "network"
