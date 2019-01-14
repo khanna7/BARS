@@ -31,6 +31,7 @@ const std::string STOP_AT = "stop.at";
 const std::string R_PARAMETERS_DERIVED = "r.parameters.derived";
 const std::string R_PARAMETERS_NON_DERIVED = "r.parameters.non.derived";
 const std::string R_FILE = "r.file";
+const std::string INIT_DATA_FILE = "initial.data.file";
 const std::string MAIN_NETWORK_FILE = "main.network.file";
 const std::string CASUAL_NETWORK_FILE = "casual.network.file";
 const std::string EVENT_FILE = "event.file";
