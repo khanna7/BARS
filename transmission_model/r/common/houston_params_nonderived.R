@@ -35,7 +35,7 @@
    ## DEMOGRAPHIC
    min.age <- 18 #COMMON
    max.age <- 34 #COMMON
-   daily.entry.rate <- 1.35 #range (1.2-1.4, as per arthi's data for n=5K, keep tabs on this parameter, esp initially)
+   daily.entry.rate <- 2 #range (1.8-2, as per arthi's data for n=10K, for constant population over 100yr burn-in)
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths

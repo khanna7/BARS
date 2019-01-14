@@ -362,5 +362,5 @@
    
    #####################
    ## SAVE BINARY
-   save.image(file="houston_initialized-model_n5000.RData")
+   save.image(file=paste0("houston_initialized-model_n",n,".RData"))
    
