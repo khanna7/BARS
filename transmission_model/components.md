@@ -18,7 +18,7 @@ Transmitting the disease through the network - ```Model::runTransmission```
 
 * class Person - Person.h,cpp
 * class TransmissionRunner - TransmissionRunner.h,cpp
-* 
+
 
 ## Testing and Diagnosis ##
 
