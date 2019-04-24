@@ -251,6 +251,11 @@ extern const std::string EXTERNAL_INFECTION_RATE_MIN;
 extern const std::string EXTERNAL_INFECTION_RATE_MAX;
 extern const std::string EXTERNAL_INFECTION_AGE_FACTOR;
 
+extern const std::string INPUT_LOWER_JAIL_TERM_PROB;
+extern const std::string INPUT_UPPER_JAIL_TERM_PROB;
+extern const std::string INCARCERATION_PROB_FOR_ENTRIES;
+
+
 /**
  * Parameters singleton that contains the model properties.
  *

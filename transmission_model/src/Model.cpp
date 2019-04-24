@@ -3,6 +3,8 @@
  *
  *  Created on: Oct 8, 2015
  *      Author: nick
+ *  Modified on: 1 Mar 2019 
+ *      by Babak (added jail related functions)
  */
 
 #include <cmath>
@@ -39,6 +41,11 @@
 
 #include "debug_utils.h"
 
+//#include "printHelper.h"
+//#include "Helper.h"
+
+#define quote(x) #x
+
 //#include "EventWriter.h"
 
 using namespace Rcpp;
@@ -51,6 +58,9 @@ namespace TransModel {
 
 const std::string BALANCED = "balanced";
 const double VS_VL_COUNT = std::log10(2) + 2;
+
+
+PersonPtr aPerson; //tmp
 
 PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
     if (cod == CauseOfDeath::AGE)
@@ -401,12 +411,9 @@ void init_sero_prep_manager(PrepInterventionManager& prep_manager, float age_thr
     std::cout << "SD Intrv lt: " << lt_sd << "\n";
     std::cout << "SD Intrv gte: " << gte_sd << "\n";
 
-
     // // used in PUExtras to calculate base unboosted probability
     // data.daily_stop_prob_sd_lt = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_LT);
     // data.daily_stop_prob_sd_gte = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_GTE);
-
-    
 
     // data.increment_sd_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT_LT);
     // data.increment_sd_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT_GTE);
@@ -817,7 +824,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
                     Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator}, prep_manager(),	
                 condom_assigner { create_condom_use_assigner() },
                 asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)}, 
-                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)} {
+                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}, jail{}{
 
     std::cout << "treated: " << cd4m_treated_runner << std::endl;
     // get initial stats
@@ -825,10 +832,11 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     init_trans_params(trans_params);
     init_logs();
     initialize_prep_interventions(prep_manager);
-
     List rnet = as<List>((*R)[net_var]);
+
     initialize_network(rnet, net, person_creator, condom_assigner, STEADY_NETWORK_TYPE);
     rnet = as<List>((*R)[cas_net_var]);
+
     initialize_edges(rnet, net, condom_assigner, CASUAL_NETWORK_TYPE);
 
     init_stage_map(stage_map);
@@ -922,6 +930,63 @@ void Model::countOverlap() {
     }
 }
 
+/**
+* Call this function to jail a person
+*/
+//template<typename V>
+void Model::jailPerson(PersonPtr& person, VertexIter<Person>& iter, double time_stamp, double serving_time) {
+
+    std::cout << "++Model:JailPerson(), time_stamp: " << time_stamp <<", person.id:"<< person->id()<< std::endl;
+    //std::cout << ", serving_time: " << serving_time <<std::endl;
+    
+    jail.addPerson(person, iter, net, time_stamp, serving_time);
+
+    jail.printPopulationInfo(serving_time);
+    //jail.printPopulationAge();
+    jail.printPopulationIDsAndTheirNework();
+    //std::cout << ", jail.popSize(): " << jail.populationSize()<< std::endl;;
+    //person->printJailRecord(time_stamp);
+}
+
+/**
+* Call this function to release a person from jail 
+*/
+void Model::releasePersonFromJail(PersonPtr& person, double time_stamp) {
+
+    std::cout << "--Model:releasePersonFromJail(), time_stamp: " << time_stamp << std::endl;
+
+    if (person !=nullptr) {
+        jail.releasePerson(person, net, time_stamp);
+        /*@TODO: how to reinstate the network of the person (as if it was before going to jail)
+         * this may need to be done by the jail object.
+        */
+        //net.addVertex(person); 
+     }
+     else {
+        std::cout << "*** ERROR: Model:releasePersonFromJail(): person is null" << std::endl;
+     }
+}
+
+/**
+* @TODO: REMOVE
+* Jail circulation process 
+*/
+void Model::jailCirculation(double tick){
+    std::cout << "--Model:jailCicrulation(), tick:" << tick<< std::endl;
+    std::cout << "Jail pop size: " << jail.populationSize() << std::endl;
+    //jail.printPopulationInfo(tick);
+    //jail.checkAndReleaseTimeServedPopulation(tick);
+    //jail.printPopulationAge();
+
+    std::cout << "show content of jail test: " << std::endl;
+    std::map<PersonPtr, vector<EdgePtr<Person>>>::iterator it;
+    for (it=jail.begin(); it!=jail.end(); ++it)
+       std::cout << it->first->id() << ", ";
+
+    std::cout << std::endl;
+
+}
+
 void Model::step() {
     double t = RepastProcess::instance()->getScheduleRunner().currentTick();
     Stats* stats = Stats::instance();
@@ -939,7 +1004,6 @@ void Model::step() {
     // updates (i.e. simulates) the partner network
     simulate(R, net, p2val, condom_assigner, t);
 
-
     if (Parameters::instance()->getBooleanParameter(COUNT_OVERLAPS)) {
         countOverlap();
     } else {
@@ -948,11 +1012,16 @@ void Model::step() {
 
     // introduce new persons into the model
     entries(t, size_of_timestep);
+
+    //jailCirculation(t);
+
     // run the HIV transmission algorithm 
     runTransmission(t);
 
     vector<PersonPtr> uninfected;
-
+    
+    //update of same (vital) attributes, desease diagonistic and progression, checking for death, and release of jailed population 
+    updateJailedVitals(t, size_of_timestep, max_survival, uninfected);
 
     // update the physiological etc. (vital) attributes of the population
     // updating cd4 counts, checking for death, diagnosing persons, etc.
@@ -1013,18 +1082,139 @@ void Model::updateDisease(PersonPtr person) {
     person->setInfectivity(infectivity);
 }
 
+
+
+void Model::updateJailedVitals(double tick, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
+
+    std::cout << "+++updateJailedVitals(): tick: " << tick<<std::endl;
+
+    unsigned int dead_count = 0;
+    Stats* stats = Stats::instance();
+    map<double, ARTScheduler*> art_map;
+    uninfected.reserve(net.vertexCount());
+
+    float time_to_full_supp = Parameters::instance()->getFloatParameter(TIME_TO_FULL_SUPP);
+    int vs_count = 0, inf_count = 0, diagnosed_count = 0, vs_pos_count = 0;
+
+    // iterate through all the jailed population 
+    for (auto iter = jail.begin(); iter != jail.end();) {
+
+        //PersonPtr person = (*iter);
+        PersonPtr person = iter->first;
+
+        // update viral load, cd4
+        if (person->isInfected()) {
+            updateDisease(person);
+        }
+
+        if (persons_to_log.find(person->id()) != persons_to_log.end()) {
+            stats->recordBiomarker(tick, person);
+        }
+
+        // diagnose person and schedule for ART 
+        if (person->isTestable() && !person->isDiagnosed()) {
+            if (person->diagnose(tick)) {
+                schedulePostDiagnosisART(person, art_map, tick, size_of_timestep);
+            }
+        }
+
+        bool crossed_thresh = person->step(size_of_timestep, age_threshold);
+
+        // check person for "death" -- aging out, death by infection.
+        CauseOfDeath cod = dead(tick, person, max_age);
+        if (cod != CauseOfDeath::NONE) {
+            // person died -- remove them from model, network, etc.
+            vector<EdgePtr<Person>> edges;
+
+            PartnershipEvent::PEventType pevent_type = cod_to_PEvent(cod);
+
+            net.getEdges(person, edges);
+
+            for (auto edge : edges) {
+                //cout << "id: " << edge->id() << ", type: " << edge->type() << ", v1.id:" << edge->v1()->id()<< ", v2.id:" << edge->v2()->id() << endl;
+                //cout << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
+                Stats::instance()->recordPartnershipEvent(tick, edge->id(), edge->v1()->id(), edge->v2()->id(),
+                        pevent_type, edge->type());
+            }
+
+            //remove dead person from jail
+            jail.removeDeadPerson(person, tick);
+            ++dead_count;
+
+        } else {
+            // don't count dead uninfected persons
+            if (!person->isInfected()) {
+                stats->currentCounts().incrementUninfected(person);
+                // accumulate persons who may potentially go on PrEP
+                prep_manager.processPerson(person, net);
+                if (person->isOnPrep()) {
+                    ++stats->currentCounts().on_prep;
+                }
+                uninfected.push_back(person);
+
+            } else {
+
+                if ( person->infectionParameters().time_since_infection >= time_to_full_supp) {
+                    ++inf_count;
+                    if (person->infectionParameters().viral_load < VS_VL_COUNT) {
+                        ++vs_count;
+                    }
+                }
+
+                if (person->isDiagnosed() && !isnan(person->infectionParameters().time_since_infection) &&
+                                person->infectionParameters().time_since_infection >= time_to_full_supp) {
+                    ++diagnosed_count;
+                    if (person->infectionParameters().viral_load < VS_VL_COUNT) {
+                        ++vs_pos_count;
+                    }
+                }
+            }
+            if (person->isOnART()) {
+                ++stats->currentCounts().on_art;
+            }
+
+            if (crossed_thresh) {
+                // crossed_thresh means Person crossed from less than to greater than equal
+                // age category so testing and adherece parameters need to be updated to
+                // reflect that
+                person_creator.updateTesting(person, size_of_timestep);
+                person_creator.updatePREPAdherence(person);
+            }
+            ++iter;
+        }
+        //release person if serving time is completed : 
+        if (jail.isServingTimeCompleted(person, tick)) {
+            jail.releasePerson(person, net, tick);
+        }
+    }
+
+    stats->currentCounts().vl_supp_per_positives = inf_count == 0 ? 0 : ((double)vs_count) / inf_count;
+    stats->currentCounts().vl_supp_per_diagnosis = diagnosed_count == 0 ? 0 : ((double)vs_pos_count) / diagnosed_count;
+    // Select from accumulated potential persons those to put on PrEP.
+    prep_manager.run(tick, net);
+    // Reset the prep uptake for next round
+    prep_manager.reset();
+}
+
+
 void Model::updateVitals(double tick, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
+
+    std::cout << "updateVitals: tick: " << tick<<std::endl;
+
     unsigned int dead_count = 0;
     Stats* stats = Stats::instance();
     map<double, ARTScheduler*> art_map;
 
     uninfected.reserve(net.vertexCount());
 
+    //std::cout << " uninfected.size*(), after: " << uninfected.size()<< std::endl;
+
     float time_to_full_supp = Parameters::instance()->getFloatParameter(TIME_TO_FULL_SUPP);
     int vs_count = 0, inf_count = 0, diagnosed_count = 0, vs_pos_count = 0;
 
     // iterate through all the network vertices (i.e. the persons)
     for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
+ 
         PersonPtr person = (*iter);
         // update viral load, cd4
         if (person->isInfected()) {
@@ -1043,18 +1233,26 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
         }
 
         bool crossed_thresh = person->step(size_of_timestep, age_threshold);
+
         // check person for "death" -- aging out, death by infection.
         CauseOfDeath cod = dead(tick, person, max_age);
         if (cod != CauseOfDeath::NONE) {
             // person died -- remove them from model, network, etc.
             vector<EdgePtr<Person>> edges;
+
             PartnershipEvent::PEventType pevent_type = cod_to_PEvent(cod);
+
             net.getEdges(person, edges);
+            //std::cout << "edges.size (): " << edges.size()<< std::endl;
+            //printHelper::print_edges(edges);
+
             for (auto edge : edges) {
-                //cout << edge->id() << "," << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
+                //cout << "id: " << edge->id() << ", type: " << edge->type() << ", v1.id:" << edge->v1()->id()<< ", v2.id:" << edge->v2()->id() << endl;
+                //cout << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
                 Stats::instance()->recordPartnershipEvent(tick, edge->id(), edge->v1()->id(), edge->v2()->id(),
                         pevent_type, edge->type());
             }
+
             iter = net.removeVertex(iter);
             ++dead_count;
         } else {
@@ -1098,6 +1296,26 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             }
             ++iter;
         }
+      
+        //jail dyanamics: 
+        double incarceration_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_FOR_ENTRIES);
+
+     if (person->id()==169)
+           std::cout << person->id() << "********BUG:***jailed person id 169 is still here!*****" << std::endl;
+
+      if (tick ==1 ) {
+
+        if ((!person->isJailed()) && (Random::instance()->nextDouble() <=  incarceration_prob)) {
+            int jail_term_from =  Parameters::instance()->getIntParameter(INPUT_LOWER_JAIL_TERM_PROB);
+            int jail_term_to   =  Parameters::instance()->getIntParameter(INPUT_UPPER_JAIL_TERM_PROB);
+            IntUniformGenerator jail_term_gen = Random::instance()->createUniIntGenerator(jail_term_from, jail_term_to);
+
+            double serving_time = (double) jail_term_gen.next();
+            jailPerson(person, iter, tick, serving_time);
+
+        }
+      }
+
     }
 
     stats->currentCounts().vl_supp_per_positives = inf_count == 0 ? 0 : ((double)vs_count) / inf_count;
@@ -1148,22 +1366,28 @@ void Model::infectPerson(PersonPtr& person, double time_stamp) {
     }
 }
 
+
+
 void Model::entries(double tick, float size_of_timestep) {
     float min_age = Parameters::instance()->getFloatParameter(MIN_AGE);
     size_t pop_size = net.vertexCount();
     if (pop_size > 0) {
         double births_prob = Parameters::instance()->getDoubleParameter(DAILY_ENTRY_RATE);
+
         PoissonGen birth_gen(Random::instance()->engine(), boost::random::poisson_distribution<>(births_prob));
+
         DefaultNumberGenerator<PoissonGen> gen(birth_gen);
+
         int entries = (int) gen.next();
+
         Stats* stats = Stats::instance();
         stats->currentCounts().entries = entries;
-        //std::cout << "entries: " << entries << std::endl;
 
         double infected_prob = Parameters::instance()->getDoubleParameter(INIT_HIV_PREV_ENTRIES);
 
         for (int i = 0; i < entries; ++i) {
             VertexPtr<Person> p = person_creator(tick, min_age);
+
             if (Random::instance()->nextDouble() <= infected_prob) {
                 // as if infected at previous timestep
                 float infected_at = tick - (size_of_timestep * 1);
@@ -1179,7 +1403,7 @@ void Model::entries(double tick, float size_of_timestep) {
             net.addVertex(p);
             Stats::instance()->personDataRecorder()->initRecord(p, tick);
         }
-    }
+    } 
 }
 
 std::string get_net_out_filename(const std::string& file_name) {
@@ -1314,6 +1538,7 @@ void Model::runTransmission(double time_stamp) {
     vector<PersonPtr> infecteds;
 
     //std::cout << sex_acts_per_time_step << ", " << node_count << ", " << edge_count << ", " << prob << std::endl;
+
     Stats* stats = Stats::instance();
     for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
         int type = (*iter)->type();

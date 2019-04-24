@@ -94,5 +94,8 @@
    acute.mult.holling <- 26
    late.mult.holling <- 7
    min.chronic.infectivity.unadj <- 0.000497/2.89 
-   
+   incarceration.prob.for.entries <- 0.009 # probability that an entering person will be incarcerated
+
    ## relationship between viral load and chronic infectivity (hughes et al.)
+
+

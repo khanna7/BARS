@@ -447,3 +447,7 @@ testing.prob.gte.7 = "13-16|0.02857143"
 testing.prob.gte.8 = "17-20|0"
 testing.prob.gte.9 = "21-30|0"
 
+################################
+##Incarceration/ Jail related:
+incarceration.prob.for.entries <- 0.009 # probability that an entering person will be incarcerated
+

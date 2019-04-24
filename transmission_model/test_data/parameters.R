@@ -200,6 +200,11 @@ sc.casual.usually.use.condoms.prob <- 0.75
 sc.casual.always.use.condoms.prob <- 1
 
 
+################################
+##Incarceration/ Jail related:
+incarceration.prob.for.entries <- 0.009 # probability that an entering person will be incarcerated
+
+
 
 
 

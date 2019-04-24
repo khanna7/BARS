@@ -2,7 +2,9 @@
  * Person.h
  *
  *  Created on: Oct 8, 2015
- *      Author: nick
+ *      Author: nick 
+ *  Modified on: 1 Mar 2019 
+ *      by Babak (added jail paratmeters and other jail related functions)
  */
 
 #ifndef SRC_PERSON_H_
@@ -14,6 +16,7 @@
 #include "GeometricDistribution.h"
 #include "AdherenceCategory.h"
 #include "PrepParameters.h"
+#include "JailParameters.h"
 
 namespace TransModel {
 
@@ -33,6 +36,8 @@ private:
     bool dead_, diagnosed_, testable_;
     Diagnoser diagnoser_;
     AdherenceData art_adherence_;
+
+    JailParameters jail_parameters_;
 
     double score_;
 
@@ -196,6 +201,70 @@ public:
      * Updates the prep AdherenceData.
      */
     void updatePrepAdherence(AdherenceData& data);
+
+    
+   // =====Jail related functions: 
+
+    /**
+     * Get jailParameters
+     */
+    const JailParameters& jailParameters() const {
+        return jail_parameters_;
+    }
+
+    /**
+     * Boolean function to check if a person is jailed (in jail).
+     */
+    bool isJailed() const {
+        return jail_parameters_.is_in_jail;
+    }
+    
+    /**
+     * Get the time the person was jailed
+     */
+    float timeOfJail() const {
+        return jail_parameters_.time_of_jail;
+    }
+
+    /**
+     * Get person's jail serving time
+     */
+    float jailServingTime() const {
+        return jail_parameters_.serving_time;
+    }
+
+
+    /**
+     * Get the age of the person at the time of first jail (history)
+     */
+    float ageAtFirstJail() const {
+        return jail_parameters_.age_at_first_jail;
+    }
+
+     /**
+     * Get the age of the person at the time of jail
+     */
+    float ageAtJail() const {
+        return jail_parameters_.age_at_jail;
+    }
+
+    /**
+     * Get the time since the person was jailed
+     */
+    float timeSinceJailed(double current_time) const {
+        return (current_time - jail_parameters_.time_of_jail);
+    }
+
+    /**
+     * Debuging helper function: print jail record of a jailed person
+     */ 
+    void printJailRecord(double current_time)  {
+        return jail_parameters_.printJailRecord(current_time);
+    } 
+
+    void getInJail(double time, double serving_time);
+
+    void getOutJail(double release_time); 
 
 };
 

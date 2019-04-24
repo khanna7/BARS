@@ -151,3 +151,7 @@
     #insurance.prop <- 
     #incarceration.prop <- 
 
+################################
+##Incarceration/ Jail related:
+incarceration.prob.for.entries <- 0.009 # probability that an entering person will be incarcerated
+

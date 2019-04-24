@@ -3,6 +3,9 @@
  *
  *  Created on: Oct 8, 2015
  *      Author: nick
+ *  Modified on: 1 Mar 2019 
+ *      by Babak (added jail related functions)
+ * 
  */
 
 #ifndef SRC_MODEL_H_
@@ -28,6 +31,12 @@
 #include "RangeWithProbability.h"
 #include "ARTLagCalculator.h"
 #include "PrepInterventionManager.h"
+
+#include "Jail.h"
+#include "printHelper.h"'
+#include "Helper.h"
+
+
 
 namespace TransModel {
 
@@ -60,6 +69,9 @@ private:
 
     float age_threshold;
 
+    Jail jail;
+    //std::unique_ptr<Jail> jail_runner;
+
     void runTransmission(double timestamp);
     CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
     void entries(double tick, float size_of_time_step);
@@ -69,6 +81,8 @@ private:
      * @param uninfected empty vector into which the uninfected are placed
      */
     void updateVitals(double time, float size_of_time_step, int max_survival, std::vector<PersonPtr>& uninfected);
+    void updateJailedVitals(double time, float size_of_time_step, int max_survival, std::vector<PersonPtr>& uninfected);
+
     void updateDisease(PersonPtr person);
     void runExternalInfections(std::vector<PersonPtr>& uninfected, double time);
 
@@ -84,6 +98,16 @@ private:
      * Initializes PrEP cessation events for the initial set of persons.
      */
     void initPrepCessation();
+
+
+    /**
+     * Functions related to Jail Circulation process.
+     */
+    void jailCirculation(double time);
+    //template<typename V>
+    void jailPerson(PersonPtr& person, VertexIter<Person>& iter, double time_stamp, double serving_time);
+    void releasePersonFromJail(PersonPtr& person, double time_stamp);
+
 
 public:
     Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);
