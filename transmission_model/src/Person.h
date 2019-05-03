@@ -14,6 +14,7 @@
 #include "GeometricDistribution.h"
 #include "AdherenceCategory.h"
 #include "PrepParameters.h"
+#include "JailParameters.h"
 
 namespace TransModel {
 
@@ -35,6 +36,8 @@ private:
     AdherenceData art_adherence_;
 
     double score_;
+
+    JailParameters jail_parameters_;
 
 public:
     Person(int id, float age, bool circum_status, int steady_role, int casual_role,
@@ -196,6 +199,61 @@ public:
      * Updates the prep AdherenceData.
      */
     void updatePrepAdherence(AdherenceData& data);
+
+    /**
+     * Boolean function to check if a person is jailed (in jail).
+     */
+    bool isJailed() const {
+        return jail_parameters_.is_in_jail;
+    }
+
+    void jailed(double time, double serving_time);
+
+    void releasedFromJail(double release_time); 
+
+    /**
+     * Get the time the person was jailed
+     */
+    float timeOfJail() const {
+        return jail_parameters_.time_of_jail;
+    }
+
+    /**
+     * Get person's jail serving time
+     */
+    float jailServingTime() const {
+        return jail_parameters_.serving_time;
+    }
+
+
+    /**
+     * Get the age of the person at the time of first jail (history)
+     */
+    float ageAtFirstJail() const {
+        return jail_parameters_.age_at_first_jail;
+    }
+
+     /**
+     * Get the age of the person at the time of jail
+     */
+    float ageAtJail() const {
+        return jail_parameters_.age_at_jail;
+    }
+
+    /**
+     * Get the time since the person was jailed
+     */
+    float timeSinceJailed(double current_time) const {
+        return (current_time - jail_parameters_.time_of_jail);
+    }
+
+    /**
+     * Debuging helper function: print jail record of a jailed person
+     */ 
+    void printJailRecord(double current_time)  {
+        return jail_parameters_.printJailRecord(current_time);
+    } 
+
 
 };
 

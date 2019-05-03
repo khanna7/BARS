@@ -264,6 +264,9 @@ const std::string EXTERNAL_INFECTION_RATE_MIN = "external.infections.per.person.
 const std::string EXTERNAL_INFECTION_RATE_MAX = "external.infections.per.person.day.max";
 const std::string EXTERNAL_INFECTION_AGE_FACTOR = "external.infections.age.factor";
 
+const std::string INPUT_LOWER_JAIL_TERM_PROB = "min.jail.term.duration";
+const std::string INPUT_UPPER_JAIL_TERM_PROB = "max.jail.term.duration";
+const std::string INCARCERATION_PROB_FOR_ENTRIES = "incarceration.prob.for.entries";
 
 Parameters* Parameters::instance_ = 0;
 

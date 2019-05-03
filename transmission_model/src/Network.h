@@ -12,6 +12,7 @@
 #include <set>
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include "boost/iterator/transform_iterator.hpp"
 
@@ -109,6 +110,11 @@ public:
     unsigned int edgeCount(int edge_type) {
         return edge_counts[edge_type];
     }
+
+    /**
+     * Gets whether or not the network contains the specified vertex.
+     */
+    bool contains(const std::shared_ptr<V>& vertex);
 
     /**
      * Gets all the edges in which that specified vertex participates and put them
@@ -223,6 +229,11 @@ void Network<V>::addVertex(const std::shared_ptr<V>& vertex) {
 }
 
 template<typename V>
+bool Network<V>::contains(const std::shared_ptr<V>& vertex) {
+    return vertices.find(vertex->id()) != vertices.end();
+}
+
+template<typename V>
 bool Network<V>::hasEdge(VertexPtr<V> v1, VertexPtr<V> v2, int type) {
     return hasEdge(v1->id(), v2->id(), type);
 }
@@ -274,11 +285,13 @@ EdgePtr<V> Network<V>::removeEdge(unsigned int v1_idx, unsigned int v2_idx, int 
             EdgeListData& d2 = iel.at(v2_idx);
             d2.edge_idxs.erase(edge_idx);
             --d2.edge_counts[type];
+            
             return edge;
         }
     }
 
     // defaults to nullptr
+
     return edge;
 }
 

@@ -28,6 +28,7 @@
 #include "RangeWithProbability.h"
 #include "ARTLagCalculator.h"
 #include "PrepInterventionManager.h"
+#include "Jail.h"
 
 namespace TransModel {
 
@@ -44,6 +45,7 @@ class Model {
 private:
     std::shared_ptr<RInside> R;
     Network<Person> net;
+    std::vector<PersonPtr> population;
     std::shared_ptr<TransmissionRunner> trans_runner;
     CD4Calculator cd4_calculator;
     ViralLoadCalculator viral_load_calculator;
@@ -57,8 +59,8 @@ private:
     PrepInterventionManager prep_manager;
     CondomUseAssigner condom_assigner;
     RangeWithProbability asm_runner, cd4m_treated_runner;
-
     float age_threshold;
+    Jail jail;
 
     void runTransmission(double timestamp);
     CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
@@ -84,6 +86,7 @@ private:
      * Initializes PrEP cessation events for the initial set of persons.
      */
     void initPrepCessation();
+    void jailPerson(double tick, PersonPtr& person);
 
 public:
     Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);

@@ -135,4 +135,35 @@ void Person::updatePrepAdherence(AdherenceData& data) {
     prep_.setAdherenceData(data);
 }
 
+/**
+* Function to be called when a person gets in the jail 
+* Sets jail parameters, including an accumulative count of times the same person is jailed. 
+*/ 
+void Person::jailed(double time, double serving_time) {
+    //std::cout << "Person: getInJail():, time " << time << ", serving time:"<< serving_time <<std::endl;
+    jail_parameters_.accumulative_injail_count++;
+    jail_parameters_.is_in_jail = true;
+    jail_parameters_.time_of_jail = time;
+    jail_parameters_.serving_time = serving_time;
+    jail_parameters_.age_at_jail = age_;
+    jail_parameters_.time_since_jailed = 0;
+    if (jail_parameters_.is_first_time_jailed){
+        jail_parameters_.age_at_first_jail = age_;
+    }
+    //jail_parameters_.accumulative_time_in_jail=0;
+}  
+
+/**
+* Function to be called when a person gets out of the jail 
+* Sets is-in-jail flag to false as well as calulating and setting accumlative time a person has spent in jail. 
+*/ 
+void Person::releasedFromJail(double time_of_release) {
+    //std::cout << "Person: getOutJail():, time " << current_time << std::endl;
+    jail_parameters_.accumulative_time_in_jail += (time_of_release - jail_parameters_.time_of_jail);
+    jail_parameters_.is_in_jail = false;
+    if (jail_parameters_.is_first_time_jailed) { 
+        jail_parameters_.is_first_time_jailed = false;
+    }
+}  
+
 } /* namespace TransModel */
