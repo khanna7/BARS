@@ -1,3 +1,9 @@
+22 May 2019
+
+Version 0.55
+
+* Updated how ART is scheduled at the start of a post-burnin run
+
 02 November 2018
 
 Version 0.54
