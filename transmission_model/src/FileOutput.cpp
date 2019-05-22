@@ -69,6 +69,12 @@ void FileOutput::close() {
     }
 }
 
+void FileOutput::flush() {
+    if (open) {
+        out.flush();
+    }
+}
+ 
 FileOutput::~FileOutput() {
     close();
 }

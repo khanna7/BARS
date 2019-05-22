@@ -59,8 +59,9 @@ void initialize_art_adherence(std::shared_ptr<Person> person, double first_art_a
 void schedule_art_adherence(std::shared_ptr<Person> person, double first_art_at_tick) {
     double window_length = Parameters::instance()->getDoubleParameter(PARTIAL_ART_ADHER_WINDOW_LENGTH);
     double remainder = window_length;
-    if (person->isOnART()) {
-        // can be on ART from burnin in which case need to schedule for the remaining time.
+    if (!isnan(person->infectionParameters().time_since_art_init)) {
+        // can be on ART from burnin in which case need to schedule 
+        // at the update at the appropriate time.
         remainder = window_length - (((int)person->infectionParameters().time_since_art_init) % ((int)window_length));
         if (remainder < 0) {
             remainder = 1;

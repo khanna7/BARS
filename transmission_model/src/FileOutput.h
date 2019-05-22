@@ -67,6 +67,7 @@ public:
      * Closes the recorder and writes any unwritten data to the file.
      */
     void close();
+    void flush();
 
 private:
     std::ofstream out;

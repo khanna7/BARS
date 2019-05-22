@@ -92,9 +92,11 @@ struct PersonToVAL {
         if (p->isDiagnosed()) {
             vertex["time_of_diagnosis"] = p->infectionParameters().time_of_diagnosis;
             vertex["time_since_diagnosed"] = p->infectionParameters().time_since_diagnosed;
+            vertex["art_lag"] = p->infectionParameters().art_lag;
         } else {
             vertex["time_of_diagnosis"] = NA_REAL;
             vertex["time_since_diagnosed"] = NA_REAL;
+            vertex["art_lag"] = NA_REAL;
         }
         const Diagnoser& diagnoser = p->diagnoser();
         vertex["number.of.tests"] = diagnoser.testCount();
@@ -132,13 +134,16 @@ struct PersonToVAL {
         vertex["adherence.category"] = static_cast<int>(p->artAdherence().category);
         vertex["prep.adherence.category"] = static_cast<int>(p->prepParameters().adherenceCagegory());
 
-        if (p->isOnART()) {
-            vertex["time.since.art.initiation"] = p->infectionParameters().time_since_art_init;
-            vertex["time.of.art.initiation"] = p->infectionParameters().time_of_art_init;
-            vertex["vl.art.traj.slope"] = p->infectionParameters().vl_art_traj_slope;
-            vertex["cd4.at.art.initiation"] = p->infectionParameters().cd4_at_art_init;
-            vertex["vl.at.art.initiation"] = p->infectionParameters().vl_at_art_init;
+        if (p->isDiagnosed()) {
+            // if diagnosed, could have started ART 
+            // but check for NAN's if diagnosed but not yet on ART, i.e. in lag period
+            vertex["time.since.art.initiation"] = isnan(p->infectionParameters().time_since_art_init) ? NA_REAL : p->infectionParameters().time_since_art_init;
+            vertex["time.of.art.initiation"] = isnan(p->infectionParameters().time_of_art_init) ? NA_REAL : p->infectionParameters().time_of_art_init;
+            vertex["vl.art.traj.slope"] = isnan(p->infectionParameters().vl_art_traj_slope) ? NA_REAL : p->infectionParameters().vl_art_traj_slope;
+            vertex["cd4.at.art.initiation"] = isnan(p->infectionParameters().cd4_at_art_init) ? NA_REAL : p->infectionParameters().cd4_at_art_init;
+            vertex["vl.at.art.initiation"] = isnan(p->infectionParameters().vl_at_art_init) ? NA_REAL : p->infectionParameters().vl_at_art_init;
         } else {
+            // probably don't need this branch
             vertex["time.since.art.initiation"] = NA_REAL;
             vertex["time.of.art.initiation"] = NA_REAL;
             vertex["vl.art.traj.slope"] = NA_REAL;
@@ -314,11 +319,15 @@ void init_network_save(Model* model) {
     }
 }
 
-void init_biomarker_logging(size_t pop_size, std::set<int>& ids_to_log) {
+void init_biomarker_logging(Network<Person>& net, std::set<int>& ids_to_log) {
     if (Parameters::instance()->contains(BIOMARKER_LOG_COUNT)) {
         int number_to_log = Parameters::instance()->getIntParameter(BIOMARKER_LOG_COUNT);
-       
-        IntUniformGenerator gen = Random::instance()->createUniIntGenerator(0, pop_size - 1);
+        std::vector<PersonPtr> persons;
+        for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+            persons.push_back(*iter);
+        }
+
+        IntUniformGenerator gen = Random::instance()->createUniIntGenerator(0, persons.size() - 1);
         for (int i = 0; i < number_to_log; ++i) {
             int id = (int) gen.next();
             while (ids_to_log.find(id) != ids_to_log.end()) {
@@ -727,6 +736,8 @@ ARTLagCalculator create_art_lag_calc() {
     return ARTLagCalculator(upper, lower, age_threshold);
 }
 
+
+
 void add_condom_use_prob(CondomUseAssignerFactory& factory, PartnershipType ptype, int network_type,
         const std::string& category_param, const std::string& use_param) {
     double cat_prob = Parameters::instance()->getDoubleParameter(category_param);
@@ -803,15 +814,34 @@ RangeWithProbability create_cd4m_runner(const std::string& prefix) {
     return creator.createRangeWithProbability();
 }
 
+// FileOutput debug_out(unique_file_name("./art_counts.csv"));
+
+// void debug(double tick, Network<Person>& net) {
+//     float art_count = 0, inf_count = 0;
+//     for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+//         PersonPtr person = (*iter);
+//         if (person->isOnART()) {
+//             ++art_count;
+//         } 
+//         if (person->isInfected()) {
+//             ++inf_count;
+//         }
+//     }
+//     //std::cout << "ART Count: " << art_count << ", Inf Count: " << inf_count << std::endl;
+//     //std::cout << "On ART: " << (art_count / inf_count) << std::endl;
+//     debug_out << tick << ", " << art_count << "," << inf_count << "," << (art_count / inf_count) << std::endl;
+//     debug_out.flush();
+// }
+
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
-        R(ri), net(false), population{}, trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
+        R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
                 create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
                 0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, trans_params { }, art_lag_calculator {
                 create_art_lag_calc() },  person_creator { trans_runner,
                     Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator}, prep_manager(),	
                 condom_assigner { create_condom_use_assigner() },
                 asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)}, 
-                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}, jail(&net) {
+                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)} {
 
     std::cout << "treated: " << cd4m_treated_runner << std::endl;
     // get initial stats
@@ -824,18 +854,17 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     initialize_network(rnet, net, person_creator, condom_assigner, STEADY_NETWORK_TYPE);
     rnet = as<List>((*R)[cas_net_var]);
     initialize_edges(rnet, net, condom_assigner, CASUAL_NETWORK_TYPE);
-    population.insert(population.end(), net.verticesBegin(), net.verticesEnd());
-    
+
     init_stage_map(stage_map);
     init_network_save(this);
 
-    current_pop_size = population.size();
+    current_pop_size = net.vertexCount();
 
-    init_biomarker_logging(current_pop_size, persons_to_log);
+    init_biomarker_logging(net, persons_to_log);
     Stats* stats = TransModel::Stats::instance();
     stats->currentCounts().main_edge_count = net.edgeCount(STEADY_NETWORK_TYPE);
     stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
-    for (auto iter = population.begin(); iter != population.end(); ++iter) {
+    for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
         PersonPtr p = *iter;
         stats->personDataRecorder()->initRecord(p, 0);
         if (p->isInfected()) {
@@ -860,7 +889,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 
 void Model::initPrepCessation() {
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
-    for (auto iter = population.begin(); iter != population.end(); ++iter) {
+    for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
         PersonPtr person = *iter;
         if (person->isOnPrep()) {
             double stop_time = person->prepParameters().stopTime();
@@ -875,7 +904,7 @@ void Model::initPrepCessation() {
 void Model::atEnd() {
     double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
     std::shared_ptr<PersonDataRecorderI> pdr = Stats::instance()->personDataRecorder();
-    for (auto iter = population.begin(); iter != population.end(); ++iter) {
+    for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
         pdr->finalize(*iter, ts);
     }
 
@@ -927,13 +956,13 @@ void Model::step() {
     PersonToVALForSimulate p2val;
     float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
     float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
-
-    if ((int) t % 100 == 0)
+    
+    if ((int) t % 100 == 0) {
         std::cout << " ---- " << t << " ---- " << std::endl;
+    }
    
     // updates (i.e. simulates) the partner network
     simulate(R, net, p2val, condom_assigner, t);
-
 
     if (Parameters::instance()->getBooleanParameter(COUNT_OVERLAPS)) {
         countOverlap();
@@ -948,7 +977,6 @@ void Model::step() {
 
     vector<PersonPtr> uninfected;
 
-
     // update the physiological etc. (vital) attributes of the population
     // updating cd4 counts, checking for death, diagnosing persons, etc.
     updateVitals(t, size_of_timestep, max_survival, uninfected);
@@ -956,7 +984,7 @@ void Model::step() {
     // select members of the population for infection from external sources
     runExternalInfections(uninfected, t);
     previous_pop_size = current_pop_size;
-    current_pop_size = population.size();
+    current_pop_size = net.vertexCount();
 
     // the R statnet network update code needs these updated every iteration
     updateThetaForm("theta.form");
@@ -964,8 +992,7 @@ void Model::step() {
 
     stats->currentCounts().main_edge_count = net.edgeCount(STEADY_NETWORK_TYPE);
     stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
-    // Vertex here refers to "member of population" so we can use the population vector
-    for (auto iter = population.begin(); iter != population.end(); ++iter) {
+    for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
         stats->currentCounts().incrementVertexCount((*iter));
     }
 
@@ -976,6 +1003,7 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
         float size_of_timestep) {
     double lag = art_lag_calculator.calculateLag(person, size_of_timestep);
     Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
+    person->setARTLag(lag);
 
     double art_at_tick = lag + tick;
     ARTScheduler* scheduler = nullptr;
@@ -1014,15 +1042,13 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     Stats* stats = Stats::instance();
     map<double, ARTScheduler*> art_map;
 
-    uninfected.reserve(population.size());
+    uninfected.reserve(net.vertexCount());
 
     float time_to_full_supp = Parameters::instance()->getFloatParameter(TIME_TO_FULL_SUPP);
     int vs_count = 0, inf_count = 0, diagnosed_count = 0, vs_pos_count = 0;
 
-    double incarceration_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_FOR_ENTRIES);
-
     // iterate through all the network vertices (i.e. the persons)
-    for (auto iter = population.begin(); iter != population.end();) {
+    for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
         PersonPtr person = (*iter);
         // update viral load, cd4
         if (person->isInfected()) {
@@ -1053,12 +1079,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 Stats::instance()->recordPartnershipEvent(tick, edge->id(), edge->v1()->id(), edge->v2()->id(),
                         pevent_type, edge->type());
             }
-            net.removeVertex(person);
-            iter = population.erase(iter);
-            if (person->isJailed()) {
-                jail.removeDeadPerson(tick, person);
-            }
-            ++dead_count; 
+            iter = net.removeVertex(iter);
+            ++dead_count;
         } else {
             // don't count dead uninfected persons
             if (!person->isInfected()) {
@@ -1087,11 +1109,6 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                     }
                 }
             }
-
-            if (!person->isJailed() && Random::instance()->nextDouble() <=  incarceration_prob) {
-                jail.addPerson(tick, person);
-            }
-
             if (person->isOnART()) {
                 ++stats->currentCounts().on_art;
             }
@@ -1157,7 +1174,7 @@ void Model::infectPerson(PersonPtr& person, double time_stamp) {
 
 void Model::entries(double tick, float size_of_timestep) {
     float min_age = Parameters::instance()->getFloatParameter(MIN_AGE);
-    size_t pop_size = population.size();
+    size_t pop_size = net.vertexCount();
     if (pop_size > 0) {
         double births_prob = Parameters::instance()->getDoubleParameter(DAILY_ENTRY_RATE);
         PoissonGen birth_gen(Random::instance()->engine(), boost::random::poisson_distribution<>(births_prob));
@@ -1183,7 +1200,6 @@ void Model::entries(double tick, float size_of_timestep) {
                 stats->currentCounts().incrementInfectedAtEntry(p);
                 stats->recordInfectionEvent(infected_at, p);
             }
-            population.push_back(p);
             net.addVertex(p);
             Stats::instance()->personDataRecorder()->initRecord(p, tick);
         }
