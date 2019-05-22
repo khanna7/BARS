@@ -92,9 +92,11 @@ struct PersonToVAL {
         if (p->isDiagnosed()) {
             vertex["time_of_diagnosis"] = p->infectionParameters().time_of_diagnosis;
             vertex["time_since_diagnosed"] = p->infectionParameters().time_since_diagnosed;
+            vertex["art_lag"] = p->infectionParameters().art_lag;
         } else {
             vertex["time_of_diagnosis"] = NA_REAL;
             vertex["time_since_diagnosed"] = NA_REAL;
+            vertex["art_lag"] = NA_REAL;
         }
         const Diagnoser& diagnoser = p->diagnoser();
         vertex["number.of.tests"] = diagnoser.testCount();
@@ -132,13 +134,16 @@ struct PersonToVAL {
         vertex["adherence.category"] = static_cast<int>(p->artAdherence().category);
         vertex["prep.adherence.category"] = static_cast<int>(p->prepParameters().adherenceCagegory());
 
-        if (p->isOnART()) {
-            vertex["time.since.art.initiation"] = p->infectionParameters().time_since_art_init;
-            vertex["time.of.art.initiation"] = p->infectionParameters().time_of_art_init;
-            vertex["vl.art.traj.slope"] = p->infectionParameters().vl_art_traj_slope;
-            vertex["cd4.at.art.initiation"] = p->infectionParameters().cd4_at_art_init;
-            vertex["vl.at.art.initiation"] = p->infectionParameters().vl_at_art_init;
+        if (p->isDiagnosed()) {
+            // if diagnosed, could have started ART 
+            // but check for NAN's if diagnosed but not yet on ART, i.e. in lag period
+            vertex["time.since.art.initiation"] = isnan(p->infectionParameters().time_since_art_init) ? NA_REAL : p->infectionParameters().time_since_art_init;
+            vertex["time.of.art.initiation"] = isnan(p->infectionParameters().time_of_art_init) ? NA_REAL : p->infectionParameters().time_of_art_init;
+            vertex["vl.art.traj.slope"] = isnan(p->infectionParameters().vl_art_traj_slope) ? NA_REAL : p->infectionParameters().vl_art_traj_slope;
+            vertex["cd4.at.art.initiation"] = isnan(p->infectionParameters().cd4_at_art_init) ? NA_REAL : p->infectionParameters().cd4_at_art_init;
+            vertex["vl.at.art.initiation"] = isnan(p->infectionParameters().vl_at_art_init) ? NA_REAL : p->infectionParameters().vl_at_art_init;
         } else {
+            // probably don't need this branch
             vertex["time.since.art.initiation"] = NA_REAL;
             vertex["time.of.art.initiation"] = NA_REAL;
             vertex["vl.art.traj.slope"] = NA_REAL;
@@ -809,6 +814,25 @@ RangeWithProbability create_cd4m_runner(const std::string& prefix) {
     return creator.createRangeWithProbability();
 }
 
+// FileOutput debug_out(unique_file_name("./art_counts.csv"));
+
+// void debug(double tick, Network<Person>& net) {
+//     float art_count = 0, inf_count = 0;
+//     for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+//         PersonPtr person = (*iter);
+//         if (person->isOnART()) {
+//             ++art_count;
+//         } 
+//         if (person->isInfected()) {
+//             ++inf_count;
+//         }
+//     }
+//     //std::cout << "ART Count: " << art_count << ", Inf Count: " << inf_count << std::endl;
+//     //std::cout << "On ART: " << (art_count / inf_count) << std::endl;
+//     debug_out << tick << ", " << art_count << "," << inf_count << "," << (art_count / inf_count) << std::endl;
+//     debug_out.flush();
+// }
+
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
         R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
                 create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
@@ -932,9 +956,10 @@ void Model::step() {
     PersonToVALForSimulate p2val;
     float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
     float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
-
-    if ((int) t % 100 == 0)
+    
+    if ((int) t % 100 == 0) {
         std::cout << " ---- " << t << " ---- " << std::endl;
+    }
    
     // updates (i.e. simulates) the partner network
     simulate(R, net, p2val, condom_assigner, t);
@@ -978,6 +1003,7 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
         float size_of_timestep) {
     double lag = art_lag_calculator.calculateLag(person, size_of_timestep);
     Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
+    person->setARTLag(lag);
 
     double art_at_tick = lag + tick;
     ARTScheduler* scheduler = nullptr;

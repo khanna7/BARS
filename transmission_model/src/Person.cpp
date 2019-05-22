@@ -113,6 +113,7 @@ bool Person::diagnose(double tick) {
     diagnosed_ = result == Result::POSITIVE;
     if (diagnosed_) {
         infection_parameters_.time_of_diagnosis = tick;
+        infection_parameters_.time_since_diagnosed = 0;
         Stats::instance()->personDataRecorder()->recordDiagnosis(this, tick);
     }
     if (result != Result::NO_TEST) {

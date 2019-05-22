@@ -185,6 +185,10 @@ public:
         return prep_;
     }
 
+    void setARTLag(double lag) {
+        infection_parameters_.art_lag = lag;
+    }
+
     bool diagnose(double tick);
 
     /**

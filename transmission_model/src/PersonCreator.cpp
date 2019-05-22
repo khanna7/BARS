@@ -15,6 +15,7 @@
 #include "Diagnoser.h"
 #include "Stats.h"
 #include "ARTScheduler.h"
+#include "file_utils.h"
 
 using namespace Rcpp;
 
@@ -94,6 +95,7 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double model_tick, double b
     if (person->diagnosed_ && val.containsElementNamed("time_since_diagnosed")) {
         person->infection_parameters_.time_of_diagnosis = as<float>(val["time_of_diagnosis"]);
         person->infection_parameters_.time_since_diagnosed = as<float>(val["time_since_diagnosed"]);
+        person->setARTLag(as<float>(val["art_lag"]));
     }
     person->infection_parameters_.cd4_count = as<float>(val["cd4.count.today"]);
 
@@ -105,7 +107,10 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double model_tick, double b
         person->infection_parameters_.age_at_infection = as<float>(val["age.at.infection"]);
         person->infection_parameters_.dur_inf = trans_runner_->durationOfInfection();
         person->infection_parameters_.art_status = as<bool>(val["art.status"]);
+        person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
+
         if (person->infection_parameters_.art_status) {
+            // onART at end of burnin -- need to finish up and schedule check
             person->infection_parameters_.time_since_art_init = as<float>(val["time.since.art.initiation"]);
             person->infection_parameters_.time_of_art_init = as<float>(val["time.of.art.initiation"]);
             person->infection_parameters_.vl_art_traj_slope = as<float>(val["vl.art.traj.slope"]);
@@ -118,20 +123,48 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double model_tick, double b
             } else {
                 initialize_art_adherence(person, model_tick);
             }
-        } else if (person->diagnosed_ && person->infection_parameters_.time_since_art_init == 0 && burnin_last_tick > 0) {
-            // diagnosed by never been on ART (i.e. time_since_art_init == 0, if have been on ART and went off then
-            // time_since_art_init would be equal to the init time.)
 
-            double lag = art_lag_calculator.calculateLag(person, size_of_timestep);
-            Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
+        } else if (person->diagnosed_ && burnin_last_tick > 0) {
+            // diagnosed and in lag period at end of burnin
+            float time_of_art_init = as<float>(val["time.of.art.initiation"]);
+            if (isnan(time_of_art_init)) {
+                double lag = person->infection_parameters_.art_lag - (burnin_last_tick - person->infection_parameters_.time_of_diagnosis);
+                Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
 
-            double art_at_tick = lag + model_tick;
-            ARTPostBurninScheduler* scheduler = new ARTPostBurninScheduler(art_at_tick, person);
-            repast::RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick - 0.1,
-                repast::Schedule::FunctorPtr(scheduler));
+                double art_at_tick = lag + model_tick; // - correction;
+                if (art_at_tick < 0) {
+                    // do it immediately
+                    art_at_tick = 1 + model_tick;
+                }
+
+                ARTPostBurninScheduler* scheduler = new ARTPostBurninScheduler(art_at_tick, person);
+                repast::RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick - 0.1,
+                    repast::Schedule::FunctorPtr(scheduler));
+            
+            } else {
+                // diagnosed and has been on ART at some point, but not now
+                person->infection_parameters_.time_of_art_init = as<float>(val["time.of.art.initiation"]);
+                float time_since_art_init = as<float>(val["time.since.art.initiation"]);
+                // time_since_art_init only makes sense if person is on ART
+                // but initializing art_adherence uses it to schedule so we
+                // temporarily set it here to the duration so we can schedule properly.
+                person->infection_parameters_.time_since_art_init = burnin_last_tick - person->infection_parameters_.time_of_art_init;
+                person->infection_parameters_.vl_art_traj_slope = as<float>(val["vl.art.traj.slope"]);
+                person->infection_parameters_.cd4_at_art_init = as<float>(val["cd4.at.art.initiation"]);
+                person->infection_parameters_.vl_at_art_init = as<float>(val["vl.at.art.initiation"]);
+                Stats::instance()->recordARTEvent(model_tick, person->id(), true);
+
+                if (val.containsElementNamed("adherence.category")) {
+                    initialize_art_adherence(person, model_tick, static_cast<AdherenceCategory>(as<int>(val["adherence.category"])));
+                } else {
+                    initialize_art_adherence(person, model_tick);
+                }
+                // set it back to avoid breaking the onART assumption 
+                // of time since art init
+                person->infection_parameters_.time_since_art_init = time_since_art_init;
+
+            }
         }
-
-        person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
     } else {
         //  the prep.status attribute only exists in uninfected persons in the R model
         PrepStatus status = as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF;
