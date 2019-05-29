@@ -1287,7 +1287,6 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
             } else {
                 ++Stats::instance()->currentCounts().asm_deaths;
                 Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
-                Stats::instance()->personDataRecorder()->recordDeath(person, tick);
                 cod = CauseOfDeath::ASM;
             }
         } 
