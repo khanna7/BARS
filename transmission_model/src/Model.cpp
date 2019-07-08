@@ -38,6 +38,9 @@
 #include "Logger.h"
 
 #include "debug_utils.h"
+#include "Helper.h"
+
+#include "CSVWriter.h"
 
 //#include "EventWriter.h"
 
@@ -47,10 +50,13 @@ using namespace repast;
 
 namespace fs = boost::filesystem;
 
-namespace TransModel {
+namespace TransModel { 
 
 const std::string BALANCED = "balanced";
 const double VS_VL_COUNT = std::log10(2) + 2;
+
+//CSVWriter csvwriter("jailStatsTest.csv"); //temp csv writer for test
+//CSVWriter csvwriter("ChaosTest.csv"); //temp csv writer for test
 
 PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
     if (cod == CauseOfDeath::AGE)
@@ -239,7 +245,6 @@ std::string get_stats_filename(const std::string& key) {
     } else {
         return "";
     }
-
 }
 
 void init_stats() {
@@ -259,6 +264,11 @@ void init_stats() {
     int max_age = Parameters::instance()->getIntParameter(MAX_AGE);
 
     builder.createStatsSingleton(min_age, max_age);
+
+    //temp csv writer for test: 
+    //std::vector<std::string> header = {"tick", "newJailed", "nextDayRelease", "jailedPop", "generalPop", "totalPop", 
+                                      // "popChange", "entries", "ageDeaths", "infectDeaths", "asmDeaths", "totalDeaths"};
+    //csvwriter.addHeader(header);
 }
 
 void add_log(const std::string& fname, const std::string& header, 
@@ -401,8 +411,6 @@ void init_sero_prep_manager(PrepInterventionManager& prep_manager, float age_thr
     // // used in PUExtras to calculate base unboosted probability
     // data.daily_stop_prob_sd_lt = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_LT);
     // data.daily_stop_prob_sd_gte = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_GTE);
-
-    
 
     // data.increment_sd_lt = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT_LT);
     // data.increment_sd_gte = Parameters::instance()->getDoubleParameter(SERO_PREP_YEARLY_INCREMENT_GTE);
@@ -948,10 +956,12 @@ void Model::step() {
 
     vector<PersonPtr> uninfected;
 
-
     // update the physiological etc. (vital) attributes of the population
     // updating cd4 counts, checking for death, diagnosing persons, etc.
     updateVitals(t, size_of_timestep, max_survival, uninfected);
+
+    //test 
+    //std::cout << "tick= " << t <<std::endl;
 
     // select members of the population for infection from external sources
     runExternalInfections(uninfected, t);
@@ -1027,6 +1037,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
         // update viral load, cd4
         if (person->isInfected()) {
             updateDisease(person);
+            //if (person->isJailed())
+               //std::cout << ">>>>>>>>>>>>>>>>update diseas is called for jailed person" << std::endl;
         }
 
         if (persons_to_log.find(person->id()) != persons_to_log.end()) {
@@ -1088,8 +1100,16 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 }
             }
 
-            if (!person->isJailed() && Random::instance()->nextDouble() <=  incarceration_prob) {
-                jail.addPerson(tick, person);
+            //proability of jailing a person: 
+            if (!person->isJailed())  {
+                 //@TODO write these values in the appropriate parameter file
+                if (person->hasPerviousJailHistory() && Random::instance()->nextDouble() <=  0.0005173) {
+                    jail.addPerson(tick, person);
+                }
+                //@TODO write these values in the appropriate parameter file
+                else if (Random::instance()->nextDouble() <=  0.0000787) { 
+                    jail.addPerson(tick, person);
+                }
             }
 
             if (person->isOnART()) {
@@ -1116,12 +1136,13 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 }
 
 void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
+
     double min = Parameters::instance()->getDoubleParameter(EXTERNAL_INFECTION_RATE_MIN);
     double max = Parameters::instance()->getDoubleParameter(EXTERNAL_INFECTION_RATE_MAX);
     double val = Random::instance()->createUniDoubleGenerator(min, max).next();
-    // std::cout << val << std::endl;
+
     double prob = uninfected.size() * val;
-    //std::cout << uninfected.size() << ", " << prob << std::endl;
+
     if (Random::instance()->nextDouble() <= prob) {
         float min_age = Parameters::instance()->getFloatParameter(MIN_AGE);
         float factor = Parameters::instance()->getFloatParameter(EXTERNAL_INFECTION_AGE_FACTOR);
@@ -1132,6 +1153,7 @@ void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
             int exp = ((int) floor(p->age() - min_age));
             sum += (float) pow(factor, exp);
             prob_map.emplace(sum, p);
+
         }
 
         float draw = (float) Random::instance()->createUniDoubleGenerator(0, sum).next();
@@ -1321,15 +1343,16 @@ void record_sex_act(int edge_type, bool condom_used, bool discordant, Stats* sta
 void Model::runTransmission(double time_stamp) {
     vector<PersonPtr> infecteds;
 
-    //std::cout << sex_acts_per_time_step << ", " << node_count << ", " << edge_count << ", " << prob << std::endl;
     Stats* stats = Stats::instance();
     for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
         int type = (*iter)->type();
         if (hasSex(type)) {
             bool condom_used = (*iter)->useCondom(Random::instance()->nextDouble());
+
             bool discordant = false;
             PersonPtr out_p = (*iter)->v1();
             PersonPtr in_p = (*iter)->v2();
+
             if (out_p->isInfected() && !in_p->isInfected()) {
                 discordant = true;
 
@@ -1345,7 +1368,6 @@ void Model::runTransmission(double time_stamp) {
                     Stats::instance()->recordInfectionEvent(time_stamp, in_p, out_p, false, (*iter)->type());
                 }
             }
-
             record_sex_act(type, condom_used, discordant, stats);
         }
     }
@@ -1358,8 +1380,56 @@ void Model::runTransmission(double time_stamp) {
             infectPerson(person, time_stamp);
             stats->currentCounts().incrementInfected(person);
             stats->personDataRecorder()->recordInfection(person, time_stamp, InfectionSource::INTERNAL);
+            stats->currentCounts().incrementNewlyInfected();             
         }
     }
+    //infection transmission among jailed persons: 
+    jail.runInternalInfectionTransmission(time_stamp); 
 }
+
+
+int Model::infectedPopulationSize() {
+    float totalInfectedPop=0;
+    for (auto& p : population) {
+        if (p->isInfected()) {
+            totalInfectedPop++;
+        }
+    }
+    return totalInfectedPop;
+}
+
+int Model::uninfectedPopulationSize() {
+    float totaluninfectedPop=0;
+    for (auto& p : population) {
+        if (!p->isInfected()) {
+            totaluninfectedPop++;
+        }
+    }
+    return totaluninfectedPop;
+}
+
+/**
+* Function to calcuate infection incidence 
+* When neeeded, the function is only used to calcuate infection rate over a certain period (e.g. year) in order to
+* to set the infection incidence rate (per day) inside the jail (half of the general population)
+*/ 
+float Model::infectionIncidence() { 
+    Stats* stats = Stats::instance();
+    //return (float) infectedPopulationSize()/(float)uninfectedPopulationSize(); //infection prevalence
+   return (float) stats->currentCounts().total_internal_infected_new /(float)uninfectedPopulationSize();
+}
+
+/**
+* Function to calcuate infection incidence based on person-day 
+* When neeeded, the function is only used to calcuate infection rate over a certain period (e.g. year) in order to
+* to set the infection incidence rate (per day) inside the jail (half of the general population)
+*/ 
+float Model::infectionIncidence_personDay(double time) {
+    Stats* stats = Stats::instance();
+    int infected_today = std::accumulate(stats->currentCounts().internal_infected.begin(), stats->currentCounts().internal_infected.end(), 0);
+    total_infected_person_days += infected_today * time;
+    return (float) infectedPopulationSize()/(float) (uninfectedPopulationSize() + total_infected_person_days);
+}
+
 
 } /* namespace TransModel */

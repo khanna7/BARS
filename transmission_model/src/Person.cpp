@@ -15,7 +15,7 @@ namespace TransModel {
 Person::Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser diagnoser) :
         id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age), circum_status_(circum_status),
         infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false), testable_(false),
-        diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0) {
+        diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), vulnerability_expiration_(0) {
 }
 
 //Person::Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth) : net(network), id_(id) {
@@ -136,6 +136,23 @@ void Person::updatePrepAdherence(AdherenceData& data) {
 }
 
 /**
+ * Used by the jail release function to set Vulnerability Expiration Time (vulnerability time + current time) 
+ * This is time period where a person newly released from jail remains vulnearble to change of behaviour 
+ */
+void Person::setVulnerabilityExpirationTime(double expiration_time) {
+    vulnerability_expiration_ = expiration_time;
+}
+
+/**
+* to check whether the person (newly relased from jail) is vulnearble  
+*/
+bool Person::isVulnerable(double current_time) {
+    if (current_time <= vulnerability_expiration_)
+      return true;
+    else return false; 
+}
+
+/**
 * Function to be called when a person gets in the jail 
 * Sets jail parameters, including an accumulative count of times the same person is jailed. 
 */ 
@@ -147,9 +164,9 @@ void Person::jailed(double time, double serving_time) {
     jail_parameters_.serving_time = serving_time;
     jail_parameters_.age_at_jail = age_;
     jail_parameters_.time_since_jailed = 0;
-    if (jail_parameters_.is_first_time_jailed){
+    /* if (jail_parameters_.is_first_time_jailed){
         jail_parameters_.age_at_first_jail = age_;
-    }
+    } */
     //jail_parameters_.accumulative_time_in_jail=0;
 }  
 

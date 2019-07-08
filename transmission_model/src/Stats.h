@@ -134,10 +134,17 @@ struct Counts {
     int min_age_;
     double vl_supp_per_positives, vl_supp_per_diagnosis, cd4m_deaths;
 
+    unsigned int total_internal_infected; //accumulative total number of agents who were infected by internal infections (in runTransmission), incluidng during burnin
+    unsigned int total_internal_infected_new; //as above, excpet it does not inlcude those infected during burnin but only new infected cases after burnin
+    unsigned int total_internal_infected_inJail; //accumulative total number of agents in jail who were infected by internal infections
+
+
     Counts(int min_age, int max_age);
     void reset();
     void writeTo(FileOutput& out);
     void incrementInfected(PersonPtr& p);
+    void incrementInfectedInJail();
+    void incrementNewlyInfected();
     void incrementInfectedAtEntry(PersonPtr& p);
     void incrementInfectedExternal(PersonPtr& p);
     void incrementUninfected(PersonPtr& p);
