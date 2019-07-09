@@ -3,8 +3,6 @@
  *
  *  Created on: Jun 5, 2012
  *      Author: nick
- *  Modified on 28 March 2019 
- *      By Babak (added parameter for lower & upper jail term probability)
  */
 
 #include "boost/algorithm/string.hpp"
@@ -287,8 +285,7 @@ Parameters::~Parameters() {
 
 }
 
-void Parameters::initialize(Properties &props)
-{
+void Parameters::initialize(Properties& props) {
     if (instance_ != 0) {
         delete instance_;
     }

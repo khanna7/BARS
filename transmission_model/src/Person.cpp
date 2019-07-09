@@ -3,8 +3,6 @@
  *
  *  Created on: Oct 8, 2015
  *      Author: nick
- *  Modified on: 1 Mar 2019 
- *      by Babak (added jail paratmeters and other jail related functions)
  */
 
 #include "Person.h"

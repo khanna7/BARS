@@ -2,9 +2,7 @@
  * Person.h
  *
  *  Created on: Oct 8, 2015
- *      Author: nick 
- *  Modified on: 1 Mar 2019 
- *      by Babak (added jail paratmeters and other jail related functions)
+ *      Author: nick
  */
 
 #ifndef SRC_PERSON_H_
@@ -36,8 +34,6 @@ private:
     bool dead_, diagnosed_, testable_;
     Diagnoser diagnoser_;
     AdherenceData art_adherence_;
-
-    JailParameters jail_parameters_;
 
     double score_;
 
