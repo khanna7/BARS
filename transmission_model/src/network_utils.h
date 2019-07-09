@@ -139,6 +139,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
         } else {
             EdgePtr<V> res = net.removeEdge(out, in, edge_type);
             if (!res) {
+                std::cout << "Bad Edge: (" << out << ", " << in << ", " << edge_type << ")" << std::endl;
                 if (net.hasEdge(in, out, edge_type) || net.hasEdge(out, in, edge_type)) {
                     std::cout << "has edge" << std::endl;
                 }

@@ -41,6 +41,9 @@ private:
 
     double score_;
 
+    JailParameters jail_parameters_;
+    double vulnerability_expiration_;
+
 public:
     Person(int id, float age, bool circum_status, int steady_role, int casual_role,
             Diagnoser diagnoser);
@@ -202,15 +205,18 @@ public:
      */
     void updatePrepAdherence(AdherenceData& data);
 
-    
-   // =====Jail related functions: 
+    //+++++++
 
     /**
-     * Get jailParameters
+     * Used by the jail release function to set Vulnerability Expiration Time (vulnerability time + current time) 
+     * This is time period where a person newly released from jail remains vulnearble to change of behaviour 
      */
-    const JailParameters& jailParameters() const {
-        return jail_parameters_;
-    }
+    void setVulnerabilityExpirationTime(double expiration_time);
+
+    /**
+     * to check whether the person (newly relased from jail) is still vulnearble  
+     */
+    bool isVulnerable(double current_time);
 
     /**
      * Boolean function to check if a person is jailed (in jail).
@@ -218,7 +224,18 @@ public:
     bool isJailed() const {
         return jail_parameters_.is_in_jail;
     }
-    
+
+    /**
+     * Boolean function to check if a person is jailed (in jail).
+     */
+    bool hasPerviousJailHistory() const {
+        return !jail_parameters_.is_first_time_jailed;
+    }
+
+    void jailed(double time, double serving_time);
+
+    void releasedFromJail(double release_time); 
+
     /**
      * Get the time the person was jailed
      */
@@ -233,13 +250,12 @@ public:
         return jail_parameters_.serving_time;
     }
 
-
     /**
      * Get the age of the person at the time of first jail (history)
      */
-    float ageAtFirstJail() const {
+        /* float ageAtFirstJail() const {
         return jail_parameters_.age_at_first_jail;
-    }
+    } */
 
      /**
      * Get the age of the person at the time of jail
@@ -262,9 +278,6 @@ public:
         return jail_parameters_.printJailRecord(current_time);
     } 
 
-    void getInJail(double time, double serving_time);
-
-    void getOutJail(double release_time); 
 
 };
 

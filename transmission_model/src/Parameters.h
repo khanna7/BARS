@@ -255,7 +255,6 @@ extern const std::string INPUT_LOWER_JAIL_TERM_PROB;
 extern const std::string INPUT_UPPER_JAIL_TERM_PROB;
 extern const std::string INCARCERATION_PROB_FOR_ENTRIES;
 
-
 /**
  * Parameters singleton that contains the model properties.
  *

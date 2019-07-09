@@ -31,6 +31,7 @@
 #include "RangeWithProbability.h"
 #include "ARTLagCalculator.h"
 #include "PrepInterventionManager.h"
+#include "Jail.h"
 
 #include "Jail.h"
 #include "printHelper.h"'
@@ -53,6 +54,7 @@ class Model {
 private:
     std::shared_ptr<RInside> R;
     Network<Person> net;
+    std::vector<PersonPtr> population;
     std::shared_ptr<TransmissionRunner> trans_runner;
     CD4Calculator cd4_calculator;
     ViralLoadCalculator viral_load_calculator;
@@ -66,8 +68,9 @@ private:
     PrepInterventionManager prep_manager;
     CondomUseAssigner condom_assigner;
     RangeWithProbability asm_runner, cd4m_treated_runner;
-
     float age_threshold;
+    Jail jail;
+    unsigned int total_infected_person_days;
 
     Jail jail;
     //std::unique_ptr<Jail> jail_runner;
@@ -98,6 +101,15 @@ private:
      * Initializes PrEP cessation events for the initial set of persons.
      */
     void initPrepCessation();
+    void jailPerson(double tick, PersonPtr& person);
+
+     /**
+     * These are used for calcualting (infection) incidence:
+     */
+    int infectedPopulationSize();
+    int uninfectedPopulationSize();
+    float infectionIncidence();
+    float infectionIncidence_personDay(double time);
 
 
     /**
