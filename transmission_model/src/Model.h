@@ -61,6 +61,7 @@ private:
     RangeWithProbability asm_runner, cd4m_treated_runner;
     float age_threshold;
     Jail jail;
+    unsigned int total_infected_person_days;
 
     void runTransmission(double timestamp);
     CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
@@ -87,6 +88,14 @@ private:
      */
     void initPrepCessation();
     void jailPerson(double tick, PersonPtr& person);
+
+     /**
+     * These are used for calcualting (infection) incidence:
+     */
+    int infectedPopulationSize();
+    int uninfectedPopulationSize();
+    float infectionIncidence();
+    float infectionIncidence_personDay(double time);
 
 public:
     Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);

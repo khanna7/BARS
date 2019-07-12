@@ -16,7 +16,7 @@
 
 namespace TransModel {
 
-enum class InfectionSource {INTERNAL, EXTERNAL, NONE};
+enum class InfectionSource {INTERNAL, EXTERNAL, INJAIL, NONE};
 
 struct PersonData {
 
