@@ -3,6 +3,7 @@ global.random.seed=42
 #stop.at = 36500 # 100 years
 #stop.at = 3650 # 10 years
 stop.at = 7300 # 20 years
+#stop.at = 1000
 
 net.variable.name = nw
 casual.net.variable.name = n_cas
@@ -24,7 +25,7 @@ per.tick.counts.output.file = counts.csv
 #infection.events.file = infection_events.csv
 
 #biomarker.log.file = biomarker_log.csv
-biomarker.persons.to.log = random:100
+biomarker.persons.to.log = random:5
 
 #death.events.file = exit_events.csv
 #person.data.file = person_data.csv
