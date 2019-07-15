@@ -41,7 +41,7 @@ const std::string OUTPUT_DIR = "output.directory";
 const std::string PARTNERSHIP_EVENTS_FILE = "partnership.events.file";
 const std::string INFECTION_EVENTS_FILE =  "infection.events.file";
 const std::string BIOMARKER_FILE = "biomarker.log.file";
-const std::string BIOMARKER_LOG_COUNT = "biomarker.number.of.persons.to.log";
+const std::string BIOMARKER_LOG_COUNT = "biomarker.persons.to.log";
 const std::string DEATH_EVENT_FILE = "death.events.file";
 const std::string TESTING_EVENT_FILE = "testing.events.file";
 const std::string ART_EVENT_FILE = "art.events.file";
@@ -266,7 +266,9 @@ const std::string EXTERNAL_INFECTION_AGE_FACTOR = "external.infections.age.facto
 
 const std::string INPUT_LOWER_JAIL_TERM_PROB = "min.jail.term.duration";
 const std::string INPUT_UPPER_JAIL_TERM_PROB = "max.jail.term.duration";
-const std::string INCARCERATION_PROB_FOR_ENTRIES = "incarceration.prob.for.entries";
+const std::string INCARCERATION_PROB = "incarceration.prob";
+// prob for previously incarcerated
+const std::string INCARCERATION_PROB_PREV = "incarceration.prob.prev";
 
 Parameters* Parameters::instance_ = 0;
 

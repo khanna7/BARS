@@ -24,7 +24,7 @@ per.tick.counts.output.file = counts.csv
 #infection.events.file = infection_events.csv
 
 #biomarker.log.file = biomarker_log.csv
-biomarker.number.of.persons.to.log = 100
+biomarker.persons.to.log = random:100
 
 #death.events.file = exit_events.csv
 #person.data.file = person_data.csv
@@ -48,3 +48,7 @@ input.age.threshold = 26
 
 input.lower.jail.term.prob = 1
 input.upper.jail.term.prob = 200
+
+incarceration.prob = 0.0
+# probability of incareration for previously jailed
+incarceration.prob.prev = 0.0

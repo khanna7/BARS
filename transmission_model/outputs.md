@@ -100,7 +100,9 @@ Infection events are recorded in the file defined by *infection.events.file* in 
   * 1: the casual network
 
 ### Biomarker logging
-Some number of persons can be selected at the start of the model for biomarker logging. Biomarker logging logs the viral load, cd4 count and art status of each selected person at each time step. The data is recorded in the file defined by the *biomarker.log.file* property in the model.props file. The number of persons to log is defined by the *biomarker.number.of.persons.to.log* property. The persons to log are selected randomly from all persons prior to simulation start. The format is csv with each row logging the data for a particular person. The columns in the output are:
+Some number of persons can be selected at the start of the model for biomarker logging. Biomarker logging logs the viral load, cd4 count and art status of each selected person at each time step. The data is recorded in the file defined by the *biomarker.log.file* property in the model.props file. The number of persons to log is defined by the *biomarker.persons.to.log* property. The persons to log are either selected randomly from all persons prior to simulation start or person ids can be specified in comma delimited list. To enable random selection, the *biomarker.persons.to.log* should be set to `random:N`
+where N is the number of persons to log. To enable the selection of particular persons by id, the *biomarker.persons.to.log* should be set to a comma delimited list of person ids.
+The format is csv with each row logging the data for a particular person. The columns in the output are:
 * tick: the time step at which the logging occurred
 * p_id: the id of the logged person
 * viral_load: the viral load the logged person at time 'tick'

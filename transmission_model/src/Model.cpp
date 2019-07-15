@@ -38,9 +38,9 @@
 #include "Logger.h"
 
 #include "debug_utils.h"
-#include "Helper.h"
+//#include "Helper.h"
 
-#include "CSVWriter.h"
+//#include "CSVWriter.h"
 
 //#include "EventWriter.h"
 
@@ -330,16 +330,25 @@ void init_network_save(Model* model) {
 }
 
 void init_biomarker_logging(size_t pop_size, std::set<int>& ids_to_log) {
-    if (Parameters::instance()->contains(BIOMARKER_LOG_COUNT)) {
-        int number_to_log = Parameters::instance()->getIntParameter(BIOMARKER_LOG_COUNT);
-
-        IntUniformGenerator gen = Random::instance()->createUniIntGenerator(0, pop_size - 1);
-        for (int i = 0; i < number_to_log; ++i) {
-            int id = (int) gen.next();
-            while (ids_to_log.find(id) != ids_to_log.end()) {
-                id = (int) gen.next();
+    if (Parameters::instance()->contains(BIOMARKER_LOG_COUNT) && Parameters::instance()->contains(BIOMARKER_FILE)) {
+        string bio_param = Parameters::instance()->getStringParameter(BIOMARKER_LOG_COUNT);
+        if (bio_param.find("random:") != string::npos) {
+            int number_to_log = stoi(bio_param.substr(7));
+       
+            IntUniformGenerator gen = Random::instance()->createUniIntGenerator(0, pop_size - 1);
+            for (int i = 0; i < number_to_log; ++i) {
+                int id = (int) gen.next();
+                while (ids_to_log.find(id) != ids_to_log.end()) {
+                    id = (int) gen.next();
+                }
+                ids_to_log.emplace(id);
             }
-            ids_to_log.emplace(id);
+        } else {
+            vector<string> ids;
+            boost::split(ids, bio_param, boost::is_any_of(","));
+            for (auto& sid : ids) {
+                ids_to_log.emplace(stoi(sid));
+            }
         }
     }
 }
@@ -1056,7 +1065,9 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     float time_to_full_supp = Parameters::instance()->getFloatParameter(TIME_TO_FULL_SUPP);
     int vs_count = 0, inf_count = 0, diagnosed_count = 0, vs_pos_count = 0;
 
-    double incarceration_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_FOR_ENTRIES);
+    double incarceration_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB);
+    double incarceration_prob_prev = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_PREV);
+
 
     // iterate through all the network vertices (i.e. the persons)
     for (auto iter = population.begin(); iter != population.end(); ) {
@@ -1127,23 +1138,17 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 }
             }
 
-<<<<<<< HEAD
-            if (!person->isJailed() && Random::instance()->nextDouble() <=  incarceration_prob) {
-	            jail.addPerson(tick, person);
-	        }
-=======
             //proability of jailing a person: 
             if (!person->isJailed())  {
                  //@TODO write these values in the appropriate parameter file
-                if (person->hasPerviousJailHistory() && Random::instance()->nextDouble() <=  0.0005173) {
+                if (person->hasPerviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_prob_prev) {
                     jail.addPerson(tick, person);
                 }
                 //@TODO write these values in the appropriate parameter file
-                else if (Random::instance()->nextDouble() <=  0.0000787) { 
+                else if (Random::instance()->nextDouble() <= incarceration_prob) { 
                     jail.addPerson(tick, person);
                 }
             }
->>>>>>> JCM
 
             if (person->isOnART()) {
                 ++stats->currentCounts().on_art;
