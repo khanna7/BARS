@@ -129,6 +129,7 @@ PersonPtr PersonCreator::operator()(Rcpp::List& val, double model_tick, double b
             float time_of_art_init = as<float>(val["time.of.art.initiation"]);
             if (isnan(time_of_art_init)) {
                 double lag = person->infection_parameters_.art_lag - (burnin_last_tick - person->infection_parameters_.time_of_diagnosis);
+                Stats::instance()->personDataRecorder()->initRecord(person, 0);
                 Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
 
                 double art_at_tick = lag + model_tick; // - correction;

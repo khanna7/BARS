@@ -103,8 +103,10 @@ void PersonDataRecorder::recordDeath(const PersonPtr& p, double ts) {
 }
 
 void PersonDataRecorder::initRecord(PersonPtr& person, double time_of_entry) {
-    PersonData pd(person, time_of_entry);
-    data.emplace(person->id(), pd);
+    if (data.find(person->id()) == data.end()) {
+        PersonData pd(person, time_of_entry);
+        data.emplace(person->id(), pd);
+    }
 }
 
 void PersonDataRecorder::incrementNonAdheredIntervals(const PersonPtr& p) {
