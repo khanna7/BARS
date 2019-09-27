@@ -156,6 +156,18 @@ write.csv(main_registry10, file="main_registry10.csv", row.names=FALSE)
 main_result10<-relationship_registry(time10,main_registry10,0)
 write.csv(main_result10[[2]], file="main_result10.csv", row.names=FALSE)
 
+main_result1<-read.csv("main_result1.csv")[[1]]
+main_result1<-append(main_result1,main_result1[[3649]])
+main_result2<-read.csv("main_result2.csv")[[1]]
+main_result3<-read.csv("main_result3.csv")[[1]]
+main_result4<-read.csv("main_result4.csv")[[1]]
+main_result5<-read.csv("main_result5.csv")[[1]]
+main_result6<-read.csv("main_result6.csv")[[1]]
+main_result7<-read.csv("main_result7.csv")[[1]]
+main_result8<-read.csv("main_result8.csv")[[1]]
+main_result9<-read.csv("main_result9.csv")[[1]]
+main_result10<-read.csv("main_result10.csv")[[1]][1:3650]
+
 
 final_result_data_main<-data.frame(main_result1,
                                    main_result2,
@@ -209,7 +221,7 @@ write.csv(casual_result7[[2]], file="casual_result7.csv", row.names=FALSE)
 casual_registry8<-casual_result7[[1]]
 write.csv(casual_registry8, file="casual_registry8.csv", row.names=FALSE)
 casual_result8<-relationship_registry(time8,casual_registry8,1)
-write.csv(casual_result8[[2]], file="casual_result8.csv", row.names=FALSE)
+write.csv(casual_result8[[2]], file="casual_result8.csv", row.names=FALSE)  
 
 casual_registry9<-casual_result8[[1]]
 write.csv(casual_registry9, file="casual_registry9.csv", row.names=FALSE)
@@ -220,6 +232,18 @@ casual_registry10<-casual_result9[[1]]
 write.csv(casual_registry10, file="casual_registry10.csv", row.names=FALSE)
 casual_result10<-relationship_registry(time10,casual_registry10,1)
 write.csv(casual_result10[[2]], file="casual_result10.csv", row.names=FALSE)
+
+casual_result1<-read.csv("casual_result1.csv")[[1]]
+casual_result1<-append(casual_result1,casual_result1[[3649]])
+casual_result2<-read.csv("casual_result2.csv")[[1]]
+casual_result3<-read.csv("casual_result3.csv")[[1]]
+casual_result4<-read.csv("casual_result4.csv")[[1]]
+casual_result5<-read.csv("casual_result5.csv")[[1]]
+casual_result6<-read.csv("casual_result6.csv")[[1]]
+casual_result7<-read.csv("casual_result7.csv")[[1]]
+casual_result8<-read.csv("casual_result8.csv")[[1]]
+casual_result9<-read.csv("casual_result9.csv")[[1]]
+casual_result10<-read.csv("casual_result10.csv")[[1]][1:3650]
 
 
 final_result_data_casual<-data.frame(casual_result1,
@@ -297,19 +321,4 @@ a<-cbind(a,maxvec)
 
 write.csv(a, file="final_casual_relationship_ratios+summarystats.csv")
 
-cres1<-read.csv("casual_result1.csv")
-cres2<-read.csv("casual_result2.csv")
-cres3<-read.csv("casual_result3.csv")
-cres4<-read.csv("casual_result4.csv")
-cres5<-read.csv("casual_result5.csv")
-
-cres<-append(cres1[[1]],cres1[[1]][3649])
-partial_casual_results<-data.frame(cres,
-                                   cres2[[1]],
-                                   cres3[[1]],
-                                   cres4[[1]],
-                                   cres5[[1]],
-                                   stringsAsFactors = FALSE)
-
-testing<-read.csv("main_relationship_ratios.csv")
-
+#end of script
