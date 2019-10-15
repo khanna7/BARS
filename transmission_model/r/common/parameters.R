@@ -98,4 +98,7 @@
 
    ## relationship between viral load and chronic infectivity (hughes et al.)
 
+   #####################
+   ## Jail related Parameters
+   ## 
 

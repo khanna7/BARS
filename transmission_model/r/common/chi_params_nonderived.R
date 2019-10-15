@@ -380,6 +380,10 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 	sc.casual.usually.use.condoms.prob <- 0.75
 	sc.casual.always.use.condoms.prob <- 1
 
+     #####################
+   ## Jail related Parameters
+   network.retention.multiplier <- 1
+
 
 	### Age Specific Mortality ###
 	### We don't strictly need all these age ranges, but

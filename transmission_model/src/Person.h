@@ -38,7 +38,10 @@ private:
     double score_;
 
     JailParameters jail_parameters_;
-    double vulnerability_expiration_;
+    //double vulnerability_expiration_;
+
+    bool off_art_flag=false;
+    bool off_prep_flag=false;
 
 public:
     Person(int id, float age, bool circum_status, int steady_role, int casual_role,
@@ -211,12 +214,37 @@ public:
      * Used by the jail release function to set Vulnerability Expiration Time (vulnerability time + current time) 
      * This is time period where a person newly released from jail remains vulnearble to change of behaviour 
      */
-    void setVulnerabilityExpirationTime(double expiration_time);
+    //void setVulnerabilityExpirationTime(double expiration_time);
 
     /**
      * to check whether the person (newly relased from jail) is still vulnearble  
      */
-    bool isVulnerable(double current_time);
+    //bool isVulnerable(double current_time);
+
+    /**
+     * to set on/off PrEP flag   
+     */
+    void setOffPrepFlag(bool is_off_prep){
+        off_prep_flag = is_off_prep;
+    }
+
+    bool isOffPrepFlagOn(){
+        return off_prep_flag;
+    }
+
+    /**
+     * to set on/off ART flag 
+     */
+    void setOffArtFlag(bool is_off_art){
+        off_art_flag = is_off_art;
+    }
+
+    bool isOffArtFlagOn(){
+        return off_art_flag;
+    }
+
+
+
 
     /**
      * Boolean function to check if a person is jailed (in jail).

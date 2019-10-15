@@ -40,7 +40,9 @@ CPP_SOURCE = Person.cpp \
     RandomSelectionPrepIntervention.cpp \
     PrepAgeFilter.cpp \
     Logger.cpp \
-    Jail.cpp
+    Jail.cpp \
+    OffArtFlagEndEvent.cpp \
+    OffPrepFlagEndEvent.cpp 
     
 
 c_source += $(C_SOURCE)

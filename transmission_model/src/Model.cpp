@@ -38,7 +38,7 @@
 #include "Logger.h"
 
 #include "debug_utils.h"
-//#include "Helper.h"
+#include "PrintHelper.h"
 
 //#include "CSVWriter.h"
 
@@ -971,7 +971,7 @@ void Model::step() {
     PersonToVALForSimulate p2val;
     float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
     float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
-    
+       
     if ((int) t % 100 == 0) {
         std::cout << " ---- " << t << " ---- " << std::endl;
     }
@@ -996,8 +996,8 @@ void Model::step() {
     // updating cd4 counts, checking for death, diagnosing persons, etc.
     updateVitals(t, size_of_timestep, max_survival, uninfected);
 
-    //test 
-    //std::cout << "tick= " << t <<std::endl;
+    //mytest 
+    //std::cout << "tick= " << t <<std::endl; 
 
     // select members of the population for infection from external sources
     runExternalInfections(uninfected, t);
@@ -1026,7 +1026,11 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
     double art_at_tick = lag + tick;
     ARTScheduler* scheduler = nullptr;
     auto iter = art_map.find(art_at_tick);
+    //std::cout << "-----tick: " << tick<< ", lag: "<< lag<< std::endl;
+
     if (iter == art_map.end()) {
+        //std::cout << " iter==map.end: " << iter->first << std::endl;
+
         scheduler = new ARTScheduler((float) art_at_tick);
         RepastProcess::instance()->getScheduleRunner().scheduleEvent(art_at_tick - 0.1,
                 repast::Schedule::FunctorPtr(scheduler));
@@ -1038,7 +1042,8 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
 }
 
 void Model::updateDisease(PersonPtr person) {
-    if (person->isOnART()) {
+    if (person->isOnART() && !person->isOffArtFlagOn()) { //care disruption mechanism
+    //if (person->isOnART()) { 
         float slope = viral_load_slope_calculator.calculateSlope(person->infectionParameters());
         person->setViralLoadARTSlope(slope);
     }
@@ -1068,15 +1073,12 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     double incarceration_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB);
     double incarceration_prob_prev = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_PREV);
 
-
     // iterate through all the network vertices (i.e. the persons)
     for (auto iter = population.begin(); iter != population.end(); ) {
         PersonPtr person = (*iter);
         // update viral load, cd4
         if (person->isInfected()) {
             updateDisease(person);
-            //if (person->isJailed())
-               //std::cout << ">>>>>>>>>>>>>>>>update diseas is called for jailed person" << std::endl;
         }
 
         if (persons_to_log.find(person->id()) != persons_to_log.end()) {
@@ -1115,7 +1117,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 stats->currentCounts().incrementUninfected(person);
                 // accumulate persons who may potentially go on PrEP
                 prep_manager.processPerson(person, net);
-                if (person->isOnPrep()) {
+                if (person->isOnPrep() && !person->isOffPrepFlagOn()) {  //care disruption
+                //if (person->isOnPrep()) {
                     ++stats->currentCounts().on_prep;
                 }
                 uninfected.push_back(person);
@@ -1146,11 +1149,13 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 }
                 //@TODO write these values in the appropriate parameter file
                 else if (Random::instance()->nextDouble() <= incarceration_prob) { 
+                //else if (Random::instance()->nextDouble() <= 0.0001) { 
                     jail.addPerson(tick, person);
                 }
             }
 
-            if (person->isOnART()) {
+            if (person->isOnART() && !person->isOffArtFlagOn()) { //care disruption 
+            // if (person->isOnART()) {
                 ++stats->currentCounts().on_art;
             }
 
@@ -1225,7 +1230,6 @@ void Model::entries(double tick, float size_of_timestep) {
         int entries = (int) gen.next();
         Stats* stats = Stats::instance();
         stats->currentCounts().entries = entries;
-        //std::cout << "entries: " << entries << std::endl;
 
         double infected_prob = Parameters::instance()->getDoubleParameter(INIT_HIV_PREV_ENTRIES);
 
@@ -1306,7 +1310,8 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
 
     if (cod == CauseOfDeath::NONE) { 
         double increase = 0;
-        if (person->isOnART()) {
+        if (person->isOnART()  && !person->isOffArtFlagOn()) { //care disruption
+        //if (person->isOnART()) {
             increase = cd4m_treated_runner.lookup(person->infectionParameters().cd4_count);
         }
 

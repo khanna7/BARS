@@ -24,6 +24,11 @@ public:
     virtual ~ViralLoadCalculator();
 
     float calculateViralLoad(const InfectionParameters& infection_params);
+
+    const SharedViralLoadParameters& sharedViralLoadParameters() const {
+        return vl_params;
+    }
+
 };
 
 } /* namespace TransModel */

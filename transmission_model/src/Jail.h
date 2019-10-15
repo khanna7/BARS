@@ -67,6 +67,8 @@ class Jail {
     int numberOfPersonsToBeReleasedAtTime(double);
     float avgPopulationAge();
     float avgPopulationServingTime();
+    int onArtPopulationSize();
+    int onPrepPopulationSize();
 
     void printPopulationInfo(double time);
     void printPopulationID();
@@ -74,6 +76,7 @@ class Jail {
     void printPopulationAge();
     void printPopulationIDsAndTheirNework();
     void printPopulationDiseaseInfo();
+    void printPopulationInfoOnART();
 
     int totalJailed() {
       return total_jailed_;

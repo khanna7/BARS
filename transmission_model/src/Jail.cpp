@@ -15,6 +15,13 @@
 #include "GeometricDistribution.h"
 #include "Stats.h"
 
+#include "PrintHelper.h"
+
+#include "CSVReader.h"
+
+#include "OffArtFlagEndEvent.h"
+#include "OffPrepFlagEndEvent.h"
+
 //#include "CSVWriter.h"
 
 using namespace repast;
@@ -22,6 +29,9 @@ using namespace repast;
 namespace TransModel {
 
 //CSVWriter writer("jail_vul_dur.csv");
+//CSVWriter writer("geometricDistTest.csv");
+std::vector<double> net_decay_prob_main;
+std::vector<double> net_decay_prob_casual;
 
 ReleaseEvent::ReleaseEvent(std::shared_ptr<Person> person, Jail* jail) : person_(person), jail_(jail)
 {}
@@ -38,16 +48,23 @@ void ReleaseEvent::operator()() {
 Jail::Jail(Network<Person>* net) : net_(net) {
     //std::set<std::string> header = { "y"};
     //writer.addHeader(header);
+
+    string net_decay_prob_file_main = Parameters::instance()->getStringParameter(NETWORK_DECAY_PROB_MAIN_FILE);
+    CSVReader reader_net_decay_prob_main(net_decay_prob_file_main);
+    net_decay_prob_main = reader_net_decay_prob_main.readAsDouble();
+
+    string net_decay_prob_file_casual = Parameters::instance()->getStringParameter(NETWORK_DECAY_PROB_CASUAL_FILE);
+    CSVReader reader_net_decay_prob_casual(net_decay_prob_file_casual);
+    net_decay_prob_casual = reader_net_decay_prob_casual.readAsDouble();
+
 }
 
 Jail::~Jail() {}
 
 double get_jail_time() {
  
-    //@TODO write this value in the appropriate parameter file
-    double p = 0.0172; //  1/58  
-
-    GeometricDistribution jail_term_gen = GeometricDistribution(p, 0);
+    double serving_time_prob = Parameters::instance()->getDoubleParameter(JAIL_SERVING_TIME_MEAN_PROB);
+    GeometricDistribution jail_term_gen = GeometricDistribution(serving_time_prob, 0);
     double jail_serving_time = jail_term_gen.next();
 
     return jail_serving_time+1; //+1 to avoid having 0 day
@@ -58,6 +75,8 @@ double get_jail_time() {
 */ 
 void Jail::addPerson(double tick, PersonPtr person) {
     double serving_time = get_jail_time();
+
+    person -> setOffPrepFlag(true); //care disruption mechanism, turn on offPrEP flag immediately
 
     if(std::find(jailed_pop.begin(), jailed_pop.end(), person) != jailed_pop.end()) {
         std::cout << "*****ERROR in Jail::addPerson:***** Person is already in jail" << std::endl;
@@ -94,7 +113,13 @@ void Jail::releasePerson(double tick, PersonPtr person) {
     net_->addVertex(person);
     std::vector<EdgePtr<Person>> edges = jailed_pop_net.at(person->id());
 
-    double retentionProb = retentionNetworkProbability(person->jailServingTime());
+    //double retention_prob = retentionNetworkProbability(person->jailServingTime());
+    double retention_prob;
+
+    float ret_multiplier = Parameters::instance()->getFloatParameter(NETWORK_RETENTION_MULTIPLIER);
+    //std::cout << "ret_multiplier: " << ret_multiplier << std::endl;
+
+    int time_spent_in_jail = tick - person->timeOfJail(); //time spent in jail, in case it would be different from person->jailServingTime()
 
     for (auto edge : edges) {
         PersonPtr source = edge->v1();
@@ -104,23 +129,42 @@ void Jail::releasePerson(double tick, PersonPtr person) {
         if ((source->id() == person->id() && !target->isJailed() && !target->isDead()) ||
         // if person is target, then make sure source is still valid
             (target->id() == person->id() && !source->isJailed() && !source->isDead())) {
-                if (Random::instance()->nextDouble() <= retentionProb) {
-                    EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
-                    new_edge->setCondomUseProbability(edge->condomUseProbability());
+                if (edge->type() == STEADY_NETWORK_TYPE)  //0
+                    retention_prob = net_decay_prob_main[time_spent_in_jail];
+                else //CASUAL_NETWORK_TYPE, 1
+                  retention_prob = net_decay_prob_casual[time_spent_in_jail]; 
+
+                //if (Random::instance()->nextDouble() <= retention_prob) {
+                if (Random::instance()->nextDouble() <= retention_prob * ret_multiplier) {
+                        EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
+                        new_edge->setCondomUseProbability(edge->condomUseProbability());
                 }
         }
     }
 
-    double vulnerability_mean = vulnerabilityMean(person->jailServingTime());
+    //double vulnerability_mean = vulnerabilityMean(person->jailServingTime());
+    float vulnerability_mean = Parameters::instance()->getFloatParameter(VULNERABILITY_MEAN_PROB);
 
-    PoissonGen vulnerability_dur_gen(Random::instance()->engine(), boost::random::poisson_distribution<>(vulnerability_mean));
-    DefaultNumberGenerator<PoissonGen> gen(vulnerability_dur_gen);
-    int vulnerability_duration = (int) gen.next();
-    person->setVulnerabilityExpirationTime(vulnerability_duration+tick);
+    GeometricDistribution vulnerability_dur_gen = GeometricDistribution(vulnerability_mean, 0);
+    //PoissonGen vulnerability_dur_gen(Random::instance()->engine(), boost::random::poisson_distribution<>(vulnerability_mean));
+    //DefaultNumberGenerator<PoissonGen> gen(vulnerability_dur_gen);
+    //int vulnerability_duration = (int) vulnerability_dur_gen.next();
+    //person->setVulnerabilityExpirationTime(vulnerability_duration+tick);
+
+    person -> setOffArtFlag(true); //PrEP has been already off when jailed. 
+
+    int vulnerability_duration_prep = (int) vulnerability_dur_gen.next();
+    double off_prep_flag_change_time = tick + vulnerability_duration_prep;
+    ScheduleRunner& prep_runner = RepastProcess::instance()->getScheduleRunner();
+    prep_runner.scheduleEvent(off_prep_flag_change_time, Schedule::FunctorPtr(new OffPrepFlagEndEvent(person)));
+   
+    int vulnerability_duration_art = (int) vulnerability_dur_gen.next();
+    double off_art_flag_change_time = tick + vulnerability_duration_art;      
+    ScheduleRunner& art_runner = RepastProcess::instance()->getScheduleRunner();
+    art_runner.scheduleEvent(off_art_flag_change_time, Schedule::FunctorPtr(new OffArtFlagEndEvent(person)));
 
     jailed_pop_net.erase(person->id());
     total_released_++;
-
 }
 
 /**
@@ -137,16 +181,17 @@ void Jail::removeDeadPerson(double time, PersonPtr person) {
 */
 void Jail::runInternalInfectionTransmission(double time) {
     Stats* stats = Stats::instance();
-    float incidence_rate =  0.000182;  //@TODO write this value in the appropirate parameter file 
+    double incidence_rate = Parameters::instance()->getDoubleParameter(IN_JAIL_INFECTION_INCIDENCE_RATE); // 0.000182
 
     //currently used as probablity to apply for each incarcerated individual
     //this can potentially be changed to one single person infection if the probability occurs 
-    float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION);
+    float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION); 
 
     for (auto& p : jailed_pop) {
         if (!p->isInfected()) {
             if (repast::Random::instance()->nextDouble() <= incidence_rate) {
                 p-> infect(duration_of_infection, time);
+                p-> setOffPrepFlag(true); //care disruption mechanism, turn on offPrEP flag immediately
                 total_infected_inside_jail_++;
                 stats->currentCounts().incrementInfectedInJail();
                 stats->personDataRecorder()->recordInfection(p, time, InfectionSource::INJAIL);
@@ -207,7 +252,6 @@ double Jail::retentionNetworkProbability(double serving_time) {
     } 
 }
 
-
 /**
 * Private function to get vulnerability mean at the time of release based on serving time
 */ 
@@ -246,7 +290,7 @@ int  Jail::populationSize() {
 * Returns total number of infected persons in jail 
 */ 
 int Jail::infectedPopulationSize() {
-    float totalInfectedPop=0;
+    int totalInfectedPop=0;
     for (auto& p : jailed_pop) {
         if (p->isInfected()) {
             totalInfectedPop++;
@@ -259,13 +303,39 @@ int Jail::infectedPopulationSize() {
 * Returns total number of uninfected persons in jail 
 */ 
 int Jail::uninfectedPopulationSize() {
-    float totaluninfectedPop=0;
+    int totaluninfectedPop=0;
     for (auto& p : jailed_pop) {
         if (!p->isInfected()) {
             totaluninfectedPop++;
         }
     }
     return totaluninfectedPop;
+}
+
+/**
+* Returns total number of onART persons in jail 
+*/ 
+int Jail::onArtPopulationSize() {
+    int totalOnArtPop=0;
+    for (auto& p : jailed_pop) {
+        if (p->isOnART()) {
+            totalOnArtPop++;
+        }
+    }
+    return totalOnArtPop;
+}
+
+/**
+* Returns total number of onPrEP persons in jail 
+*/ 
+int Jail::onPrepPopulationSize() {
+    int totalOnPrepPop=0;
+    for (auto& p : jailed_pop) {
+        if (p->isOnPrep()) {
+            totalOnPrepPop++;
+        }
+    }
+    return totalOnPrepPop;
 }
 
 
@@ -500,6 +570,36 @@ void Jail::printPopulationIDsAndTheirNework() {
             std::cout << "[i" << edge->id() << ",t" << edge->type() << "(" << edge->v1()->id()<< "," << edge->v2()->id() << ")]" << std::endl;
         }
     }
+    std::cout << std::endl << "===========================================" << std::endl;
+}
+
+
+void Jail::printPopulationInfoOnART() {
+
+    std::cout << "=====Jail::printPopulationInfoOnART: ======" << std::endl;
+    //std::cout << std::endl << "---isOnART?:" << std::endl;
+    /*for (auto& p : jailed_pop) {
+        if (p->isOnART())
+            std::cout << p->id() << ", "; 
+    } */
+
+    for (auto& p : jailed_pop) {
+        if (p->isOnPrep()) {
+            //std::cout << p->id() << ", "; 
+            std::cout << p->id() << std::endl; 
+            PrintHelper::printPersonViralLoad(p);
+        }
+    }
+
+        //if (p->id() == 1522) {
+        //if (p->id() == 4082) {
+        //if  (p->infectionParameters().infection_status)
+           //std::cout << p->id() << std::endl;  
+           //PrintHelper::printPersonInfectionPar(p);
+           //PrintHelper::printPersonViralLoad(p);
+
+        //}
+
     std::cout << std::endl << "===========================================" << std::endl;
 }
 
