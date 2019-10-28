@@ -137,7 +137,7 @@ Counts::Counts(int min_age, int max_age) :
                 sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
                 on_art{0}, on_prep{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
-                vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, total_internal_infected{0}, total_internal_infected_inJail{0}, total_internal_infected_new{0}
+                vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, total_internal_infected{0}, total_internal_infected_injail{0}, total_internal_infected_new{0}
 
 {
 }
@@ -158,6 +158,7 @@ void Counts::reset() {
     std::fill(infected_at_entry.begin(), infected_at_entry.end(), 0);
     std::fill(vertex_count.begin(), vertex_count.end(), 0);
     overlaps = 0;
+    internal_infected_injail=0;
 }
 
 
@@ -171,7 +172,8 @@ void Counts::incrementInfected(PersonPtr& p) {
 * Function to use for keeping track of the total numbers of indviduals infected in jail 
 */ 
 void Counts::incrementInfectedInJail() {
-    ++total_internal_infected_inJail; 
+    ++total_internal_infected_injail; //accumulative (total)
+    ++internal_infected_injail;  //counter for each cycle 
 }
 
 /**

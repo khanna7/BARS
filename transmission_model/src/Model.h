@@ -89,6 +89,8 @@ private:
     void initPrepCessation();
     void jailPerson(double tick, PersonPtr& person);
 
+    float incarcerationRate();
+
      /**
      * These are used for calcualting (infection) incidence:
      */

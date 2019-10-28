@@ -4,7 +4,7 @@ global.random.seed=42
 #stop.at = 3650 # 10 years
 #stop.at = 1000
 stop.at = 7300 # 20 years
-#stop.at = 100
+#stop.at = 730
 
 net.variable.name = nw
 casual.net.variable.name = n_cas
@@ -53,13 +53,19 @@ input.age.threshold = 26
 network.decay.prob.main.file    = ../config/net_decay_prob_main.csv
 network.decay.prob.casual.file  = ../config/net_decay_prob_casual.csv
 
-# input.lower.jail.term.prob = 1
-# input.upper.jail.term.prob = 200
+is.network.disruption.on = false;
+is.care.disruption.on = false;
 
-incarceration.prob = 0.0
+#incarceration.prob = 0.0
+incarceration.prob = 0.0005173
+#incarceration.prob = 0.002
 # probability of incareration for previously jailed
-incarceration.prob.prev = 0.0
+#incarceration.prob.prev = 0.0
+incarceration.prob.prev = 0.0000787
+#incarceration.prob.prev = 0.002
 
 in.jail.infection.incidence.rate =  0.000182 
 jail.serving.time.mean.prob = 0.0172 #1/58 days
 vulnerability.mean.prob = 0.0111  #1/90 days
+
+network.retention.multiplier = 1

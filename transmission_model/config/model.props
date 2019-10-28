@@ -45,9 +45,3 @@ count.overlaps = true
 output.age.range = 20-30,30-100
 input.age.threshold = 26
 
-input.lower.jail.term.prob = 1
-input.upper.jail.term.prob = 200
-
-incarceration.prob = 0.0
-# probability of incareration for previously jailed
-incarceration.prob.prev = 0.0

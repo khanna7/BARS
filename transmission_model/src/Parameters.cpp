@@ -272,6 +272,9 @@ const std::string NETWORK_RETENTION_MULTIPLIER = "network.retention.multiplier";
 const std::string NETWORK_DECAY_PROB_MAIN_FILE   = "network.decay.prob.main.file";
 const std::string NETWORK_DECAY_PROB_CASUAL_FILE = "network.decay.prob.casual.file";
 
+const std::string IS_NETWORK_DISRUPTION_ON = "is.network.disruption.on";
+const std::string IS_CARE_DISRUPTION_ON = "is.care.disruption.on";
+
 // prob for previously incarcerated
 const std::string INCARCERATION_PROB_PREV = "incarceration.prob.prev";
 

@@ -40,7 +40,7 @@
 #include "debug_utils.h"
 #include "PrintHelper.h"
 
-//#include "CSVWriter.h"
+#include "CSVWriter.h"
 
 //#include "EventWriter.h"
 
@@ -56,7 +56,8 @@ const std::string BALANCED = "balanced";
 const double VS_VL_COUNT = std::log10(2) + 2;
 
 //CSVWriter csvwriter("jailStatsTest.csv"); //temp csv writer for test
-//CSVWriter csvwriter("ChaosTest.csv"); //temp csv writer for test
+//CSVWriter csvwriter("infec_incidence.csv"); //temp csv writer for test
+//int new_infected_this_cycle=0; //couting total infections, includig externals during one cycle sim
 
 PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
     if (cod == CauseOfDeath::AGE)
@@ -273,6 +274,11 @@ void init_stats() {
     //temp csv writer for test: 
     //std::vector<std::string> header = {"tick", "newJailed", "nextDayRelease", "jailedPop", "generalPop", "totalPop", 
                                       // "popChange", "entries", "ageDeaths", "infectDeaths", "asmDeaths", "totalDeaths"};
+    //std::vector<std::string> header = {"baseline"};
+    std::vector<std::string> header = {"inc_rate", "incar_rate", "jail_pop",  
+    "tot_new_inf_jail", "tot_new_infected", "uninfected_c", "tot_pop",
+    "internal_infected", "external_infected", "infected_at_entry", "uninfected"};
+
     //csvwriter.addHeader(header);
 }
 
@@ -999,6 +1005,34 @@ void Model::step() {
     //mytest 
     //std::cout << "tick= " << t <<std::endl; 
 
+    float inf_incidence = infectionIncidence();
+    float incarcerate_rate = incarcerationRate();
+    //std::cout <<t << ", inf_incidence rate  =" << inf_incidence; 
+    //std::cout << ", incarceration rate  =" << incarcerationRate(); 
+    //std::cout << ",  jail pop =" << jail.populationSize() <<std::endl; 
+
+
+    int int_infected = std::accumulate(stats->currentCounts().internal_infected.begin(), stats->currentCounts().internal_infected.end(), 0);
+    int ext_infected = std::accumulate(stats->currentCounts().external_infected.begin(), stats->currentCounts().external_infected.end(), 0);
+    int inf_at_entry = std::accumulate(stats->currentCounts().infected_at_entry.begin(), stats->currentCounts().infected_at_entry.end(), 0);
+    int uninfect = std::accumulate(stats->currentCounts().uninfected.begin(), stats->currentCounts().uninfected.end(), 0);
+
+   /* std::vector<std::string> vals;
+    vals.push_back(to_string(inf_incidence));
+    vals.push_back(to_string(incarcerate_rate));
+    vals.push_back(to_string(jail.populationSize()));
+    vals.push_back(to_string(stats->currentCounts().total_internal_infected_injail));
+    vals.push_back(to_string(stats->currentCounts().total_internal_infected_new));
+    vals.push_back(to_string(uninfectedPopulationSize()));
+    vals.push_back(to_string(population.size()));
+    vals.push_back(to_string(int_infected));
+    vals.push_back(to_string(ext_infected));
+    vals.push_back(to_string(inf_at_entry));
+    vals.push_back(to_string(uninfect)); */
+
+    //csvwriter.addSingleValue(inf_incidence);
+    //csvwriter.addRow(vals);
+
     // select members of the population for infection from external sources
     runExternalInfections(uninfected, t);
     previous_pop_size = current_pop_size;
@@ -1015,6 +1049,9 @@ void Model::step() {
     }
 
     stats->resetForNextTimeStep();
+
+    //new_infected_this_cycle=0;
+
 }
 
 void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
@@ -1144,6 +1181,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             //proability of jailing a person: 
             if (!person->isJailed())  {
                  //@TODO write these values in the appropriate parameter file
+                //cout << "incarceration_prob_prev: " << incarceration_prob_prev << endl;
                 if (person->hasPerviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_prob_prev) {
                     jail.addPerson(tick, person);
                 }
@@ -1207,6 +1245,8 @@ void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
         infectPerson(p, t);
         stats->currentCounts().incrementInfectedExternal(p);
         stats->personDataRecorder()->recordInfection(p, t, InfectionSource::EXTERNAL);
+        //new_infected_this_cycle++;
+
     }
 }
 
@@ -1422,7 +1462,8 @@ void Model::runTransmission(double time_stamp) {
             infectPerson(person, time_stamp);
             stats->currentCounts().incrementInfected(person);
             stats->personDataRecorder()->recordInfection(person, time_stamp, InfectionSource::INTERNAL);
-            stats->currentCounts().incrementNewlyInfected();             
+            stats->currentCounts().incrementNewlyInfected();   //infected after burnin     
+            //new_infected_this_cycle++;
         }
     }
     //infection transmission among jailed persons: 
@@ -1433,8 +1474,10 @@ void Model::runTransmission(double time_stamp) {
 int Model::infectedPopulationSize() {
     float totalInfectedPop=0;
     for (auto& p : population) {
-        if (p->isInfected()) {
-            totalInfectedPop++;
+        if (!p->isDead()) {
+            if (p->isInfected()) {
+                totalInfectedPop++;
+            }
         }
     }
     return totalInfectedPop;
@@ -1443,11 +1486,22 @@ int Model::infectedPopulationSize() {
 int Model::uninfectedPopulationSize() {
     float totaluninfectedPop=0;
     for (auto& p : population) {
-        if (!p->isInfected()) {
-            totaluninfectedPop++;
+        if (!p->isDead()) {
+            if (!p->isInfected()) {
+                totaluninfectedPop++;
+            }
         }
     }
     return totaluninfectedPop;
+}
+
+
+
+/**
+* Function to calcuate incarceration rate 
+*/ 
+float Model::incarcerationRate() { 
+   return (float) jail.populationSize() /(float)population.size();
 }
 
 /**
@@ -1458,7 +1512,17 @@ int Model::uninfectedPopulationSize() {
 float Model::infectionIncidence() { 
     Stats* stats = Stats::instance();
     //return (float) infectedPopulationSize()/(float)uninfectedPopulationSize(); //infection prevalence
-   return (float) stats->currentCounts().total_internal_infected_new /(float)uninfectedPopulationSize();
+
+   //number 
+   int int_infected = std::accumulate(stats->currentCounts().internal_infected.begin(), stats->currentCounts().internal_infected.end(), 0);
+   int ext_infected = std::accumulate(stats->currentCounts().external_infected.begin(), stats->currentCounts().external_infected.end(), 0);
+   int inf_at_entry = std::accumulate(stats->currentCounts().infected_at_entry.begin(), stats->currentCounts().infected_at_entry.end(), 0);
+   int inf_in_jail = stats->currentCounts().internal_infected_injail;
+   int uninfect = std::accumulate(stats->currentCounts().uninfected.begin(), stats->currentCounts().uninfected.end(), 0);
+   
+   int total_infected_this_cycle = int_infected + ext_infected + inf_at_entry + inf_in_jail; 
+   //return (float) stats->currentCounts().total_internal_infected_new /(float)uninfectedPopulationSize();
+   return (float) total_infected_this_cycle/(float)uninfect;
 }
 
 /**

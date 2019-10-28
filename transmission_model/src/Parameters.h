@@ -260,6 +260,9 @@ extern const std::string NETWORK_RETENTION_MULTIPLIER;
 extern const std::string NETWORK_DECAY_PROB_MAIN_FILE;
 extern const std::string NETWORK_DECAY_PROB_CASUAL_FILE;
 
+extern const std::string IS_NETWORK_DISRUPTION_ON;
+extern const std::string IS_CARE_DISRUPTION_ON;
+
 // prob for previously incarcerated
 extern const std::string INCARCERATION_PROB_PREV;
 

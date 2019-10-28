@@ -136,8 +136,8 @@ struct Counts {
 
     unsigned int total_internal_infected; //accumulative total number of agents who were infected by internal infections (in runTransmission), incluidng during burnin
     unsigned int total_internal_infected_new; //as above, excpet it does not inlcude those infected during burnin but only new infected cases after burnin
-    unsigned int total_internal_infected_inJail; //accumulative total number of agents in jail who were infected by internal infections
-
+    unsigned int total_internal_infected_injail; //accumulative total number of agents in jail who were infected by internal infections
+    unsigned int internal_infected_injail;   //this is to keep internal infections inside the jail at each cycle 
 
     Counts(int min_age, int max_age);
     void reset();

@@ -107,7 +107,9 @@
    art.prop.part.plus.adherent <- 0.28
    art.prop.part.neg.adherent <- 0.30
 
-   art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
+   #art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
+   art.prop.always.adherent <- 0.32
+
 
  	art.always.adherent.probability <- 0.95
 	art.never.adherent.probability <- 0.05
@@ -117,13 +119,18 @@
    #####################
    ## Transmission Parameters
    ## Additional multiplier information: http://www.hiv.va.gov/provider/manual-primary-care/prevention-for-positives-table3.asp
-   acute.mult <- 4.98
-   late.mult <- 3.49
-   circum.mult <- 0.40 ## 40% is the multiplier. Circumcised insertive men are 0.60 times as infectious
+   #acute.mult <- 4.98
+   acute.mult <- 5
+   #late.mult <- 3.49
+   late.mult <- 1
+   #circum.mult <- 0.40 ## 40% is the multiplier. Circumcised insertive men are 0.60 times as infectious
+    circum.mult <- 1
+
    acute.mult.holling <- 26
    late.mult.holling <- 7
    #min.chronic.infectivity.unadj <- 0.000497/2.89
-   min.chronic.infectivity.unadj <- (0.00898+0.003379)/2 #jenness et al.
+   #min.chronic.infectivity.unadj <- (0.00898+0.003379)/2 #jenness et al.
+   min.chronic.infectivity.unadj <- 0.0009229133
 
    ## relationship between viral load and chronic infectivity (hughes et al.)
       ## each log increment in viral load corresponds to a 2.89-fold increase in infectivity
@@ -199,7 +206,8 @@ default.prep.mean.days.usage.gte <- 365
 
 default.prep.yearly.increment.lt <- 0
 default.prep.yearly.increment.gte <- 0
-default.prep.years.to.increment <- 0
+#default.prep.years.to.increment <- 0
+default.prep.years.to.increment <- 14
 
 default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the 
 default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention
@@ -319,8 +327,9 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 ######################
     ## Sexual Behavior
     #num.sex.acts.base <- 2.4
-    prop.steady.sex.acts <- 0.093 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
+    #prop.steady.sex.acts <- 0.093 #of steady parrnteships on a given day, in how many does a sex act (w or w/o condom) occur?
                                  #same as freq.of.sex parameter in data table
+    prop.steady.sex.acts <- 0.1893571
     prop.casual.sex.acts <- 0.053 #same as above, but for casual
     inf.red.w.condom <- 0.80
 
@@ -382,7 +391,7 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 
      #####################
    ## Jail related Parameters
-   network.retention.multiplier <- 1
+  ## network.retention.multiplier <- 1
 
 
 	### Age Specific Mortality ###
