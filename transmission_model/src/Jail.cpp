@@ -28,7 +28,7 @@ using namespace repast;
 
 namespace TransModel {
 
-CSVWriter  csv_writer("jail_vul_dur.csv");
+//CSVWriter  csv_writer("jail_vul_dur.csv");
 //CSVWriter csv_writer("geometricDistTest.csv");
 std::vector<double> net_decay_prob_main;
 std::vector<double> net_decay_prob_casual;
@@ -170,9 +170,9 @@ void Jail::releasePerson(double tick, PersonPtr person) {
         ScheduleRunner& art_runner = RepastProcess::instance()->getScheduleRunner();
         art_runner.scheduleEvent(off_art_flag_change_time, Schedule::FunctorPtr(new OffArtFlagEndEvent(person)));
 
-        std::vector<std::string> vals;
-        vals.push_back(to_string(vulnerability_duration_prep));
-        vals.push_back(to_string(vulnerability_duration_art));
+        //std::vector<std::string> vals;
+        //vals.push_back(to_string(vulnerability_duration_prep));
+        //vals.push_back(to_string(vulnerability_duration_art));
         //csv_writer.addRow(vals);
     }
 
