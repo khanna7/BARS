@@ -50,7 +50,7 @@ void ReleaseEvent::operator()() {
 
 Jail::Jail(Network<Person>* net) : net_(net) {
     std::set<std::string> header = { "prep", "art"};
-    csv_writer.addHeader(header);
+    //csv_writer.addHeader(header);
 
     string net_decay_prob_file_main = Parameters::instance()->getStringParameter(NETWORK_DECAY_PROB_MAIN_FILE);
     CSVReader reader_net_decay_prob_main(net_decay_prob_file_main);
