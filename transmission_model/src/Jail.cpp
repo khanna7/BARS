@@ -66,8 +66,9 @@ Jail::~Jail() {}
 
 double get_jail_time() {
  
-    double serving_time_prob = Parameters::instance()->getDoubleParameter(JAIL_SERVING_TIME_MEAN_PROB);
-    GeometricDistribution jail_term_gen = GeometricDistribution(serving_time_prob, 0);
+    //double serving_time_prob = Parameters::instance()->getDoubleParameter(JAIL_SERVING_TIME_MEAN_PROB);
+    double serving_time_mean = Parameters::instance()->getDoubleParameter(JAIL_SERVING_TIME_MEAN);
+    GeometricDistribution jail_term_gen = GeometricDistribution((1/serving_time_mean), 0);
     double jail_serving_time = jail_term_gen.next();
 
     return jail_serving_time+1; //+1 to avoid having 0 day
@@ -154,25 +155,24 @@ void Jail::releasePerson(double tick, PersonPtr person) {
 
     if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
         //double vulnerability_mean = vulnerabilityMean(person->jailServingTime());
-        float vulnerability_mean = Parameters::instance()->getFloatParameter(VULNERABILITY_MEAN_PROB);
-
-        GeometricDistribution vulnerability_dur_gen = GeometricDistribution(vulnerability_mean, 0);
+        float post_release_interference_period_mean = Parameters::instance()->getFloatParameter(POST_RELEASE_INTERFERENCE_PERIOD_MEAN);
+        GeometricDistribution post_release_interference_dur_gen = GeometricDistribution((1/post_release_interference_period_mean), 0);
 
         person -> setOffArtFlag(true); //care disruption; PrEP has been already off when jailed
 
-        int vulnerability_duration_prep = (int) vulnerability_dur_gen.next();
-        double off_prep_flag_change_time = tick + vulnerability_duration_prep;
+        int post_release_interf_duration_prep = (int) post_release_interference_dur_gen.next();
+        double off_prep_flag_change_time = tick + post_release_interf_duration_prep;
         ScheduleRunner& prep_runner = RepastProcess::instance()->getScheduleRunner();
         prep_runner.scheduleEvent(off_prep_flag_change_time, Schedule::FunctorPtr(new OffPrepFlagEndEvent(person)));
     
-        int vulnerability_duration_art = (int) vulnerability_dur_gen.next();
-        double off_art_flag_change_time = tick + vulnerability_duration_art;      
+        int post_release_interf_duration_art = (int) post_release_interference_dur_gen.next();
+        double off_art_flag_change_time = tick + post_release_interf_duration_art;      
         ScheduleRunner& art_runner = RepastProcess::instance()->getScheduleRunner();
         art_runner.scheduleEvent(off_art_flag_change_time, Schedule::FunctorPtr(new OffArtFlagEndEvent(person)));
 
         //std::vector<std::string> vals;
-        //vals.push_back(to_string(vulnerability_duration_prep));
-        //vals.push_back(to_string(vulnerability_duration_art));
+        //vals.push_back(to_string(post_release_interf_duration_prep));
+        //vals.push_back(to_string(post_release_interf_duration_art));
         //csv_writer.addRow(vals);
     }
 
@@ -195,11 +195,32 @@ void Jail::removeDeadPerson(double time, PersonPtr person) {
 void Jail::runInternalInfectionTransmission(double time) {
     Stats* stats = Stats::instance();
     double incidence_rate = Parameters::instance()->getDoubleParameter(IN_JAIL_INFECTION_INCIDENCE_RATE); // 0.000182
+   
+    double expected_infection = incidence_rate * uninfectedPopulationSize();
+   
+    //one single person infection randomly if the probability occurs 
+    if (repast::Random::instance()->nextDouble() <= expected_infection) {
+
+        if (jailed_pop.size()>1) {
+            vector<PersonPtr>::iterator randomIt = jailed_pop.begin();
+            std::advance(randomIt, std::rand() % jailed_pop.size());
+            PersonPtr p  = *randomIt;
+            //std::cout << "random person:" <<p -> id() <<std::endl; 
+            float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION); 
+            p-> infect(duration_of_infection, time);
+            if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
+                p-> setOffPrepFlag(true); //care disruption mechanism, turn on offPrEP flag immediately
+            }
+            total_infected_inside_jail_++;
+            stats->currentCounts().incrementInfected(p); // we add it to internal_infected list 
+            stats->currentCounts().incrementInfectedInJail(); // although we keeep a separate counter stats on injail infections
+            stats->personDataRecorder()->recordInfection(p, time, InfectionSource::INJAIL);
+        }
+    }
 
     //currently used as probablity to apply for each incarcerated individual
     //this can potentially be changed to one single person infection if the probability occurs 
-    float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION); 
-
+    /*float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION); 
     for (auto& p : jailed_pop) {
         if (!p->isInfected()) {
             if (repast::Random::instance()->nextDouble() <= incidence_rate) {
@@ -214,6 +235,7 @@ void Jail::runInternalInfectionTransmission(double time) {
             }
         }
     }
+    */
 }
 
 /**

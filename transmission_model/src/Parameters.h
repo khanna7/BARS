@@ -253,9 +253,8 @@ extern const std::string EXTERNAL_INFECTION_AGE_FACTOR;
 
 
 //jail related 
-extern const std::string INPUT_LOWER_JAIL_TERM_PROB;
-extern const std::string INPUT_UPPER_JAIL_TERM_PROB;
-extern const std::string INCARCERATION_PROB;
+//extern const std::string INPUT_LOWER_JAIL_TERM_PROB;
+//extern const std::string INPUT_UPPER_JAIL_TERM_PROB;
 extern const std::string NETWORK_RETENTION_MULTIPLIER;
 extern const std::string NETWORK_DECAY_PROB_MAIN_FILE;
 extern const std::string NETWORK_DECAY_PROB_CASUAL_FILE;
@@ -263,17 +262,19 @@ extern const std::string NETWORK_DECAY_PROB_CASUAL_FILE;
 extern const std::string IS_NETWORK_DISRUPTION_ON;
 extern const std::string IS_CARE_DISRUPTION_ON;
 
-// prob for previously incarcerated
-extern const std::string INCARCERATION_PROB_PREV;
+extern const std::string INCARCERATION_PROB;
 
-// prob for jail serving time (term) mean for geometric dist
-extern const std::string JAIL_SERVING_TIME_MEAN_PROB;
+// prob for previously incarcerated
+extern const std::string INCARCERATION_WITH_CJI_PROB;
+
+// jail serving time (term) mean (in terms of day)
+extern const std::string JAIL_SERVING_TIME_MEAN;
 
 // infection incidence rate inside jail
 extern const std::string IN_JAIL_INFECTION_INCIDENCE_RATE;
 
-// prob for vulnerability mean as prob for geometric dist
-extern const std::string VULNERABILITY_MEAN_PROB;
+extern const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN;
+
 
 /**
  * Parameters singleton that contains the model properties.

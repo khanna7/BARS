@@ -1005,19 +1005,18 @@ void Model::step() {
     //mytest 
     //std::cout << "tick= " << t <<std::endl; 
 
-    float inf_incidence = infectionIncidence();
-    float incarcerate_rate = incarcerationRate();
+    //float inf_incidence = infectionIncidence();
+    //float incarcerate_rate = incarcerationRate();
     //std::cout <<t << ", inf_incidence rate  =" << inf_incidence; 
     //std::cout << ", incarceration rate  =" << incarcerationRate(); 
     //std::cout << ",  jail pop =" << jail.populationSize() <<std::endl; 
 
+    //int int_infected = std::accumulate(stats->currentCounts().internal_infected.begin(), stats->currentCounts().internal_infected.end(), 0);
+    //int ext_infected = std::accumulate(stats->currentCounts().external_infected.begin(), stats->currentCounts().external_infected.end(), 0);
+    //int inf_at_entry = std::accumulate(stats->currentCounts().infected_at_entry.begin(), stats->currentCounts().infected_at_entry.end(), 0);
+    //int uninfect = std::accumulate(stats->currentCounts().uninfected.begin(), stats->currentCounts().uninfected.end(), 0);
 
-    int int_infected = std::accumulate(stats->currentCounts().internal_infected.begin(), stats->currentCounts().internal_infected.end(), 0);
-    int ext_infected = std::accumulate(stats->currentCounts().external_infected.begin(), stats->currentCounts().external_infected.end(), 0);
-    int inf_at_entry = std::accumulate(stats->currentCounts().infected_at_entry.begin(), stats->currentCounts().infected_at_entry.end(), 0);
-    int uninfect = std::accumulate(stats->currentCounts().uninfected.begin(), stats->currentCounts().uninfected.end(), 0);
-
-   /* std::vector<std::string> vals;
+    /*std::vector<std::string> vals;
     vals.push_back(to_string(inf_incidence));
     vals.push_back(to_string(incarcerate_rate));
     vals.push_back(to_string(jail.populationSize()));
@@ -1028,10 +1027,10 @@ void Model::step() {
     vals.push_back(to_string(int_infected));
     vals.push_back(to_string(ext_infected));
     vals.push_back(to_string(inf_at_entry));
-    vals.push_back(to_string(uninfect)); */
+    vals.push_back(to_string(uninfect)); 
 
     //csvwriter.addSingleValue(inf_incidence);
-    //csvwriter.addRow(vals);
+    csvwriter.addRow(vals); */
 
     // select members of the population for infection from external sources
     runExternalInfections(uninfected, t);
@@ -1108,7 +1107,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     int vs_count = 0, inf_count = 0, diagnosed_count = 0, vs_pos_count = 0;
 
     double incarceration_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB);
-    double incarceration_prob_prev = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_PREV);
+    //double incarceration_prob_prev = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_PREV);
+    double incarceration_with_cji_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB);
 
     // iterate through all the network vertices (i.e. the persons)
     for (auto iter = population.begin(); iter != population.end(); ) {
@@ -1181,8 +1181,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             //proability of jailing a person: 
             if (!person->isJailed())  {
                  //@TODO write these values in the appropriate parameter file
-                //cout << "incarceration_prob_prev: " << incarceration_prob_prev << endl;
-                if (person->hasPerviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_prob_prev) {
+                //cout << "incarceration_with_cji_prob: " << incarceration_with_cji_prob << endl;
+                if (person->hasPerviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_with_cji_prob) {
                     jail.addPerson(tick, person);
                 }
                 //@TODO write these values in the appropriate parameter file

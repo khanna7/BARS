@@ -265,9 +265,9 @@ const std::string EXTERNAL_INFECTION_RATE_MAX = "external.infections.per.person.
 const std::string EXTERNAL_INFECTION_AGE_FACTOR = "external.infections.age.factor";
 
 // jail related:
-const std::string INPUT_LOWER_JAIL_TERM_PROB = "min.jail.term.duration";
-const std::string INPUT_UPPER_JAIL_TERM_PROB = "max.jail.term.duration";
-const std::string INCARCERATION_PROB = "incarceration.prob";
+//const std::string INPUT_LOWER_JAIL_TERM_PROB = "min.jail.term.duration";
+//const std::string INPUT_UPPER_JAIL_TERM_PROB = "max.jail.term.duration";
+
 const std::string NETWORK_RETENTION_MULTIPLIER = "network.retention.multiplier";
 const std::string NETWORK_DECAY_PROB_MAIN_FILE   = "network.decay.prob.main.file";
 const std::string NETWORK_DECAY_PROB_CASUAL_FILE = "network.decay.prob.casual.file";
@@ -275,17 +275,17 @@ const std::string NETWORK_DECAY_PROB_CASUAL_FILE = "network.decay.prob.casual.fi
 const std::string IS_NETWORK_DISRUPTION_ON = "is.network.disruption.on";
 const std::string IS_CARE_DISRUPTION_ON = "is.care.disruption.on";
 
+const std::string INCARCERATION_PROB = "incarceration.prob";
 // prob for previously incarcerated
-const std::string INCARCERATION_PROB_PREV = "incarceration.prob.prev";
+const std::string INCARCERATION_WITH_CJI_PROB = "incarceration.with.cji.prob";
 
-// prob for jail serving time (term) mean for geometric dist
-const std::string JAIL_SERVING_TIME_MEAN_PROB = "jail.serving.time.mean.prob";
+// jail serving time (term) mean (in terms of days)
+const std::string JAIL_SERVING_TIME_MEAN = "jail.serving.time.mean";
 
 // infection incidence rate inside jail
 const std::string IN_JAIL_INFECTION_INCIDENCE_RATE = "in.jail.infection.incidence.rate";
 
-// prob for vulnerability mean as prob for geometric dist
-const std::string VULNERABILITY_MEAN_PROB = "vulnerability.mean.prob";
+const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN = "post.release.interference.period.mean";
 
 Parameters* Parameters::instance_ = 0;
 

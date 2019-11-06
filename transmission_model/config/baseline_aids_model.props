@@ -52,26 +52,26 @@ input.age.threshold = 26
 
 
 #----jail related: 
-network.decay.prob.main.file    = ../config/net_decay_prob_main.csv
-network.decay.prob.casual.file  = ../config/net_decay_prob_casual.csv
+network.decay.prob.main.file    = ../data/net_decay_prob_main.csv
+network.decay.prob.casual.file  = ../data/net_decay_prob_casual.csv
 
 is.network.disruption.on = false;
 is.care.disruption.on = false;
 
-# input.lower.jail.term.prob = 1
-# input.upper.jail.term.prob = 200
-
 #incarceration.prob = 0.0
 incarceration.prob = 0.0005173
 #incarceration.prob = 0.002
+
 # probability of incareration for previously jailed
-#incarceration.prob.prev = 0.0
-incarceration.prob.prev = 0.0000787
-#incarceration.prob.prev = 0.002
+#incarceration.with.cji.prob = 0.0
+incarceration.with.cji.prob = 0.0000787
+#incarceration.with.cji.prob = 0.002
 
+# 0.000182 /2 
+in.jail.infection.incidence.rate =  0.000091 
 
-in.jail.infection.incidence.rate =  0.000182 
-jail.serving.time.mean.prob = 0.0172 #1/58 days
-vulnerability.mean.prob = 0.0111  #1/90 days
+jail.serving.time.mean = 58
+
+post.release.interference.period.mean = 90
 
 network.retention.multiplier = 1
