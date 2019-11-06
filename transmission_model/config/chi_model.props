@@ -57,19 +57,18 @@ is.network.disruption.on = false;
 is.care.disruption.on = false;
 
 #incarceration.prob = 0.0
-incarceration.prob = 0.0005173
+incarceration.prob = 0.0000787
 #incarceration.prob = 0.002
-# probability of incareration for previously jailed
+
 #incarceration.with.cji.prob = 0.0
-incarceration.with.cji.prob = 0.0000787
+incarceration.with.cji.prob = 0.0005173
 #incarceration.with.cji.prob = 0.002
 
-in.jail.infection.incidence.rate =  0.000182 
-#jail.serving.time.mean.prob = 0.0172 #1/58 days
-jail.serving.time.mean = 58 
+# 0.000182 /2 
+in.jail.infection.incidence.rate =  0.000091 
 
-#vulnerability.mean.prob = 0.0111  #1/90 days
-post.release.interference.period.mean = 90 
+jail.serving.time.mean = 58
 
+post.release.interference.period.mean = 90
 
 network.retention.multiplier = 1
