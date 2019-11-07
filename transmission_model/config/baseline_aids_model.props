@@ -2,7 +2,7 @@
 global.random.seed=1
 
 #stop.at = 36500 # 100 years
-stop.at = 3650 # 10 years
+stop.at = 3650 
 #stop.at = 7300 # 20 years
 #stop.at = 730
 
@@ -52,8 +52,11 @@ input.age.threshold = 26
 
 
 #----jail related: 
-network.decay.prob.main.file    = ../data/net_decay_prob_main.csv
-network.decay.prob.casual.file  = ../data/net_decay_prob_casual.csv
+#network.decay.prob.main.file    = ../data/net_decay_prob_main.csv
+#network.decay.prob.casual.file  = ../data/net_decay_prob_casual.csv
+
+network.decay.prob.main.file    = /home/bmardestani/BARS/transmission_model/data/net_decay_prob_main.csv
+network.decay.prob.casual.file  = /home/bmardestani/BARS/transmission_model/data/net_decay_prob_casual.csv
 
 is.network.disruption.on = false;
 is.care.disruption.on = false;

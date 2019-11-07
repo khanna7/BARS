@@ -30,7 +30,7 @@ export PROCS=2
 # be ignored if the MACHINE variable (see below) is not set.
 export QUEUE=broadwl
 #export WALLTIME=7:00:00
-export WALLTIME=0:10:00
+export WALLTIME=7:00:00
 export PPN=14
 export TURBINE_JOBNAME="${EXPID}_job"
 export TURBINE_DIRECTIVE="#SBATCH --mem-per-cpu=4000\n#SBATCH --mail-type=END,FAIL"
