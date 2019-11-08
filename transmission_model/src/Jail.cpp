@@ -203,7 +203,7 @@ void Jail::runInternalInfectionTransmission(double time) {
 
         if (jailed_pop.size()>1) {
             vector<PersonPtr>::iterator randomIt = jailed_pop.begin();
-            std::advance(randomIt, std::rand() % jailed_pop.size());
+            std::advance(randomIt, repast::Random::instance()->createUniIntGenerator(1, jailed_pop.size()).next());
             PersonPtr p  = *randomIt;
             //std::cout << "random person:" <<p -> id() <<std::endl; 
             float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION); 
