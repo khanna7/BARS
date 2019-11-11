@@ -1,0 +1,80 @@
+#global.random.seed=42
+global.random.seed=1
+
+#stop.at = 36500 # 100 years
+stop.at = 3650 
+#stop.at = 7300 # 20 years
+#stop.at = 730
+
+net.variable.name = nw
+casual.net.variable.name = n_cas
+
+#----
+r.parameters.non.derived = ../r/common/chi_params_nonderived.R
+r.parameters.derived = ../r/common/chi_params_derived.R
+
+r.file = ../r/network_model/transmission_model_tergmlite.R
+initial.data.file = ../r/network_model/cas_net_n10000.RData
+
+# if these properties are not commented out
+# then these networks will replace existing ones (NEED to comment these out for calibration)
+main.network.file = ../r/network_model/v57-calib-inst-248-only-main_network_36500.RDS
+casual.network.file = ../r/network_model/v57-calib-inst-248-only-casual_network_36500.RDS
+#----
+
+output.directory = ./output
+per.tick.counts.output.file = counts.csv
+#partnership.events.file = partnership_events.csv
+#infection.events.file = infection_events.csv
+
+#biomarker.log.file = biomarker_log.csv
+biomarker.persons.to.log = random:5
+
+#death.events.file = exit_events.csv
+#person.data.file = person_data.csv
+#testing.events.file = testing_events.csv
+#art.events.file = art_events.csv
+#prep.events.file = prep_events.csv
+
+#serodiscordant.prep.log.file = serodiscordant_log.csv
+#default.prep.log.file = base_prep_log.csv
+#network.prep.log.file = network_prep_log.csv
+#random.selection.prep.log.file = random_selection_prep_log.csv
+
+net.save.file = main_network.RDS
+casual.net.save.file = casual_network.RDS
+
+save.network.at = end
+count.overlaps = true
+
+output.age.range = 20-30,30-100
+input.age.threshold = 26
+
+
+#----jail related: 
+#network.decay.prob.main.file    = ../data/net_decay_prob_main.csv
+#network.decay.prob.casual.file  = ../data/net_decay_prob_casual.csv
+
+network.decay.prob.main.file    = /home/bmardestani/BARS/transmission_model/data/net_decay_prob_main.csv
+network.decay.prob.casual.file  = /home/bmardestani/BARS/transmission_model/data/net_decay_prob_casual.csv
+
+is.network.disruption.on = false
+is.care.disruption.on = false
+
+#incarceration.prob = 0.0
+incarceration.prob = 0.0000787
+#incarceration.prob = 0.002
+
+# probability of incareration for previously jailed
+#incarceration.with.cji.prob = 0.0
+incarceration.with.cji.prob = 0.0005173
+#incarceration.with.cji.prob = 0.002
+
+# 0.000182 /2 
+in.jail.infection.incidence.rate =  0.000091 
+
+jail.serving.time.mean = 58
+
+post.release.interference.period.mean = 90
+
+network.retention.multiplier = 1

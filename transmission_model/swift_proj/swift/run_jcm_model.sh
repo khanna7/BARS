@@ -24,7 +24,7 @@ check_directory_exists
 
 # TODO edit the number of processes as required.
 #export PROCS=644
-export PROCS=2
+export PROCS=32
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if the MACHINE variable (see below) is not set.
@@ -78,7 +78,16 @@ PARAM_ARGS="-model_sh=$MODEL_SH "
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/combination-rs-retention.txt 
-UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/baseline.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/baseline.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/jail.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/both_disr.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr_low.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr_high.txt 
+UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr_low.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr_high.txt 
+
 UPF_NAME=$( basename $UPF_DATA_FILE )
 UPF_FILE=$TURBINE_OUTPUT/$UPF_NAME
 
@@ -87,6 +96,7 @@ echo $UPF_FILE
 #cp $EMEWS_PROJECT_ROOT/../config/model_n10000.props $TURBINE_OUTPUT/model.props
 #cp $EMEWS_PROJECT_ROOT/../config/baseline_aids_model.props $TURBINE_OUTPUT/model.props
 cp $EMEWS_PROJECT_ROOT/../config/baseline_aids_model.props $TURBINE_OUTPUT/baseline_aids_model.props
+#cp $EMEWS_PROJECT_ROOT/../config/jcm_model.props $TURBINE_OUTPUT/jcm_model.props
 cp $UPF_DATA_FILE $TURBINE_OUTPUT/
 
 # echo's anything following this standard out

@@ -43,6 +43,7 @@ VERSION="$(<$emews_root/../Release/version.txt)"
 APP=$emews_root/../Release/transmission_model-$VERSION
 #PROPS_FILE=$instance_directory/../model.props
 PROPS_FILE=$instance_directory/../baseline_aids_model.props
+#PROPS_FILE=$instance_directory/../jcm_model.props
 MODEL_CMD="mpirun -n 1 $APP $PROPS_FILE $param_line"
 
 # Turn bash error checking off. This is
