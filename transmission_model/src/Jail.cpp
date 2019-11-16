@@ -201,10 +201,9 @@ void Jail::runInternalInfectionTransmission(double time) {
     //one single person infection randomly if the probability occurs 
     if (repast::Random::instance()->nextDouble() <= expected_infection) {
 
-        if (jailed_pop.size()>1) {
-            vector<PersonPtr>::iterator randomIt = jailed_pop.begin();
-            std::advance(randomIt, repast::Random::instance()->createUniIntGenerator(1, jailed_pop.size()).next());
-            PersonPtr p  = *randomIt;
+        if (jailed_pop.size()>2) {
+            unsigned int rand_person_index = Random::instance()->createUniIntGenerator(0, jailed_pop.size()-1).next();
+            PersonPtr p  = jailed_pop[rand_person_index];
             //std::cout << "random person:" <<p -> id() <<std::endl; 
             float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION); 
             p-> infect(duration_of_infection, time);

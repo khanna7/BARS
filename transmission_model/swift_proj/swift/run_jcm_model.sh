@@ -25,12 +25,13 @@ check_directory_exists
 # TODO edit the number of processes as required.
 #export PROCS=644
 export PROCS=32
+#export PROCS=4
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if the MACHINE variable (see below) is not set.
 export QUEUE=broadwl
-#export WALLTIME=7:00:00
 export WALLTIME=7:00:00
+#export WALLTIME=0:50:00
 export PPN=14
 export TURBINE_JOBNAME="${EXPID}_job"
 export TURBINE_DIRECTIVE="#SBATCH --mem-per-cpu=4000\n#SBATCH --mail-type=END,FAIL"
@@ -84,9 +85,12 @@ log_script
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/both_disr.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr_low.txt 
-#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr_high.txt 
-UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr_low.txt 
+UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr_high.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr_low.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr_high.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/baseline_one.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr_low_one.txt
+
 
 UPF_NAME=$( basename $UPF_DATA_FILE )
 UPF_FILE=$TURBINE_OUTPUT/$UPF_NAME
