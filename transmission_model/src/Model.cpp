@@ -1041,8 +1041,12 @@ void Model::step() {
     updateThetaForm("theta.form");
     updateThetaForm("theta.form_cas");
 
+    stats->currentCounts().jail_pop = jail.populationSize();
+    stats->currentCounts().infected_jail_pop = jail.infectedPopulationSize();
+
     stats->currentCounts().main_edge_count = net.edgeCount(STEADY_NETWORK_TYPE);
     stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
+
     for (auto iter = population.begin(); iter != population.end(); ++iter) {
         stats->currentCounts().incrementVertexCount((*iter));
     }
@@ -1177,17 +1181,55 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                     }
                 }
             }
-
+            //test only
+            //if (person->isOnART()) {} //only HIV+
+            //if (person->isOnPrep()) {}  //only HIV-
             //proability of jailing a person: 
             if (!person->isJailed())  {
-                 //@TODO write these values in the appropriate parameter file
-                //cout << "incarceration_with_cji_prob: " << incarceration_with_cji_prob << endl;
                 if (person->hasPerviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_with_cji_prob) {
+                    //PrintHelper::printPersonNetwork(person,&net);
+                    std::vector<EdgePtr<Person>> edges;
+                    net.getEdges(person, edges);
+                    for (auto edge : edges) { 
+                        if (edge->v1()->id() != person->id()) {
+                            if (edge->v1()->isInfected())
+                                ++stats->currentCounts().partners_infected_before_jail;
+                        }
+                        if (edge->v2()->id() != person->id()) {
+                            if (edge->v2()->isInfected())
+                               ++stats->currentCounts().partners_infected_before_jail;
+                        }
+                    }
+
+                    if (person->isInfected()) {
+                         ++stats->currentCounts().infected_before_jail;
+                    }
+
+                    ++stats->currentCounts().jailed;
+
                     jail.addPerson(tick, person);
                 }
-                //@TODO write these values in the appropriate parameter file
                 else if (Random::instance()->nextDouble() <= incarceration_prob) { 
                 //else if (Random::instance()->nextDouble() <= 0.0001) { 
+                    std::vector<EdgePtr<Person>> edges;
+                    net.getEdges(person, edges);
+                    for (auto edge : edges) { 
+                        if (edge->v1()->id() != person->id()) {
+                            if (edge->v1()->isInfected())
+                                ++stats->currentCounts().partners_infected_before_jail;
+                        }
+                        if (edge->v2()->id() != person->id()) {
+                            if (edge->v2()->isInfected())
+                               ++stats->currentCounts().partners_infected_before_jail;
+                        }
+                    }
+
+                    if (person->isInfected()) {
+                        ++stats->currentCounts().infected_before_jail;
+                    }
+
+                    ++stats->currentCounts().jailed;
+
                     jail.addPerson(tick, person);
                 }
             }

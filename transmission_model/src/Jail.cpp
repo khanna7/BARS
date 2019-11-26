@@ -178,6 +178,12 @@ void Jail::releasePerson(double tick, PersonPtr person) {
 
     jailed_pop_net.erase(person->id());
     total_released_++;
+
+    Stats* stats = Stats::instance();
+    
+    if (person->isInfected()) {
+        ++stats->currentCounts().infected_before_release;
+    }
 }
 
 /**
@@ -615,27 +621,11 @@ void Jail::printPopulationInfoOnART() {
 
     std::cout << "=====Jail::printPopulationInfoOnART: ======" << std::endl;
     //std::cout << std::endl << "---isOnART?:" << std::endl;
-    /*for (auto& p : jailed_pop) {
+    for (auto& p : jailed_pop) {
         if (p->isOnART())
             std::cout << p->id() << ", "; 
-    } */
-
-    for (auto& p : jailed_pop) {
-        if (p->isOnPrep()) {
-            //std::cout << p->id() << ", "; 
-            std::cout << p->id() << std::endl; 
-            PrintHelper::printPersonViralLoad(p);
-        }
-    }
-
-        //if (p->id() == 1522) {
-        //if (p->id() == 4082) {
-        //if  (p->infectionParameters().infection_status)
-           //std::cout << p->id() << std::endl;  
-           //PrintHelper::printPersonInfectionPar(p);
-           //PrintHelper::printPersonViralLoad(p);
-
-        //}
+        //PrintHelper::printPersonViralLoad(p);
+    } 
 
     std::cout << std::endl << "===========================================" << std::endl;
 }
