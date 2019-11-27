@@ -131,7 +131,7 @@ void Counts::writeTo(FileOutput& out) {
     << sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom << ","
     << on_art << "," << on_prep << "," << vl_supp_per_positives << "," << vl_supp_per_diagnosis << ","
     << cd4m_deaths << "," << jail_pop << "," << jailed << "," << infected_jail_pop  << "," << internal_infected_injail << ","
-    << infected_before_jail << "," << partners_infected_before_jail << "," << infected_before_release << "," << "\n";
+    << infected_before_jail << "," << partners_infected_before_jail << "," << infected_before_release << "\n";
 
 }
 
