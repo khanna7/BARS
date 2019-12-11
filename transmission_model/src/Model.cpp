@@ -1187,8 +1187,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 }
             }
             //test only
-            //if (person->isOnART()) {} //only HIV+
-            //if (person->isOnPrep()) {}  //only HIV-
+            //if (person->isInfected()) {} //only HIV+
             //proability of jailing a person: 
             if (!person->isJailed())  {
                 if (person->hasPerviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_with_cji_prob) {
