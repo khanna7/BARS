@@ -1036,11 +1036,15 @@ void Model::step() {
     runExternalInfections(uninfected, t);
     previous_pop_size = current_pop_size;
     current_pop_size = population.size();
+    //std::cout << "tick= " << t << ", current_pop_size: "<< current_pop_size<<std::endl; 
+
 
     // the R statnet network update code needs these updated every iteration
     updateThetaForm("theta.form");
     updateThetaForm("theta.form_cas");
 
+    stats->currentCounts().pop = current_pop_size;
+    
     stats->currentCounts().jail_pop = jail.populationSize();
     stats->currentCounts().infected_jail_pop = jail.infectedPopulationSize();
 
@@ -1102,6 +1106,7 @@ void Model::updateDisease(PersonPtr person) {
 
 void Model::updateVitals(double tick, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
     unsigned int dead_count = 0;
+    
     Stats* stats = Stats::instance();
     map<double, ARTScheduler*> art_map;
 

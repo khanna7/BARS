@@ -139,6 +139,7 @@ struct Counts {
     unsigned int total_internal_infected_injail; //accumulative total number of agents in jail who were infected by internal infections
     unsigned int internal_infected_injail;   //this is to keep internal infections inside the jail at each cycle 
     unsigned int infected_jail_pop; 
+    unsigned int pop;   
     unsigned int jail_pop;     
     unsigned int jailed;   //nb jailed each cycle
     unsigned int infected_before_jail;  
