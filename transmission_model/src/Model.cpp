@@ -1210,6 +1210,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                     }
 
                     ++stats->currentCounts().jailed;
+                    ++stats->currentCounts().jailed_recidivist;
 
                     jail.addPerson(tick, person);
                 }
