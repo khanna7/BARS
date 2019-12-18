@@ -130,7 +130,7 @@
    late.mult.holling <- 7
    #min.chronic.infectivity.unadj <- 0.000497/2.89
    #min.chronic.infectivity.unadj <- (0.00898+0.003379)/2 #jenness et al.
-   min.chronic.infectivity.unadj <- 0.0009229133
+   min.chronic.infectivity.unadj <- 0.000922913
 
    ## relationship between viral load and chronic infectivity (hughes et al.)
       ## each log increment in viral load corresponds to a 2.89-fold increase in infectivity
