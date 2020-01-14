@@ -21,7 +21,7 @@ namespace TransModel {
 
 class Jail {
 
-  private:
+private:
     Network<Person>* net_;
     std::vector<PersonPtr> jailed_pop;  //keep jailed person
     std::map<unsigned int, std::vector<EdgePtr<Person>>> jailed_pop_net; //map person ID to its network
@@ -38,6 +38,8 @@ class Jail {
 
     int total_infected_inside_jail_=0;    //accumulative total of agents infected inside jail  
 
+    std::vector<double> net_decay_prob_main;
+    std::vector<double> net_decay_prob_casual;
 
     void updateJailServingTimeStats(double serving_time);
     double retentionNetworkProbability(double serving_time);

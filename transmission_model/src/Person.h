@@ -256,7 +256,7 @@ public:
     /**
      * Boolean function to check if a person is jailed (in jail).
      */
-    bool hasPerviousJailHistory() const {
+    bool hasPreviousJailHistory() const {
         return !jail_parameters_.is_first_time_jailed;
     }
 

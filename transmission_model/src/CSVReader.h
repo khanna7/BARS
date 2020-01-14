@@ -1,70 +1,67 @@
+
 /*
  * CSVReader.h
  *
- *  Created on: Oct 7, 2019
- *      Author: Babak
+ *  Created on: Apr 17, 2012
+ *      Author: nick
  */
 
-#ifndef SRC_CSVREADER_H_
-#define SRC_CSVREADER_H_
+#ifndef CSVREADER_H_
+#define CSVREADER_H_
 
-#include <fstream>
 #include <vector>
-#include <iterator>
-
-//#include <iostream>
-//#include <sstream>
+#include <string>
+#include <fstream>
 
 namespace TransModel {
 
-/*
- * A class to read a csv file.
- *
+/**
+ * Reads CSV formatted data files. Each line of the file is read into a vector
+ * where each element of the vector is a data element from that line.
  */
-
-class CSVReader
-{
-	std::string fileName;
-	std::string delimeter;
-
- 
+class CSVReader {
 public:
-	public:
-	CSVReader(std::string filename, std::string delim = ",") :
-			fileName(filename), delimeter(delim) {}
- 
-	//Member functions
-	std::vector<double> readAsDouble();
+
+	/**
+	 * Create a CSVReader that will read the specified file.
+	 */
+	CSVReader(const std::string& file);
+
+	// copy constructor
+	CSVReader(const CSVReader& reader);
+
+	virtual ~CSVReader();
+
+	/**
+	 * Reads the next line into the vector, returning true
+	 * if a line was read, otherwise false. This will return
+	 * false when it reaaches the end of the file.
+	 */
+	bool next(std::vector<std::string>& vec);
+
+	/**
+	 * Readers the next line into the converting the string values to doubles, returning true
+	 * if a line was read, otherwise false. This will return
+	 * false when it reaaches the end of the file.
+	 */
+	bool next(std::vector<double>& vec);
+
+	/**
+	 * Skips the specified number of lines in the file.
+	 */
+	void skip(int lines);
+
+	// assignment operator
+	CSVReader& operator=(const CSVReader& rhs);
+
+private:
+	void findDelimeter();
+
+	std::string fname;
+	char delim;
+	std::ifstream in;
 };
-
-std::vector<double> CSVReader::readAsDouble()
-{
-	std::fstream file;
-
-	std::vector<double> vals;
-
-    file.open(fileName);
-	if (!file.is_open()) {
-        std::cout << "******ERORR: in CSVReader:: could not read the file: " << fileName<< std::endl;
-		exit(0);
-	}
-    std::string line;
-    while (getline( file, line,'\n'))
-	{
-	  std::istringstream templine(line);
-	  std::string data;
-	  while (getline( templine, data,',')) 
-	  {
-	    vals.push_back(atof(data.c_str()));  
-	  }
-	}
-
-    file.close();
-
-	return vals;
 
 }
 
-} /* namespace TransModel */
-
-#endif /* SRC_CSVREADER_H_ */
+#endif /* CSVREADER_H_ */

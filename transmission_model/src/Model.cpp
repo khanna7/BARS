@@ -1104,6 +1104,43 @@ void Model::updateDisease(PersonPtr person) {
     person->setInfectivity(infectivity);
 }
 
+void Model::updateJailStats(Stats* stats, PersonPtr person) {
+    std::vector<EdgePtr<Person>> edges;
+    net.getEdges(person, edges);
+    for (auto edge : edges) { 
+        if (edge->v1()->id() == person->id()) {
+            if (edge->v2()->isInfected())
+                    ++stats->currentCounts().partners_infected_before_jail;
+
+        } else {
+            if (edge->v1()->isInfected())
+                ++stats->currentCounts().partners_infected_before_jail;
+        }
+    }
+
+    if (person->isInfected()) {
+        ++stats->currentCounts().infected_before_jail;
+    }
+
+    ++stats->currentCounts().jailed;
+}
+    
+    
+void Model::doJailCheck(PersonPtr person, double tick, double incarceration_with_cji_prob, double incarceration_prob) {
+    //test only
+        //if (person->isInfected()) {} //only HIV+
+        //proability of jailing a person: 
+        if (!person->isJailed())  {
+            if (person->hasPreviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_with_cji_prob) {
+                jail.addPerson(tick, person);
+
+            } else if (Random::instance()->nextDouble() <= incarceration_prob) { 
+                jail.addPerson(tick, person);
+            }
+            updateJailStats(Stats::instance(), person);
+        }
+}
+
 void Model::updateVitals(double tick, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
     unsigned int dead_count = 0;
     
@@ -1119,7 +1156,6 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     //double incarceration_prob_prev = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_PREV);
     double incarceration_with_cji_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB);
 
-    // iterate through all the network vertices (i.e. the persons)
     for (auto iter = population.begin(); iter != population.end(); ) {
         PersonPtr person = (*iter);
         // update viral load, cd4
@@ -1186,58 +1222,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                     }
                 }
             }
-            //test only
-            //if (person->isInfected()) {} //only HIV+
-            //proability of jailing a person: 
-            if (!person->isJailed())  {
-                if (person->hasPerviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_with_cji_prob) {
-                    //PrintHelper::printPersonNetwork(person,&net);
-                    std::vector<EdgePtr<Person>> edges;
-                    net.getEdges(person, edges);
-                    for (auto edge : edges) { 
-                        if (edge->v1()->id() != person->id()) {
-                            if (edge->v1()->isInfected())
-                                ++stats->currentCounts().partners_infected_before_jail;
-                        }
-                        if (edge->v2()->id() != person->id()) {
-                            if (edge->v2()->isInfected())
-                               ++stats->currentCounts().partners_infected_before_jail;
-                        }
-                    }
-
-                    if (person->isInfected()) {
-                         ++stats->currentCounts().infected_before_jail;
-                    }
-
-                    ++stats->currentCounts().jailed;
-                    ++stats->currentCounts().jailed_recidivist;
-
-                    jail.addPerson(tick, person);
-                }
-                else if (Random::instance()->nextDouble() <= incarceration_prob) { 
-                //else if (Random::instance()->nextDouble() <= 0.0001) { 
-                    std::vector<EdgePtr<Person>> edges;
-                    net.getEdges(person, edges);
-                    for (auto edge : edges) { 
-                        if (edge->v1()->id() != person->id()) {
-                            if (edge->v1()->isInfected())
-                                ++stats->currentCounts().partners_infected_before_jail;
-                        }
-                        if (edge->v2()->id() != person->id()) {
-                            if (edge->v2()->isInfected())
-                               ++stats->currentCounts().partners_infected_before_jail;
-                        }
-                    }
-
-                    if (person->isInfected()) {
-                        ++stats->currentCounts().infected_before_jail;
-                    }
-
-                    ++stats->currentCounts().jailed;
-
-                    jail.addPerson(tick, person);
-                }
-            }
+            
+            doJailCheck(person, tick, incarceration_with_cji_prob, incarceration_prob);
 
             if (person->isOnART() && !person->isOffArtFlagOn()) { //care disruption 
             // if (person->isOnART()) {

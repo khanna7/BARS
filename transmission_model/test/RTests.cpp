@@ -29,7 +29,7 @@ void test_tick_not_exists(const std::string& net_name) {
  * serialized ones.
  */
 TEST(LoadTests, TestNetworkLoading) {
-	std::string cmd = "source(file=\"../r/network_model/transmission_model.R\")";
+	std::string cmd = "source(file=\"../r/network_model/transmission_model_tergmlite.R\")\ntrans_model_init(\"../r/network_model/chi_net_n5000.RData\")";
 	RInstance::rptr->parseEvalQ(cmd);
 	test_tick_not_exists("nw");
 	test_tick_not_exists("n_cas");

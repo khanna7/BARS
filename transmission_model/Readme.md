@@ -24,3 +24,18 @@
 * Rcpp R package v. 1.0.0
 * RInside R package v. 0.2.14
 * networkDynamic R package v. 0.9.0
+
+### Unit Tests ###
+
+Due to some complications with RInside and recreating the R environment within a running
+process, the tests need to be run separately. Once compiled, you can run them with:
+
+`./unit_tests X.*`
+
+where X is the name of the test package. For example,
+
+`./unit_tests --gtest_filter=MiscTests.*`
+
+ You can list all the test packages with
+
+`./unit_tests --gtest_list_tests`

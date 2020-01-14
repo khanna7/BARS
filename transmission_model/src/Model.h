@@ -29,6 +29,7 @@
 #include "ARTLagCalculator.h"
 #include "PrepInterventionManager.h"
 #include "Jail.h"
+#include "Stats.h"
 
 namespace TransModel {
 
@@ -98,6 +99,9 @@ private:
     int uninfectedPopulationSize();
     float infectionIncidence();
     float infectionIncidence_personDay(double time);
+
+    void updateJailStats(Stats* stats, PersonPtr person);
+    void doJailCheck(PersonPtr person, double, double, double);
 
 public:
     Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);

@@ -28,14 +28,6 @@ using namespace repast;
 
 namespace TransModel {
 
-//CSVWriter  csv_writer("jail_vul_dur.csv");
-//CSVWriter csv_writer("geometricDistTest.csv");
-std::vector<double> net_decay_prob_main;
-std::vector<double> net_decay_prob_casual;
-
-//bool is_care_disruption_on = true;
-//bool is_network_disruption_on = true;
-
 ReleaseEvent::ReleaseEvent(std::shared_ptr<Person> person, Jail* jail) : person_(person), jail_(jail)
 {}
 
@@ -48,18 +40,22 @@ void ReleaseEvent::operator()() {
     }
 }
 
-Jail::Jail(Network<Person>* net) : net_(net) {
+Jail::Jail(Network<Person>* net) : net_(net),  net_decay_prob_main(), net_decay_prob_casual() {
     std::set<std::string> header = { "prep", "art"};
     //csv_writer.addHeader(header);
 
     string net_decay_prob_file_main = Parameters::instance()->getStringParameter(NETWORK_DECAY_PROB_MAIN_FILE);
-    CSVReader reader_net_decay_prob_main(net_decay_prob_file_main);
-    net_decay_prob_main = reader_net_decay_prob_main.readAsDouble();
+    CSVReader reader_main(net_decay_prob_file_main);
+    std::vector<double> v;
+    while (reader_main.next(v)) {
+        net_decay_prob_main.push_back(v[0]);
+    }
 
     string net_decay_prob_file_casual = Parameters::instance()->getStringParameter(NETWORK_DECAY_PROB_CASUAL_FILE);
-    CSVReader reader_net_decay_prob_casual(net_decay_prob_file_casual);
-    net_decay_prob_casual = reader_net_decay_prob_casual.readAsDouble();
-
+    CSVReader reader_casual(net_decay_prob_file_casual);
+    while (reader_casual.next(v)) {
+        net_decay_prob_casual.push_back(v[0]);
+    }
 }
 
 Jail::~Jail() {}
@@ -105,7 +101,7 @@ void Jail::addPerson(double tick, PersonPtr person) {
 
     updateJailServingTimeStats(serving_time);
     total_jailed_++;
-    if (person->hasPerviousJailHistory())
+    if (person->hasPreviousJailHistory())
         total_jailed_with_hist_++;
 }
 
