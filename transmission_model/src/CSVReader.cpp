@@ -6,6 +6,10 @@
  *      Author: nick
  */
 
+#include <iostream>
+
+#include "repast_hpc/Utilities.h"
+
 #include "CSVReader.h"
 
 #include <boost/tokenizer.hpp>
@@ -38,9 +42,9 @@ void CSVReader::findDelimeter() {
                 delim = '\n';
                 break;
             }
+
             if (c == '\r') {
                 delim = '\r';
-                break;
             }
         }
     }
@@ -62,11 +66,13 @@ bool CSVReader::next(vector<double>& vec) {
     if (getline(in, line, delim)) {
         // tokenize the line using boost's escaped list separator
         // which parses CSV format
+        line = repast::trim(line);
         tokenizer<escaped_list_separator<char> > tok(line);
         // assign those values to the vector
-        std::transform(tok.begin(), tok.end(), vec.begin(), [](const std::string& val) {
-            return stod(val);
-        });
+        vec.clear();
+        for (auto v : tok) {
+            vec.push_back(std::stod(v));
+        }
         return true;
     }
     // return false when there are no more lines to
