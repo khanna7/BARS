@@ -45,6 +45,9 @@ private:
     double retentionNetworkProbability(double serving_time);
     double vulnerabilityMean(double serving_time);
 
+    std::map<unsigned int, unsigned int> prep_evt_count;
+    std::map<unsigned int, unsigned int> art_evt_count;
+
   public:
     Jail(Network<Person>* net);
     virtual ~Jail();
@@ -119,6 +122,28 @@ private:
     int totalInfectedInsideJail() {
       return total_infected_inside_jail_;
     }
+
+    /**
+     * Notifies this Jail that the prep override period for the
+     * specified person has ended. When a person goes back to
+     * Jail and there is an another override before this ones
+     * ends, then this can return false.
+     * 
+     * @return whether or not the override should be
+     * actually be stopped.
+     */  
+    bool prepOverrideEnded(PersonPtr person);
+
+    /**
+     * Notifies this Jail that the art override period for the
+     * specified person has ended. When a person goes back to
+     * Jail and there is an another override before this ones
+     * ends, then this can return false.
+     * 
+     * @return whether or not the override should be
+     * actually be stopped.
+     */
+    bool artOverrideEnded(PersonPtr person);
 
 };
 

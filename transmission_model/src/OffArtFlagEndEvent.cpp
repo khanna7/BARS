@@ -7,17 +7,18 @@
 
 #include "OffArtFlagEndEvent.h"
 #include "Stats.h"
+#include "Jail.h"
 
 namespace TransModel {
 
-OffArtFlagEndEvent::OffArtFlagEndEvent(std::shared_ptr<Person> person) :
-    person_(person){
+OffArtFlagEndEvent::OffArtFlagEndEvent(std::shared_ptr<Person> person, Jail* jail) :
+    person_(person), jail_{jail} {
 }
 
 void OffArtFlagEndEvent::operator()() {
 
     // might be dead prior to this event occuring
-    if (!person_->isDead()) {
+    if (!person_->isDead() && jail_->artOverrideEnded(person_)) {
         person_->setArtForcedOff(false);
     }
 }

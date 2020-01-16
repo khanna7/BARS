@@ -15,14 +15,17 @@
 
 namespace TransModel {
 
+class Jail;
+
 class OffPrepFlagEndEvent : public repast::Functor {
 
 private:
     PersonPtr person_;
+    Jail* jail_;
     //double timestamp_;
 
 public:
-    OffPrepFlagEndEvent(std::shared_ptr<Person> person);
+    OffPrepFlagEndEvent(std::shared_ptr<Person> person, Jail* jail);
     virtual ~OffPrepFlagEndEvent();
 
     void operator()();

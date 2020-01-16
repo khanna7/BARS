@@ -105,6 +105,7 @@ void Jail::addPerson(double tick, PersonPtr person) {
         total_jailed_with_hist_++;
 }
 
+
 /**
 * Release (remove) a person from the jail (list) 
 */ 
@@ -154,14 +155,19 @@ void Jail::releasePerson(double tick, PersonPtr person) {
         person->setArtForcedOff(true); //care disruption; PrEP has been already off when jailed
 
         int post_release_interf_duration_prep = (int) post_release_interference_dur_gen.next();
-        double off_prep_flag_change_time = tick + post_release_interf_duration_prep;
+        // + 0.1 in case this tick
+        double off_prep_flag_change_time = tick + post_release_interf_duration_prep + 0.1;
         ScheduleRunner& prep_runner = RepastProcess::instance()->getScheduleRunner();
-        prep_runner.scheduleEvent(off_prep_flag_change_time, Schedule::FunctorPtr(new OffPrepFlagEndEvent(person)));
-    
+        prep_runner.scheduleEvent(off_prep_flag_change_time, Schedule::FunctorPtr(new OffPrepFlagEndEvent(person, this)));
+        ++prep_evt_count[person->id()];
+            
         int post_release_interf_duration_art = (int) post_release_interference_dur_gen.next();
-        double off_art_flag_change_time = tick + post_release_interf_duration_art;      
+        double off_art_flag_change_time = tick + post_release_interf_duration_art + 0.1;    
         ScheduleRunner& art_runner = RepastProcess::instance()->getScheduleRunner();
-        art_runner.scheduleEvent(off_art_flag_change_time, Schedule::FunctorPtr(new OffArtFlagEndEvent(person)));
+        art_runner.scheduleEvent(off_art_flag_change_time, Schedule::FunctorPtr(new OffArtFlagEndEvent(person, this)));
+        ++art_evt_count[person->id()];
+
+        // std::cout << off_prep_flag_change_time << ", " << off_art_flag_change_time << std::endl;
 
         //std::vector<std::string> vals;
         //vals.push_back(to_string(post_release_interf_duration_prep));
@@ -172,9 +178,8 @@ void Jail::releasePerson(double tick, PersonPtr person) {
     jailed_pop_net.erase(person->id());
     total_released_++;
 
-    Stats* stats = Stats::instance();
-    
     if (person->isInfected()) {
+        Stats* stats = Stats::instance();
         ++stats->currentCounts().infected_before_release;
     }
 }
@@ -184,8 +189,17 @@ void Jail::releasePerson(double tick, PersonPtr person) {
 */ 
 void Jail::removeDeadPerson(double time, PersonPtr person) {
     jailed_pop.erase(std::remove(jailed_pop.begin(), jailed_pop.end(), person), jailed_pop.end());
-    jailed_pop_net.erase(person->id());  
+    unsigned int id = person->id();
+    jailed_pop_net.erase(id);  
     total_dead_in_jail_++;
+    
+    if (prep_evt_count.find(id) != prep_evt_count.end()) {
+        prep_evt_count.erase(id);
+    }
+
+    if (art_evt_count.find(id) != art_evt_count.end()) {
+        art_evt_count.erase(id);
+    }
 }
 
 /**
@@ -619,6 +633,25 @@ void Jail::printPopulationInfoOnART() {
     } 
 
     std::cout << std::endl << "===========================================" << std::endl;
+}
+
+bool decrement_evt_count(std::map<unsigned int, unsigned int>& evt_count, unsigned int id) {
+    --evt_count.at(id);
+    if (evt_count[id] == 0) {
+        evt_count.erase(id);
+        return true;
+    }
+    return false;
+}
+
+bool Jail::prepOverrideEnded(PersonPtr person) {
+    bool val = decrement_evt_count(prep_evt_count, person->id());
+    return person->isJailed() ? false : val;
+}
+
+bool Jail::artOverrideEnded(PersonPtr person) {
+    bool val = decrement_evt_count(art_evt_count, person->id());
+    return person->isJailed() ? false : val;
 }
 
 
