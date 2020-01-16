@@ -114,14 +114,14 @@ struct PersonToVAL {
 
         vertex["prep.status"] = static_cast<int>(p->prepStatus());
 
-        if (p->isOnPrep()) {
+        if (p->isOnPrep(false)) {
             vertex["time.of.prep.cessation"] = p->prepParameters().stopTime();
             vertex["time.of.prep.initiation"] = p->prepParameters().startTime();
         }
 
         if (p->isInfected()) {
             vertex["infectivity"] = p->infectivity();
-            vertex["art.status"] = p->isOnART();
+            vertex["art.status"] = p->isOnART(false);
             vertex["inf.status"] = p->isInfected();
             vertex["time.since.infection"] = p->infectionParameters().time_since_infection;
             vertex["time.of.infection"] = p->infectionParameters().time_of_infection;
@@ -912,7 +912,7 @@ void Model::initPrepCessation() {
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
     for (auto iter = population.begin(); iter != population.end(); ++iter) {
         PersonPtr person = *iter;
-        if (person->isOnPrep()) {
+        if (person->isOnPrep(false)) {
             double stop_time = person->prepParameters().stopTime();
             runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
             double start_time = person->prepParameters().startTime();
@@ -1086,7 +1086,7 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
 }
 
 void Model::updateDisease(PersonPtr person) {
-    if (person->isOnART() && !person->isOffArtFlagOn()) { //care disruption mechanism
+    if (person->isOnART(true)) { //care disruption mechanism
     //if (person->isOnART()) { 
         float slope = viral_load_slope_calculator.calculateSlope(person->infectionParameters());
         person->setViralLoadARTSlope(slope);
@@ -1199,7 +1199,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 stats->currentCounts().incrementUninfected(person);
                 // accumulate persons who may potentially go on PrEP
                 prep_manager.processPerson(person, net);
-                if (person->isOnPrep() && !person->isOffPrepFlagOn()) {  //care disruption
+                if (person->isOnPrep(true)) {  //care disruption
                 //if (person->isOnPrep()) {
                     ++stats->currentCounts().on_prep;
                 }
@@ -1225,7 +1225,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             
             doJailCheck(person, tick, incarceration_with_cji_prob, incarceration_prob);
 
-            if (person->isOnART() && !person->isOffArtFlagOn()) { //care disruption 
+            if (person->isOnART(true)) { //care disruption 
             // if (person->isOnART()) {
                 ++stats->currentCounts().on_art;
             }
@@ -1383,7 +1383,7 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
 
     if (cod == CauseOfDeath::NONE) { 
         double increase = 0;
-        if (person->isOnART()  && !person->isOffArtFlagOn()) { //care disruption
+        if (person->isOnART(true)) { //care disruption
         //if (person->isOnART()) {
             increase = cd4m_treated_runner.lookup(person->infectionParameters().cd4_count);
         }

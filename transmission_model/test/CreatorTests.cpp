@@ -129,7 +129,7 @@ TEST_F(CreatorTests, TestUninfectedPersonCreation) {
     ASSERT_EQ(0, person->steady_role());
     ASSERT_NEAR(18.97795f, person->age(), 0.00001);
     ASSERT_TRUE(person->isTestable());
-    ASSERT_FALSE(person->isOnPrep());
+    ASSERT_FALSE(person->isOnPrep(false));
 
     InfectionParameters params = person->infectionParameters();
     ASSERT_FALSE(params.art_status);

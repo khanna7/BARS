@@ -56,7 +56,7 @@ struct PrintHelper {
     static void printPersonViralLoad(PersonPtr person) {
         //std::cout << "-----person id: ---- " << person->id() << std::endl;
 
-        std::cout << "-----person id: ---- " << person->id() << ", isOnART: " << person->isOnART() << std::endl;
+        std::cout << "-----person id: ---- " << person->id() << ", isOnART: " << person->isOnART(false) << std::endl;
         InfectionParameters infection_par = person->infectionParameters();
 
         //std::cout << "  calculateViralLoadART  viral_load: " << viral_load << ", time_since_art_init "  << infection_params.time_since_art_init <<", time_to_full_supp: " << vl_params.time_to_full_supp <<std::endl;

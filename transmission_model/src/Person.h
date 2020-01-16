@@ -38,10 +38,6 @@ private:
     double score_;
 
     JailParameters jail_parameters_;
-    //double vulnerability_expiration_;
-
-    bool off_art_flag=false;
-    bool off_prep_flag=false;
 
 public:
     Person(int id, float age, bool circum_status, int steady_role, int casual_role,
@@ -72,10 +68,6 @@ public:
         return age_;
     }
 
-    bool isOnPrep() const {
-        return prep_.status() == PrepStatus::ON;
-    }
-
     const PrepStatus prepStatus() const {
         return prep_.status();
     }
@@ -86,10 +78,6 @@ public:
 
     bool isCircumcised() const {
         return circum_status_;
-    }
-
-    bool isOnART() const {
-        return infection_parameters_.art_status;
     }
 
     bool isInfected() const {
@@ -221,31 +209,38 @@ public:
      */
     //bool isVulnerable(double current_time);
 
-    /**
-     * to set on/off PrEP flag   
-     */
-    void setOffPrepFlag(bool is_off_prep){
-        off_prep_flag = is_off_prep;
+    bool isOnPrep(bool check_override) const {
+        if (check_override) {
+            return prep_.status() == PrepStatus::ON && !prep_.prepForcedOff();
+        } else {
+            return prep_.status() == PrepStatus::ON;
+        }
     }
 
-    bool isOffPrepFlagOn(){
-        return off_prep_flag;
+    /**
+     * Override standard prep on / off. Scheduling on / off prep
+     * will continue to use non-overriden value, but things like
+     * transmission will check for override.
+     */
+    void setPrepForcedOff(bool val) {
+        prep_.setPrepForcedOff(val);
     }
+
+    bool isOnART(bool check_override) const {
+        if (check_override) {
+            return infection_parameters_.art_status && !infection_parameters_.art_forced_off;
+        }
+        return infection_parameters_.art_status;
+    }
+
 
     /**
      * to set on/off ART flag 
      */
-    void setOffArtFlag(bool is_off_art){
-        off_art_flag = is_off_art;
+    void setArtForcedOff(bool forced){
+        infection_parameters_.art_forced_off = forced;
     }
-
-    bool isOffArtFlagOn(){
-        return off_art_flag;
-    }
-
-
-
-
+ 
     /**
      * Boolean function to check if a person is jailed (in jail).
      */

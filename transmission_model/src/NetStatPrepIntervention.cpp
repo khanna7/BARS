@@ -28,7 +28,7 @@ void NetStatPrepIntervention::reset() {
 void NetStatPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
     if (filter_->apply(person)) {
         ++total_negatives;
-        if (!person->isOnPrep()) {
+        if (!person->isOnPrep(false)) {
             ++candidate_count;
         }
     }
@@ -58,7 +58,7 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
         prep_p = ((double)total_negatives * k * (prep_data_.stop + adjustment)) / selected_count;
         unsigned int threshold = (unsigned int)selected_count;
         for (auto& person : ranked_persons) {
-            if (!person->isInfected() && !person->isOnPrep() && filter_->apply(person)) {
+            if (!person->isInfected() && !person->isOnPrep(false) && filter_->apply(person)) {
                 ++count;
                 if (repast::Random::instance()->nextDouble() <= prep_p) {
                     putOnPrep(tick, person, PrepStatus::ON_INTERVENTION);

@@ -23,7 +23,7 @@ void BasePrepIntervention::reset() {
 void BasePrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
     if (filter_->apply(person)) {
         ++total_negatives;
-        if (!person->isOnPrep()) {
+        if (!person->isOnPrep(false)) {
             candidates.push_back(person);
         }
     }

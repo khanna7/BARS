@@ -145,7 +145,7 @@ Counts::Counts(int min_age, int max_age) :
                 on_art{0}, on_prep{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, 
-                total_internal_infected{0}, total_internal_infected_injail{0}, total_internal_infected_new{0}, internal_infected_injail{0},
+                total_internal_infected{0}, total_internal_infected_new{0}, total_internal_infected_injail{0}, internal_infected_injail{0},
                 infected_jail_pop{0}, pop{0}, jail_pop{0}, jailed{0}, jailed_recidivist{0}, infected_before_jail{0}, partners_infected_before_jail{0}, infected_before_release{0}
 
 {
@@ -268,7 +268,7 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p) {
     evt.p1_cd4 = p->infectionParameters().cd4_count;
     evt.p1_infectivity = p->infectivity();
     evt.p1_viral_load = p->infectionParameters().viral_load;
-    evt.p1_on_prep = p->isOnPrep();
+    evt.p1_on_prep = p->isOnPrep(true);
     evt.p2_id = -1;
     evt.p2_age = 0;
     evt.p2_cd4 = 0;
@@ -288,12 +288,12 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p1, const PersonP
     evt.p1_cd4 = p1->infectionParameters().cd4_count;
     evt.p1_infectivity = p1->infectivity();
     evt.p1_viral_load = p1->infectionParameters().viral_load;
-    evt.p1_on_prep = p1->isOnPrep();
+    evt.p1_on_prep = p1->isOnPrep(true);
     evt.p2_id = p2->id();
     evt.p2_age = p2->age();
     evt.p2_cd4 = p2->infectionParameters().cd4_count;
     evt.p2_viral_load = p2->infectionParameters().viral_load;
-    evt.p2_on_prep = p2->isOnPrep();
+    evt.p2_on_prep = p2->isOnPrep(true);
     evt.condom_used = condom;
     evt.network_type = net_type;
     ievent_writer->addOutput(evt);

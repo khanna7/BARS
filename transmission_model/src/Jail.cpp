@@ -76,7 +76,7 @@ double get_jail_time() {
 void Jail::addPerson(double tick, PersonPtr person) {
     double serving_time = get_jail_time();
     if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
-        person -> setOffPrepFlag(true); //care disruption mechanism, turn on offPrEP flag immediately
+        person->setPrepForcedOff(true); //care disruption mechanism, turn on offPrEP flag immediately
     }
 
     if(std::find(jailed_pop.begin(), jailed_pop.end(), person) != jailed_pop.end()) {
@@ -114,12 +114,9 @@ void Jail::releasePerson(double tick, PersonPtr person) {
     net_->addVertex(person);
     std::vector<EdgePtr<Person>> edges = jailed_pop_net.at(person->id());
 
-    //double retention_prob = retentionNetworkProbability(person->jailServingTime());
-    double retention_prob;
 
     float ret_multiplier = Parameters::instance()->getFloatParameter(NETWORK_RETENTION_MULTIPLIER);
-    //std::cout << "ret_multiplier: " << ret_multiplier << std::endl;
-
+   
     int time_spent_in_jail = tick - person->timeOfJail(); //time spent in jail, in case it would be different from person->jailServingTime()
 
     for (auto edge : edges) {
@@ -130,13 +127,13 @@ void Jail::releasePerson(double tick, PersonPtr person) {
         if ((source->id() == person->id() && !target->isJailed() && !target->isDead()) ||
         // if person is target, then make sure source is still valid
             (target->id() == person->id() && !source->isJailed() && !source->isDead())) {
+                double retention_prob;
                 if (edge->type() == STEADY_NETWORK_TYPE)  //0
                     retention_prob = net_decay_prob_main[time_spent_in_jail];
                 else //CASUAL_NETWORK_TYPE, 1
                   retention_prob = net_decay_prob_casual[time_spent_in_jail]; 
 
                 if (Parameters::instance()->getBooleanParameter(IS_NETWORK_DISRUPTION_ON)) {
-                    //if (Random::instance()->nextDouble() <= retention_prob) {
                     if (Random::instance()->nextDouble() <= retention_prob * ret_multiplier) {
                             EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
                             new_edge->setCondomUseProbability(edge->condomUseProbability());
@@ -154,7 +151,7 @@ void Jail::releasePerson(double tick, PersonPtr person) {
         float post_release_interference_period_mean = Parameters::instance()->getFloatParameter(POST_RELEASE_INTERFERENCE_PERIOD_MEAN);
         GeometricDistribution post_release_interference_dur_gen = GeometricDistribution((1/post_release_interference_period_mean), 0);
 
-        person -> setOffArtFlag(true); //care disruption; PrEP has been already off when jailed
+        person->setArtForcedOff(true); //care disruption; PrEP has been already off when jailed
 
         int post_release_interf_duration_prep = (int) post_release_interference_dur_gen.next();
         double off_prep_flag_change_time = tick + post_release_interf_duration_prep;
@@ -209,9 +206,7 @@ void Jail::runInternalInfectionTransmission(double time) {
             //std::cout << "random person:" <<p -> id() <<std::endl; 
             float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION); 
             p-> infect(duration_of_infection, time);
-            if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
-                p-> setOffPrepFlag(true); //care disruption mechanism, turn on offPrEP flag immediately
-            }
+           
             total_infected_inside_jail_++;
             stats->currentCounts().incrementInfected(p); // we add it to internal_infected list 
             stats->currentCounts().incrementInfectedInJail(); // although we keeep a separate counter stats on injail infections
@@ -357,7 +352,7 @@ int Jail::uninfectedPopulationSize() {
 int Jail::onArtPopulationSize() {
     int totalOnArtPop=0;
     for (auto& p : jailed_pop) {
-        if (p->isOnART()) {
+        if (p->isOnART(false)) {
             totalOnArtPop++;
         }
     }
@@ -370,7 +365,7 @@ int Jail::onArtPopulationSize() {
 int Jail::onPrepPopulationSize() {
     int totalOnPrepPop=0;
     for (auto& p : jailed_pop) {
-        if (p->isOnPrep()) {
+        if (p->isOnPrep(false)) {
             totalOnPrepPop++;
         }
     }
@@ -579,11 +574,11 @@ void Jail::printPopulationDiseaseInfo() {
 
     std::cout << std::endl << "---isOnPrep?:" << std::endl;
     for (auto& p : jailed_pop) 
-        std::cout << p->isOnPrep() << ", ";
+        std::cout << p->isOnPrep(false) << ", ";
 
     std::cout << std::endl << "---isOnART?:" << std::endl;
     for (auto& p : jailed_pop) 
-        std::cout << p->isOnART() << ", ";   
+        std::cout << p->isOnART(false) << ", ";   
 
     std::cout << std::endl << "---infectivity?:" << std::endl;
     for (auto& p : jailed_pop) 
@@ -618,7 +613,7 @@ void Jail::printPopulationInfoOnART() {
     std::cout << "=====Jail::printPopulationInfoOnART: ======" << std::endl;
     //std::cout << std::endl << "---isOnART?:" << std::endl;
     for (auto& p : jailed_pop) {
-        if (p->isOnART())
+        if (p->isOnART(false))
             std::cout << p->id() << ", "; 
         //PrintHelper::printPersonViralLoad(p);
     } 

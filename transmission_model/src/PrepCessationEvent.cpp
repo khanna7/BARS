@@ -18,7 +18,7 @@ PrepCessationEvent::PrepCessationEvent(std::shared_ptr<Person> person, double ti
 void PrepCessationEvent::operator()() {
     // might be dead or may have gone off prep by becoming infected
     // prior to this event occuring
-    if (!person_->isDead() && person_->isOnPrep()) {
+    if (!person_->isDead() && person_->isOnPrep(false)) {
         person_->goOffPrep(PrepStatus::OFF);
         Stats::instance()->personDataRecorder()->recordPREPStop(person_.get(), timestamp_, PrepStatus::OFF);
         Stats::instance()->recordPREPEvent(timestamp_, person_->id(), static_cast<int>(PrepStatus::OFF));

@@ -17,8 +17,10 @@ class PrepParameters {
 
 private:
     PrepStatus status_;
+    bool prep_forced_off;
     double start_time_, stop_time_;
     AdherenceData adherence;
+
 public:
     PrepParameters(PrepStatus status, double start_time, double stop_time);
     PrepParameters(PrepStatus status, double start_time, double stop_time, AdherenceData& cat);
@@ -60,6 +62,15 @@ public:
     void setAdherenceData(AdherenceData data) {
         adherence = data;
     }
+
+    void setPrepForcedOff(bool val) {
+        prep_forced_off = val;
+    }
+
+    bool prepForcedOff() const {
+        return prep_forced_off;
+    }
+
 };
 
 } /* namespace TransModel */

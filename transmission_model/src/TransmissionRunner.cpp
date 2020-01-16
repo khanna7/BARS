@@ -28,7 +28,7 @@ bool TransmissionRunner::determineInfection(PersonPtr& infector, PersonPtr& infe
         infectivity *= condom_multiplier_;
     }
 
-    if (infectee->isOnPrep()) {
+    if (infectee->isOnPrep(true)) {
         infectivity *= (1 - infectee->prepParameters().prepEffectiveness());
     }
 

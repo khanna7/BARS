@@ -17,9 +17,9 @@ const std::string PersonData::header("id,time_of_entry,time_of_death,infection_s
 PersonData::PersonData(PersonPtr p, double time_of_birth) :
         id_(p->id()), birth_ts(time_of_birth), death_ts(-1), infection_ts(
                 p->isInfected() ? p->infectionParameters().time_of_infection : -1), art_init_ts(
-                p->isOnART() ? p->infectionParameters().time_of_art_init : -1), art_stop_ts(-1),
-                prep_init_ts(p->isOnPrep() ? p->prepParameters().startTime() : -1), prep_stop_ts(-1), prep_status(p->prepStatus()), infection_status(
-                p->isInfected()), art_status(p->isOnART()), diagnosed(p->isDiagnosed()), number_of_tests(
+                p->isOnART(false) ? p->infectionParameters().time_of_art_init : -1), art_stop_ts(-1),
+                prep_init_ts(p->isOnPrep(false) ? p->prepParameters().startTime() : -1), prep_stop_ts(-1), prep_status(p->prepStatus()), infection_status(
+                p->isInfected()), art_status(p->isOnART(false)), diagnosed(p->isDiagnosed()), number_of_tests(
                 p->diagnoser().testCount()), time_since_last_test { -1 }, art_adherence_category(static_cast<int>(AdherenceCategory::NA)), prep_adherence_category(static_cast<int>(AdherenceCategory::NA)),
                 adhered_interval_count(0), non_adhered_interval_count(0), init_art_lag(-1), infection_source(static_cast<unsigned int>(InfectionSource::NONE)),
                 time_of_diagnosis(-1.0) {

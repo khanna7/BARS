@@ -21,7 +21,7 @@ void RandomSelectionPrepIntervention::reset() {
 void RandomSelectionPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
     if (filter_->apply(person)) {
         ++total_negatives;
-        if (!person->isOnPrep()) {
+        if (!person->isOnPrep(false)) {
             candidates.emplace(person->id(), person);
         }
     }

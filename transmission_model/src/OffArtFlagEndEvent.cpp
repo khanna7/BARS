@@ -11,14 +11,14 @@
 namespace TransModel {
 
 OffArtFlagEndEvent::OffArtFlagEndEvent(std::shared_ptr<Person> person) :
-        person_(person){
+    person_(person){
 }
 
 void OffArtFlagEndEvent::operator()() {
 
     // might be dead prior to this event occuring
     if (!person_->isDead()) {
-        person_ -> setOffPrepFlag(false);
+        person_->setArtForcedOff(false);
     }
 }
 

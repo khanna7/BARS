@@ -47,7 +47,7 @@ void SerodiscordantPrepIntervention::reset() {
 void SerodiscordantPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
     if (filter_->apply(person)) {
         ++total_negatives;
-        if (!person->isOnPrep()) {
+        if (!person->isOnPrep(false)) {
             std::vector<EdgePtr<Person>> edges;
             network.getEdges(person, edges);
             for (auto edge : edges) {
