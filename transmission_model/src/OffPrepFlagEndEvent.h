@@ -22,6 +22,7 @@ class OffPrepFlagEndEvent : public repast::Functor {
 private:
     PersonPtr person_;
     Jail* jail_;
+    bool canceled;
     //double timestamp_;
 
 public:
@@ -29,6 +30,10 @@ public:
     virtual ~OffPrepFlagEndEvent();
 
     void operator()();
+
+    void cancel() {
+        canceled = true;
+    }
 };
 
 } /* namespace TransModel */

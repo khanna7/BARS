@@ -15,6 +15,8 @@
 #include "Person.h"
 #include "Network.h"
 #include "Edge.h"
+#include "OffArtFlagEndEvent.h"
+#include "OffPrepFlagEndEvent.h"
 
 
 namespace TransModel {
@@ -45,8 +47,8 @@ private:
     double retentionNetworkProbability(double serving_time);
     double vulnerabilityMean(double serving_time);
 
-    std::map<unsigned int, unsigned int> prep_evt_count;
-    std::map<unsigned int, unsigned int> art_evt_count;
+    std::map<unsigned int, OffPrepFlagEndEvent*> prep_evts;
+    std::map<unsigned int, OffArtFlagEndEvent*> art_evts;
 
   public:
     Jail(Network<Person>* net);
@@ -125,25 +127,15 @@ private:
 
     /**
      * Notifies this Jail that the prep override period for the
-     * specified person has ended. When a person goes back to
-     * Jail and there is an another override before this ones
-     * ends, then this can return false.
-     * 
-     * @return whether or not the override should be
-     * actually be stopped.
+     * specified person has ended. 
      */  
-    bool prepOverrideEnded(PersonPtr person);
+    void prepOverrideEnded(PersonPtr person);
 
     /**
      * Notifies this Jail that the art override period for the
-     * specified person has ended. When a person goes back to
-     * Jail and there is an another override before this ones
-     * ends, then this can return false.
-     * 
-     * @return whether or not the override should be
-     * actually be stopped.
+     * specified person has ended.
      */
-    bool artOverrideEnded(PersonPtr person);
+    void artOverrideEnded(PersonPtr person);
 
 };
 

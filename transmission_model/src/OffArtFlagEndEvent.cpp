@@ -12,14 +12,16 @@
 namespace TransModel {
 
 OffArtFlagEndEvent::OffArtFlagEndEvent(std::shared_ptr<Person> person, Jail* jail) :
-    person_(person), jail_{jail} {
+    person_(person), jail_(jail), canceled(false) {
 }
 
 void OffArtFlagEndEvent::operator()() {
-
     // might be dead prior to this event occuring
-    if (!person_->isDead() && jail_->artOverrideEnded(person_)) {
-        person_->setArtForcedOff(false);
+    if (!person_->isDead()) {
+        jail_->artOverrideEnded(person_);
+        if (!canceled) {
+            person_->setArtForcedOff(false);
+        }
     }
 }
 

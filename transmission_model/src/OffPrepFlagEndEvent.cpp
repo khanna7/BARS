@@ -12,14 +12,16 @@
 namespace TransModel {
 
 OffPrepFlagEndEvent::OffPrepFlagEndEvent(std::shared_ptr<Person> person, Jail* jail) :
-        person_(person), jail_(jail) {
+        person_(person), jail_(jail), canceled(false) {
 }
 
 void OffPrepFlagEndEvent::operator()() {
-
     // might be dead prior to this event occuring
-    if (!person_->isDead() && jail_->prepOverrideEnded(person_)) {
-        person_->setPrepForcedOff(false);
+    if (!person_->isDead()) {
+        jail_->prepOverrideEnded(person_);
+        if (!canceled) {
+            person_->setPrepForcedOff(false);
+        }
     }
 }
 

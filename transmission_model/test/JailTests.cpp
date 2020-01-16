@@ -220,18 +220,21 @@ TEST_F(JailTests, TestMultiJailStayCareDisruption) {
 
     // Go back in Jail before override period ends
     jail.addPerson(schedule.getCurrentTick(), p2);
+    // back in jail so ART override is off
+    ASSERT_TRUE(p2->isOnART(true));
 
-    // run the next event -- ART Off 1 which has no
-    // effect because person is in jail
+    // run the next event -- ART Off 1 
+    // person is in jail so state stays the same.
     const_cast<repast::Schedule&>(schedule).execute();
     // std::cout << "tick: " << schedule.getCurrentTick() << std::endl;
     ASSERT_TRUE(p2->isJailed());
-    ASSERT_FALSE(p2->isOnART(true));
+    ASSERT_TRUE(p2->isOnART(true));
     ASSERT_TRUE(p2->isOnART(false));
     ASSERT_FALSE(p2->isOnPrep(true));
     ASSERT_TRUE(p2->isOnPrep(false));
 
-    // run the next event, Release 2, no change in ART or PREP
+    // run the next event, Release 2, 
+    // so art / prep override is on
     const_cast<repast::Schedule&>(schedule).execute();
     // std::cout << "tick: " << schedule.getCurrentTick() << std::endl;
     ASSERT_FALSE(p2->isOnART(true));
@@ -239,13 +242,13 @@ TEST_F(JailTests, TestMultiJailStayCareDisruption) {
     ASSERT_FALSE(p2->isOnPrep(true));
     ASSERT_TRUE(p2->isOnPrep(false));
 
-    // run the next event, prep off 2, should have no effect
-    // given prep off 1 is longer
+    // run the next event, prep off 2, should turn
+    // prep override off
     const_cast<repast::Schedule&>(schedule).execute();
     // std::cout << "tick: " << schedule.getCurrentTick() << std::endl;
     ASSERT_FALSE(p2->isOnART(true));
     ASSERT_TRUE(p2->isOnART(false));
-    ASSERT_FALSE(p2->isOnPrep(true));
+    ASSERT_TRUE(p2->isOnPrep(true));
     ASSERT_TRUE(p2->isOnPrep(false));
 
     // run the next event, ART off 2, should have effect
@@ -253,10 +256,11 @@ TEST_F(JailTests, TestMultiJailStayCareDisruption) {
     // std::cout << "tick: " << schedule.getCurrentTick() << std::endl;
     ASSERT_TRUE(p2->isOnART(true));
     ASSERT_TRUE(p2->isOnART(false));
-    ASSERT_FALSE(p2->isOnPrep(true));
+    ASSERT_TRUE(p2->isOnPrep(true));
     ASSERT_TRUE(p2->isOnPrep(false));
 
-    // run the next event, prep off 1, should have effect
+    // run the next event, prep off 1, but this should be
+    // canceled by now
     const_cast<repast::Schedule&>(schedule).execute();
     // std::cout << "tick: " << schedule.getCurrentTick() << std::endl;
     ASSERT_TRUE(p2->isOnART(true));
