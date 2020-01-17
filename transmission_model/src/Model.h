@@ -64,7 +64,8 @@ private:
     Jail jail;
     unsigned int total_infected_person_days;
 
-    void runTransmission(double timestamp);
+    // returns the number infected
+    unsigned int runTransmission(double timestamp);
     CauseOfDeath dead(double tick, PersonPtr person, int max_survival);
     void entries(double tick, float size_of_time_step);
     void deactivateEdges(int id, double time);
@@ -74,7 +75,7 @@ private:
      */
     void updateVitals(double time, float size_of_time_step, int max_survival, std::vector<PersonPtr>& uninfected);
     void updateDisease(PersonPtr person);
-    void runExternalInfections(std::vector<PersonPtr>& uninfected, double time);
+    unsigned int runExternalInfections(std::vector<PersonPtr>& uninfected, double time);
 
     void infectPerson(PersonPtr& person, double time_stamp);
     void updateThetaForm(const std::string& var_name);
@@ -102,6 +103,7 @@ private:
 
     void updateJailStats(Stats* stats, PersonPtr person);
     void doJailCheck(PersonPtr person, double, double, double);
+    void runJailInfections(double tick);
 
 public:
     Model(std::shared_ptr<RInside>& r_ptr, const std::string& net_var, const std::string& cas_net_var);

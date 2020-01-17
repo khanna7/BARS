@@ -263,15 +263,16 @@ extern const std::string IS_NETWORK_DISRUPTION_ON;
 extern const std::string IS_CARE_DISRUPTION_ON;
 
 extern const std::string INCARCERATION_PROB;
-
 // prob for previously incarcerated
 extern const std::string INCARCERATION_WITH_CJI_PROB;
 
 // jail serving time (term) mean (in terms of day)
 extern const std::string JAIL_SERVING_TIME_MEAN;
 
-// infection incidence rate inside jail
-extern const std::string IN_JAIL_INFECTION_INCIDENCE_RATE;
+extern const std::string JAIL_INFECTION_RATE_WINDOW_SIZE;
+extern const std::string JAIL_INFECTION_RATE_MULTIPLIER;
+extern const std::string JAIL_INFECTION_RATE_DEFAULT;
+
 
 extern const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN;
 

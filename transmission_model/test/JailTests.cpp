@@ -1,17 +1,20 @@
+
+#include <random>
 #include "gtest/gtest.h"
 
 
 #include "repast_hpc/RepastProcess.h"
 
 #include "Jail.h"
+#include "JailInfectionRateCalc.h"
 #include "Parameters.h"
 #include "PersonCreator.h"
 #include "StatsBuilder.h"
 #include "utils.h"
+#include "CondomUseAssigner.h"
 
 using namespace TransModel;
 using namespace std;
-
 
 class JailTests: public ::testing::Test {
 
@@ -60,7 +63,7 @@ TEST_F(JailTests, TestJailNetworkRetention) {
     net.addEdge(p2, p1, 0);
     
 
-    Jail jail(&net);
+    Jail jail(&net, 0, 0, 0);
     p2->goOnPrep(1, 2);
     ASSERT_TRUE(p2->isOnPrep(true));
     ASSERT_TRUE(p2->isOnPrep(false));
@@ -126,7 +129,7 @@ TEST_F(JailTests, TestJailCareDistruption) {
 
     const repast::Schedule& schedule = repast::RepastProcess::instance()->getScheduleRunner().schedule();
     
-    Jail jail(&net);
+    Jail jail(&net, 0, 0, 0);
     p2->goOnPrep(1, 2);
     // Test care disruption
     Parameters::instance()->putParameter(IS_CARE_DISRUPTION_ON, true);
@@ -193,7 +196,7 @@ TEST_F(JailTests, TestMultiJailStayCareDisruption) {
 
     const repast::Schedule& schedule = repast::RepastProcess::instance()->getScheduleRunner().schedule();
     
-    Jail jail(&net);
+    Jail jail(&net, 0, 0, 0);
     p2->goOnPrep(1, 2);
     // Test care disruption
     Parameters::instance()->putParameter(IS_CARE_DISRUPTION_ON, true);
@@ -267,4 +270,69 @@ TEST_F(JailTests, TestMultiJailStayCareDisruption) {
     ASSERT_TRUE(p2->isOnART(false));
     ASSERT_TRUE(p2->isOnPrep(true));
     ASSERT_TRUE(p2->isOnPrep(false));
+}
+
+TEST_F(JailTests, TestInfRateCalc) {
+    std::default_random_engine generator;
+    std::uniform_int_distribution<int> distribution(1, 20);
+    std::vector<std::pair<int, int>> vals;
+    for (int i = 0; i < 10; ++i) {
+        int a = distribution(generator);
+        int b = distribution(generator);
+
+        if (a > b) {
+            vals.push_back(std::make_pair(b, a));
+        } else {
+            vals.push_back(std::make_pair(a, b));
+        }
+    }
+
+    JailInfRateCalculator calc(3, 0.5, 0.2);
+    // return default rate because haven't met window yet.
+    ASSERT_EQ(0.2, calc.calculateRate());
+    for (size_t i = 0; i < vals.size(); ++i) {
+        calc.addInfectionRate(vals[i].first, vals[i].second);
+        double rate = calc.calculateRate();
+        if (i < 2) {
+            ASSERT_EQ(0.2, rate);
+        } else {
+            double sum = 0;
+            int start = i - 2;
+            for (int j = start; j < start + 3; ++j) {
+                sum += (double)vals[j].first / vals[j].second;
+            }
+            ASSERT_EQ(sum / 3 * 0.5, rate);
+        }
+    }
+}
+
+TEST_F(JailTests, TestJailInfection) {
+
+    Diagnoser diagnoser(5, 0, 1);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
+    Network<Person> net(false);
+    net.addVertex(p1);
+    net.addVertex(p2);
+    net.addEdge(p2, p1);
+    
+    // unifected for 3 then infected
+    Jail jail(&net, 3, 1, 0);
+    jail.addPerson(1, p1);
+    for (int i = 0; i < 8; ++i) {
+        // 100% inf rate
+        jail.addOutsideInfectionRate(1, 1);
+        std::vector<PersonPtr> infecteds;
+        std::vector<EdgePtr<Person>> edges;
+        jail.runInternalInfectionTransmission(i, infecteds, edges);
+        if (i < 2) {
+            ASSERT_TRUE(std::find(infecteds.begin(), infecteds.end(), p1) == infecteds.end());
+            ASSERT_EQ(0, edges.size());
+        } else {
+            ASSERT_FALSE(std::find(infecteds.begin(), infecteds.end(), p1) == infecteds.end());
+            ASSERT_EQ(1, edges.size());
+            ASSERT_EQ(p2, edges[0]->v1());
+            ASSERT_EQ(p1, edges[0]->v2());
+        }
+    }
 }

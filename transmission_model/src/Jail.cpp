@@ -40,7 +40,10 @@ void ReleaseEvent::operator()() {
     }
 }
 
-Jail::Jail(Network<Person>* net) : net_(net),  net_decay_prob_main(), net_decay_prob_casual() {
+Jail::Jail(Network<Person>* net, unsigned int inf_window_size, double inf_multiplier, double inf_default_rate) : 
+    net_(net),  jailed_pop(), jailed_pop_net(), net_decay_prob_main(), 
+    net_decay_prob_casual(), prep_evts(), art_evts(), jail_inf_calc(inf_window_size, inf_multiplier, inf_default_rate) {
+
     std::set<std::string> header = { "prep", "art"};
     //csv_writer.addHeader(header);
 
@@ -106,7 +109,6 @@ void Jail::addPerson(double tick, PersonPtr person) {
     if (person->hasPreviousJailHistory())
         total_jailed_with_hist_++;
 }
-
 
 /**
 * Release (remove) a person from the jail (list) 
@@ -190,11 +192,6 @@ void Jail::releasePerson(double tick, PersonPtr person) {
 
     jailed_pop_net.erase(person->id());
     total_released_++;
-
-    if (person->isInfected()) {
-        Stats* stats = Stats::instance();
-        ++stats->currentCounts().infected_before_release;
-    }
 }
 
 /**
@@ -219,50 +216,25 @@ void Jail::removeDeadPerson(double time, PersonPtr person) {
     }
 }
 
+void Jail::addOutsideInfectionRate(unsigned int infected, unsigned int uninfected) {
+    jail_inf_calc.addInfectionRate(infected, uninfected);
+}
+
 /**
 * Function for applying internal infection transmission among jailed populaiton  
 */
-void Jail::runInternalInfectionTransmission(double time) {
-    Stats* stats = Stats::instance();
-    double incidence_rate = Parameters::instance()->getDoubleParameter(IN_JAIL_INFECTION_INCIDENCE_RATE); // 0.000182
-   
-    double expected_infection = incidence_rate * uninfectedPopulationSize();
-   
-    //one single person infection randomly if the probability occurs 
-    if (repast::Random::instance()->nextDouble() <= expected_infection) {
-
-        if (jailed_pop.size()>2) {
-            unsigned int rand_person_index = Random::instance()->createUniIntGenerator(0, jailed_pop.size()-1).next();
-            PersonPtr p  = jailed_pop[rand_person_index];
-            //std::cout << "random person:" <<p -> id() <<std::endl; 
-            float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION); 
-            p-> infect(duration_of_infection, time);
-           
-            total_infected_inside_jail_++;
-            stats->currentCounts().incrementInfected(p); // we add it to internal_infected list 
-            stats->currentCounts().incrementInfectedInJail(); // although we keeep a separate counter stats on injail infections
-            stats->personDataRecorder()->recordInfection(p, time, InfectionSource::INJAIL);
-        }
-    }
-
-    //currently used as probablity to apply for each incarcerated individual
-    //this can potentially be changed to one single person infection if the probability occurs 
-    /*float duration_of_infection = Parameters::instance()->getFloatParameter(DURATION_OF_INFECTION); 
+void Jail::runInternalInfectionTransmission(double time, std::vector<PersonPtr>& newly_infected, std::vector<EdgePtr<Person>>& infected_edges) {
+    double prob = jail_inf_calc.calculateRate();
     for (auto& p : jailed_pop) {
-        if (!p->isInfected()) {
-            if (repast::Random::instance()->nextDouble() <= incidence_rate) {
-                p-> infect(duration_of_infection, time);
-                if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
-                    p-> setOffPrepFlag(true); //care disruption mechanism, turn on offPrEP flag immediately
-                }
-                total_infected_inside_jail_++;
-                stats->currentCounts().incrementInfected(p); // we add it to internal_infected list 
-                stats->currentCounts().incrementInfectedInJail(); // although we keeep a separate counter stats on injail infections
-                stats->personDataRecorder()->recordInfection(p, time, InfectionSource::INJAIL);
-            }
+        if (!p->isInfected() && repast::Random::instance()->nextDouble() <= prob) {
+            ++total_infected_inside_jail_;
+            newly_infected.push_back(p);
+
+            // update the condom use prob of the stored edges now that the person has changed state
+            std::vector<EdgePtr<Person>> edges = jailed_pop_net.at(p->id());
+            infected_edges.insert(infected_edges.end(), edges.begin(), edges.end());
         }
     }
-    */
 }
 
 /**

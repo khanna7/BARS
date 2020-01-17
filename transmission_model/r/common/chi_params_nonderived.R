@@ -443,26 +443,48 @@ external.infections.age.factor = 1 # changed to 1 to remove more external infect
 
 
 # range of number of tests in last two years min-max, fraction of the population
-testing.prob.lt.1 = "1-2|0.457377778"
-testing.prob.lt.2 = "3-4|0.299377778"
-testing.prob.lt.3 = "5-6|0.109377778"
-testing.prob.lt.4 = "7-8|0.055377778"
-testing.prob.lt.5 = "9-10|0.039377778"
-testing.prob.lt.6 = "11-12|0.012377778"
-testing.prob.lt.7 = "13-16|0.008877778"
-testing.prob.lt.8 = "17-20|0.010677778"
-testing.prob.lt.9 = "21-30|0.007177778"
+testing.prob.lt.1 <- "1-2|0.457377778"
+testing.prob.lt.2 <- "3-4|0.299377778"
+testing.prob.lt.3 <- "5-6|0.109377778"
+testing.prob.lt.4 <- "7-8|0.055377778"
+testing.prob.lt.5 <- "9-10|0.039377778"
+testing.prob.lt.6 <- "11-12|0.012377778"
+testing.prob.lt.7 <- "13-16|0.008877778"
+testing.prob.lt.8 <- "17-20|0.010677778"
+testing.prob.lt.9 <- "21-30|0.007177778"
 
-testing.prob.gte.1 = "1-2|0.457377778"
-testing.prob.gte.2 = "3-4|0.299377778"
-testing.prob.gte.3 = "5-6|0.109377778"
-testing.prob.gte.4 = "7-8|0.055377778"
-testing.prob.gte.5 = "9-10|0.039377778"
-testing.prob.gte.6 = "11-12|0.012377778"
-testing.prob.gte.7 = "13-16|0.008877778"
-testing.prob.gte.8 = "17-20|0.010677778"
-testing.prob.gte.9 = "21-30|0.007177778"
+testing.prob.gte.1 <- "1-2|0.457377778"
+testing.prob.gte.2 <- "3-4|0.299377778"
+testing.prob.gte.3 <- "5-6|0.109377778"
+testing.prob.gte.4 <- "7-8|0.055377778"
+testing.prob.gte.5 <- "9-10|0.039377778"
+testing.prob.gte.6 <- "11-12|0.012377778"
+testing.prob.gte.7 <- "13-16|0.008877778"
+testing.prob.gte.8 <- "17-20|0.010677778"
+testing.prob.gte.9 <- "21-30|0.007177778"
 
+# jail
 incarceration.prob.for.entries <- 0.001
 min.jail.term.duration <- 3
 max.jail.term.duration <- 10
+
+is.network.disruption.on <- FALSE
+is.care.disruption.on <- FALSE
+
+#incarceration.prob <- 0.0
+incarceration.prob <- 0.0000787
+#incarceration.prob <- 0.002
+
+#incarceration.with.cji.prob <- 0.0
+incarceration.with.cji.prob <- 0.0005173
+#incarceration.with.cji.prob <- 0.002
+
+jail.infection.rate.window.size <- 90
+jail.infection.rate.multiplier <- 0.5
+jail.infection.rate.default <- 0.000091 
+
+jail.serving.time.mean <- 58
+post.release.interference.period.mean <- 90
+network.retention.multiplier <- 1
+
+

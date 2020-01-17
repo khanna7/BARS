@@ -860,7 +860,10 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
                     Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator}, prep_manager(),	
                 condom_assigner { create_condom_use_assigner() },
                 asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)}, 
-                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}, jail(&net) {
+                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}, 
+                jail(&net, Parameters::instance()->getIntParameter(JAIL_INFECTION_RATE_WINDOW_SIZE), 
+                    Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_MULTIPLIER), 
+                    Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_DEFAULT)) {
 
     std::cout << "treated: " << cd4m_treated_runner << std::endl;
     // get initial stats
@@ -994,46 +997,17 @@ void Model::step() {
     // introduce new persons into the model
     entries(t, size_of_timestep);
     // run the HIV transmission algorithm 
-    runTransmission(t);
-
+    unsigned int uninfected_count = uninfectedPopulationSize();
+    unsigned int infected_count = runTransmission(t);
     vector<PersonPtr> uninfected;
 
     // update the physiological etc. (vital) attributes of the population
     // updating cd4 counts, checking for death, diagnosing persons, etc.
     updateVitals(t, size_of_timestep, max_survival, uninfected);
-
-    //mytest 
-    //std::cout << "tick= " << t <<std::endl; 
-
-    //float inf_incidence = infectionIncidence();
-    //float incarcerate_rate = incarcerationRate();
-    //std::cout <<t << ", inf_incidence rate  =" << inf_incidence; 
-    //std::cout << ", incarceration rate  =" << incarcerationRate(); 
-    //std::cout << ",  jail pop =" << jail.populationSize() <<std::endl; 
-
-    //int int_infected = std::accumulate(stats->currentCounts().internal_infected.begin(), stats->currentCounts().internal_infected.end(), 0);
-    //int ext_infected = std::accumulate(stats->currentCounts().external_infected.begin(), stats->currentCounts().external_infected.end(), 0);
-    //int inf_at_entry = std::accumulate(stats->currentCounts().infected_at_entry.begin(), stats->currentCounts().infected_at_entry.end(), 0);
-    //int uninfect = std::accumulate(stats->currentCounts().uninfected.begin(), stats->currentCounts().uninfected.end(), 0);
-
-    /*std::vector<std::string> vals;
-    vals.push_back(to_string(inf_incidence));
-    vals.push_back(to_string(incarcerate_rate));
-    vals.push_back(to_string(jail.populationSize()));
-    vals.push_back(to_string(stats->currentCounts().total_internal_infected_injail));
-    vals.push_back(to_string(stats->currentCounts().total_internal_infected_new));
-    vals.push_back(to_string(uninfectedPopulationSize()));
-    vals.push_back(to_string(population.size()));
-    vals.push_back(to_string(int_infected));
-    vals.push_back(to_string(ext_infected));
-    vals.push_back(to_string(inf_at_entry));
-    vals.push_back(to_string(uninfect)); 
-
-    //csvwriter.addSingleValue(inf_incidence);
-    csvwriter.addRow(vals); */
-
     // select members of the population for infection from external sources
-    runExternalInfections(uninfected, t);
+    unsigned int outside_infection_count = runExternalInfections(uninfected, t);
+    jail.addOutsideInfectionRate(infected_count + outside_infection_count, uninfected_count);
+    runJailInfections(t);
     previous_pop_size = current_pop_size;
     current_pop_size = population.size();
     //std::cout << "tick= " << t << ", current_pop_size: "<< current_pop_size<<std::endl; 
@@ -1249,7 +1223,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     prep_manager.reset();
 }
 
-void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
+unsigned int Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
 
     double min = Parameters::instance()->getDoubleParameter(EXTERNAL_INFECTION_RATE_MIN);
     double max = Parameters::instance()->getDoubleParameter(EXTERNAL_INFECTION_RATE_MAX);
@@ -1278,9 +1252,9 @@ void Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {
         infectPerson(p, t);
         stats->currentCounts().incrementInfectedExternal(p);
         stats->personDataRecorder()->recordInfection(p, t, InfectionSource::EXTERNAL);
-        //new_infected_this_cycle++;
-
+        return 1;
     }
+    return 0;
 }
 
 void Model::infectPerson(PersonPtr& person, double time_stamp) {
@@ -1455,7 +1429,7 @@ void record_sex_act(int edge_type, bool condom_used, bool discordant, Stats* sta
     }
 }
 
-void Model::runTransmission(double time_stamp) {
+unsigned int Model::runTransmission(double time_stamp) {
     vector<PersonPtr> infecteds;
 
     Stats* stats = Stats::instance();
@@ -1487,6 +1461,7 @@ void Model::runTransmission(double time_stamp) {
         }
     }
 
+    unsigned int new_infected_count = 0;
     for (auto& person : infecteds) {
         // if person has multiple partners who are infected,
         // person gets multiple chances to become infected from them
@@ -1496,13 +1471,29 @@ void Model::runTransmission(double time_stamp) {
             stats->currentCounts().incrementInfected(person);
             stats->personDataRecorder()->recordInfection(person, time_stamp, InfectionSource::INTERNAL);
             stats->currentCounts().incrementNewlyInfected();   //infected after burnin     
-            //new_infected_this_cycle++;
+            ++new_infected_count;
         }
     }
-    //infection transmission among jailed persons: 
-    jail.runInternalInfectionTransmission(time_stamp); 
+
+    return new_infected_count;
 }
 
+void Model::runJailInfections(double time_stamp) {
+    Stats* stats = Stats::instance();
+    std::vector<PersonPtr> infected_in_jail;
+    std:vector<EdgePtr<Person>> infected_edges;
+    jail.runInternalInfectionTransmission(time_stamp, infected_in_jail, infected_edges);
+    for (auto& person : infected_in_jail) {
+        infectPerson(person, time_stamp);
+        stats->currentCounts().incrementInfected(person); 
+        stats->currentCounts().incrementInfectedInJail(); 
+        stats->personDataRecorder()->recordInfection(person, time_stamp, InfectionSource::INJAIL);
+    } 
+
+    for (auto& edge: infected_edges) {
+        condom_assigner.initEdge(edge);
+    }
+}
 
 int Model::infectedPopulationSize() {
     float totalInfectedPop=0;
@@ -1519,10 +1510,8 @@ int Model::infectedPopulationSize() {
 int Model::uninfectedPopulationSize() {
     float totaluninfectedPop=0;
     for (auto& p : population) {
-        if (!p->isDead()) {
-            if (!p->isInfected()) {
-                totaluninfectedPop++;
-            }
+        if (!p->isDead() && !p->isInfected()) {
+            ++totaluninfectedPop;
         }
     }
     return totaluninfectedPop;

@@ -146,6 +146,8 @@ void init_parameters(const std::string& non_derived, const std::string& derived,
             }
         } else if (TYPEOF(val) == STRSXP) {
             params->putParameter(name, Rcpp::as<std::string>(val));
+        } else if (TYPEOF(val) == LGLSXP) {
+            params->putParameter(name, Rcpp::as<bool>(val));
         }
     }
 

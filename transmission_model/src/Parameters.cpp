@@ -282,8 +282,9 @@ const std::string INCARCERATION_WITH_CJI_PROB = "incarceration.with.cji.prob";
 // jail serving time (term) mean (in terms of days)
 const std::string JAIL_SERVING_TIME_MEAN = "jail.serving.time.mean";
 
-// infection incidence rate inside jail
-const std::string IN_JAIL_INFECTION_INCIDENCE_RATE = "in.jail.infection.incidence.rate";
+const std::string JAIL_INFECTION_RATE_WINDOW_SIZE = "jail.infection.rate.window.size";
+const std::string JAIL_INFECTION_RATE_MULTIPLIER = "jail.infection.rate.multiplier";
+const std::string JAIL_INFECTION_RATE_DEFAULT = "jail.infection.rate.default";
 
 const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN = "post.release.interference.period.mean";
 

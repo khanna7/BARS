@@ -17,6 +17,8 @@
 #include "Edge.h"
 #include "OffArtFlagEndEvent.h"
 #include "OffPrepFlagEndEvent.h"
+#include "JailInfectionRateCalc.h"
+#include "CondomUseAssigner.h"
 
 
 namespace TransModel {
@@ -49,9 +51,10 @@ private:
 
     std::map<unsigned int, OffPrepFlagEndEvent*> prep_evts;
     std::map<unsigned int, OffArtFlagEndEvent*> art_evts;
+    JailInfRateCalculator jail_inf_calc;
 
   public:
-    Jail(Network<Person>* net);
+    Jail(Network<Person>* net, unsigned int window_size, double multiplier, double default_rate);
     virtual ~Jail();
 
     std::map<unsigned int, std::vector<EdgePtr<Person>>>::iterator begin() { return jailed_pop_net.begin();}
@@ -60,7 +63,9 @@ private:
     void releasePerson(double tick, PersonPtr);
     void addPerson(double tick, PersonPtr person);
     void removeDeadPerson(double time, PersonPtr person);
-    void runInternalInfectionTransmission(double time);
+    void addOutsideInfectionRate(unsigned int infected, unsigned int uninfected);
+    void runInternalInfectionTransmission(double time, std::vector<PersonPtr>& newly_infected,
+      std::vector<EdgePtr<Person>>& infected_edges);
 
     bool isServingTimeCompleted(PersonPtr person, double time);
     void checkAndReleaseTimeServedPopulation(Network<Person>& net,double time);

@@ -43,7 +43,8 @@ CPP_SOURCE = Person.cpp \
     Jail.cpp \
     OffArtFlagEndEvent.cpp \
     OffPrepFlagEndEvent.cpp \
-    CSVReader.cpp
+    CSVReader.cpp \
+    JailInfectionRateCalc.cpp
     
 
 c_source += $(C_SOURCE)
