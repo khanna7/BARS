@@ -464,10 +464,6 @@ testing.prob.gte.8 <- "17-20|0.010677778"
 testing.prob.gte.9 <- "21-30|0.007177778"
 
 # jail
-incarceration.prob.for.entries <- 0.001
-min.jail.term.duration <- 3
-max.jail.term.duration <- 10
-
 is.network.disruption.on <- FALSE
 is.care.disruption.on <- FALSE
 
