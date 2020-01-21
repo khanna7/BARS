@@ -18,10 +18,6 @@
 #include "PrintHelper.h"
 
 #include "CSVReader.h"
-
-#include "OffArtFlagEndEvent.h"
-#include "OffPrepFlagEndEvent.h"
-
 #include "CSVWriter.h"
 
 using namespace repast;
@@ -40,9 +36,9 @@ void ReleaseEvent::operator()() {
     }
 }
 
-Jail::Jail(Network<Person>* net, unsigned int inf_window_size, double inf_multiplier, double inf_default_rate) : 
+Jail::Jail(Network<Person>* net, JailInfRateCalculator calc) : 
     net_(net),  jailed_pop(), jailed_pop_net(), net_decay_prob_main(), 
-    net_decay_prob_casual(), prep_evts(), art_evts(), jail_inf_calc(inf_window_size, inf_multiplier, inf_default_rate) {
+    net_decay_prob_casual(), prep_evts(), art_evts(), jail_inf_calc(calc) {
 
     std::set<std::string> header = { "prep", "art"};
     //csv_writer.addHeader(header);
@@ -73,41 +69,66 @@ double get_jail_time() {
     return jail_serving_time+1; //+1 to avoid having 0 day
 }
 
-/**
-* Add a person to the jail (list) 
-*/ 
-void Jail::addPerson(double tick, PersonPtr person) {
-    double serving_time = get_jail_time();
-    if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
-        person->setPrepForcedOff(true); //care disruption mechanism, turn on offPrEP flag immediately
-        // disable ART override while in jail
-        person->setArtForcedOff(false);
-    }
+void Jail::addPerson(PersonPtr person, double jail_duration, double tick) {
+    bool care_disruption_on = Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON);
+    person->setPrepForcedOff(care_disruption_on);
+    person->setArtForcedOff(false);
+   
 
     if(std::find(jailed_pop.begin(), jailed_pop.end(), person) != jailed_pop.end()) {
         std::cout << "*****ERROR in Jail::addPerson:***** Person is already in jail" << std::endl;
     } else {
-        person->jailed(tick, serving_time);
+        person->jailed(tick, jail_duration);
         jailed_pop.push_back(person);
 
         std::vector<EdgePtr<Person>> edges;
         net_->getEdges(person, edges);
 
         jailed_pop_net.emplace(person->id(), edges);
-
         net_->removeVertex(person);
     }
 
     // schedule a release event for the person
     // + .1 to 
-    double stop_time = tick + serving_time + .1;
+    double stop_time = tick + jail_duration + .1;
     repast::ScheduleRunner& runner = repast::RepastProcess::instance()->getScheduleRunner();
     runner.scheduleEvent(stop_time, repast::Schedule::FunctorPtr(new ReleaseEvent(person, this)));
 
-    updateJailServingTimeStats(serving_time);
+    updateJailServingTimeStats(jail_duration);
     total_jailed_++;
     if (person->hasPreviousJailHistory())
         total_jailed_with_hist_++;
+}
+
+/**
+* Add a person to the jail (list) 
+*/ 
+void Jail::addPerson(double tick, PersonPtr person) {
+    double serving_time = get_jail_time();
+    addPerson(person, serving_time, tick);
+}
+
+void Jail::addInmatesToNetwork() {
+    for (auto person : jailed_pop) {
+        net_->addVertex(person);
+    }
+
+    for (auto person : jailed_pop) {
+        auto edges = jailed_pop_net[person->id()];
+        for (auto edge : edges) {
+            PersonPtr source = edge->v1();
+            PersonPtr target = edge->v2();
+            EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
+            new_edge->setCondomUseProbability(edge->condomUseProbability());
+        }
+    }
+
+}
+   
+void Jail::removeInmatesFromNetwork() {
+    for (auto person : jailed_pop) {
+        net_->removeVertex(person);
+    }
 }
 
 /**
@@ -121,7 +142,6 @@ void Jail::releasePerson(double tick, PersonPtr person) {
 
 
     float ret_multiplier = Parameters::instance()->getFloatParameter(NETWORK_RETENTION_MULTIPLIER);
-   
     int time_spent_in_jail = tick - person->timeOfJail(); //time spent in jail, in case it would be different from person->jailServingTime()
 
     for (auto edge : edges) {
@@ -156,42 +176,41 @@ void Jail::releasePerson(double tick, PersonPtr person) {
         float post_release_interference_period_mean = Parameters::instance()->getFloatParameter(POST_RELEASE_INTERFERENCE_PERIOD_MEAN);
         GeometricDistribution post_release_interference_dur_gen = GeometricDistribution((1/post_release_interference_period_mean), 0);
 
-        unsigned int id = person->id();
-        ScheduleRunner& schedule = RepastProcess::instance()->getScheduleRunner();
-
         int post_release_interf_duration_prep = (int) post_release_interference_dur_gen.next();
         // + 0.1 in case this tick
         double off_prep_flag_change_time = tick + post_release_interf_duration_prep + 0.1;
-        
-        OffPrepFlagEndEvent* prep_evt = new OffPrepFlagEndEvent(person, this);
-        auto p_iter = prep_evts.find(id);
-        if (p_iter != prep_evts.end()) {
-            p_iter->second->cancel();
-        }
-        prep_evts[id] = prep_evt;
-        schedule.scheduleEvent(off_prep_flag_change_time, Schedule::FunctorPtr(prep_evt));
+        scheduleEndPrepForcedOff(person, off_prep_flag_change_time);
             
         person->setArtForcedOff(true); //care disruption; PrEP has been already off when jailed
         int post_release_interf_duration_art = (int) post_release_interference_dur_gen.next();
         double off_art_flag_change_time = tick + post_release_interf_duration_art + 0.1;    
-        OffArtFlagEndEvent* art_evt = new OffArtFlagEndEvent(person, this);
-        auto a_iter = art_evts.find(id);
-        if (a_iter != art_evts.end()) {
-            a_iter->second->cancel();
-        }
-        art_evts[id] = art_evt;
-        schedule.scheduleEvent(off_art_flag_change_time, Schedule::FunctorPtr(art_evt));
-
-        // std::cout << off_prep_flag_change_time << ", " << off_art_flag_change_time << std::endl;
-
-        //std::vector<std::string> vals;
-        //vals.push_back(to_string(post_release_interf_duration_prep));
-        //vals.push_back(to_string(post_release_interf_duration_art));
-        //csv_writer.addRow(vals);
+        scheduleEndArtForcedOff(person, off_art_flag_change_time);
     }
 
     jailed_pop_net.erase(person->id());
     total_released_++;
+}
+
+void Jail::scheduleEndPrepForcedOff(PersonPtr person, double at) {
+    ScheduleRunner& schedule = RepastProcess::instance()->getScheduleRunner();
+    OffPrepFlagEndEvent* prep_evt = new OffPrepFlagEndEvent(person, this, at);
+    auto p_iter = prep_evts.find(person->id());
+    if (p_iter != prep_evts.end()) {
+        p_iter->second->cancel();
+    }
+    prep_evts[person->id()] = prep_evt;
+    schedule.scheduleEvent(at, Schedule::FunctorPtr(prep_evt));
+}
+    
+void Jail::scheduleEndArtForcedOff(PersonPtr person, double at) {
+    ScheduleRunner& schedule = RepastProcess::instance()->getScheduleRunner();
+    OffArtFlagEndEvent* art_evt = new OffArtFlagEndEvent(person, this, at);
+    auto a_iter = art_evts.find(person->id());
+    if (a_iter != art_evts.end()) {
+        a_iter->second->cancel();
+    }
+    art_evts[person->id()] = art_evt;
+    schedule.scheduleEvent(at, Schedule::FunctorPtr(art_evt));
 }
 
 /**
@@ -220,6 +239,10 @@ void Jail::addOutsideInfectionRate(unsigned int infected, unsigned int uninfecte
     jail_inf_calc.addInfectionRate(infected, uninfected);
 }
 
+void Jail::addOutsideInfectionRate(double rate) {
+    jail_inf_calc.addInfectionRate(rate);
+}
+
 /**
 * Function for applying internal infection transmission among jailed populaiton  
 */
@@ -230,7 +253,6 @@ void Jail::runInternalInfectionTransmission(double time, std::vector<PersonPtr>&
             ++total_infected_inside_jail_;
             newly_infected.push_back(p);
 
-            // update the condom use prob of the stored edges now that the person has changed state
             std::vector<EdgePtr<Person>> edges = jailed_pop_net.at(p->id());
             infected_edges.insert(infected_edges.end(), edges.begin(), edges.end());
         }
@@ -630,6 +652,54 @@ void Jail::prepOverrideEnded(PersonPtr person) {
 
 void Jail::artOverrideEnded(PersonPtr person) {
     art_evts.erase(person->id());
+}
+
+void initialize_jail(Jail& jail, Rcpp::List& network, std::vector<PersonPtr>& population) {
+    Rcpp::List gal = Rcpp::as<Rcpp::List>(network["gal"]);
+    if (gal.containsElementNamed("external.infection.rates")) {
+        Rcpp::NumericVector rates = gal["external.infection.rates"];
+        for (auto v : rates) {
+            jail.addOutsideInfectionRate(v);
+        }
+    }
+
+    std::map<unsigned int, PersonPtr> pmap;
+    for (auto person : population) {
+        if (person->isJailed()) {
+            jail.addPerson(person, person->jailServingTime(), 0);
+        }
+        pmap.emplace(person->id(), person);
+    }
+
+    if (gal.containsElementNamed("jail.events")) {
+        Rcpp::NumericVector evts = gal["jail.events"];
+
+        double burnin_tick = 0;
+        if (gal.containsElementNamed("tick")) {
+            burnin_tick = gal["tick"];
+        }
+        
+        for (int i = 0, n = evts.size(); i < n; i += 3) {
+            unsigned int id = (unsigned int)evts[i];
+            double at = evts[i + 1];
+            unsigned int type = (unsigned int)evts[i + 2];
+
+            if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
+                at = at - burnin_tick;
+                if (type == 0) {
+                    jail.scheduleEndArtForcedOff(pmap.at(id), at);
+                } else {
+                    jail.scheduleEndPrepForcedOff(pmap.at(id), at);
+                }
+
+            } else {
+                pmap.at(id)->setArtForcedOff(false);
+                pmap.at(id)->setPrepForcedOff(false);
+            }
+
+        }
+
+    }
 }
 
 

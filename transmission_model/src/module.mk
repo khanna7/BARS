@@ -41,10 +41,11 @@ CPP_SOURCE = Person.cpp \
     PrepAgeFilter.cpp \
     Logger.cpp \
     Jail.cpp \
-    OffArtFlagEndEvent.cpp \
-    OffPrepFlagEndEvent.cpp \
+    JailEvents.cpp \
     CSVReader.cpp \
-    JailInfectionRateCalc.cpp
+    JailInfectionRateCalc.cpp \
+    Serializer.cpp \
+    PersonToVAL.cpp
     
 
 c_source += $(C_SOURCE)

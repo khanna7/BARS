@@ -15,6 +15,7 @@
 #include "TransmissionRunner.h"
 #include "StatsBuilder.h"
 #include "utils.h"
+#include "Network.h"
 
 using namespace TransModel;
 using namespace Rcpp;
@@ -121,8 +122,12 @@ TEST_F(CreatorTests, TestUninfectedPersonCreation) {
     // make sure I have the right one
     ASSERT_NEAR(18.97795, as<double>(p_list["age"]), 0.00001);
 
+    Network<Person> net(false);
+    JailInfRateCalculator calc(3, 1, 0);
+    Jail jail(&net, calc);
+
     std::shared_ptr<TransmissionRunner> runner = std::make_shared<TransmissionRunner>(1, 1, 1, 10);
-    PersonCreator creator(runner, 1, create_art_lag_calc());
+    PersonCreator creator(runner, 1, create_art_lag_calc(), &jail);
     PersonPtr person = creator(p_list, 1, 0);
     ASSERT_TRUE(person->isCircumcised());
     ASSERT_FALSE(person->isInfected());

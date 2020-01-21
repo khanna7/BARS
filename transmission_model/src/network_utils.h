@@ -160,7 +160,8 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
  * rnet's val becomes a Vertex, and the appropriate edges are created.
  */
 template<typename V, typename F, typename EdgeInit>
-void initialize_network(List& rnet, Network<V>& net, F& vertex_creator, EdgeInit& edge_initializer, int edge_type = 0) {
+void initialize_network(List& rnet, Network<V>& net, F& vertex_creator, EdgeInit& edge_initializer,
+int edge_type = 0) {
     if (net.vertexCount() != 0)
         throw std::invalid_argument("Cannot initialize network: network is not empty");
 

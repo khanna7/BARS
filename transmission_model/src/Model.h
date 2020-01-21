@@ -56,12 +56,12 @@ private:
     std::set<int> persons_to_log;
     TransmissionParameters trans_params;
     ARTLagCalculator art_lag_calculator;
+    Jail jail;
     PersonCreator person_creator;
     PrepInterventionManager prep_manager;
     CondomUseAssigner condom_assigner;
     RangeWithProbability asm_runner, cd4m_treated_runner;
     float age_threshold;
-    Jail jail;
     unsigned int total_infected_person_days;
 
     // returns the number infected

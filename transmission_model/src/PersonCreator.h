@@ -19,6 +19,7 @@
 #include "common.h"
 #include "GeometricDistribution.h"
 #include "ARTLagCalculator.h"
+#include "Jail.h"
 
 namespace TransModel {
 
@@ -32,9 +33,19 @@ private:
     PREPAdherenceConfigurator prep_adherence_configurator;
     double detection_window_;
     ARTLagCalculator art_lag_calculator;
+    Jail* jail_;
+
+    PersonPtr createPerson(Rcpp::List& val);
+    void initInfectedPerson(PersonPtr person, Rcpp::List& val, double model_tick,
+        double burnin_last_tick);
+    void initUninfectedPerson(PersonPtr person, Rcpp::List& val, double model_tick,
+        double burnin_last_tick);
+    void initJailParameters(PersonPtr person, Rcpp::List& val, double model_tick,
+        double burnin_last_tick);
 
 public:
-    PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window,  ARTLagCalculator);
+    PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window,  
+        ARTLagCalculator, Jail*);
     virtual ~PersonCreator();
 
     PersonPtr operator()(Rcpp::List& val, double model_tick, double burnin_last_tick);

@@ -13,6 +13,9 @@
 #include "utils.h"
 #include "CondomUseAssigner.h"
 
+#include "RInstance.h"
+#include "Rcpp.h"
+
 using namespace TransModel;
 using namespace std;
 
@@ -62,8 +65,8 @@ TEST_F(JailTests, TestJailNetworkRetention) {
     net.addVertex(p4);
     net.addEdge(p2, p1, 0);
     
-
-    Jail jail(&net, 0, 0, 0);
+    JailInfRateCalculator calc(0, 0, 0);
+    Jail jail(&net, calc);
     p2->goOnPrep(1, 2);
     ASSERT_TRUE(p2->isOnPrep(true));
     ASSERT_TRUE(p2->isOnPrep(false));
@@ -129,7 +132,8 @@ TEST_F(JailTests, TestJailCareDistruption) {
 
     const repast::Schedule& schedule = repast::RepastProcess::instance()->getScheduleRunner().schedule();
     
-    Jail jail(&net, 0, 0, 0);
+    JailInfRateCalculator calc(0, 0, 0);
+    Jail jail(&net, calc);
     p2->goOnPrep(1, 2);
     // Test care disruption
     Parameters::instance()->putParameter(IS_CARE_DISRUPTION_ON, true);
@@ -196,7 +200,8 @@ TEST_F(JailTests, TestMultiJailStayCareDisruption) {
 
     const repast::Schedule& schedule = repast::RepastProcess::instance()->getScheduleRunner().schedule();
     
-    Jail jail(&net, 0, 0, 0);
+    JailInfRateCalculator calc(0, 0, 0);
+    Jail jail(&net, calc);
     p2->goOnPrep(1, 2);
     // Test care disruption
     Parameters::instance()->putParameter(IS_CARE_DISRUPTION_ON, true);
@@ -317,7 +322,8 @@ TEST_F(JailTests, TestJailInfection) {
     net.addEdge(p2, p1);
     
     // unifected for 3 then infected
-    Jail jail(&net, 3, 1, 0);
+    JailInfRateCalculator calc(3, 1, 0);
+    Jail jail(&net, calc);
     jail.addPerson(1, p1);
     for (int i = 0; i < 8; ++i) {
         // 100% inf rate
@@ -335,4 +341,62 @@ TEST_F(JailTests, TestJailInfection) {
             ASSERT_EQ(p1, edges[0]->v2());
         }
     }
+}
+
+TEST_F(JailTests, TestJailInmateAddRemove) {
+    Diagnoser diagnoser(5, 0, 1);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
+    Network<Person> net(false);
+    net.addVertex(p1);
+    net.addVertex(p2);
+    net.addEdge(p2, p1);
+    
+    // unifected for 3 then infected
+    JailInfRateCalculator calc(3, 1, 0);
+    Jail jail(&net, calc);
+    jail.addPerson(1, p1);
+    ASSERT_FALSE(net.contains(p1));
+    ASSERT_FALSE(net.hasEdge(2, 1, 0));
+
+    jail.addInmatesToNetwork();
+    ASSERT_TRUE(net.contains(p1));
+    ASSERT_TRUE(net.hasEdge(2, 1, 0));
+
+    jail.removeInmatesFromNetwork();
+    ASSERT_FALSE(net.contains(p1));
+    ASSERT_FALSE(net.hasEdge(2, 1, 0));
+}
+
+TEST_F(JailTests, TestInitJailInfCalc) {
+    Network<Person> net(false);
+    
+    JailInfRateCalculator calc(90, 0.5, 0.000009);
+    Rcpp::List network = RInstance::rptr->parseEval("readRDS(\"../test_data/main_network_500.RDS\")");
+    Rcpp::List gal = Rcpp::as<Rcpp::List>(network["gal"]);
+    Rcpp::NumericVector rates = gal["external.infection.rates"];
+    for (auto v : rates) {
+        calc.addInfectionRate(v);
+    }
+
+    double expected_rate =  std::accumulate(rates.begin(), rates.end(), 0.0) / rates.size() * 0.5;
+    ASSERT_EQ(expected_rate, calc.calculateRate());
+
+    JailInfRateCalculator calc2(45, 0.5, 0.000009);
+    for (auto v : rates) {
+        calc2.addInfectionRate(v);
+    }
+
+    expected_rate =  std::accumulate(rates.begin() + 45, rates.end(), 0.0) / 45 * 0.5;
+    ASSERT_EQ(expected_rate, calc2.calculateRate());
+
+    JailInfRateCalculator calc3(100, 0.5, 0.000009);
+    for (auto v : rates) {
+        calc3.addInfectionRate(v);
+    }
+
+    // expect default because window is larger than saved data
+    ASSERT_EQ(0.000009, calc3.calculateRate());
+    
+
 }

@@ -23,6 +23,8 @@ struct JailParameters {
     int accumulative_injail_count;  //accumulative number of times agent has been jailed
     double accumulative_time_in_jail; //accumulative time agent spent time in jail 
 
+    // IF THESE DEFAULT VALUES CHANGE, MAKE SURE THE JAIL INITIALIZATION CODE IN
+    // PERSONCREATOR IS STILL CORRECT
     JailParameters() : is_in_jail(false), is_first_time_jailed(true),
             time_of_jail(-1),
             serving_time(-1),

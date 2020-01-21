@@ -15,17 +15,19 @@
 #include "Person.h"
 #include "Network.h"
 #include "Edge.h"
-#include "OffArtFlagEndEvent.h"
-#include "OffPrepFlagEndEvent.h"
+#include "JailEvents.h"
 #include "JailInfectionRateCalc.h"
 #include "CondomUseAssigner.h"
 
 
 namespace TransModel {
 
+class Serializer;
+
 class Jail {
 
 private:
+    friend class Serializer;
     Network<Person>* net_;
     std::vector<PersonPtr> jailed_pop;  //keep jailed person
     std::map<unsigned int, std::vector<EdgePtr<Person>>> jailed_pop_net; //map person ID to its network
@@ -53,8 +55,8 @@ private:
     std::map<unsigned int, OffArtFlagEndEvent*> art_evts;
     JailInfRateCalculator jail_inf_calc;
 
-  public:
-    Jail(Network<Person>* net, unsigned int window_size, double multiplier, double default_rate);
+public:
+    Jail(Network<Person>* net, JailInfRateCalculator calc);
     virtual ~Jail();
 
     std::map<unsigned int, std::vector<EdgePtr<Person>>>::iterator begin() { return jailed_pop_net.begin();}
@@ -62,8 +64,31 @@ private:
 
     void releasePerson(double tick, PersonPtr);
     void addPerson(double tick, PersonPtr person);
+    void addPerson(PersonPtr person, double jail_duration, double tick);
+
+    void scheduleEndArtForcedOff(PersonPtr person, double at);
+    void scheduleEndPrepForcedOff(PersonPtr person, double at);
+
+
+    /**
+     * Adds all the inmates back to the network. Typically so 
+     * we can serialize the full network. NOTE: any maninpulation of jail
+     * state between calls to addInmates and removeInmates can 
+     * corrupt the jail state.
+     */
+    void addInmatesToNetwork();
+    /**
+     * Removes the inmates from the network. Typically done
+     * after addInmates so we can restore the network state.
+     * NOTE: any maninpulation of jail
+     * state between calls to addInmates and removeInmates can 
+     * corrupt the jail state.
+     */
+    void removeInmatesFromNetwork();
+
     void removeDeadPerson(double time, PersonPtr person);
     void addOutsideInfectionRate(unsigned int infected, unsigned int uninfected);
+    void addOutsideInfectionRate(double rate);
     void runInternalInfectionTransmission(double time, std::vector<PersonPtr>& newly_infected,
       std::vector<EdgePtr<Person>>& infected_edges);
 
@@ -156,6 +181,8 @@ public:
 
     void operator()();
 };
+
+void initialize_jail(Jail& jail, Rcpp::List& network, std::vector<PersonPtr>& population);
 
 
 } /* namespace TransModel */

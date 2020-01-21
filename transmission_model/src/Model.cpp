@@ -39,6 +39,8 @@
 
 #include "debug_utils.h"
 #include "PrintHelper.h"
+#include "PersonToVAL.h"
+#include "Serializer.h"
 
 #include "CSVWriter.h"
 
@@ -80,87 +82,6 @@ struct PersonToVALForSimulate {
         return List::create(Named("na") = false, Named("vertex_names") = idx, Named("role_main") = v->steady_role(),
                 Named("role_casual") = v->casual_role(), Named("inf.status") = v->isInfected(),
                 Named("diagnosed") = v->isDiagnosed(), Named("age") = v->age(), Named("sqrt.age") = sqrt(v->age()));
-    }
-};
-
-struct PersonToVAL {
-
-    List operator()(const PersonPtr& p, int idx, double tick) const {
-        List vertex = List::create();
-
-        vertex["na"] = false, vertex["vertex_names"] = idx;
-
-        vertex[C_ID] = p->id();
-        vertex["age"] = p->age();
-        vertex["cd4.count.today"] = p->infectionParameters().cd4_count;
-        vertex["circum.status"] = p->isCircumcised();
-
-        vertex["diagnosed"] = p->isDiagnosed();
-        if (p->isDiagnosed()) {
-            vertex["time_of_diagnosis"] = p->infectionParameters().time_of_diagnosis;
-            vertex["time_since_diagnosed"] = p->infectionParameters().time_since_diagnosed;
-            vertex["art_lag"] = p->infectionParameters().art_lag;
-        } else {
-            vertex["time_of_diagnosis"] = NA_REAL;
-            vertex["time_since_diagnosed"] = NA_REAL;
-            vertex["art_lag"] = NA_REAL;
-        }
-        const Diagnoser& diagnoser = p->diagnoser();
-        vertex["number.of.tests"] = diagnoser.testCount();
-        vertex["testing.probability"] = diagnoser.testingProbability();
-        vertex["non.testers"] = !(p->isTestable());
-        vertex["role_casual"] = p->casual_role();
-        vertex["role_main"] = p->steady_role();
-
-        vertex["prep.status"] = static_cast<int>(p->prepStatus());
-
-        if (p->isOnPrep(false)) {
-            vertex["time.of.prep.cessation"] = p->prepParameters().stopTime();
-            vertex["time.of.prep.initiation"] = p->prepParameters().startTime();
-        }
-
-        if (p->isInfected()) {
-            vertex["infectivity"] = p->infectivity();
-            vertex["art.status"] = p->isOnART(false);
-            vertex["inf.status"] = p->isInfected();
-            vertex["time.since.infection"] = p->infectionParameters().time_since_infection;
-            vertex["time.of.infection"] = p->infectionParameters().time_of_infection;
-            vertex["age.at.infection"] = p->infectionParameters().age_at_infection;
-            vertex["viral.load.today"] = p->infectionParameters().viral_load;
-        } else {
-            vertex["infectivity"] = 0;
-            vertex["art.covered"] = NA_LOGICAL;
-            vertex["art.status"] = NA_LOGICAL;
-            vertex["inf.status"] = false;
-            vertex["time.since.infection"] = NA_REAL;
-            vertex["time.of.infection"] = NA_REAL;
-            vertex["age.at.infection"] = NA_REAL;
-            vertex["viral.load.today"] = 0;
-        }
-
-        vertex["adherence.category"] = static_cast<int>(p->artAdherence().category);
-        vertex["prep.adherence.category"] = static_cast<int>(p->prepParameters().adherenceCagegory());
-
-        if (p->isDiagnosed()) {
-            // if diagnosed, could have started ART 
-            // but check for NAN's if diagnosed but not yet on ART, i.e. in lag period
-            vertex["time.since.art.initiation"] = isnan(p->infectionParameters().time_since_art_init) ? NA_REAL : p->infectionParameters().time_since_art_init;
-            vertex["time.of.art.initiation"] = isnan(p->infectionParameters().time_of_art_init) ? NA_REAL : p->infectionParameters().time_of_art_init;
-            vertex["vl.art.traj.slope"] = isnan(p->infectionParameters().vl_art_traj_slope) ? NA_REAL : p->infectionParameters().vl_art_traj_slope;
-            vertex["cd4.at.art.initiation"] = isnan(p->infectionParameters().cd4_at_art_init) ? NA_REAL : p->infectionParameters().cd4_at_art_init;
-            vertex["vl.at.art.initiation"] = isnan(p->infectionParameters().vl_at_art_init) ? NA_REAL : p->infectionParameters().vl_at_art_init;
-        } else {
-            // probably don't need this branch
-            vertex["time.since.art.initiation"] = NA_REAL;
-            vertex["time.of.art.initiation"] = NA_REAL;
-            vertex["vl.art.traj.slope"] = NA_REAL;
-            vertex["cd4.at.art.initiation"] = NA_REAL;
-            vertex["vl.at.art.initiation"] = NA_REAL;
-        }
-
-        //std::cout << as<bool>(vertex["art.status"]) << std::endl;
-
-        return vertex;
     }
 };
 
@@ -314,7 +235,7 @@ void init_logs() {
     }
 }
 
-void init_network_save(Model* model) {
+void init_network_save(Jail* jail, Network<Person>* net, std::shared_ptr<RInside> R) {
     string save_prop = Parameters::instance()->getStringParameter(NET_SAVE_AT);
     vector<string> ats;
     boost::split(ats, save_prop, boost::is_any_of(","));
@@ -322,14 +243,16 @@ void init_network_save(Model* model) {
         ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
         for (auto& at : ats) {
             boost::trim(at);
+            Serializer* serializer = new Serializer(net, jail, R);
+
             if (at == "end") {
                 //std::cout << "scheduling at end" << std::endl;
-                runner.scheduleEndEvent(Schedule::FunctorPtr(new MethodFunctor<Model>(model, &Model::saveRNetwork)));
+                runner.scheduleEndEvent(Schedule::FunctorPtr(serializer));
             } else {
                 double tick = stod(at);
                 //std::cout << "scheduling at " << tick << std::endl;
                 runner.scheduleEvent(tick + 0.1,
-                        Schedule::FunctorPtr(new MethodFunctor<Model>(model, &Model::saveRNetwork)));
+                        Schedule::FunctorPtr(serializer));
             }
         }
     }
@@ -856,14 +779,15 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
         R(ri), net(false), population{}, trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
                 create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
                 0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, trans_params { }, art_lag_calculator {
-                create_art_lag_calc() },  person_creator { trans_runner,
-                    Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator}, prep_manager(),	
+                create_art_lag_calc() },  
+                jail(&net, JailInfRateCalculator(Parameters::instance()->getIntParameter(JAIL_INFECTION_RATE_WINDOW_SIZE), 
+                    Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_MULTIPLIER), 
+                    Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_DEFAULT))),
+                person_creator { trans_runner, Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator, &jail}, prep_manager(),	
                 condom_assigner { create_condom_use_assigner() },
                 asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)}, 
-                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}, 
-                jail(&net, Parameters::instance()->getIntParameter(JAIL_INFECTION_RATE_WINDOW_SIZE), 
-                    Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_MULTIPLIER), 
-                    Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_DEFAULT)) {
+                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}
+                 {
 
     std::cout << "treated: " << cd4m_treated_runner << std::endl;
     // get initial stats
@@ -878,9 +802,22 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     initialize_edges(rnet, net, condom_assigner, CASUAL_NETWORK_TYPE);
 
     population.insert(population.end(), net.verticesBegin(), net.verticesEnd());
+    initialize_jail(jail, rnet, population);
+
+    //////////////////////
+    // int c = 0;
+    // for (auto person : population) {
+    //     net.removeVertex(person);
+    //     if (c++ == 4500) {
+    //         break;
+    //     }
+    // }
+    // population.clear();
+    // population.insert(population.end(), net.verticesBegin(), net.verticesEnd());
+    ////////////////////////
 
     init_stage_map(stage_map);
-    init_network_save(this);
+    init_network_save(&jail, &net, R);
 
     current_pop_size = population.size();
 
@@ -1301,39 +1238,6 @@ void Model::entries(double tick, float size_of_timestep) {
     }
 }
 
-std::string get_net_out_filename(const std::string& file_name) {
-    long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
-    fs::path filepath(file_name);
-    std::string stem = filepath.stem().string();
-
-    std::stringstream ss;
-    ss << stem << "_" << tick << filepath.extension().string();
-    fs::path newName(filepath.parent_path() / ss.str());
-
-    return newName.string();
-}
-
-void Model::saveRNetwork() {
-    List rnet;
-    std::map<unsigned int, unsigned int> idx_map;
-    PersonToVAL p2val;
-
-    long tick = floor(RepastProcess::instance()->getScheduleRunner().currentTick());
-    create_r_network(tick, rnet, net, idx_map, p2val, STEADY_NETWORK_TYPE);
-    std::string file_name = output_directory(Parameters::instance()) + "/"
-            + Parameters::instance()->getStringParameter(NET_SAVE_FILE);
-    as<Function>((*R)["nw_save"])(rnet, unique_file_name(get_net_out_filename(file_name)), tick);
-
-    if (Parameters::instance()->contains(CASUAL_NET_SAVE_FILE)) {
-        idx_map.clear();
-        List cas_net;
-        create_r_network(tick, cas_net, net, idx_map, p2val, CASUAL_NETWORK_TYPE);
-        file_name = output_directory(Parameters::instance()) + "/"
-                + Parameters::instance()->getStringParameter(CASUAL_NET_SAVE_FILE);
-        as<Function>((*R)["nw_save"])(cas_net, unique_file_name(get_net_out_filename(file_name)), tick);
-    }
-}
-
 CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
     int death_count = 0;
     CauseOfDeath cod = CauseOfDeath::NONE;
@@ -1481,7 +1385,7 @@ unsigned int Model::runTransmission(double time_stamp) {
 void Model::runJailInfections(double time_stamp) {
     Stats* stats = Stats::instance();
     std::vector<PersonPtr> infected_in_jail;
-    std:vector<EdgePtr<Person>> infected_edges;
+    std::vector<EdgePtr<Person>> infected_edges;
     jail.runInternalInfectionTransmission(time_stamp, infected_in_jail, infected_edges);
     for (auto& person : infected_in_jail) {
         infectPerson(person, time_stamp);

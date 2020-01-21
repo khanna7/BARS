@@ -273,6 +273,10 @@ public:
         return jail_parameters_.serving_time;
     }
 
+    const JailParameters& jailParameters() const {
+        return jail_parameters_;
+    }
+
     /**
      * Get the age of the person at the time of first jail (history)
      */
