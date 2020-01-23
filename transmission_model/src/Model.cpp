@@ -804,7 +804,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     population.insert(population.end(), net.verticesBegin(), net.verticesEnd());
     initialize_jail(jail, rnet, population);
 
-     init_stage_map(stage_map);
+    init_stage_map(stage_map);
     init_network_save(&jail, &net, R);
 
     current_pop_size = population.size();
