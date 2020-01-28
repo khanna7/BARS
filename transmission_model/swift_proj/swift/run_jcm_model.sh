@@ -31,7 +31,7 @@ export PROCS=272
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if the MACHINE variable (see below) is not set.
 export QUEUE=broadwl
-export WALLTIME=7:00:00
+export WALLTIME=24:00:00
 #export WALLTIME=0:50:00
 export PPN=14
 export TURBINE_JOBNAME="${EXPID}_job"

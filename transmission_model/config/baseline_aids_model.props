@@ -1,8 +1,8 @@
 #global.random.seed=42
 global.random.seed=1
 
-#stop.at = 36500 # 100 years
-stop.at = 3650 
+stop.at = 36500
+#stop.at = 3650 
 #stop.at = 7300 # 20 years
 #stop.at = 730
 
@@ -58,23 +58,3 @@ input.age.threshold = 26
 network.decay.prob.main.file    = /home/bmardestani/BARS/transmission_model/data/net_decay_prob_main.csv
 network.decay.prob.casual.file  = /home/bmardestani/BARS/transmission_model/data/net_decay_prob_casual.csv
 
-is.network.disruption.on = false
-is.care.disruption.on = false
-
-#incarceration.prob = 0.0
-incarceration.prob = 0.0000787
-#incarceration.prob = 0.002
-
-# probability of incareration for previously jailed
-#incarceration.with.cji.prob = 0.0
-incarceration.with.cji.prob = 0.0005173
-#incarceration.with.cji.prob = 0.002
-
-# 0.000182 /2 
-in.jail.infection.incidence.rate =  0.000091 
-
-jail.serving.time.mean = 58
-
-post.release.interference.period.mean = 90
-
-network.retention.multiplier = 1
