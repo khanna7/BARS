@@ -1004,24 +1004,29 @@ void Model::updateDisease(PersonPtr person) {
 }
 
 void Model::updateJailStats(Stats* stats, PersonPtr person) {
+
     std::vector<EdgePtr<Person>> edges;
     net.getEdges(person, edges);
     for (auto edge : edges) { 
-        if (edge->v1()->id() == person->id()) {
-            if (edge->v2()->isInfected())
-                    ++stats->currentCounts().partners_infected_before_jail;
-
-        } else {
+        if (edge->v1()->id() != person->id()) {
             if (edge->v1()->isInfected())
-                ++stats->currentCounts().partners_infected_before_jail;
+                ++stats->currentCounts().infected_partners_at_incarceration;
+            }
+        if (edge->v2()->id() != person->id()) {
+            if (edge->v2()->isInfected())
+                 ++stats->currentCounts().infected_partners_at_incarceration;
         }
     }
 
     if (person->isInfected()) {
-        ++stats->currentCounts().infected_before_jail;
+        ++stats->currentCounts().infected_at_incarceration;
     }
 
-    ++stats->currentCounts().jailed;
+    ++stats->currentCounts().incarcerated;
+
+    if (person->hasPreviousJailHistory()) {
+        ++stats->currentCounts().incarcerated_recidivist;
+    }
 }
     
     
@@ -1031,12 +1036,13 @@ void Model::doJailCheck(PersonPtr person, double tick, double incarceration_with
         //proability of jailing a person: 
         if (!person->isJailed())  {
             if (person->hasPreviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_with_cji_prob) {
+                updateJailStats(Stats::instance(), person);
                 jail.addPerson(tick, person);
 
             } else if (Random::instance()->nextDouble() <= incarceration_prob) { 
+                updateJailStats(Stats::instance(), person);
                 jail.addPerson(tick, person);
             }
-            updateJailStats(Stats::instance(), person);
         }
 }
 
@@ -1431,7 +1437,7 @@ float Model::infectionIncidence() {
    int int_infected = std::accumulate(stats->currentCounts().internal_infected.begin(), stats->currentCounts().internal_infected.end(), 0);
    int ext_infected = std::accumulate(stats->currentCounts().external_infected.begin(), stats->currentCounts().external_infected.end(), 0);
    int inf_at_entry = std::accumulate(stats->currentCounts().infected_at_entry.begin(), stats->currentCounts().infected_at_entry.end(), 0);
-   int inf_in_jail = stats->currentCounts().internal_infected_injail;
+   int inf_in_jail = stats->currentCounts().infected_inside_jail;
    int uninfect = std::accumulate(stats->currentCounts().uninfected.begin(), stats->currentCounts().uninfected.end(), 0);
    
    int total_infected_this_cycle = int_infected + ext_infected + inf_at_entry + inf_in_jail; 

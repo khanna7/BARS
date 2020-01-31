@@ -189,6 +189,11 @@ void Jail::releasePerson(double tick, PersonPtr person) {
 
     jailed_pop_net.erase(person->id());
     total_released_++;
+
+    Stats* stats = Stats::instance();
+    if (person->isInfected()) {
+        ++stats->currentCounts().infected_at_release;
+    }
 }
 
 void Jail::scheduleEndPrepForcedOff(PersonPtr person, double at) {

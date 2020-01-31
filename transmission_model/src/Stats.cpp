@@ -104,8 +104,8 @@ const std::string Counts::header(
         "sd_steady_sex_with_condom,sd_steady_sex_without_condom,"
         "sc_steady_sex_with_condom,sc_steady_sex_without_condom,"
         "on_art,on_prep,vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
-        "pop,jail_pop,jailed,jailed_recidivist,infected_jail_pop,internal_infected_injail,"
-        "infected_before_jail,partners_infected_before_jail,infected_before_release");
+        "pop,jail_pop,incarcerated,incarcerated_recidivist,infected_jail_pop,infected_inside_jail,"
+        "infected_at_incarceration,infected_partners_at_incarceration,infected_at_release");
 
 
 void write_vector_out(std::vector<unsigned int>& vec, FileOutput& out) {
@@ -130,9 +130,9 @@ void Counts::writeTo(FileOutput& out) {
     << sd_steady_sex_with_condom << "," << sd_steady_sex_without_condom << ","
     << sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom << ","
     << on_art << "," << on_prep << "," << vl_supp_per_positives << "," << vl_supp_per_diagnosis << ","
-    << cd4m_deaths << "," << pop << "," << jail_pop << "," << jailed << ","  <<jailed_recidivist << ","
-    << infected_jail_pop  << "," << internal_infected_injail << ","
-    << infected_before_jail << "," << partners_infected_before_jail << "," << infected_before_release << "\n";
+    << cd4m_deaths << "," << pop << "," << jail_pop << "," << incarcerated << ","  << incarcerated_recidivist << ","
+    << infected_jail_pop  << "," << infected_inside_jail << ","
+    << infected_at_incarceration << "," << infected_partners_at_incarceration << "," << infected_at_release << "\n";
 
 }
 
@@ -145,8 +145,8 @@ Counts::Counts(int min_age, int max_age) :
                 on_art{0}, on_prep{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, 
-                total_internal_infected{0}, total_internal_infected_new{0}, total_internal_infected_injail{0}, internal_infected_injail{0},
-                infected_jail_pop{0}, pop{0}, jail_pop{0}, jailed{0}, jailed_recidivist{0}, infected_before_jail{0}, partners_infected_before_jail{0}, infected_before_release{0}
+                total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
+                infected_jail_pop{0}, pop{0}, jail_pop{0}, incarcerated{0}, incarcerated_recidivist{0}, infected_at_incarceration{0}, infected_partners_at_incarceration{0}, infected_at_release{0}
 
 {
 }
@@ -167,15 +167,15 @@ void Counts::reset() {
     std::fill(infected_at_entry.begin(), infected_at_entry.end(), 0);
     std::fill(vertex_count.begin(), vertex_count.end(), 0);
     overlaps = 0;
-    internal_infected_injail=0;
+    infected_inside_jail=0;
     infected_jail_pop=0;
     pop=0;
     jail_pop=0;
-    jailed=0;
-    jailed_recidivist=0;
-    infected_before_jail=0;
-    partners_infected_before_jail=0;
-    infected_before_release=0;
+    incarcerated=0;
+    incarcerated_recidivist=0;
+    infected_at_incarceration=0;
+    infected_partners_at_incarceration=0;
+    infected_at_release=0;
 }
 
 
@@ -189,8 +189,8 @@ void Counts::incrementInfected(PersonPtr& p) {
 * Function to use for keeping track of the total numbers of indviduals infected in jail 
 */ 
 void Counts::incrementInfectedInJail() {
-    ++total_internal_infected_injail; //accumulative (total)
-    ++internal_infected_injail;  //counter for each cycle 
+    ++total_infected_inside_jail; //accumulative (total)
+    ++infected_inside_jail;  //counter for each cycle 
 }
 
 /**
