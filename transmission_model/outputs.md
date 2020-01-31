@@ -61,6 +61,15 @@ network in the model at the end of the timestep
 * on_prep: the number of persons on PrEP at this time.
 * vl_supp_per_positives: the number of virally suppressed individuals who have been infected for at least time.to.full.supp divided by the number of infected persons who have been infected for at least time.to.full.supp.
 * vl_supp_per_diagnosed: the number of virally suppressed individuals who have been diagnosed as positive for at least time.to.full.supp divided by the number of persons who have been diagnosed as positive for at least time.to.full.supp
+* infected_jail_pop: the number of persons in jail at that timestep who are infected
+* uninfected_jail_pop: the number of persons in jail at that timestep are uninfected
+* uninfected_ever_jailed: number of persons at that timestep who are uninfected and have been jailed
+* uninfected_never_jailed: number of persons at that timestep who are uninfected and have never been jailed
+* infected_ever_jailed: number of persons at that timestep who are infected and have been jailed
+* infected_never_jailed: number of persons at that timestep who are infected and have never been jailed
+* vertex_count_ever_jailed: total number of persons at that timestep who have ever been jailed
+* vertex_count_never_jailed: total number of persons at that timestep who have never been jailed
+
 
 
 ### Partnership Events
