@@ -5,7 +5,7 @@ global.random.seed=42
 #stop.at = 1000
 #stop.at = 7300 # 20 years
 #stop.at = 730
-stop.at = 1095
+stop.at = 500
 
 net.variable.name = nw
 casual.net.variable.name = n_cas

@@ -944,9 +944,6 @@ void Model::step() {
 
     stats->currentCounts().pop = current_pop_size;
     
-    stats->currentCounts().jail_pop = jail.populationSize();
-    stats->currentCounts().infected_jail_pop = jail.infectedPopulationSize();
-
     stats->currentCounts().main_edge_count = net.edgeCount(STEADY_NETWORK_TYPE);
     stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
 
@@ -1384,8 +1381,8 @@ void Model::runJailInfections(double time_stamp) {
     for (auto& person : infected_in_jail) {
         infectPerson(person, time_stamp);
         stats->currentCounts().incrementInfected(person); 
-        stats->currentCounts().incrementInfectedInJail(); 
         stats->personDataRecorder()->recordInfection(person, time_stamp, InfectionSource::INJAIL);
+        stats->currentCounts().incrementNewlyInfected();
     } 
 
     for (auto& edge: infected_edges) {
@@ -1415,14 +1412,6 @@ int Model::uninfectedPopulationSize() {
     return totaluninfectedPop;
 }
 
-
-
-/**
-* Function to calcuate incarceration rate 
-*/ 
-float Model::incarcerationRate() { 
-   return (float) jail.populationSize() /(float)population.size();
-}
 
 /**
 * Function to calcuate infection incidence 

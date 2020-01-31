@@ -254,8 +254,9 @@ void Jail::addOutsideInfectionRate(double rate) {
 void Jail::runInternalInfectionTransmission(double time, std::vector<PersonPtr>& newly_infected, std::vector<EdgePtr<Person>>& infected_edges) {
     double prob = jail_inf_calc.calculateRate();
     for (auto& p : jailed_pop) {
-        if (!p->isInfected() && repast::Random::instance()->nextDouble() <= prob) {
-            ++total_infected_inside_jail_;
+        if (p->isInfected()) {
+            Stats::instance()->currentCounts().incrementInjectedJailPopCount();
+        } else if (repast::Random::instance()->nextDouble() <= prob) {
             newly_infected.push_back(p);
 
             std::vector<EdgePtr<Person>> edges = jailed_pop_net.at(p->id());
@@ -343,40 +344,6 @@ double Jail::vulnerabilityMean(double serving_time) {
 }
 
 /**
-* Gets the jail population size  
-*/ 
-int  Jail::populationSize() {
-    return jailed_pop.size();
-}
-
-
-/**
-* Returns total number of infected persons in jail 
-*/ 
-int Jail::infectedPopulationSize() {
-    int totalInfectedPop=0;
-    for (auto& p : jailed_pop) {
-        if (p->isInfected()) {
-            totalInfectedPop++;
-        }
-    }
-    return totalInfectedPop;
-}
-
-/**
-* Returns total number of uninfected persons in jail 
-*/ 
-int Jail::uninfectedPopulationSize() {
-    int totaluninfectedPop=0;
-    for (auto& p : jailed_pop) {
-        if (!p->isInfected()) {
-            totaluninfectedPop++;
-        }
-    }
-    return totaluninfectedPop;
-}
-
-/**
 * Returns total number of onART persons in jail 
 */ 
 int Jail::onArtPopulationSize() {
@@ -402,14 +369,6 @@ int Jail::onPrepPopulationSize() {
     return totalOnPrepPop;
 }
 
-
-/**
-* Calcuates and returns the infection incidence proportion 
-*/ 
-float Jail::infectionIncidence() {
-
-    return (float) infectedPopulationSize()/(float)uninfectedPopulationSize();
-}
 
 /**
 * Returns the number persons jailed at a given day (time) 

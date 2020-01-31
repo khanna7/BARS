@@ -42,8 +42,6 @@ private:
     int total_ser_time_6months_1year_=0;   //total jailed with serving time of 6 months till less than 1 year   
     int total_ser_time_more_than_year_=0; //total jailed with serving time of more than a year
 
-    int total_infected_inside_jail_=0;    //accumulative total of agents infected inside jail  
-
     std::vector<double> net_decay_prob_main;
     std::vector<double> net_decay_prob_casual;
 
@@ -94,11 +92,6 @@ public:
 
     bool isServingTimeCompleted(PersonPtr person, double time);
     void checkAndReleaseTimeServedPopulation(Network<Person>& net,double time);
-
-    int populationSize();
-    int infectedPopulationSize();
-    int uninfectedPopulationSize();
-    float infectionIncidence();
     
     int numberOfPersonsJailedAtTime(double);
     int numberOfPersonsToBeReleasedAtTime(double);
@@ -149,10 +142,6 @@ public:
 
     int totalServingTime_1y_plus() {
       return total_ser_time_more_than_year_;
-    }
-
-    int totalInfectedInsideJail() {
-      return total_infected_inside_jail_;
     }
 
     /**
