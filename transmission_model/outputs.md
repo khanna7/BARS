@@ -60,7 +60,6 @@ network in the model at the end of the timestep
 * infected_at_incarceration: the number of persons who were already infected at the time of incarceration.
 * infected_partners_at_incarceration: the number of infected partners of the persons at the time of their incarcerations.
 * infected_at_release: the number of inmate persons who were infected at the time of their releases.
-
 * sc_casual_sex_without_condom: the number of sex acts between sero-concordant casual partners in which a condom was not used.
 * steady_sex_acts: the number of sex acts that occurred between steady partners.
 * sd_steady_sex_with_condom: the number of sex acts between sero-discordant steady partners in which a condom was used.
