@@ -43,8 +43,8 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * steady_edge_count: the number of edges in the steady partner network in the model at the end of the timestep
 * casual_edge_count: the number of edges in the casual partner
 network in the model at the end of the timestep
-* vertex_count: the total number of vertices at the end of the timestep. This takes into account adding entries and subtracting deaths.
-* vertex_count_N:  the total number of vertices of age N at the end of the timestep.  N is currently 18 - 34 with one column for each age.
+* vertex_count: the total number of persons at the end of the timestep. This takes into account adding entries and subtracting deaths. The "vertex_count" name is relic of when all persons were vertices.
+* vertex_count_N:  the total number of persons of age N at the end of the timestep.  N is currently 18 - 34 with one column for each age. The "vertex_count" name is relic of when all persons were vertices.
 * overlaps: the number of edges that occur in both the main network and the casual network. This is determined by iterating through the edges in the network with the smallest edge count, and incrementing the count if the same edge exists in the other network. Edges are non-directed so the count is incremented if v1 -> v2 or v2 -> v1 exists. The iteration is a relatively expensive operation and it can be turned off by setting the model property *count.overlaps* to false.
 * sex_acts: the number of sex acts that occured at that timestep.
 * casual_sex_acts: the number of sex acts that occurred between casual partners.
