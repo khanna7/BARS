@@ -155,7 +155,8 @@ void PersonCreator::initUninfectedPerson(PersonPtr person, Rcpp::List& val, doub
     
     //  the prep.status attribute only exists in uninfected persons in the R model
     PrepStatus status = as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF;
-    if (status == PrepStatus::ON) {
+    if (status == PrepStatus::ON && model_tick > 0) {
+        // if model_tick == 0 then event will be recorded in Model::initPrepCessation
         Stats::instance()->recordPREPEvent(model_tick, person->id(), static_cast<int>(PrepStatus::ON));
     }
 
@@ -163,7 +164,7 @@ void PersonCreator::initUninfectedPerson(PersonPtr person, Rcpp::List& val, doub
     double time_of_init = 0;
     double time_of_cess = 0;
     if (val.containsElementNamed("time.of.prep.initiation")) {
-            time_of_init = as<double>(val["time.of.prep.initiation"]);
+        time_of_init = as<double>(val["time.of.prep.initiation"]);
         if (burnin_last_tick > 0) {
             // how much time left to be on prep when carried over
             // from burnin
