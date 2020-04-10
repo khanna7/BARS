@@ -25,7 +25,7 @@ f <- '%s'
 a <- ''
 if (file.exists(f)) {
   df <- read.csv(f)
-  if (tail(df, 1)$tick == %f) {
+  if (dim(df)[1] > 0 && tail(df, 1)$tick == %f) {
     ranges <- c(20,29,30,34)
     prev <- summarize_prev(f, ranges)
     inc <- summarize_inc(f, ranges)
