@@ -3,3 +3,4 @@
 .RData
 scratch/
 r_src/
+*.RDS
