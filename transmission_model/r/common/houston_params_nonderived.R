@@ -152,22 +152,22 @@
     # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    art.init.lag.lt.1 <- "0.1692857143|0-7" #ALL BELOW ARE COMMON - WE DIDN'T HAVE THIS INFO FOR HOUSTON
-    art.init.lag.lt.2 <- "0.314285714|7-30"
-    art.init.lag.lt.3 <- "0.191285714|30-90"
-    art.init.lag.lt.4 <- "0.067285714|90-180"
-    art.init.lag.lt.5 <- "0.123285714|180-365"
-    art.init.lag.lt.6 <- "0.089285714|365-730"
-    art.init.lag.lt.7 <- "0.045285714|1825-1825"
+    art.init.lag.lt.1 <- "1.0378|0-7" #NHBS-5 data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
+    art.init.lag.lt.2 <- "0.1003|7-30" #Assumed geometric distribution, and computed number of samples in each bin: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
+    art.init.lag.lt.3 <- "0.211|30-90"
+    art.init.lag.lt.4 <- "0.2287|90-180"
+    art.init.lag.lt.5 <- "0.2453|180-365"
+    art.init.lag.lt.6 <- "0.1456|365-730"
+    art.init.lag.lt.7 <- "0.0311|1825-1825"
 
-    art.init.lag.gte.1 <- "0.167125|0-7"
-    art.init.lag.gte.2 <- "0.2621250|7-30"
-    art.init.lag.gte.3 <- "0.095125|30-90"
-    art.init.lag.gte.4 <- "0.143125|90-180"
-    art.init.lag.gte.5 <- "0.143125|180-365"
-    art.init.lag.gte.6 <- "0.071125|365-730"
-    art.init.lag.gte.7 <- "0.047125|730-1825"
-    art.init.lag.gte.8 <- "0.071125|1825-1825"
+    art.init.lag.gte.1 <- art.init.lag.lt.1 #ditto as ".lt" parameters above 
+    art.init.lag.gte.2 <- art.init.lag.lt.2 
+    art.init.lag.gte.3 <- art.init.lag.lt.3
+    art.init.lag.gte.4 <- art.init.lag.lt.4 
+    art.init.lag.gte.5 <- art.init.lag.lt.5 
+    art.init.lag.gte.6 <- art.init.lag.lt.6
+    art.init.lag.gte.7 <- art.init.lag.lt.7
+    art.init.lag.gte.8 <- 0 
 
 #####################
 ## 
