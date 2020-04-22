@@ -205,11 +205,12 @@ default.prep.balanced.unbalanced <- 'balanced' #COMMON
 
 serodiscordant.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
 serodiscordant.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
-serodiscordant.base.prep.mean.days.usage.lt <- 365 #updated 23may2018 #COMMON
-serodiscordant.base.prep.mean.days.usage.gte <- 365 #COMMON
 
-serodiscordant.intrv.prep.mean.days.usage.lt <- 365 #COMMON
-serodiscordant.intrv.prep.mean.days.usage.gte <- 365 #COMMON
+serodiscordant.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
+serodiscordant.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte 
+
+serodiscordant.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+serodiscordant.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
 # one of main, casual, or all
 serodiscordant.intrv.prep.network.type <- 'main' #COMMON
@@ -226,11 +227,11 @@ serodiscordant.intrv.prep.years.to.increment <- 5 #COMMON
 eigen.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
 eigen.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
 
-eigen.base.prep.mean.days.usage.lt <- 365 #All below are #COMMON
-eigen.base.prep.mean.days.usage.gte <- 365
+eigen.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+eigen.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
-eigen.intrv.prep.mean.days.usage.lt <- 365
-eigen.intrv.prep.mean.days.usage.gte <- 365
+eigen.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+eigen.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
 eigen.intrv.prep.yearly.increment.lt <- 0.04
 eigen.intrv.prep.yearly.increment.gte <- 0.04
@@ -246,11 +247,11 @@ eigen.intrv.prep.topn <- 0.10
 degree.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt
 degree.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
 
-degree.base.prep.mean.days.usage.lt <- 365 #All below are #COMMON #All below are #COMMON
-degree.base.prep.mean.days.usage.gte <- 365
+degree.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+degree.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
-degree.intrv.prep.mean.days.usage.lt <- 365
-degree.intrv.prep.mean.days.usage.gte <- 365
+degree.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+degree.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
 degree.intrv.prep.yearly.increment.lt <- 0.04
 degree.intrv.prep.yearly.increment.gte <- 0.04
