@@ -3,6 +3,7 @@
 
    #####################
    ## NETWORK (steady)
+
      n <- 10000
 
    ## empirical degree information
@@ -11,7 +12,7 @@
 
      # Note: This data doesn't exist for Houston YMAP
      # using estimates from NHBS data
-     # Box Sync/BARS/Data-and-Summaries/Houston/Houston_Mean_Duration_of_Partnerships.xlsx: https://uchicago.box.com/s/jhigs6hunkjhn8vfpxiadtvm3k9xt2yz
+     # Box Sync/BARS/Data-and-Summaries/Houston/Houston_Mean_Duration_of_Partnerships.xlsx: https://uchicago.box.com/s/jhigs6hunkjhn8vfpxiadtvm3k9xt2yz (i cant find this summary though)
      duration <- 970 
 
      ## role
