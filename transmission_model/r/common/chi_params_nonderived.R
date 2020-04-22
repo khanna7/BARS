@@ -193,7 +193,7 @@
 
 # one of default, young_old_ratio, serodiscordant, eigen, or degree
 prep.uptake <- 'default'
-prep.intervention.at <- 365
+prep.intervention.at <- 0
 prep.intervention <- 'random'
 
 ## Default PrEP  parameters ###
