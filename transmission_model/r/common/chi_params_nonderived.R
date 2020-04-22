@@ -193,6 +193,8 @@
 
 # one of default, young_old_ratio, serodiscordant, eigen, or degree
 prep.uptake <- 'default'
+prep.intervention.at <- 365
+prep.intervention <- 'random'
 
 ## Default PrEP  parameters ###
 
@@ -217,6 +219,23 @@ default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for t
 default.prep.balanced.unbalanced <- 'balanced'
 
 ## End Default Parameters ##
+
+## Random Selection Intervention 
+random.base.prep.bl.use.prop.lt <- 12.7/100
+random.base.prep.bl.use.prop.gte <- 14.7/100
+
+random.base.prep.mean.days.usage.lt <- 365
+random.base.prep.mean.days.usage.gte <- 365
+
+random.intrv.prep.mean.days.usage.lt <- 365
+random.intrv.prep.mean.days.usage.gte <- 365
+
+random.intrv.prep.yearly.increment.lt <- 0
+random.intrv.prep.yearly.increment.gte <- 0
+
+random.intrv.prep.years.to.increment <- 0
+
+## End random selection params
 
 ## Young Old Ratio PrEP Uptake Parameters ##
 

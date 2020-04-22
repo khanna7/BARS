@@ -47,7 +47,7 @@
    default.prep.daily.stop.prob.lt <- 1/default.prep.mean.days.usage.lt
    default.prep.daily.stop.prob.gte <- 1/default.prep.mean.days.usage.gte
    default.prep.daily.stop.prob <- mean(c(default.prep.daily.stop.prob.lt, default.prep.daily.stop.prob.gte))
-   prep.dailty.stop.prob <- default.prep.daily.stop.prob.lt #needed only for time 0
+   prep.daily.stop.prob <- default.prep.daily.stop.prob.lt #needed only for time 0
  
    ### Young Old Ratio PrEP intervention parameters ###
    
@@ -70,11 +70,19 @@
   eigen.intrv.prep.daily.stop.prob.gte <- 1 / eigen.intrv.prep.mean.days.usage.gte
 
   ### Degree intervention parameters ###
-   degree.base.prep.daily.stop.prob.lt <- 1 / degree.base.prep.mean.days.usage.lt
-   degree.base.prep.daily.stop.prob.gte <- 1 / degree.base.prep.mean.days.usage.gte
+  degree.base.prep.daily.stop.prob.lt <- 1 / degree.base.prep.mean.days.usage.lt
+  degree.base.prep.daily.stop.prob.gte <- 1 / degree.base.prep.mean.days.usage.gte
    
   degree.intrv.prep.daily.stop.prob.lt <- 1 / degree.intrv.prep.mean.days.usage.lt
   degree.intrv.prep.daily.stop.prob.gte <- 1 / degree.intrv.prep.mean.days.usage.gte
+
+  ### Random intervention parameters ###
+  random.base.prep.daily.stop.prob.lt <- 1 / random.base.prep.mean.days.usage.lt
+  random.base.prep.daily.stop.prob.gte <- 1 / random.base.prep.mean.days.usage.gte
+   
+  random.intrv.prep.daily.stop.prob.lt <- 1 / random.intrv.prep.mean.days.usage.lt
+  random.intrv.prep.daily.stop.prob.gte <- 1 / random.intrv.prep.mean.days.usage.gte
+
 
    #####################
    ## Transmission Parameters

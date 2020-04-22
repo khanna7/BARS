@@ -104,6 +104,8 @@ const std::string PREG_MULT = "preg.mult";
 const std::string PREG_SUSC_MULT = "preg.susc.mult";
 
 const std::string PREP_SCHEME = "prep.uptake";
+const std::string PREP_INTERVENTION_SCHEME = "prep.intervention";
+const std::string PREP_INTERVENTION_AT = "prep.intervention.at";
 
 const std::string DEFAULT_PREP_USE_PROP_LT = "default.prep.bl.use.prop.lt";
 const std::string DEFAULT_PREP_USE_PROP_GTE = "default.prep.bl.use.prop.gte";
@@ -159,6 +161,17 @@ const std::string DEGREE_PREP_YEARLY_INCREMENT_LT = "degree.intrv.prep.yearly.in
 const std::string DEGREE_PREP_YEARLY_INCREMENT_GTE = "degree.intrv.prep.yearly.increment.gte";
 const std::string DEGREE_PREP_YEARS_TO_INCREMENT = "degree.intrv.prep.years.to.increment";
 const std::string DEGREE_TOPN = "degree.intrv.prep.topn";
+
+const std::string RANDOM_BASE_PREP_USE_PROP_LT = "random.base.prep.bl.use.prop.lt";
+const std::string RANDOM_BASE_PREP_USE_PROP_GTE = "random.base.prep.bl.use.prop.gte";
+const std::string RANDOM_BASE_PREP_DAILY_STOP_PROB_LT = "random.base.prep.daily.stop.prob.lt";
+const std::string RANDOM_BASE_PREP_DAILY_STOP_PROB_GTE = "random.base.prep.daily.stop.prob.gte";
+
+const std::string RANDOM_INTRV_PREP_DAILY_STOP_PROB_LT = "random.intrv.prep.daily.stop.prob.lt";
+const std::string RANDOM_INTRV_PREP_DAILY_STOP_PROB_GTE = "random.intrv.prep.daily.stop.prob.gte";
+const std::string RANDOM_PREP_YEARLY_INCREMENT_LT = "random.intrv.prep.yearly.increment.lt";
+const std::string RANDOM_PREP_YEARLY_INCREMENT_GTE = "random.intrv.prep.yearly.increment.gte";
+const std::string RANDOM_PREP_YEARS_TO_INCREMENT = "random.intrv.prep.years.to.increment";
 
 const std::string SET_POINT_VIRAL_LOAD = "set.point.viral.load";
 const std::string SIZE_OF_TIMESTEP = "size.of.timestep";

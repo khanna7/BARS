@@ -5,6 +5,8 @@
  *      Author: nick
  */
 
+#include "Rcpp.h"
+
 #include "Person.h"
 #include "Stats.h"
 

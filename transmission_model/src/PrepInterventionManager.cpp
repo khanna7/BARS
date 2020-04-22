@@ -83,4 +83,24 @@ void PrepInterventionManager::reset() {
     }
 }
 
+void PrepInterventionManager::clear() {
+    interventions.clear();
+}
+
+ScheduleIntervention::ScheduleIntervention(PrepInterventionManager* prep_manager) : prep_manager_{prep_manager} {}
+
+ScheduleIntervention::~ScheduleIntervention() {}
+
+void ScheduleIntervention::addIntervention(std::shared_ptr<IPrepIntervention> intervention) {
+    interventions.push_back(intervention);
+}
+
+void ScheduleIntervention::operator()() {
+    std::cout << "Updating intervention" << std::endl;
+    prep_manager_->clear();
+    for (auto& intervention : interventions) {
+        prep_manager_->addIntervention(intervention);
+    }
+}
+
 }

@@ -8,7 +8,6 @@
 #ifndef SRC_PERSON_H_
 #define SRC_PERSON_H_
 
-#include "Rcpp.h"
 #include "DiseaseParameters.h"
 #include "Diagnoser.h"
 #include "GeometricDistribution.h"

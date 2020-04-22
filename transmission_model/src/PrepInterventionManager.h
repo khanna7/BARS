@@ -4,11 +4,12 @@
 #include <memory>
 #include <vector>
 
+#include "repast_hpc/Schedule.h"
+
 #include "Network.h"
 #include "GeometricDistribution.h"
 #include "PrepStatus.h"
 #include "common.h"
-
 
 namespace TransModel {
 
@@ -75,6 +76,22 @@ public:
     void run(double tick, Network<Person>& network);
     void onYearEnded();
     void reset();
+    void clear();
+};
+
+
+class ScheduleIntervention : public repast::Functor {
+
+private:
+    PrepInterventionManager* prep_manager_;
+    std::vector<std::shared_ptr<IPrepIntervention>> interventions;
+
+public:
+    ScheduleIntervention(PrepInterventionManager* prep_manager);
+    ~ScheduleIntervention();
+
+    void addIntervention(std::shared_ptr<IPrepIntervention> intervention);
+    void operator()() override;
 };
 
 }

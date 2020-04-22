@@ -91,6 +91,8 @@ extern const std::string PREG_MULT;
 extern const std::string PREG_SUSC_MULT;
 
 extern const std::string PREP_SCHEME;
+extern const std::string PREP_INTERVENTION_SCHEME;
+extern const std::string PREP_INTERVENTION_AT;
 
 extern const std::string DEFAULT_PREP_USE_PROP_LT;
 extern const std::string DEFAULT_PREP_USE_PROP_GTE;
@@ -147,6 +149,17 @@ extern const std::string DEGREE_PREP_YEARLY_INCREMENT_LT;
 extern const std::string DEGREE_PREP_YEARLY_INCREMENT_GTE;
 extern const std::string DEGREE_PREP_YEARS_TO_INCREMENT;
 extern const std::string DEGREE_TOPN;
+
+extern const std::string RANDOM_BASE_PREP_USE_PROP_LT;
+extern const std::string RANDOM_BASE_PREP_USE_PROP_GTE;
+extern const std::string RANDOM_BASE_PREP_DAILY_STOP_PROB_LT;
+extern const std::string RANDOM_BASE_PREP_DAILY_STOP_PROB_GTE;
+
+extern const std::string RANDOM_INTRV_PREP_DAILY_STOP_PROB_LT;
+extern const std::string RANDOM_INTRV_PREP_DAILY_STOP_PROB_GTE;
+extern const std::string RANDOM_PREP_YEARLY_INCREMENT_LT;
+extern const std::string RANDOM_PREP_YEARLY_INCREMENT_GTE;
+extern const std::string RANDOM_PREP_YEARS_TO_INCREMENT;
 
 extern const std::string SET_POINT_VIRAL_LOAD;
 extern const std::string SIZE_OF_TIMESTEP;

@@ -12,6 +12,8 @@
 
 #include "repast_hpc/Schedule.h"
 
+#include "Rcpp.h"
+
 #include "Person.h"
 #include "Network.h"
 #include "Edge.h"

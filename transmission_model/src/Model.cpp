@@ -295,7 +295,7 @@ NetworkType find_net_type(std::string type) {
     throw std::invalid_argument("Unknown partnership type for PrEP serodiscordant intervention: '" + type + "'");
 }
 
-void init_sero_prep_manager(PrepInterventionManager& prep_manager, float age_threshold, float max_age) {
+void init_sero_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
     PrepUptakeData lt_base_data, gte_base_data;
     lt_base_data.years_to_increment = 0;
     gte_base_data.years_to_increment = 0;
@@ -317,8 +317,8 @@ void init_sero_prep_manager(PrepInterventionManager& prep_manager, float age_thr
     // add the base prep intervention
     std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
     std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
 
     PrepUptakeData lt_sd, gte_sd;
     lt_sd.use = lt_base_data.use;
@@ -340,8 +340,8 @@ void init_sero_prep_manager(PrepInterventionManager& prep_manager, float age_thr
     std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
     std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
    
-    prep_manager.addIntervention(std::make_shared<SerodiscordantPrepIntervention>(lt_sd, lt, net_type));
-    prep_manager.addIntervention(std::make_shared<SerodiscordantPrepIntervention>(gte_sd, gte, net_type));
+    vec.push_back(std::make_shared<SerodiscordantPrepIntervention>(lt_sd, lt, net_type));
+    vec.push_back(std::make_shared<SerodiscordantPrepIntervention>(gte_sd, gte, net_type));
 
     std::cout << "SD Net Type: " << Parameters::instance()->getStringParameter(SERO_NET_TYPE) << ", " 
         << static_cast<int>(net_type) << std::endl;
@@ -364,7 +364,7 @@ void init_sero_prep_manager(PrepInterventionManager& prep_manager, float age_thr
     // std::cout << "prep.update=serodiscordant" << "\n" << data << net_type << std::endl;    
 }
 
-void init_eigen_prep_manager(PrepInterventionManager& prep_manager, float age_threshold, float max_age) {
+void init_eigen_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
     PrepUptakeData lt_base_data, gte_base_data;
     lt_base_data.years_to_increment = 0;
     gte_base_data.years_to_increment = 0;
@@ -388,8 +388,8 @@ void init_eigen_prep_manager(PrepInterventionManager& prep_manager, float age_th
     std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
 
     // add the base prep intervention
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
 
     PrepUptakeData lt_data, gte_data;
     lt_data.use = lt_base_data.use;
@@ -414,7 +414,7 @@ void init_eigen_prep_manager(PrepInterventionManager& prep_manager, float age_th
 
     intervention->addNetIntervention(std::make_shared<NetStatPrepIntervention>(lt_data, lt, top_n));
     intervention->addNetIntervention(std::make_shared<NetStatPrepIntervention>(gte_data, gte, top_n));
-    prep_manager.addIntervention(intervention);
+    vec.push_back(intervention);
 
     std::cout << "EIGEN top_n: " << top_n << "\n";
     std::cout << "EIGEN Base lt: " << lt_base_data << "\n";
@@ -450,7 +450,7 @@ void init_eigen_prep_manager(PrepInterventionManager& prep_manager, float age_th
     // return std::make_shared<EigenPUManager>(data, age_threshold, topn);
 }
 
-// std::shared_ptr<DegreePUManager> create_degree_prep_manager(float age_threshold) {
+// std::shared_ptr<DegreePUManager> create_degree_intervention(float age_threshold) {
 //     PrepUseData data;
 
 //     // used in PUBBase as k in prob calc
@@ -479,7 +479,7 @@ void init_eigen_prep_manager(PrepInterventionManager& prep_manager, float age_th
 //     return std::make_shared<DegreePUManager>(data, age_threshold, topn);
 // }
 
-void init_degree_prep_manager(PrepInterventionManager& prep_manager, float age_threshold, float max_age) {
+void init_degree_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
     PrepUptakeData lt_base_data, gte_base_data;
     lt_base_data.years_to_increment = 0;
     gte_base_data.years_to_increment = 0;
@@ -503,8 +503,8 @@ void init_degree_prep_manager(PrepInterventionManager& prep_manager, float age_t
     std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
 
     // add the base prep intervention
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
 
     PrepUptakeData lt_data, gte_data;
     lt_data.use = lt_base_data.use;
@@ -529,7 +529,7 @@ void init_degree_prep_manager(PrepInterventionManager& prep_manager, float age_t
 
     intervention->addNetIntervention(std::make_shared<NetStatPrepIntervention>(lt_data, lt, top_n));
     intervention->addNetIntervention(std::make_shared<NetStatPrepIntervention>(gte_data, gte, top_n));
-    prep_manager.addIntervention(intervention);
+    vec.push_back(intervention);
 
     std::cout << "DEGREE top_n: " << top_n << "\n";
     std::cout << "DEGREE Base lt: " << lt_base_data << "\n";
@@ -538,7 +538,60 @@ void init_degree_prep_manager(PrepInterventionManager& prep_manager, float age_t
     std::cout << "DEGREE Intrv gte: " << gte_data << "\n";
 }
 
-void init_default_prep_manager(PrepInterventionManager& prep_manager, float age_threshold, float max_age) {
+void init_random_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
+    PrepUptakeData lt_base_data, gte_base_data;
+    lt_base_data.years_to_increment = 0;
+    gte_base_data.years_to_increment = 0;
+    lt_base_data.increment = 0;
+    gte_base_data.increment = 0;
+    
+    // used in base prob calc
+    lt_base_data.use = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_USE_PROP_LT);
+    gte_base_data.use = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_USE_PROP_GTE);
+
+    // used in cessation generators
+    lt_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_DAILY_STOP_PROB_LT);
+    gte_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_DAILY_STOP_PROB_GTE);
+
+    // used to calculate base probabilities
+    lt_base_data.stop = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_DAILY_STOP_PROB_LT);
+    gte_base_data.stop = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_DAILY_STOP_PROB_GTE);
+
+    // these are immutable so we could reuse them, but they may not remain so in the future
+    std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
+    std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+
+    // add the base prep intervention
+    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+
+    PrepUptakeData lt_data, gte_data;
+    lt_data.use = lt_base_data.use;
+    gte_data.use = gte_base_data.use;
+
+    lt_data.stop = Parameters::instance()->getDoubleParameter(RANDOM_INTRV_PREP_DAILY_STOP_PROB_LT);
+    gte_data.stop = Parameters::instance()->getDoubleParameter(RANDOM_INTRV_PREP_DAILY_STOP_PROB_GTE);
+    lt_data.cessation_stop = Parameters::instance()->getDoubleParameter(RANDOM_INTRV_PREP_DAILY_STOP_PROB_LT);
+    gte_data.cessation_stop = Parameters::instance()->getDoubleParameter(RANDOM_INTRV_PREP_DAILY_STOP_PROB_GTE);
+
+    lt_data.increment = Parameters::instance()->getDoubleParameter(RANDOM_PREP_YEARLY_INCREMENT_LT);
+    gte_data.increment = Parameters::instance()->getDoubleParameter(RANDOM_PREP_YEARLY_INCREMENT_GTE);
+    lt_data.years_to_increment = Parameters::instance()->getDoubleParameter(RANDOM_PREP_YEARS_TO_INCREMENT);
+    gte_data.years_to_increment = Parameters::instance()->getDoubleParameter(RANDOM_PREP_YEARS_TO_INCREMENT);
+
+    // these are immutable so we could reuse them, but they may not remain so in the future
+    std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
+    std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt));
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte));
+
+    std::cout << "Random Intervention lt: " << lt_data << "\n";
+    std::cout << "Random Intervention gte: " << gte_data << "\n";
+    
+}
+
+void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
     // Add the base
     PrepUptakeData lt_base_data, gte_base_data;
     lt_base_data.years_to_increment = 0;
@@ -564,8 +617,8 @@ void init_default_prep_manager(PrepInterventionManager& prep_manager, float age_
     std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
     std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
 
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
-    prep_manager.addIntervention(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
 
     // Add the intervention
     PrepUptakeData lt_data, gte_data;
@@ -586,11 +639,11 @@ void init_default_prep_manager(PrepInterventionManager& prep_manager, float age_
     std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
     std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
 
-    prep_manager.addIntervention(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt));
-    prep_manager.addIntervention(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte));
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt));
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte));
 
-    std::cout << "Random Selection lt: " << lt_data << "\n";
-    std::cout << "Random Selection gte: " << gte_data << "\n";
+    std::cout << "Random Default Selection lt: " << lt_data << "\n";
+    std::cout << "Random Default Selection gte: " << gte_data << "\n";
     
     // PrepUseData data;
     // data.base_use_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
@@ -616,7 +669,7 @@ void init_default_prep_manager(PrepInterventionManager& prep_manager, float age_
     // return std::make_shared<IncrementingPrepUptakeManager>(data, age_threshold);
 }
 
-// std::shared_ptr<ProportionalPrepUptakeManager> create_yor_prep_manager(float age_threshold) {
+// std::shared_ptr<ProportionalPrepUptakeManager> create_yor_intervention(float age_threshold) {
 //     PrepUseData data;
 
 //     data.base_use_yor = Parameters::instance()->getDoubleParameter(YOR_PREP_USE_PROP);
@@ -642,16 +695,47 @@ void initialize_prep_interventions(PrepInterventionManager& prep_manager) {
     
     string prep_scheme = Parameters::instance()->getStringParameter(PREP_SCHEME);
 
+    std::vector<std::shared_ptr<IPrepIntervention>> interventions;
     if (prep_scheme == "default") {
-        init_default_prep_manager(prep_manager, age_threshold, max_age);
+        init_default_intervention(interventions, age_threshold, max_age);
     } else if (prep_scheme == "serodiscordant") {
-        init_sero_prep_manager(prep_manager, age_threshold, max_age);
+        init_sero_intervention(interventions, age_threshold, max_age);
     } else if (prep_scheme == "eigen") {
-        init_eigen_prep_manager(prep_manager, age_threshold, max_age);
+        init_eigen_intervention(interventions, age_threshold, max_age);
     } else if (prep_scheme == "degree") {
-        init_degree_prep_manager(prep_manager, age_threshold, max_age);
+        init_degree_intervention(interventions, age_threshold, max_age);
     } else {
         throw invalid_argument("Invalid PrEP Uptake scheme: '" + prep_scheme + "'");
+    }
+
+    for (auto& intervention : interventions) {
+        prep_manager.addIntervention(intervention);
+    }
+
+    double intervention_at  = Parameters::instance()->getDoubleParameter(PREP_INTERVENTION_AT);
+    if (intervention_at  > 0) {
+        interventions.clear();
+        string intervention_scheme = Parameters::instance()->getStringParameter(PREP_INTERVENTION_SCHEME);
+        if (intervention_scheme == "random") {
+            init_random_intervention(interventions, age_threshold, max_age);
+        } else if (intervention_scheme == "serodiscordant") {
+            init_sero_intervention(interventions, age_threshold, max_age);
+        } else if (intervention_scheme == "eigen") {
+            init_eigen_intervention(interventions, age_threshold, max_age);
+        } else if (intervention_scheme == "degree") {
+            init_degree_intervention(interventions, age_threshold, max_age);
+        } else {
+            throw invalid_argument("Invalid PrEP intervention scheme: '" + prep_scheme + "'");
+        }
+
+        std::cout << "Scheduling " << intervention_scheme << " intervention for day " << intervention_at << std::endl;
+        boost::shared_ptr<ScheduleIntervention> scheduled_intervention = 
+            boost::make_shared<ScheduleIntervention>(&prep_manager);
+        for (auto& intervention : interventions) {
+            scheduled_intervention->addIntervention(intervention);
+        }
+        RepastProcess::instance()->getScheduleRunner().scheduleEvent(intervention_at - 0.001, 
+            scheduled_intervention);
     }
 }
 
