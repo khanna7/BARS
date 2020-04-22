@@ -158,7 +158,7 @@
     art.init.lag.lt.4 <- "0.2287|90-180"
     art.init.lag.lt.5 <- "0.2453|180-365"
     art.init.lag.lt.6 <- "0.1456|365-730"
-    art.init.lag.lt.7 <- "0.0311|1825-1825"
+    art.init.lag.lt.7 <- "0.0311|730-1825"
 
     art.init.lag.gte.1 <- art.init.lag.lt.1 #ditto as ".lt" parameters above 
     art.init.lag.gte.2 <- art.init.lag.lt.2 
@@ -167,7 +167,7 @@
     art.init.lag.gte.5 <- art.init.lag.lt.5 
     art.init.lag.gte.6 <- art.init.lag.lt.6
     art.init.lag.gte.7 <- art.init.lag.lt.7
-    art.init.lag.gte.8 <- 0 
+    art.init.lag.gte.8 <- "0|1825-1825" 
 
 #####################
 ## 
