@@ -5,11 +5,7 @@
    ## NETWORK (steady)
      n <- 10000
 
-   ## empirical edegree information
-     ## 0 main partnerships = 56.6% of men
-     ## 1 main partnership = 41.2% of men
-     ## 2 main partnerships = 1.8 % of men
-     ## >=3 main partnerships = 0.3 % of men
+   ## empirical degree information
      deg_seq <- c(61.02, 34.65, 3.54)*n/100 
      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
