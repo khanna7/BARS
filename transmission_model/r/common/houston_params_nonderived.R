@@ -171,7 +171,7 @@
     art.init.lag.gte.8 <- "0.071125|1825-1825"
 
 #####################
-## PrEP
+## 
 
 ## PrEP Uptake Scheme ##
 
@@ -224,8 +224,8 @@ yor.prep.additional.gte <- 0.4 #COMMON
 
 ## Serodiscordant PrEP Uptake Parameters ###
 
-serodiscordant.base.prep.bl.use.prop.lt <- 12.7/100 #COMMON
-serodiscordant.base.prep.bl.use.prop.gte <- 14.7/100 #COMMON
+serodiscordant.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
+serodiscordant.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
 serodiscordant.base.prep.mean.days.usage.lt <- 365 #updated 23may2018 #COMMON
 serodiscordant.base.prep.mean.days.usage.gte <- 365 #COMMON
 
@@ -244,10 +244,10 @@ serodiscordant.intrv.prep.years.to.increment <- 5 #COMMON
 
 ## Eigen PrEP Uptake Parameters ###
 
-eigen.base.prep.bl.use.prop.lt <- 12.7/100 #All below are #COMMON
-eigen.base.prep.bl.use.prop.gte <- 14.7/100
+eigen.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
+eigen.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
 
-eigen.base.prep.mean.days.usage.lt <- 365
+eigen.base.prep.mean.days.usage.lt <- 365 #All below are #COMMON
 eigen.base.prep.mean.days.usage.gte <- 365
 
 eigen.intrv.prep.mean.days.usage.lt <- 365
@@ -264,10 +264,10 @@ eigen.intrv.prep.topn <- 0.10
 
 ## Degree PrEP Uptake Parameters ###
 
-degree.base.prep.bl.use.prop.lt <- 12.7/100 #All below are #COMMON
-degree.base.prep.bl.use.prop.gte <- 14.7/100
+degree.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt
+degree.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
 
-degree.base.prep.mean.days.usage.lt <- 365
+degree.base.prep.mean.days.usage.lt <- 365 #All below are #COMMON #All below are #COMMON
 degree.base.prep.mean.days.usage.gte <- 365
 
 degree.intrv.prep.mean.days.usage.lt <- 365
