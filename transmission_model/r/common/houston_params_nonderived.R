@@ -6,22 +6,22 @@
      n <- 10000
 
    ## empirical degree information
-     deg_seq <- c(61.02, 34.65, 3.54)*n/100 
-     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
+     deg_seq <- c(61.02, 34.65, 3.54)*n/100 #YMAP: https://uchicago.box.com/s/xsgpttj1ypx19si06d6zrqwfup0e27tw 
+     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n #derived from deg_seq above
 
      # Note: This data doesn't exist for Houston YMAP
      # using estimates from NHBS data
-     # Box Sync/BARS/Data-and-Summaries/Houston_Mean_Duration_of_Partnerships.xlsx
+     # Box Sync/BARS/Data-and-Summaries/Houston/Houston_Mean_Duration_of_Partnerships.xlsx: https://uchicago.box.com/s/jhigs6hunkjhn8vfpxiadtvm3k9xt2yz
      duration <- 970 
 
      ## role
-     pr_insertive_main <- 0.25
-     pr_receptive_main <- 0.24 
+     pr_insertive_main <- 0.25 #YMAP: https://uchicago.box.com/s/ynfyzxgpkz0ynhib1sa046dlzjyfkch8
+     pr_receptive_main <- 0.24 #ditto
 
      ## agemixing
      ## note: in chicago, the age diff was the mean of the diffs, not the sqrts
-     absdiff.sqrtage.main <- 0.312
-     absdiff.sqrtage.casual <- 0.344
+     absdiff.sqrtage.main <- 0.312 #YMAP: https://uchicago.box.com/s/ynfyzxgpkz0ynhib1sa046dlzjyfkch8
+     absdiff.sqrtage.casual <- 0.344 #ditto
 
    #####################
    ## TIMESTEP
@@ -29,7 +29,7 @@
 
    #####################
    ## DEMOGRAPHIC
-   min.age <- 18 #COMMON
+   min.age <- 18 #COMMON (by design)
    max.age <- 34 #COMMON
    daily.entry.rate <- 2 #range (1.8-2, as per arthi's data for n=10K, for constant population over 100yr burn-in)
    ## distribution of ages (between min and max)
@@ -180,7 +180,7 @@ default.prep.bl.use.prop.gte <- 20/100 #Based on NHBS-5 for Houston
 
 prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)/2 #only needed for time 0 #COMMON
 
-default.prep.mean.days.usage.lt <- 200 #Study from 3 US cities https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4908080/ 
+default.prep.mean.days.usage.lt <- 200 #Study from 3 US cities https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4908080/ and Arthi's derivation: https://uchicago.box.com/s/xsgpttj1ypx19si06d6zrqwfup0e27tw 
 default.prep.mean.days.usage.gte <- 200 #as above
 
 default.prep.yearly.increment.lt <- 0 #COMMON
@@ -285,7 +285,7 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 ######################
     ## Sexual Behavior
     # num.sex.acts.base <- 2.4
-    # Note: from Jing's word doc (on 2018-03-14)
+    # Note: from Jing's word doc (on 2018-03-14): https://uchicago.box.com/s/fy4vpbc1x5z0wor5ub2w1l95qy36f5pv
     # Using a weighting of 1/3, 1/7, 1/14, 1/30
     prop.steady.sex.acts <- 0.26 # of steady partnerships on a given day, in how many does a sex act (w or w/o condom) occur?
                                  #same as freq.of.sex parameter in data table
