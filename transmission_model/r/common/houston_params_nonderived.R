@@ -180,8 +180,8 @@ prep.uptake <- 'default'
 
 ## Default PrEP  parameters ###
 
-default.prep.bl.use.prop.lt <- 12.7/100 #COMMON
-default.prep.bl.use.prop.gte <- 14.7/100 #COMMON
+default.prep.bl.use.prop.lt <- 20/100 #Based on NHBS-5 for Houston
+default.prep.bl.use.prop.gte <- 20/100 #Based on NHBS-5 for Houston
 
 prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)/2 #only needed for time 0 #COMMON
 
