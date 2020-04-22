@@ -98,17 +98,16 @@
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month #COMMON
 
    ## ART adherence
-   partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained #COMMON
-   # Note: double checked with Nina
-   art.prop.never.adherent <- 0.2 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   art.prop.part.neg.adherent <- 0.021 + (0.5*0.095)
-   art.prop.part.plus.adherent <- 0.2 + (0.5*0.095)
-   art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent) #COMMON
+   partial.art_adher.window.length <- 1*30 #COMMON (by design) 
+   art.prop.never.adherent <- 3/100 #from YMAP https://uchicago.box.com/s/1ryu33tf3ydtt1fr7v4podyw7sm1bwo7 
+   art.prop.part.neg.adherent <- 12/100 #ditto 
+   art.prop.part.plus.adherent <- 25/100 #ditto
+   art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent) 
 
-   art.always.adherent.probability <- 0.95 #COMMON
-   art.never.adherent.probability <- 0.05 #COMMON
-   art.partial.pos.adherent.probability <- 0.66 #COMMON
-   art.partial.neg.adherent.probability <- 0.33 #COMMON
+   art.always.adherent.probability <- 0.95 #COMMON (by desgin)
+   art.never.adherent.probability <- 0.05 #ditto
+   art.partial.pos.adherent.probability <- 0.66 #ditto
+   art.partial.neg.adherent.probability <- 0.33 #ditto
 
    #####################
    ## Transmission Parameters
