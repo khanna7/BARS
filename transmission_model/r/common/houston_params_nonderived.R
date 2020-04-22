@@ -147,8 +147,8 @@
     detection.window <- 22 #COMMON
     mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY #COMMON
     #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop.lt <- 0.078 # Note: 17.9% not tested in the last two years but that's very high for never-testers. Does last two mean really never? Currently using CHI values
-    non.testers.prop.gte <- 0.023 #check houston data folder on BOX
+    non.testers.prop.lt <- 5.40/100 #NHBS-5 
+    non.testers.prop.gte <- 2.70/100 #NHBS-5
 
     # lag between diagnosis and ART init
     # format is probability, min range val - max range val
@@ -185,42 +185,21 @@ default.prep.bl.use.prop.gte <- 20/100 #Based on NHBS-5 for Houston
 
 prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)/2 #only needed for time 0 #COMMON
 
-default.prep.mean.days.usage.lt <- 365 #updated 23may2018 #COMMON
-default.prep.mean.days.usage.gte <- 365 #COMMON
+default.prep.mean.days.usage.lt <- 200 #Study from 3 US cities https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4908080/ 
+default.prep.mean.days.usage.gte <- 200 #as above
 
 default.prep.yearly.increment.lt <- 0 #COMMON
 default.prep.yearly.increment.gte <- 0 #COMMON
 default.prep.years.to.increment <- 0 #COMMON
 
-default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the #COMMON
-default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention #COMMON
+default.prep.unbalanced.starting.prob.lt <- 1/default.prep.unbalanced.starting.prob.lt  #these params are in the nonderived file so we can decouple them from the #stopping probabilities for the retention intervention 
+default.prep.unbalanced.starting.prob.gte <- 1/default.prep.unbalanced.starting.prob.gte 
 
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
 default.prep.balanced.unbalanced <- 'balanced' #COMMON
 
 ## End Default Parameters ##
-
-## Young Old Ratio PrEP Uptake Parameters ##
-
-yor.prep.bl.use.prop <- 13.7/100 #COMMON
-yor.prep.mean.days.usage <- 365 #COMMON
-
-# probability of picking a young (y) vs old (o) person by a factor of alpha
-yor.prep.alpha <- 0.3 #COMMON
-
-yor.prep.yearly.increment <- 0.2 #COMMON
-yor.prep.years.to.increment <- 5 #COMMON
-
-# prep.addtional.* specifies how many more lt, gte persons to put on prep
-# the value is the fractional increment over the base rate. For example,
-# an lt value of 0.5 will add an additional amount of person on prep equal to
-# 0.5 the amount the base added.
-yor.prep.additional.lt <- 0.5 #COMMON
-yor.prep.additional.gte <- 0.4 #COMMON
-
-## End Young Old Ratio Parameters ##
-
 
 ## Serodiscordant PrEP Uptake Parameters ###
 
