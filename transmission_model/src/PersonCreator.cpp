@@ -91,6 +91,10 @@ void PersonCreator::initInfectedPerson(PersonPtr person, Rcpp::List& val, double
     person->infection_parameters_.art_status = as<bool>(val["art.status"]);
     person->infection_parameters_.viral_load = as<float>(val["viral.load.today"]);
 
+    if (val.containsElementNamed("infectivity")) {
+        person->infectivity_ = as<float>(val["infectivity"]);
+    }
+
     if (person->infection_parameters_.art_status) {
         // onART at end of burnin -- need to finish up and schedule check
         person->infection_parameters_.time_since_art_init = as<float>(val["time.since.art.initiation"]);

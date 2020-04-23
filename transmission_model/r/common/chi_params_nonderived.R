@@ -10,7 +10,10 @@
      ## 1 main partnership = 41.2% of men
      ## 2 main partnerships = 1.8 % of men
      ## >=3 main partnerships = 0.3 % of men
-     deg_seq <- c(63.71, 34.03, 1.89)*n/100
+     #deg_seq <- c(63.71, 34.03, 1.89)*n/100
+
+     deg_seq <- c(56.60, 41.20, 1.80)*n/100
+
      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
      duration <- 512
@@ -206,8 +209,8 @@ default.prep.mean.days.usage.gte <- 365
 
 default.prep.yearly.increment.lt <- 0
 default.prep.yearly.increment.gte <- 0
-#default.prep.years.to.increment <- 0
-default.prep.years.to.increment <- 14
+default.prep.years.to.increment <- 0
+#default.prep.years.to.increment <- 14
 
 default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the 
 default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention
@@ -243,7 +246,8 @@ yor.prep.additional.gte <- 0.4
 
 serodiscordant.base.prep.bl.use.prop.lt <- 12.7/100
 serodiscordant.base.prep.bl.use.prop.gte <- 14.7/100
-serodiscordant.base.prep.mean.days.usage.lt <- 365 #updated 23may2018
+#updated 23may2018:
+serodiscordant.base.prep.mean.days.usage.lt <- 365 
 serodiscordant.base.prep.mean.days.usage.gte <- 365
 
 serodiscordant.intrv.prep.mean.days.usage.lt <- 365
@@ -479,8 +483,10 @@ jail.infection.rate.window.size <- 90
 jail.infection.rate.multiplier <- 0.5
 jail.infection.rate.default <- 0.000091 
 
-jail.serving.time.mean <- 58
+#jail.serving.time.mean <- 58
+jail.serving.time.mean <- 58.4
 post.release.interference.period.mean <- 90
-network.retention.multiplier <- 1
+#network.retention.multiplier <- 1
+network.retention.multiplier <- 0.75
 
 
