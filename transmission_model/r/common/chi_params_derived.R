@@ -49,9 +49,6 @@
    default.prep.daily.stop.prob <- mean(c(default.prep.daily.stop.prob.lt, default.prep.daily.stop.prob.gte))
    prep.dailty.stop.prob <- default.prep.daily.stop.prob.lt #needed only for time 0
  
-   ### Young Old Ratio PrEP intervention parameters ###
-   
-   yor.prep.daily.stop.prob <- 1 / yor.prep.mean.days.usage
    
    ### Serodiscordant intervention parameters ###
    
