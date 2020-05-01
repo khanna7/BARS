@@ -149,7 +149,7 @@
     # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    art.init.lag.lt.1 <- "0.0378|0-7" #NHBS-5 data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
+    art.init.lag.lt.1 <- "0.038|0-7" #NHBS-5 data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
     art.init.lag.lt.2 <- "0.1003|7-30" #Assumed geometric distribution, and computed number of samples in each bin: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
     art.init.lag.lt.3 <- "0.211|30-90"
     art.init.lag.lt.4 <- "0.2287|90-180"
@@ -157,7 +157,7 @@
     art.init.lag.lt.6 <- "0.1456|365-730"
     art.init.lag.lt.7 <- "0.0311|730-1825"
 
-    art.init.lag.gte.1 <- "0.0378|0-7" 
+    art.init.lag.gte.1 <- "0.038|0-7" 
     art.init.lag.gte.2 <- "0.1003|7-30"   
     art.init.lag.gte.3 <- "0.211|30-90"
     art.init.lag.gte.4 <- "0.2287|90-180"
