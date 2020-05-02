@@ -3,29 +3,26 @@
 
    #####################
    ## NETWORK (steady)
+
      n <- 10000
 
-   ## empirical edegree information
-     ## 0 main partnerships = 56.6% of men
-     ## 1 main partnership = 41.2% of men
-     ## 2 main partnerships = 1.8 % of men
-     ## >=3 main partnerships = 0.3 % of men
-     deg_seq <- c(61.02, 34.65, 3.54)*n/100 
-     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
+   ## empirical degree information
+     deg_seq <- c(61.02, 34.65, 3.54)*n/100 #YMAP: https://uchicago.box.com/s/xsgpttj1ypx19si06d6zrqwfup0e27tw 
+     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n #derived from deg_seq above
 
      # Note: This data doesn't exist for Houston YMAP
      # using estimates from NHBS data
-     # Box Sync/BARS/Data-and-Summaries/Houston_Mean_Duration_of_Partnerships.xlsx
+     # Box Sync/BARS/Data-and-Summaries/Houston/Houston_Mean_Duration_of_Partnerships.xlsx: https://uchicago.box.com/s/jhigs6hunkjhn8vfpxiadtvm3k9xt2yz (i cant find this summary though)
      duration <- 970 
 
      ## role
-     pr_insertive_main <- 0.25
-     pr_receptive_main <- 0.24 
+     pr_insertive_main <- 0.25 #YMAP: https://uchicago.box.com/s/ynfyzxgpkz0ynhib1sa046dlzjyfkch8
+     pr_receptive_main <- 0.24 #ditto
 
      ## agemixing
      ## note: in chicago, the age diff was the mean of the diffs, not the sqrts
-     absdiff.sqrtage.main <- 0.312
-     absdiff.sqrtage.casual <- 0.344
+     absdiff.sqrtage.main <- 0.312 #YMAP: https://uchicago.box.com/s/ynfyzxgpkz0ynhib1sa046dlzjyfkch8
+     absdiff.sqrtage.casual <- 0.344 #ditto
 
    #####################
    ## TIMESTEP
@@ -33,7 +30,7 @@
 
    #####################
    ## DEMOGRAPHIC
-   min.age <- 18 #COMMON
+   min.age <- 18 #COMMON (by design)
    max.age <- 34 #COMMON
    daily.entry.rate <- 2 #range (1.8-2, as per arthi's data for n=10K, for constant population over 100yr burn-in)
    ## distribution of ages (between min and max)
@@ -98,17 +95,16 @@
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month #COMMON
 
    ## ART adherence
-   partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained #COMMON
-   # Note: double checked with Nina
-   art.prop.never.adherent <- 0.2 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   art.prop.part.neg.adherent <- 0.021 + (0.5*0.095)
-   art.prop.part.plus.adherent <- 0.2 + (0.5*0.095)
-   art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent) #COMMON
+   partial.art_adher.window.length <- 1*30 #COMMON (by design) 
+   art.prop.never.adherent <- 3/100 #from YMAP https://uchicago.box.com/s/1ryu33tf3ydtt1fr7v4podyw7sm1bwo7 
+   art.prop.part.neg.adherent <- 12/100 #ditto 
+   art.prop.part.plus.adherent <- 25/100 #ditto
+   art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent) 
 
-   art.always.adherent.probability <- 0.95 #COMMON
-   art.never.adherent.probability <- 0.05 #COMMON
-   art.partial.pos.adherent.probability <- 0.66 #COMMON
-   art.partial.neg.adherent.probability <- 0.33 #COMMON
+   art.always.adherent.probability <- 0.95 #COMMON (by desgin)
+   art.never.adherent.probability <- 0.05 #ditto
+   art.partial.pos.adherent.probability <- 0.66 #ditto
+   art.partial.neg.adherent.probability <- 0.33 #ditto
 
    #####################
    ## Transmission Parameters
@@ -147,31 +143,31 @@
     detection.window <- 22 #COMMON
     mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY #COMMON
     #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop.lt <- 0.078 # Note: 17.9% not tested in the last two years but that's very high for never-testers. Does last two mean really never? Currently using CHI values
-    non.testers.prop.gte <- 0.023 #check houston data folder on BOX
+    non.testers.prop.lt <- 5.40/100 #NHBS-5 
+    non.testers.prop.gte <- 2.70/100 #NHBS-5
 
     # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    art.init.lag.lt.1 <- "0.1692857143|0-7" #ALL BELOW ARE COMMON - WE DIDN'T HAVE THIS INFO FOR HOUSTON
-    art.init.lag.lt.2 <- "0.314285714|7-30"
-    art.init.lag.lt.3 <- "0.191285714|30-90"
-    art.init.lag.lt.4 <- "0.067285714|90-180"
-    art.init.lag.lt.5 <- "0.123285714|180-365"
-    art.init.lag.lt.6 <- "0.089285714|365-730"
-    art.init.lag.lt.7 <- "0.045285714|1825-1825"
+    art.init.lag.lt.1 <- "0.038|0-7" #NHBS-5 data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
+    art.init.lag.lt.2 <- "0.1003|7-30" #Assumed geometric distribution, and computed number of samples in each bin: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
+    art.init.lag.lt.3 <- "0.211|30-90"
+    art.init.lag.lt.4 <- "0.2287|90-180"
+    art.init.lag.lt.5 <- "0.2453|180-365"
+    art.init.lag.lt.6 <- "0.1456|365-730"
+    art.init.lag.lt.7 <- "0.0311|730-1825"
 
-    art.init.lag.gte.1 <- "0.167125|0-7"
-    art.init.lag.gte.2 <- "0.2621250|7-30"
-    art.init.lag.gte.3 <- "0.095125|30-90"
-    art.init.lag.gte.4 <- "0.143125|90-180"
-    art.init.lag.gte.5 <- "0.143125|180-365"
-    art.init.lag.gte.6 <- "0.071125|365-730"
-    art.init.lag.gte.7 <- "0.047125|730-1825"
-    art.init.lag.gte.8 <- "0.071125|1825-1825"
+    art.init.lag.gte.1 <- "0.038|0-7" 
+    art.init.lag.gte.2 <- "0.1003|7-30"   
+    art.init.lag.gte.3 <- "0.211|30-90"
+    art.init.lag.gte.4 <- "0.2287|90-180"
+    art.init.lag.gte.5 <- "0.2453|180-365"
+    art.init.lag.gte.6 <- "0.1456|365-730"
+    art.init.lag.gte.7 <- "0.0311|730-1825"
+    art.init.lag.gte.8 <- "0.000|1825-1825"
 
 #####################
-## PrEP
+## 
 
 ## PrEP Uptake Scheme ##
 
@@ -180,20 +176,20 @@ prep.uptake <- 'default'
 
 ## Default PrEP  parameters ###
 
-default.prep.bl.use.prop.lt <- 12.7/100 #COMMON
-default.prep.bl.use.prop.gte <- 14.7/100 #COMMON
+default.prep.bl.use.prop.lt <- 20/100 #Based on NHBS-5 for Houston
+default.prep.bl.use.prop.gte <- 20/100 #Based on NHBS-5 for Houston
 
 prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)/2 #only needed for time 0 #COMMON
 
-default.prep.mean.days.usage.lt <- 365 #updated 23may2018 #COMMON
-default.prep.mean.days.usage.gte <- 365 #COMMON
+default.prep.mean.days.usage.lt <- 200 #Study from 3 US cities https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4908080/ and Arthi's derivation: https://uchicago.box.com/s/xsgpttj1ypx19si06d6zrqwfup0e27tw 
+default.prep.mean.days.usage.gte <- 200 #as above
 
 default.prep.yearly.increment.lt <- 0 #COMMON
 default.prep.yearly.increment.gte <- 0 #COMMON
 default.prep.years.to.increment <- 0 #COMMON
 
-default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the #COMMON
-default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention #COMMON
+default.prep.unbalanced.starting.prob.lt <- 1/200  #these params are in the nonderived file so we can decouple them from the #stopping probabilities for the retention intervention 
+default.prep.unbalanced.starting.prob.gte <- 1/200 
 
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" update and cessation
@@ -201,36 +197,16 @@ default.prep.balanced.unbalanced <- 'balanced' #COMMON
 
 ## End Default Parameters ##
 
-## Young Old Ratio PrEP Uptake Parameters ##
-
-yor.prep.bl.use.prop <- 13.7/100 #COMMON
-yor.prep.mean.days.usage <- 365 #COMMON
-
-# probability of picking a young (y) vs old (o) person by a factor of alpha
-yor.prep.alpha <- 0.3 #COMMON
-
-yor.prep.yearly.increment <- 0.2 #COMMON
-yor.prep.years.to.increment <- 5 #COMMON
-
-# prep.addtional.* specifies how many more lt, gte persons to put on prep
-# the value is the fractional increment over the base rate. For example,
-# an lt value of 0.5 will add an additional amount of person on prep equal to
-# 0.5 the amount the base added.
-yor.prep.additional.lt <- 0.5 #COMMON
-yor.prep.additional.gte <- 0.4 #COMMON
-
-## End Young Old Ratio Parameters ##
-
-
 ## Serodiscordant PrEP Uptake Parameters ###
 
-serodiscordant.base.prep.bl.use.prop.lt <- 12.7/100 #COMMON
-serodiscordant.base.prep.bl.use.prop.gte <- 14.7/100 #COMMON
-serodiscordant.base.prep.mean.days.usage.lt <- 365 #updated 23may2018 #COMMON
-serodiscordant.base.prep.mean.days.usage.gte <- 365 #COMMON
+serodiscordant.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
+serodiscordant.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
 
-serodiscordant.intrv.prep.mean.days.usage.lt <- 365 #COMMON
-serodiscordant.intrv.prep.mean.days.usage.gte <- 365 #COMMON
+serodiscordant.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
+serodiscordant.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte 
+
+serodiscordant.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+serodiscordant.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
 # one of main, casual, or all
 serodiscordant.intrv.prep.network.type <- 'main' #COMMON
@@ -244,14 +220,14 @@ serodiscordant.intrv.prep.years.to.increment <- 5 #COMMON
 
 ## Eigen PrEP Uptake Parameters ###
 
-eigen.base.prep.bl.use.prop.lt <- 12.7/100 #All below are #COMMON
-eigen.base.prep.bl.use.prop.gte <- 14.7/100
+eigen.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
+eigen.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
 
-eigen.base.prep.mean.days.usage.lt <- 365
-eigen.base.prep.mean.days.usage.gte <- 365
+eigen.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+eigen.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
-eigen.intrv.prep.mean.days.usage.lt <- 365
-eigen.intrv.prep.mean.days.usage.gte <- 365
+eigen.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+eigen.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
 eigen.intrv.prep.yearly.increment.lt <- 0.04
 eigen.intrv.prep.yearly.increment.gte <- 0.04
@@ -264,14 +240,14 @@ eigen.intrv.prep.topn <- 0.10
 
 ## Degree PrEP Uptake Parameters ###
 
-degree.base.prep.bl.use.prop.lt <- 12.7/100 #All below are #COMMON
-degree.base.prep.bl.use.prop.gte <- 14.7/100
+degree.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt
+degree.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
 
-degree.base.prep.mean.days.usage.lt <- 365
-degree.base.prep.mean.days.usage.gte <- 365
+degree.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+degree.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
-degree.intrv.prep.mean.days.usage.lt <- 365
-degree.intrv.prep.mean.days.usage.gte <- 365
+degree.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
+degree.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
 degree.intrv.prep.yearly.increment.lt <- 0.04
 degree.intrv.prep.yearly.increment.gte <- 0.04
@@ -310,7 +286,7 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 ######################
     ## Sexual Behavior
     # num.sex.acts.base <- 2.4
-    # Note: from Jing's word doc (on 2018-03-14)
+    # Note: from Jing's word doc (on 2018-03-14): https://uchicago.box.com/s/fy4vpbc1x5z0wor5ub2w1l95qy36f5pv
     # Using a weighting of 1/3, 1/7, 1/14, 1/30
     prop.steady.sex.acts <- 0.26 # of steady partnerships on a given day, in how many does a sex act (w or w/o condom) occur?
                                  #same as freq.of.sex parameter in data table
@@ -447,7 +423,35 @@ testing.prob.gte.7 = "13-16|0.02857143"
 testing.prob.gte.8 = "17-20|0"
 testing.prob.gte.9 = "21-30|0"
 
-################################
-##Incarceration/ Jail related:
-incarceration.prob.for.entries <- 0.009 # probability that an entering person will be incarcerated
+#============================================
+# jail
+is.network.disruption.on <- FALSE
+is.care.disruption.on <- FALSE
 
+incarceration.prob <- 0.0
+incarceration.with.cji.prob <- 0.0
+
+jail.infection.rate.window.size <- 90
+jail.infection.rate.multiplier <- 0.5
+jail.infection.rate.default <- 0.000091 
+
+jail.serving.time.mean <- 58.4
+post.release.interference.period.mean <- 90
+network.retention.multiplier <- 1
+
+#---------------------------------
+
+#prep.intervention.at <- 365
+prep.intervention.at <- 0
+prep.intervention <- 'random'
+
+## Random Selection Intervention 
+random.base.prep.bl.use.prop.lt <- 12.7/100
+random.base.prep.bl.use.prop.gte <- 14.7/100
+random.base.prep.mean.days.usage.lt <- 365
+random.base.prep.mean.days.usage.gte <- 365
+random.intrv.prep.mean.days.usage.lt <- 365
+random.intrv.prep.mean.days.usage.gte <- 365
+random.intrv.prep.yearly.increment.lt <- 0
+random.intrv.prep.yearly.increment.gte <- 0
+random.intrv.prep.years.to.increment <- 0
