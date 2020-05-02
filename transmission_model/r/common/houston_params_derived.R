@@ -42,10 +42,6 @@
    default.prep.daily.stop.prob <- mean(c(default.prep.daily.stop.prob.lt, default.prep.daily.stop.prob.gte))
    prep.daily.stop.prob <- default.prep.daily.stop.prob.lt #needed only for time 0
  
-   ### Young Old Ratio PrEP intervention parameters ###
-   
-   yor.prep.daily.stop.prob <- 1 / yor.prep.mean.days.usage
-   
    ### Serodiscordant intervention parameters ###
    
    serodiscordant.base.prep.daily.stop.prob.lt <- 1 / serodiscordant.base.prep.mean.days.usage.lt
@@ -68,6 +64,9 @@
    
   degree.intrv.prep.daily.stop.prob.lt <- 1 / degree.intrv.prep.mean.days.usage.lt
   degree.intrv.prep.daily.stop.prob.gte <- 1 / degree.intrv.prep.mean.days.usage.gte
+
+
+
 
    #####################
    ## Transmission Parameters
@@ -98,3 +97,11 @@
     
 #####################
     ## Socioeconomic status
+    
+  #======================================  
+  ### Random intervention parameters ###
+  random.base.prep.daily.stop.prob.lt <- 1 / random.base.prep.mean.days.usage.lt
+  random.base.prep.daily.stop.prob.gte <- 1 / random.base.prep.mean.days.usage.gte
+   
+  random.intrv.prep.daily.stop.prob.lt <- 1 / random.intrv.prep.mean.days.usage.lt
+  random.intrv.prep.daily.stop.prob.gte <- 1 / random.intrv.prep.mean.days.usage.gte
