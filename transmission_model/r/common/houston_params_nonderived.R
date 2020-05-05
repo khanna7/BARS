@@ -442,16 +442,16 @@ network.retention.multiplier <- 1
 #---------------------------------
 
 #prep.intervention.at <- 365
-prep.intervention.at <- 0
-prep.intervention <- 'random'
+prep.intervention.at <- 0 #needs to be set depending on whether it is burnin or intervention
+prep.intervention <- 'random' #call other interventions (e.g. eigenvector/degree/sdc in the upf if/when needed)
 
 ## Random Selection Intervention 
-random.base.prep.bl.use.prop.lt <- 12.7/100
-random.base.prep.bl.use.prop.gte <- 14.7/100
-random.base.prep.mean.days.usage.lt <- 365
-random.base.prep.mean.days.usage.gte <- 365
-random.intrv.prep.mean.days.usage.lt <- 365
-random.intrv.prep.mean.days.usage.gte <- 365
-random.intrv.prep.yearly.increment.lt <- 0
-random.intrv.prep.yearly.increment.gte <- 0
-random.intrv.prep.years.to.increment <- 0
+random.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
+random.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
+random.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
+random.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
+random.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
+random.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
+random.intrv.prep.yearly.increment.lt <- 0 #set in upf when submitting the intervention job
+random.intrv.prep.yearly.increment.gte <- 0 #ditto
+random.intrv.prep.years.to.increment <- 0 #ditto
