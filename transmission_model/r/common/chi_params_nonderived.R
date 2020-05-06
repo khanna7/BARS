@@ -502,4 +502,14 @@ jail.serving.time.mean <- 58
 post.release.interference.period.mean <- 90
 network.retention.multiplier <- 1
 
+# format is "at_timestep|new_val"
+# jail.infection.rate.multiplier.update <- "10.0|20.0"
+# incarceration.prob.update <- "10.0|0.5"
+# incarceration.with.cji.prob.update <- "10|0.2"
+# jail.serving.time.mean.update <- "10|20"
+# network.retention.multiplier.update <- "100|0.434"
+# post.release.interference.period.mean.update <- "100|32"
+# is.network.disruption.on.update <- "30|TRUE"
+# is.care.disruption.on.update <- "30|TRUE"
+
 

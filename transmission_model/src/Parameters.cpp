@@ -301,6 +301,15 @@ const std::string JAIL_INFECTION_RATE_DEFAULT = "jail.infection.rate.default";
 
 const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN = "post.release.interference.period.mean";
 
+const std::string JAIL_INFECTION_RATE_MULTIPLIER_UPDATE = "jail.infection.rate.multiplier.update";
+const std::string INCARCERATION_PROB_UPDATE = "incarceration.prob.update";
+const std::string INCARCERATION_WITH_CJI_PROB_UPDATE = "incarceration.with.cji.prob.update";
+const std::string JAIL_SERVING_TIME_MEAN_UPDATE = "jail.serving.time.mean.update";
+const std::string NETWORK_RETENTION_MULTIPLIER_UPDATE = "network.retention.multiplier.update";
+const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN_UPDATE = "post.release.interference.period.mean.update";
+const std::string IS_NETWORK_DISRUPTION_ON_UPDATE = "is.network.disruption.on.update";
+const std::string IS_CARE_DISRUPTION_ON_UPDATE = "is.care.disruption.on.update";
+
 Parameters* Parameters::instance_ = 0;
 
 std::ostream& operator<< (std::ostream& os, const Parameters* params) {

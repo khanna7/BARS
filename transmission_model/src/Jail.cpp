@@ -100,6 +100,10 @@ void Jail::addPerson(PersonPtr person, double jail_duration, double tick) {
         total_jailed_with_hist_++;
 }
 
+void Jail::updateInfRateMult(double mult) {
+    jail_inf_calc.updateMultiplier(mult);
+}
+
 /**
 * Add a person to the jail (list) 
 */ 

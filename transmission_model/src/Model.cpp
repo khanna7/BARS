@@ -43,6 +43,7 @@
 #include "Serializer.h"
 
 #include "CSVWriter.h"
+#include "JailIntervention.h"
 
 //#include "EventWriter.h"
 
@@ -909,6 +910,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     stats->resetForNextTimeStep();
 
     init_generators();
+    
 
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
     runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
@@ -917,6 +919,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     runner.scheduleEvent(364.9, 365, Schedule::FunctorPtr(new MethodFunctor<PrepInterventionManager>(&prep_manager, &PrepInterventionManager::onYearEnded)));
 
     initPrepCessation();
+    schedule_jail_interventions(runner, this, &jail);
     //write_edges(net, "./edges_at_1.csv");
 }
 

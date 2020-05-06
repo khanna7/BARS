@@ -69,6 +69,8 @@ public:
     void scheduleEndArtForcedOff(PersonPtr person, double at);
     void scheduleEndPrepForcedOff(PersonPtr person, double at);
 
+    void updateInfRateMult(double mult);
+
 
     /**
      * Adds all the inmates back to the network. Typically so 
@@ -157,6 +159,8 @@ public:
      * specified person has ended.
      */
     void artOverrideEnded(PersonPtr person);
+
+
 
 };
 

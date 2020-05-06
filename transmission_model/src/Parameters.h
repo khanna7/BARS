@@ -289,6 +289,15 @@ extern const std::string JAIL_INFECTION_RATE_DEFAULT;
 
 extern const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN;
 
+extern const std::string JAIL_INFECTION_RATE_MULTIPLIER_UPDATE;
+extern const std::string INCARCERATION_PROB_UPDATE;
+extern const std::string INCARCERATION_WITH_CJI_PROB_UPDATE;
+extern const std::string JAIL_SERVING_TIME_MEAN_UPDATE;
+extern const std::string NETWORK_RETENTION_MULTIPLIER_UPDATE;
+extern const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN_UPDATE;
+extern const std::string IS_NETWORK_DISRUPTION_ON_UPDATE;
+extern const std::string IS_CARE_DISRUPTION_ON_UPDATE;
+
 
 /**
  * Parameters singleton that contains the model properties.

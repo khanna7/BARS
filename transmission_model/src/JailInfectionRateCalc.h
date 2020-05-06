@@ -22,6 +22,10 @@ public:
     void addInfectionRate(unsigned int infected, unsigned int uninfected);
     void addInfectionRate(double rate);
     double calculateRate();
+
+    void updateMultiplier(double val) {
+        multiplier_ = val;
+    }
 };
 
 }

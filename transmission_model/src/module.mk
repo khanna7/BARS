@@ -45,7 +45,8 @@ CPP_SOURCE = Person.cpp \
     CSVReader.cpp \
     JailInfectionRateCalc.cpp \
     Serializer.cpp \
-    PersonToVAL.cpp
+    PersonToVAL.cpp \
+    JailIntervention.cpp
     
 
 c_source += $(C_SOURCE)
