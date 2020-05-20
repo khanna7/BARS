@@ -1,5 +1,7 @@
-## non-derived chicago parameters
-## initial values of parameters
+################################
+# NON-DERIVED LA PARAMETERS
+# INITIAL VALUES OF PARAMETERS
+###############################
 
    #####################
    ## NETWORK (steady)
@@ -7,20 +9,22 @@
      n <- 8000 # see https://uchicago.box.com/s/0fvs36er4tn7om8ftmlgz6lgtts1cw61
 
 
-   ## empirical degree information: 
-      ## see file "Copy of NHBS_PARAMS_request 032619.xlsx" in "Box Sync/BARS/Data-and-Summaries/LA_Data/"
-     
+   # empirical degree information: 
+      # see file "Copy of NHBS_PARAMS_request 032619.xlsx" in "Box Sync/BARS/Data-and-Summaries/LA_Data/"
+
+   # main network  
      # degree distribution
      main.deg0 <- 64 #these are numbers of partners reported in the last 3 months. we are treating these as xscn counts
      main.deg1 <- 39
      main.deg2 <- 4
      main.deg3 <- 0
      tot.main.deg <- sum(c(main.deg0, main.deg1, main.deg2, main.deg3))
-     deg_seq <- (c(main.deg0, main.deg1, main.deg2, main.deg3)/tot.main.deg)*n 
-     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n #derived from deg_seq above
+
+     main_deg_seq <- (c(main.deg0, main.deg1, main.deg2, main.deg3)/tot.main.deg)*n 
+     main_mean_deg <- ((0*main_deg_seq[1])+(1*main_deg_seq[2])+(2*main_deg_seq[3]))/n #derived from main_deg_seq above
 
      # partnership duration
-     duration <- 840 
+     dur_main <- 840 
 
      # sexual role
      pr_insertive_main <- 0.237 
@@ -30,6 +34,30 @@
      ## LA data are given in matrix form
      ## Aditya will check with Nick on whether we can change a term 
      ## in the formation ERGM without modifications on the C++ code.
+     
+     # frequency of sex
+     prop.steady.sex.acts <- 0.26 # of steady partnerships on a given day, in how many does a sex act (w or w/o condom) occur?
+                                 #same as freq.of.sex parameter in data table
+   # casual network 
+     
+     # partnership duration
+     dur_cas <- 135
+
+     # degree distribution
+     cas.deg0 <- 55 
+     cas.deg1 <- 38
+     cas.deg2 <- 2
+     cas.deg3 <- 2
+ 
+     cas_deg_seq <- (c(cas.deg0, cas.deg1, cas.deg2, cas.deg3)/tot.cas.deg)*n 
+     cas_mean_deg <- ((0*cas_deg_seq[1])+(1*cas_deg_seq[2])+(2*cas_deg_seq[3]))/n #derived from cas_deg_seq above
+
+     # role
+     pr_insertive_casual <- 21.64/100
+     pr_receptive_casual <- 32.09/100
+
+     # frequency of sex 
+     prop.casual.sex.acts <- 0.36 
 
    # TIMESTEP
    size.of.timestep <- 1 #currently set as 1 day #COMMON
@@ -125,22 +153,9 @@
    ## insertive partner transmission rel. to receptive partner
       inf.part.insertive.mult <- 2 #COMMON
 
-   #####################
+
    ## Casual (non-main)
       ## duration
-      # Note: computed from NHBS data
-      dur_cas <- 388
-      ## degree 
-      cas_deg_seq <- c(59, 25.68, 10.36)*n/100
-
-      ## nedges
-
-      ## role
-      pr_insertive_casual <- 21.64/100
-      pr_receptive_casual <- 32.09/100
-
-      ## serosorting
-
     #####################
     ## Testing, diagnosis and linkage-to-care
     detection.window <- 22 #COMMON
@@ -291,9 +306,6 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
     # num.sex.acts.base <- 2.4
     # Note: from Jing's word doc (on 2018-03-14): https://uchicago.box.com/s/fy4vpbc1x5z0wor5ub2w1l95qy36f5pv
     # Using a weighting of 1/3, 1/7, 1/14, 1/30
-    prop.steady.sex.acts <- 0.26 # of steady partnerships on a given day, in how many does a sex act (w or w/o condom) occur?
-                                 #same as freq.of.sex parameter in data table
-    prop.casual.sex.acts <- 0.23 #same as above, but for casual
     inf.red.w.condom <- 0.80
 
 # sd -- sero-discordant
