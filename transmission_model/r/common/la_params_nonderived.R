@@ -4,38 +4,41 @@
    #####################
    ## NETWORK (steady)
 
-     n <- 10000
+     n <- 8000 # see https://uchicago.box.com/s/0fvs36er4tn7om8ftmlgz6lgtts1cw61
 
-   ## empirical degree information
-     deg_seq <- c(61.02, 34.65, 3.54)*n/100 #YMAP: https://uchicago.box.com/s/xsgpttj1ypx19si06d6zrqwfup0e27tw 
+
+   ## empirical degree information: 
+      ## see file "Copy of NHBS_PARAMS_request 032619.xlsx" in "Box Sync/BARS/Data-and-Summaries/LA_Data/"
+     
+     # degree distribution
+     main.deg0 <- 64 #these are numbers of partners reported in the last 3 months. we are treating these as xscn counts
+     main.deg1 <- 39
+     main.deg2 <- 4
+     main.deg3 <- 0
+     tot.main.deg <- sum(c(main.deg0, main.deg1, main.deg2, main.deg3))
+     deg_seq <- (c(main.deg0, main.deg1, main.deg2, main.deg3)/tot.main.deg)*n 
      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n #derived from deg_seq above
 
-     # Note: This data doesn't exist for Houston YMAP
-     # using estimates from NHBS data
-     # Box Sync/BARS/Data-and-Summaries/Houston/Houston_Mean_Duration_of_Partnerships.xlsx: https://uchicago.box.com/s/jhigs6hunkjhn8vfpxiadtvm3k9xt2yz (i cant find this summary though)
-     duration <- 970 
+     # partnership duration
+     duration <- 840 
 
-     ## role
-     pr_insertive_main <- 0.25 #YMAP: https://uchicago.box.com/s/ynfyzxgpkz0ynhib1sa046dlzjyfkch8
-     pr_receptive_main <- 0.24 #ditto
+     # sexual role
+     pr_insertive_main <- 0.237 
+     pr_receptive_main <- 0.368 
 
-     ## agemixing
-     ## note: in chicago, the age diff was the mean of the diffs, not the sqrts
-     absdiff.sqrtage.main <- 0.312 #YMAP: https://uchicago.box.com/s/ynfyzxgpkz0ynhib1sa046dlzjyfkch8
-     absdiff.sqrtage.casual <- 0.344 #ditto
+     # agemixing
+     ## LA data are given in matrix form
+     ## Aditya will check with Nick on whether we can change a term 
+     ## in the formation ERGM without modifications on the C++ code.
 
-   #####################
-   ## TIMESTEP
+   # TIMESTEP
    size.of.timestep <- 1 #currently set as 1 day #COMMON
 
    #####################
    ## DEMOGRAPHIC
    min.age <- 18 #COMMON (by design)
    max.age <- 34 #COMMON
-   daily.entry.rate <- 2 #range (1.8-2, as per arthi's data for n=10K, for constant population over 100yr burn-in)
-   ## distribution of ages (between min and max)
-   ## number of births (n.births: for now take it as 1% per year)
-   ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
+   daily.entry.rate <- 2 #will need to be investigated 
 
    #####################
    ## BIOLOGICAL
