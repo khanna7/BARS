@@ -1,0 +1,81 @@
+## initial network estimation
+## For chicago, model in the last  version contained:
+   ## density (mean edges), degree distribution, duration parameter
+   ## add: age-mixing, sexual role, sero-sorting
+
+   ## top matter
+   rm(list=ls())
+
+   library(ergm)
+   library(network)
+   library(networkDynamic)
+   library(tergm)
+
+   source("../common/houston_params_nonderived.R")
+   load(file=paste0("houston_initialized-model_n",n,".RData"))
+
+   #####################
+   ## MODEL SETUP
+   net <- fit$network
+   formation_cas <- net~edges+degree(0:2)#+absdiff("age")
+                       
+
+   dissolution_cas <- net~offset(edges)
+   #theta.diss_cas <- log(dur_cas - 1)
+   #theta.diss_cas <- should be 5.13 when assuming 160-day ptshp duration and 16-year life expectancy. See `derived` param file for details.
+   target.stats_cas <- c(cas_n_edges,
+                         cas_deg_seq[1:3]#,
+                         #cas_n_edges*absdiff.casual
+                         )
+
+
+   constraints_cas <- ~.
+   formation.n_cas <- update.formula(formation_cas, net~.)
+
+   ## sexual role
+   role_casual <- sample(0:2, n, c(pr_versatile_main, 
+                                 pr_insertive_main, 
+                                 pr_receptive_main), 
+                       replace=TRUE)
+   
+   table(role_casual, exclude=NULL)
+   net %v% "role_casual" <- role_casual #0=versatile, 1=insertive, 2=receptive
+   
+   
+   #####################
+   ## CREATE EMPTY NETWORK TO START
+   #n_cas <- network.initialize(n, directed=FALSE, bipartite=FALSE)
+
+   cas_fit <- ergm(formation.n_cas, 
+                   target.stats=target.stats_cas, 
+                   constraints=constraints_cas,
+                   eval.loglik=FALSE,
+                   verbose=TRUE,
+                   control=control.ergm(MCMLE.maxit=500)
+                    )
+
+   theta.form_cas <- cas_fit$coef 
+   theta.form_cas[1] <- theta.form_cas[1] - theta.diss_cas
+
+    cas_sim_test <- simulate(net,
+                                formation=formation.n_cas,
+                                dissolution=dissolution_cas,
+                                coef.form=theta.form_cas, 
+                                coef.diss=theta.diss_cas,
+                                time.slices=2e4,
+                                #time.slices=1e2,
+                                constraints=constraints_cas,
+                                monitor=~edges+degree(0:5))
+
+   #####################
+   ## TEST
+   net.f <- network.collapse(cas_sim_test, at=1000)
+   network.size(net.f)
+   network.edgecount(net.f)
+   degreedist(net.f) 
+   
+   #####################
+
+   #####################
+   ## SAVE BINARY
+   save.image(file=paste0("houston_cas_net_n",n,".RData"))
