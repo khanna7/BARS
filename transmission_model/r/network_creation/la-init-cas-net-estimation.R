@@ -11,8 +11,8 @@
    library(networkDynamic)
    library(tergm)
 
-   source("../common/houston_params_nonderived.R")
-   load(file=paste0("houston_initialized-model_n",n,".RData"))
+   source("../common/la_params_nonderived.R")
+   load(file=paste0("LA_initialized-model_n",n,".RData"))
 
    #####################
    ## MODEL SETUP
@@ -73,9 +73,10 @@
    network.size(net.f)
    network.edgecount(net.f)
    degreedist(net.f) 
+   degreedist(net.f)/network.size(net.f)
    
    #####################
 
    #####################
    ## SAVE BINARY
-   save.image(file=paste0("houston_cas_net_n",n,".RData"))
+   save.image(file=paste0("LA_cas_net_n",n,".RData"))
