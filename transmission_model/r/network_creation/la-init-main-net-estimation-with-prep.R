@@ -11,15 +11,14 @@
    source("../common/la_params_nonderived.R")
    source("../common/la_params_derived.R")
    source("common-functions.R")
+   
    #####################
    ## MODEL SETUP
    formation <- ~edges+degree(0:2)#+absdiff("sqrt.age")
 
    dissolution <- ~offset(edges)
-   #theta.diss <- log(duration-1)
-   # theta.diss <- should be 6.43 (corresponding to duration of 512 and death correction with 16-year life expectancy). set in derived param file
 
-   target.stats <- c(nedges, deg_seq[1:3])#, absdiff.sqrtage.main*nedges)  
+   target.stats <- c(main_nedges, main_deg_seq[1:3])#, absdiff.sqrtage.main*nedges)  
    constraints <- ~.
 
    formation.n0 <- update.formula(formation, n0~.)
@@ -328,7 +327,7 @@
                )
 
    theta.form <- fit$coef 
-   theta.form[1] <- theta.form[1] - theta.diss
+   theta.form[1] <- theta.form[1] - theta.diss_main
 
    #####################
    ## SIMULATE (for testing)
@@ -336,7 +335,7 @@
                                 formation=formation.n0,
                                 dissolution=dissolution,
                                 coef.form=theta.form, 
-                                coef.diss=theta.diss,
+                                coef.diss=theta.diss_main,
                                 time.slices=2e4,
                                 #time.slices=1e2,
                                 constraints=constraints,
@@ -348,7 +347,7 @@
      net.f <- network.collapse(hetdeg.diag.sim, at=20000)
      network.size(net.f)
      network.edgecount(net.f)
-     degreedist(net.f) /network.size(net.f)
+     degreedist(net.f)/network.size(net.f)
    
      seq.of.nets <- lapply(1:length(hetdeg.diag.sim),
                            function(x)
