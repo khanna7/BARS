@@ -11,9 +11,9 @@
 
   # ergm parameters for dissolution 
     d.rate <- 1/((max.age - min.age)*365)
-    pg <- (duration - 1)/duration
+    pg <- (dur_main - 1)/dur_main
     ps2 <- (1 - d.rate)^2
-    theta.diss <- log(pg/(ps2-pg)) #adjusted for death rate, Run 
+    theta.diss_main <- log(pg/(ps2-pg)) #adjusted for death rate, Run 
   
 # NETWORK (casual)
   cas_n_edges <- cas_mean_deg*n/2 
