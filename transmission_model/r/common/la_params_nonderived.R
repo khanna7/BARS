@@ -1,6 +1,5 @@
 ################################
 # NON-DERIVED LA PARAMETERS
-# INITIAL VALUES OF PARAMETERS
 ###############################
 
    #####################
@@ -36,8 +35,8 @@
      ## in the formation ERGM without modifications on the C++ code.
      
      # frequency of sex
-     prop.steady.sex.acts <- 0.26 # of steady partnerships on a given day, in how many does a sex act (w or w/o condom) occur?
-                                 #same as freq.of.sex parameter in data table
+     prop.steady.sex.acts <- 0.08 #per person per day, confirmed by Katrina 
+                                 
    # casual network 
      
      # partnership duration
@@ -50,14 +49,14 @@
      cas.deg3 <- 2
  
      cas_deg_seq <- (c(cas.deg0, cas.deg1, cas.deg2, cas.deg3)/tot.cas.deg)*n 
-     cas_mean_deg <- ((0*cas_deg_seq[1])+(1*cas_deg_seq[2])+(2*cas_deg_seq[3]))/n #derived from cas_deg_seq above
+     cas_mean_deg <- ((0*cas_deg_seq[1])+(1*cas_deg_seq[2])+(2*cas_deg_seq[3])+3*(cas_deg_seq[4]))/n #derived from cas_deg_seq above
 
      # role
-     pr_insertive_casual <- 21.64/100
-     pr_receptive_casual <- 32.09/100
+     pr_insertive_casual <- 38.6/100
+     pr_receptive_casual <- 36.4/100
 
      # frequency of sex 
-     prop.casual.sex.acts <- 0.36 
+     prop.casual.sex.acts <- 0.36 #units: per person per day (confirmed by Katrina)  
 
    # TIMESTEP
    size.of.timestep <- 1 #currently set as 1 day #COMMON
@@ -90,11 +89,9 @@
    dur.inf <- duration.of.infection #COMMON #CAN BE DELETED, BUT DOUBLE CHECK
    late.stage.viral.load <- 5.05 ## (max?) #COMMON
 
-   #time.to.full.supp <- 4*30/size.of.timestep ## old: 4 months
    time.to.full.supp <- 1*30/size.of.timestep ## from DHHS (refer to John) #COMMON
    undetectable.vl <- log(200, base=10) #updated to 200 from 50 on 17may2018 #COMMON
 
-   #uninfected.cd4.level <- 518 #(might draw uniformly from a range)
    uninfected.cd4.level <- 916 #updated value as per nina's suggestion from Mallory Witt (2013), CID. #COMMON
 
    ## (to compute cd4 in infected but ART-naive)
@@ -113,11 +110,6 @@
   ## (cd4 decline)
   cd4.at.infection.male <- uninfected.cd4.level  #needs to be the same as `uninfected.cd4.level` #COMMON
   untreated.cd4.daily.decline <- 0.14 # (for men and women) #COMMON
-
-   ## healthy level of CD4: sample from some distribution, or should it be the same for all uninfected men?
-
-  ## (viral load)
-  ##undetectable.vl <- log(50, base=10) #see above -- needs to be 200
 
    #####################
    ## ART
@@ -154,48 +146,46 @@
       inf.part.insertive.mult <- 2 #COMMON
 
 
-   ## Casual (non-main)
-      ## duration
     #####################
-    ## Testing, diagnosis and linkage-to-care
-    detection.window <- 22 #COMMON
+    # CARE CONTINUUM
+    # Parameters are in Box/BARS/Data-and-Summaries/LA_Data/Copy of NHBS_PARAMS_request 032619.xlsx
+    #####################
+
+    # testing, diagnosis and linkage-to-care
+    detection.window <- 22 #common
     mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY #COMMON
-    #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop.lt <- 5.40/100 #NHBS-5 
-    non.testers.prop.gte <- 2.70/100 #NHBS-5
+
+    non.testers.prop.lt <- 6.40/100 
+    non.testers.prop.gte <- 0.00/100 
 
     # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    art.init.lag.lt.1 <- "0.038|0-7" #NHBS-5 data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
-    art.init.lag.lt.2 <- "0.1003|7-30" #Assumed geometric distribution, and computed number of samples in each bin: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
-    art.init.lag.lt.3 <- "0.211|30-90"
-    art.init.lag.lt.4 <- "0.2287|90-180"
-    art.init.lag.lt.5 <- "0.2453|180-365"
-    art.init.lag.lt.6 <- "0.1456|365-730"
-    art.init.lag.lt.7 <- "0.0311|730-1825"
+    art.init.lag.lt.1 <- "0.0355|0-7" #NHBS data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
+    art.init.lag.lt.2 <- "0.092875|7-30" #Assumed geometric distribution, and computed number of samples 
+    art.init.lag.lt.3 <- "0.19675|30-90" # see https://uchicago.box.com/s/i0ua9gvoammjpavseyszqr46g3vrrqav  
+    art.init.lag.lt.4 <- "0.220125|90-180" # for further details
+    art.init.lag.lt.5 <- "0.249875|180-365"
+    art.init.lag.lt.6 <- "0.163375|365-730"
+    art.init.lag.lt.7 <- "0.04125|730-1825"
 
-    art.init.lag.gte.1 <- "0.038|0-7" 
-    art.init.lag.gte.2 <- "0.1003|7-30"   
-    art.init.lag.gte.3 <- "0.211|30-90"
-    art.init.lag.gte.4 <- "0.2287|90-180"
-    art.init.lag.gte.5 <- "0.2453|180-365"
-    art.init.lag.gte.6 <- "0.1456|365-730"
-    art.init.lag.gte.7 <- "0.0311|730-1825"
-    art.init.lag.gte.8 <- "0.000|1825-1825"
+    art.init.lag.gte.1 <- art.init.lag.lt.1
+    art.init.lag.gte.2 <- art.init.lag.lt.2
+    art.init.lag.gte.3 <- art.init.lag.lt.3
+    art.init.lag.gte.4 <- art.init.lag.lt.4
+    art.init.lag.gte.5 <- art.init.lag.lt.5
+    art.init.lag.gte.6 <- art.init.lag.lt.6
+    art.init.lag.gte.7 <- art.init.lag.lt.7
 
-#####################
-## 
-
-## PrEP Uptake Scheme ##
+# PrEP Uptake Scheme 
 
 # one of default, young_old_ratio, serodiscordant, eigen, or degree
 prep.uptake <- 'default'
 
 ## Default PrEP  parameters ###
 
-default.prep.bl.use.prop.lt <- 20/100 #Based on NHBS-5 for Houston
-default.prep.bl.use.prop.gte <- 20/100 #Based on NHBS-5 for Houston
+default.prep.bl.use.prop.lt <- 8.7/100 
+default.prep.bl.use.prop.gte <- 8.7/100 
 
 prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)/2 #only needed for time 0 #COMMON
 
@@ -295,18 +285,8 @@ prep.never.adherent.trans.reduction <- 0.0
 prep.partial.pos.adherent.trans.reduction <- 0.81
 prep.partial.neg.adherent.trans.reduction <- 0.31
 
-
-#####################
-    ## Socioeconomic status
-    ##insurance.prop <-
-    ##incarceration.prop <-
-
-######################
-    ## Sexual Behavior
-    # num.sex.acts.base <- 2.4
-    # Note: from Jing's word doc (on 2018-03-14): https://uchicago.box.com/s/fy4vpbc1x5z0wor5ub2w1l95qy36f5pv
-    # Using a weighting of 1/3, 1/7, 1/14, 1/30
-    inf.red.w.condom <- 0.80
+# TRANSMISSION
+inf.red.w.condom <- 0.80
 
 # sd -- sero-discordant
 # each partnership falls in one of these buckets with
@@ -437,8 +417,4 @@ testing.prob.gte.6 = "11-12|0.02857143"
 testing.prob.gte.7 = "13-16|0.02857143"
 testing.prob.gte.8 = "17-20|0"
 testing.prob.gte.9 = "21-30|0"
-
-################################
-##Incarceration/ Jail related:
-incarceration.prob.for.entries <- 0.009 # probability that an entering person will be incarcerated
 
