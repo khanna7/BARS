@@ -47,6 +47,7 @@
      cas.deg1 <- 38
      cas.deg2 <- 2
      cas.deg3 <- 2
+     tot.cas.deg <- sum(cas.deg0, cas.deg1, cas.deg2, cas.deg3)
  
      cas_deg_seq <- (c(cas.deg0, cas.deg1, cas.deg2, cas.deg3)/tot.cas.deg)*n 
      cas_mean_deg <- ((0*cas_deg_seq[1])+(1*cas_deg_seq[2])+(2*cas_deg_seq[3])+3*(cas_deg_seq[4]))/n #derived from cas_deg_seq above
@@ -365,10 +366,10 @@ inf.red.w.condom <- 0.80
 	asm.60_65 <- 0.017383 / (365 * 1)
 	asm.65_70 <- 0.033181 / (365 * 1)
 
-### CD4 Mortality ###
-### Format is [min_max)
-# for treated persons within the specified range
-# ASM is increased by the specified amount
+# CD4 Mortality 
+  #Format is [min_max)
+  #for treated persons within the specified range
+  #ASM is increased by the specified amount
 cd4m_treated.0_50	<- 51 / 100
 cd4m_treated.50_100 <- 37 / 100
 cd4m_treated.100_200 <- 26 / 100
