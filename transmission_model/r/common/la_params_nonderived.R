@@ -168,7 +168,7 @@
     art.init.lag.lt.4 <- "0.220125|90-180" # for further details
     art.init.lag.lt.5 <- "0.249875|180-365"
     art.init.lag.lt.6 <- "0.163375|365-730"
-    art.init.lag.lt.7 <- "0.04125|730-1825"
+    art.init.lag.lt.7 <- "0.0415|730-1825"
 
     art.init.lag.gte.1 <- art.init.lag.lt.1
     art.init.lag.gte.2 <- art.init.lag.lt.2
