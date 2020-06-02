@@ -3,7 +3,7 @@
 ###############################
 
 # NETWORK (main/steady)
-  nedges <- n*mean_deg/2 
+  main_nedges <- n*main_mean_deg/2 
       
   # role
     pr_versatile_main <- 1-(pr_insertive_main + pr_receptive_main)
