@@ -33,10 +33,15 @@ void initialize_art_adherence(std::shared_ptr<Person> person, double tick, Adher
 }
 
 void initialize_art_adherence(std::shared_ptr<Person> person, double first_art_at_tick) {
-    double always = Parameters::instance()->getDoubleParameter(ART_PROP_ALWAYS_ADHERENT);
-    double never = Parameters::instance()->getDoubleParameter(ART_PROP_NEVER_ADHERENT);
-    double partial_plus = Parameters::instance()->getDoubleParameter(ART_PROP_PARTIAL_POS_ADHERENT);
-    double partial_minus = Parameters::instance()->getDoubleParameter(ART_PROP_PARTIAL_NEG_ADHERENT);
+    std::string suffix = "";
+    if (person->isPolystimulantUser()) {
+        suffix = PSU_SUFFIX;
+    }
+
+    double always = Parameters::instance()->getDoubleParameter(ART_PROP_ALWAYS_ADHERENT + suffix);
+    double never = Parameters::instance()->getDoubleParameter(ART_PROP_NEVER_ADHERENT + suffix);
+    double partial_plus = Parameters::instance()->getDoubleParameter(ART_PROP_PARTIAL_POS_ADHERENT + suffix);
+    double partial_minus = Parameters::instance()->getDoubleParameter(ART_PROP_PARTIAL_NEG_ADHERENT + suffix);
 
     //std::cout << "art: " << always << "," << never << "," << partial_plus << ", " << partial_minus << std::endl;
 

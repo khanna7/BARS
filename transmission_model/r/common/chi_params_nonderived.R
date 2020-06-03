@@ -113,11 +113,16 @@
    #art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
    art.prop.always.adherent <- 0.32
 
+   art.prop.never.adherent.psu <- 0.3 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+   art.prop.part.plus.adherent.psu <- 0.28
+   art.prop.part.neg.adherent.psu <- 0.32
+   art.prop.always.adherent.psu <- 0.1
 
- 	art.always.adherent.probability <- 0.95
-	art.never.adherent.probability <- 0.05
-	art.partial.pos.adherent.probability <- 0.66
-	art.partial.neg.adherent.probability <- 0.33
+
+   art.always.adherent.probability <- 0.95
+   art.never.adherent.probability <- 0.05
+   art.partial.pos.adherent.probability <- 0.66
+   art.partial.neg.adherent.probability <- 0.33
 
    #####################
    ## Transmission Parameters
