@@ -30,12 +30,39 @@ bool lt(PersonPtr person, double threshold) {
     return person->age() < threshold;
 }
 
-PrepIntervention::PrepIntervention(PrepUptakeData& data) : IPrepIntervention(), cessation_generator(data.cessation_stop, 1.1), year(1)
+PrepIntervention::PrepIntervention(PrepUptakeData& data, std::vector<std::shared_ptr<PrepFilter>> filters) : IPrepIntervention(), cessation_generator(data.cessation_stop, 1.1), year(1)
 {
-
+    for (auto filter : filters) {
+        addFilter(filter);
+    }
 }
 
 PrepIntervention::~PrepIntervention() {}
+
+void PrepIntervention::addFilter(std::shared_ptr<PrepFilter> filter) {
+    std::shared_ptr<PrepFilter> f(filter);
+    filters_.push_back(f);
+}
+
+bool PrepIntervention::runFilters(std::shared_ptr<Person> person) {
+    bool passed = true;
+    for (auto filter : filters_) {
+        if (!filter->apply(person)) {
+            passed = false;
+            break;
+        }
+    }
+    return passed;
+}
+
+double PrepIntervention::calcPrepStopAdjustment()
+{
+    double adjustment = 0.0;
+    for (auto filter : filters_) {
+        adjustment += filter->calcPrepStopAdjustment();
+    }
+    return adjustment;
+}
 
 void PrepIntervention::putOnPrep(double tick, std::shared_ptr<Person>& person, PrepStatus cause) {
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();

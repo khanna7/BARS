@@ -6,13 +6,13 @@
 
 namespace TransModel {
 
-NetStatPrepIntervention::NetStatPrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter, 
-    float top_n) : PrepIntervention(prep_data),
-    filter_(filter), k(0), prep_data_(prep_data), total_negatives(0),
+NetStatPrepIntervention::NetStatPrepIntervention(PrepUptakeData& prep_data, std::vector<std::shared_ptr<PrepFilter>> filters,
+    float top_n) : PrepIntervention(prep_data, filters),
+    k(0), prep_data_(prep_data), total_negatives(0),
     top_n_(top_n), candidate_count(0) {
-        onYearEnded();
+    onYearEnded();
 }
-    
+
 NetStatPrepIntervention::~NetStatPrepIntervention() {}
 
 bool NetStatPrepIntervention::isOn() {
@@ -26,7 +26,7 @@ void NetStatPrepIntervention::reset() {
 
 
 void NetStatPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
-    if (filter_->apply(person)) {
+    if (runFilters(person)) {
         ++total_negatives;
         if (!person->isOnPrep(false)) {
             ++candidate_count;
@@ -34,13 +34,13 @@ void NetStatPrepIntervention::processPerson(std::shared_ptr<Person>& person, Net
     }
 }
 
- void NetStatPrepIntervention::adjustCandidateCount(std::vector<PersonPtr>& put_on_prep) {
+void NetStatPrepIntervention::adjustCandidateCount(std::vector<PersonPtr>& put_on_prep) {
     for (auto& person : put_on_prep) {
-        if (filter_->apply(person)) {
+        if (runFilters(person)) {
             --candidate_count;
         }
     }
- }
+}
 
 void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_prep, std::vector<std::shared_ptr<Person>> ranked_persons) {
     // base_prob_lt = (prep_data.daily_p_prob_lt * prep_data.base_use_lt) / (lt_not_on_preps / lt_total_negs);
@@ -52,13 +52,13 @@ void NetStatPrepIntervention::run(double tick, std::vector<PersonPtr>& put_on_pr
     double prep_p = 0;
     unsigned int prep_count = 0;
     float selected_count = candidate_count * top_n_;
-    double adjustment = filter_->calcPrepStopAdjustment();
+    double adjustment = calcPrepStopAdjustment();
     if (selected_count > 0 && k > 0) {
         unsigned int count = 0;
         prep_p = ((double)total_negatives * k * (prep_data_.stop + adjustment)) / selected_count;
         unsigned int threshold = (unsigned int)selected_count;
         for (auto& person : ranked_persons) {
-            if (!person->isInfected() && !person->isOnPrep(false) && filter_->apply(person)) {
+            if (!person->isInfected() && !person->isOnPrep(false) && runFilters(person)) {
                 ++count;
                 if (repast::Random::instance()->nextDouble() <= prep_p) {
                     putOnPrep(tick, person, PrepStatus::ON_INTERVENTION);

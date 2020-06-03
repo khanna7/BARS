@@ -118,6 +118,9 @@ const std::string DEFAULT_PREP_BALANCED_UNBALANCED = "default.prep.balanced.unba
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT = "default.prep.unbalanced.starting.prob.lt";
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE = "default.prep.unbalanced.starting.prob.gte";
 
+const std::string DEFAULT_PREP_USE_PROP_PSU = "default.prep.bl.use.prop.psu";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_PSU = "default.prep.daily.stop.prob.psu";
+
 const std::string YOR_PREP_ALPHA = "yor.prep.alpha";
 const std::string YOR_PREP_USE_PROP = "yor.prep.bl.use.prop";
 const std::string YOR_PREP_DAILY_STOP_PROB = "yor.prep.daily.stop.prob";

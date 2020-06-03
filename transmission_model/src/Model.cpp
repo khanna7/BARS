@@ -297,7 +297,7 @@ NetworkType find_net_type(std::string type) {
 }
 
 void init_sero_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
-    PrepUptakeData lt_base_data, gte_base_data;
+/*    PrepUptakeData lt_base_data, gte_base_data;
     lt_base_data.years_to_increment = 0;
     gte_base_data.years_to_increment = 0;
     lt_base_data.increment = 0;
@@ -316,10 +316,10 @@ void init_sero_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec
     gte_base_data.stop = Parameters::instance()->getDoubleParameter(SERO_BASE_PREP_DAILY_STOP_PROB_GTE);
 
     // add the base prep intervention
-    std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
-    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
-    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+    std::shared_ptr<LTAgePrepFilter> lt_base = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte_base = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
+    //vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
+    //vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
 
     PrepUptakeData lt_sd, gte_sd;
     lt_sd.use = lt_base_data.use;
@@ -338,8 +338,8 @@ void init_sero_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec
     NetworkType net_type = find_net_type(Parameters::instance()->getStringParameter(SERO_NET_TYPE));
 
     // these are immutable so we could reuse them, but they may not remain so in the future
-    std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+    std::shared_ptr<LTAgePrepFilter> lt = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
    
     vec.push_back(std::make_shared<SerodiscordantPrepIntervention>(lt_sd, lt, net_type));
     vec.push_back(std::make_shared<SerodiscordantPrepIntervention>(gte_sd, gte, net_type));
@@ -351,7 +351,7 @@ void init_sero_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec
     std::cout << "SD Intrv lt: " << lt_sd << "\n";
     std::cout << "SD Intrv gte: " << gte_sd << "\n";
 
-
+*/
     // // used in PUExtras to calculate base unboosted probability
     // data.daily_stop_prob_sd_lt = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_LT);
     // data.daily_stop_prob_sd_gte = Parameters::instance()->getDoubleParameter(SERO_INTRV_PREP_DAILY_STOP_PROB_GTE);
@@ -366,7 +366,7 @@ void init_sero_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec
 }
 
 void init_eigen_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
-    PrepUptakeData lt_base_data, gte_base_data;
+    /*PrepUptakeData lt_base_data, gte_base_data;
     lt_base_data.years_to_increment = 0;
     gte_base_data.years_to_increment = 0;
     lt_base_data.increment = 0;
@@ -385,12 +385,12 @@ void init_eigen_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& ve
     gte_base_data.stop = Parameters::instance()->getDoubleParameter(EIGEN_BASE_PREP_DAILY_STOP_PROB_GTE);
 
     // these are immutable so we could reuse them, but they may not remain so in the future
-    std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+    std::shared_ptr<LTAgePrepFilter> lt_base = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte_base = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
 
     // add the base prep intervention
-    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
-    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+    //vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
+    //vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
 
     PrepUptakeData lt_data, gte_data;
     lt_data.use = lt_base_data.use;
@@ -410,8 +410,8 @@ void init_eigen_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& ve
     float top_n = (float)Parameters::instance()->getDoubleParameter(EIGEN_TOPN);
 
     // these are immutable so we could reuse them, but they may not remain so in the future
-    std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+    std::shared_ptr<LTAgePrepFilter> lt = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
 
     intervention->addNetIntervention(std::make_shared<NetStatPrepIntervention>(lt_data, lt, top_n));
     intervention->addNetIntervention(std::make_shared<NetStatPrepIntervention>(gte_data, gte, top_n));
@@ -422,7 +422,7 @@ void init_eigen_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& ve
     std::cout << "EIGEN Base gte: " << gte_base_data << "\n";
     std::cout << "EIGEN Intrv lt: " << lt_data << "\n";
     std::cout << "EIGEN Intrv gte: " << gte_data << "\n";
-    
+    */
     // PrepUseData data;
 
     // // used in PUBBase as k in prob calc
@@ -481,7 +481,7 @@ void init_eigen_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& ve
 // }
 
 void init_degree_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
-    PrepUptakeData lt_base_data, gte_base_data;
+    /*PrepUptakeData lt_base_data, gte_base_data;
     lt_base_data.years_to_increment = 0;
     gte_base_data.years_to_increment = 0;
     lt_base_data.increment = 0;
@@ -500,8 +500,8 @@ void init_degree_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& v
     gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEGREE_BASE_PREP_DAILY_STOP_PROB_GTE);
 
     // these are immutable so we could reuse them, but they may not remain so in the future
-    std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+    std::shared_ptr<LTAgePrepFilter> lt_base = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte_base = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
 
     // add the base prep intervention
     vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
@@ -525,8 +525,8 @@ void init_degree_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& v
     float top_n = (float)Parameters::instance()->getDoubleParameter(DEGREE_TOPN);
 
     // these are immutable so we could reuse them, but they may not remain so in the future
-    std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+    std::shared_ptr<LTAgePrepFilter> lt = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
 
     intervention->addNetIntervention(std::make_shared<NetStatPrepIntervention>(lt_data, lt, top_n));
     intervention->addNetIntervention(std::make_shared<NetStatPrepIntervention>(gte_data, gte, top_n));
@@ -537,7 +537,7 @@ void init_degree_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& v
     std::cout << "DEGREE Base gte: " << gte_base_data << "\n";
     std::cout << "DEGREE Intrv lt: " << lt_data << "\n";
     std::cout << "DEGREE Intrv gte: " << gte_data << "\n";
-}
+*/}
 
 void init_random_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
     PrepUptakeData lt_base_data, gte_base_data;
@@ -559,12 +559,16 @@ void init_random_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& v
     gte_base_data.stop = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_DAILY_STOP_PROB_GTE);
 
     // these are immutable so we could reuse them, but they may not remain so in the future
-    std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+    std::shared_ptr<LTAgePrepFilter> lt_base = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte_base = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
+    std::shared_ptr<NonSubstanceUsePrepFilter> non_sustance_user_base = std::make_shared<NonSubstanceUsePrepFilter>();
+
+    std::vector<std::shared_ptr<PrepFilter>> lt_filters_base({lt_base, non_sustance_user_base});
+    std::vector<std::shared_ptr<PrepFilter>> gte_filters_base({gte_base, non_sustance_user_base});
 
     // add the base prep intervention
-    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
-    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_filters_base));
 
     PrepUptakeData lt_data, gte_data;
     lt_data.use = lt_base_data.use;
@@ -581,11 +585,15 @@ void init_random_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& v
     gte_data.years_to_increment = Parameters::instance()->getDoubleParameter(RANDOM_PREP_YEARS_TO_INCREMENT);
 
     // these are immutable so we could reuse them, but they may not remain so in the future
-    std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+    std::shared_ptr<LTAgePrepFilter> lt = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
+    std::shared_ptr<NonSubstanceUsePrepFilter> non_sustance_user = std::make_shared<NonSubstanceUsePrepFilter>();
 
-    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt));
-    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte));
+    std::vector<std::shared_ptr<PrepFilter>> lt_filters({lt, non_sustance_user});
+    std::vector<std::shared_ptr<PrepFilter>> gte_filters({gte, non_sustance_user});
+
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt_filters));
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte_filters));
 
     std::cout << "Random Intervention lt: " << lt_data << "\n";
     std::cout << "Random Intervention gte: " << gte_data << "\n";
@@ -594,11 +602,11 @@ void init_random_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& v
 
 void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
     // Add the base
-    PrepUptakeData lt_base_data, gte_base_data;
-    lt_base_data.years_to_increment = 0;
-    gte_base_data.years_to_increment = 0;
-    lt_base_data.increment = 0;
-    gte_base_data.increment =0;    
+    PrepUptakeData lt_base_data, gte_base_data, polystimulant_user_base_data;
+    lt_base_data.years_to_increment = polystimulant_user_base_data.years_to_increment = 0;
+    gte_base_data.years_to_increment  = 0;
+    lt_base_data.increment = polystimulant_user_base_data.increment = 0;
+    gte_base_data.increment = 0;
 
     lt_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
     gte_base_data.use =  Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
@@ -614,12 +622,28 @@ void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& 
         gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE);
     }
 
-    // these are immutable so we could reuse them, but they may not remain so in the future
-    std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+    polystimulant_user_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_PSU);
+    polystimulant_user_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_PSU);
 
-    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
-    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+    if (balanced) {
+        polystimulant_user_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_PSU);
+    } else {
+        polystimulant_user_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
+    }
+
+    // these are immutable so we could reuse them, but they may not remain so in the future
+    std::shared_ptr<LTAgePrepFilter> lt_base = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte_base = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
+    std::shared_ptr<NonSubstanceUsePrepFilter> non_sustance_user_base = std::make_shared<NonSubstanceUsePrepFilter>();
+    std::shared_ptr<PolystimulantUsePrepFilter> polystimulant_user_base = std::make_shared<PolystimulantUsePrepFilter>();
+
+    std::vector<std::shared_ptr<PrepFilter>> lt_filters_base({lt_base, non_sustance_user_base});
+    std::vector<std::shared_ptr<PrepFilter>> gte_filters_base({gte_base, non_sustance_user_base});
+    std::vector<std::shared_ptr<PrepFilter>> polystimulant_user_filters_base({polystimulant_user_base});
+
+    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(polystimulant_user_base_data, polystimulant_user_filters_base));
 
     // Add the intervention
     PrepUptakeData lt_data, gte_data;
@@ -637,21 +661,25 @@ void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& 
     gte_data.years_to_increment = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARS_TO_INCREMENT);
 
     // these are immutable so we could reuse them, but they may not remain so in the future
-    std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
-    std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+    std::shared_ptr<LTAgePrepFilter> lt = std::make_shared<LTAgePrepFilter>(age_threshold);
+    std::shared_ptr<GTEAgePrepFilter> gte = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
+    std::shared_ptr<NonSubstanceUsePrepFilter> non_sustance_user = std::make_shared<NonSubstanceUsePrepFilter>();
 
-    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt));
-    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte));
+    std::vector<std::shared_ptr<PrepFilter>> lt_filters({lt_base, non_sustance_user});
+    std::vector<std::shared_ptr<PrepFilter>> gte_filters({gte_base, non_sustance_user});
+
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt_filters));
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte_filters));
 
     std::cout << "Random Default Selection lt: " << lt_data << "\n";
     std::cout << "Random Default Selection gte: " << gte_data << "\n";
-    
+
     // PrepUseData data;
     // data.base_use_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
     // data.base_use_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
     // data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
     // data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
-    
+
     // data.increment_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_LT);
     // data.increment_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_GTE);
     // data.years_to_increase = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARS_TO_INCREMENT);

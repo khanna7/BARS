@@ -6,11 +6,11 @@
 
 namespace TransModel {
 
-BasePrepIntervention::BasePrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter) : PrepIntervention(prep_data),
-    candidates(), filter_(filter), prep_data_(prep_data), total_negatives(0)  {
-        onYearEnded();
+BasePrepIntervention::BasePrepIntervention(PrepUptakeData& prep_data, std::vector<std::shared_ptr<PrepFilter>> filters) : PrepIntervention(prep_data, filters),
+    candidates(), prep_data_(prep_data), total_negatives(0)  {
+    onYearEnded();
 }
-    
+
 BasePrepIntervention::~BasePrepIntervention() {
 
 }
@@ -21,7 +21,7 @@ void BasePrepIntervention::reset() {
 }
 
 void BasePrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
-    if (filter_->apply(person)) {
+    if (runFilters(person)) {
         ++total_negatives;
         if (!person->isOnPrep(false)) {
             candidates.push_back(person);
@@ -35,7 +35,7 @@ void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep
     (*log) << (unsigned int)candidates.size();
     double prep_p = 0;
     unsigned int count = 0;
-    double adjustment = filter_->calcPrepStopAdjustment();
+    double adjustment = calcPrepStopAdjustment();
     if (candidates.size() > 0) {
         prep_p = ((double)total_negatives * prep_data_.use * (prep_data_.stop + adjustment)) / candidates.size();
         for (auto& person : candidates) {

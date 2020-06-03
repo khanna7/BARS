@@ -9,6 +9,7 @@
 #include "Network.h"
 #include "GeometricDistribution.h"
 #include "PrepStatus.h"
+#include "PrepFilter.h"
 #include "common.h"
 
 namespace TransModel {
@@ -48,9 +49,10 @@ private:
 
 protected:
     int year;
+    std::vector<std::shared_ptr<PrepFilter>> filters_;
 
 public:
-    PrepIntervention(PrepUptakeData& data);
+    PrepIntervention(PrepUptakeData& data, std::vector<std::shared_ptr<PrepFilter>> filters);
     virtual ~PrepIntervention();
 
     virtual void reset() = 0;
@@ -58,6 +60,10 @@ public:
     virtual void run(double tick,  std::vector<PersonPtr>& put_on_prep, Network<Person>& network) = 0;
     virtual void onYearEnded() = 0;
 
+    void addFilter(std::shared_ptr<PrepFilter> filter);
+    bool runFilters(std::shared_ptr<Person> person);
+    double calcPrepStopAdjustment();
+    
     void putOnPrep(double tick, std::shared_ptr<Person>& person, PrepStatus cause);
 
 };

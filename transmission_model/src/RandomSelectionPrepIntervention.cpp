@@ -6,11 +6,11 @@
 
 namespace TransModel {
 
-RandomSelectionPrepIntervention::RandomSelectionPrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter) : PrepIntervention(prep_data),
-    candidates(), filter_(filter), k(0), prep_data_(prep_data), total_negatives(0) {
-        onYearEnded();
+RandomSelectionPrepIntervention::RandomSelectionPrepIntervention(PrepUptakeData& prep_data, std::vector<std::shared_ptr<PrepFilter> > filters) : PrepIntervention(prep_data, filters),
+    candidates(), k(0), prep_data_(prep_data), total_negatives(0) {
+    onYearEnded();
 }
-    
+
 RandomSelectionPrepIntervention::~RandomSelectionPrepIntervention() {}
 
 void RandomSelectionPrepIntervention::reset() {
@@ -19,7 +19,7 @@ void RandomSelectionPrepIntervention::reset() {
 }
 
 void RandomSelectionPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
-    if (filter_->apply(person)) {
+    if (runFilters(person)) {
         ++total_negatives;
         if (!person->isOnPrep(false)) {
             candidates.emplace(person->id(), person);
@@ -41,7 +41,7 @@ void RandomSelectionPrepIntervention::run(double tick,  std::vector<PersonPtr>& 
     (*log) << (unsigned int)candidates.size();
     double prep_p = 0;
     unsigned int count = 0;
-    double adjustment = filter_->calcPrepStopAdjustment();
+    double adjustment = calcPrepStopAdjustment();
     if (candidates.size() > 0 && k > 0) {
         prep_p = ((double)total_negatives * k * (prep_data_.stop + adjustment)) / candidates.size();
         for (auto& kv : candidates) {

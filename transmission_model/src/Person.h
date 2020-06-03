@@ -30,7 +30,7 @@ private:
     InfectionParameters infection_parameters_;
     float infectivity_;
     PrepParameters prep_;
-    bool dead_, diagnosed_, testable_;
+    bool dead_, diagnosed_, testable_, polystimulant_user_;
     Diagnoser diagnoser_;
     AdherenceData art_adherence_;
 
@@ -173,6 +173,14 @@ public:
 
     bool isTestable() const {
         return testable_;
+    }
+
+    bool isSubstanceUser() const {
+        return polystimulant_user_;
+    }
+
+    bool isPolystimulantUser() const {
+        return polystimulant_user_;
     }
 
     const PrepParameters prepParameters() const {

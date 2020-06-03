@@ -28,11 +28,12 @@ EdgeFilterPtr choose_edge_filter(NetworkType type) {
     }
 }
 
-SerodiscordantPrepIntervention::SerodiscordantPrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter, NetworkType type) :
- PrepIntervention(prep_data),
-    candidates(), filter_(filter), k(0), prep_data_(prep_data), total_negatives(0),
+SerodiscordantPrepIntervention::SerodiscordantPrepIntervention(PrepUptakeData& prep_data, std::vector<std::shared_ptr<PrepFilter>> filters, NetworkType type) :
+ PrepIntervention(prep_data, filters),
+    candidates(), k(0), prep_data_(prep_data), total_negatives(0),
     edge_filter(choose_edge_filter(type)) {
-        onYearEnded();
+    onYearEnded();
+
 }
     
 SerodiscordantPrepIntervention::~SerodiscordantPrepIntervention() {
@@ -45,7 +46,7 @@ void SerodiscordantPrepIntervention::reset() {
 }
 
 void SerodiscordantPrepIntervention::processPerson(std::shared_ptr<Person>& person, Network<Person>& network) {
-    if (filter_->apply(person)) {
+    if (runFilters(person)) {
         ++total_negatives;
         if (!person->isOnPrep(false)) {
             std::vector<EdgePtr<Person>> edges;
@@ -74,7 +75,7 @@ void SerodiscordantPrepIntervention::run(double tick, std::vector<PersonPtr>& pu
     (*log) << (unsigned int)candidates.size();
     unsigned int count = 0;
     double prep_p = 0;
-    double adjustment = filter_->calcPrepStopAdjustment();
+    double adjustment = calcPrepStopAdjustment();
     if (candidates.size() > 0 && k > 0) {
         prep_p = ((double)total_negatives * k * (prep_data_.stop + adjustment)) / candidates.size();
         for (auto& kv : candidates) {

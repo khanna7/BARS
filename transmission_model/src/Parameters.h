@@ -105,6 +105,9 @@ extern const std::string DEFAULT_PREP_BALANCED_UNBALANCED;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE;
 
+extern const std::string DEFAULT_PREP_USE_PROP_PSU;
+extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_PSU;
+
 extern const std::string YOR_ADDITIONAL_PREP_LT;
 extern const std::string YOR_ADDITIONAL_PREP_GTE;
 extern const std::string YOR_PREP_ALPHA;

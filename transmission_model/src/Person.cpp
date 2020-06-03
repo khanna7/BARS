@@ -7,6 +7,8 @@
 
 #include "Rcpp.h"
 
+#include "repast_hpc/Random.h"
+
 #include "Person.h"
 #include "Stats.h"
 
@@ -17,7 +19,8 @@ namespace TransModel {
 Person::Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser diagnoser) :
         id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age), circum_status_(circum_status),
         infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false), testable_(false),
-        diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), jail_parameters_{} {
+        polystimulant_user_(false), diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), jail_parameters_{} {
+    if (repast::Random::instance()->nextDouble() >= 0.5) polystimulant_user_ = true;
         //diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), vulnerability_expiration_(0) {
 }
 

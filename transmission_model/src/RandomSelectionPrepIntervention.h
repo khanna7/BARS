@@ -6,7 +6,7 @@
 #include "Network.h"
 #include "Person.h"
 #include "PrepInterventionManager.h"
-#include "PrepAgeFilter.h"
+#include "PrepFilter.h"
 
 
 namespace TransModel {
@@ -15,7 +15,6 @@ class RandomSelectionPrepIntervention : public PrepIntervention {
 
 private:
     std::map<unsigned int, std::shared_ptr<Person>> candidates;
-    std::shared_ptr<PrepAgeFilter> filter_;
     double k;
     PrepUptakeData prep_data_;
     unsigned int total_negatives;
@@ -23,7 +22,7 @@ private:
     void trimCandidates(std::vector<PersonPtr>& put_on_prep);
 
 public:
-    RandomSelectionPrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter);
+    RandomSelectionPrepIntervention(PrepUptakeData& prep_data, std::vector<std::shared_ptr<PrepFilter>> filters);
     virtual ~RandomSelectionPrepIntervention();
 
     void reset() override;
