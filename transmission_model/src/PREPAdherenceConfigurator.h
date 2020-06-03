@@ -20,12 +20,12 @@ namespace TransModel {
 
 class PREPAdherenceConfigurator {
 private:
-    ProbDist<AdherenceData> lt_dist_, gte_dist_;
+    ProbDist<AdherenceData> lt_dist_, gte_dist_, psu_dist_;
     float age_threshold_;
     std::map<AdherenceCategory, double> cat_map_;
 public:
     PREPAdherenceConfigurator(ProbDist<AdherenceData> lt_dist, ProbDist<AdherenceData> gte_dist, float age_threshold,
-            std::map<AdherenceCategory, double> cat_map);
+            ProbDist<AdherenceData> psu_dist, std::map<AdherenceCategory, double> cat_map);
     virtual ~PREPAdherenceConfigurator();
 
     void configurePerson(std::shared_ptr<Person> person);

@@ -340,6 +340,11 @@ prep.prop.always.adherent.gte <- 0.619
 prep.prop.part.plus.adherent.gte <- 0.10
 prep.prop.part.neg.adherent.gte <- 0.07
 
+prep.prop.never.adherent.psu <- 0.211
+prep.prop.always.adherent.psu <- 0.619
+prep.prop.part.plus.adherent.psu <- 0.10
+prep.prop.part.neg.adherent.psu <- 0.07
+
 prep.always.adherent.trans.reduction <- 0.95
 prep.never.adherent.trans.reduction <- 0.0
 prep.partial.pos.adherent.trans.reduction <- 0.81

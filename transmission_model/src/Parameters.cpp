@@ -23,6 +23,7 @@ const std::string INPUT_AGE_THRESHOLD = "input.age.threshold";
 
 const std::string LT_SUFFIX = ".lt";
 const std::string GTE_SUFFIX = ".gte";
+const std::string PSU_SUFFIX = ".psu";
 
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";

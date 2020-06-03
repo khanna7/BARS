@@ -16,6 +16,7 @@ struct AdherenceData {
 	double probability;
 	AdherenceCategory category;
 
+    AdherenceData() {}
 	AdherenceData(double prob, AdherenceCategory cat) : probability{prob}, category{cat} {}
 };
 

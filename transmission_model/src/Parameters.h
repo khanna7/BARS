@@ -11,6 +11,7 @@ extern const std::string INPUT_AGE_THRESHOLD;
 
 extern const std::string LT_SUFFIX;
 extern const std::string GTE_SUFFIX;
+extern const std::string PSU_SUFFIX;
 
 extern const std::string NET_VAR;
 extern const std::string CASUAL_NET_VAR;
