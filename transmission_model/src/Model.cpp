@@ -1144,18 +1144,19 @@ void Model::updateJailStats(Stats* stats, PersonPtr person) {
     
 void Model::doJailCheck(PersonPtr person, double tick, double incarceration_with_cji_prob, double incarceration_prob) {
     //test only
-        //if (person->isInfected()) {} //only HIV+
-        //proability of jailing a person: 
-        if (!person->isJailed())  {
-            if (person->hasPreviousJailHistory() && Random::instance()->nextDouble() <=  incarceration_with_cji_prob) {
-                updateJailStats(Stats::instance(), person);
-                jail.addPerson(tick, person);
-
-            } else if (Random::instance()->nextDouble() <= incarceration_prob) { 
+    //if (person->isInfected()) {} //only HIV+
+    //proability of jailing a person: 
+    if (!person->isJailed())  {
+        if (person->hasPreviousJailHistory()) {
+            if (Random::instance()->nextDouble() <=  incarceration_with_cji_prob) {
                 updateJailStats(Stats::instance(), person);
                 jail.addPerson(tick, person);
             }
+        } else if (Random::instance()->nextDouble() <= incarceration_prob) {
+            updateJailStats(Stats::instance(), person);
+            jail.addPerson(tick, person);
         }
+    }
 }
 
 void Model::updateVitals(double tick, float size_of_timestep, int max_age, vector<PersonPtr>& uninfected) {
