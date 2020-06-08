@@ -59,10 +59,10 @@ Jail::Jail(Network<Person>* net, JailInfRateCalculator calc) :
 
 Jail::~Jail() {}
 
-double get_jail_time() {
- 
+double get_jail_time(PersonPtr person) {
+    std::string suffix = person->isPolystimulantUser() ? PSU_SUFFIX : "";
     //double serving_time_prob = Parameters::instance()->getDoubleParameter(JAIL_SERVING_TIME_MEAN_PROB);
-    double serving_time_mean = Parameters::instance()->getDoubleParameter(JAIL_SERVING_TIME_MEAN);
+    double serving_time_mean = Parameters::instance()->getDoubleParameter(JAIL_SERVING_TIME_MEAN + suffix);
     GeometricDistribution jail_term_gen = GeometricDistribution((1/serving_time_mean), 0);
     double jail_serving_time = jail_term_gen.next();
 
@@ -108,7 +108,7 @@ void Jail::updateInfRateMult(double mult) {
 * Add a person to the jail (list) 
 */ 
 void Jail::addPerson(double tick, PersonPtr person) {
-    double serving_time = get_jail_time();
+    double serving_time = get_jail_time(person);
     addPerson(person, serving_time, tick);
 }
 

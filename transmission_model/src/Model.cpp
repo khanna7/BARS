@@ -1173,7 +1173,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     double incarceration_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB);
     //double incarceration_prob_prev = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_PREV);
     double incarceration_with_cji_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB);
-
+    double incarceration_prob_psu = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + PSU_SUFFIX);
+    double incarceration_with_cji_prob_psu = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + PSU_SUFFIX);
     for (auto iter = population.begin(); iter != population.end(); ) {
         PersonPtr person = (*iter);
         // update viral load, cd4
@@ -1241,7 +1242,9 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 }
             }
             
-            doJailCheck(person, tick, incarceration_with_cji_prob, incarceration_prob);
+            double prob = person->isPolystimulantUser() ? incarceration_prob_psu : incarceration_prob;
+            double prob_with_cji = person->isPolystimulantUser() ? incarceration_with_cji_prob_psu : incarceration_with_cji_prob;
+            doJailCheck(person, tick, prob_with_cji, prob);
 
             if (person->isOnART(true)) { //care disruption 
             // if (person->isOnART()) {

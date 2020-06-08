@@ -506,10 +506,12 @@ is.care.disruption.on <- FALSE
 
 #incarceration.prob <- 0.0
 incarceration.prob <- 0.0000787
+incarceration.prob.psu <- 0.0000787
 #incarceration.prob <- 0.002
 
 #incarceration.with.cji.prob <- 0.0
 incarceration.with.cji.prob <- 0.0005173
+incarceration.with.cji.prob.psu <- 0.0005173
 #incarceration.with.cji.prob <- 0.002
 
 jail.infection.rate.window.size <- 90
@@ -518,6 +520,7 @@ jail.infection.rate.default <- 0.000091
 
 #jail.serving.time.mean <- 58
 jail.serving.time.mean <- 58.4
+jail.serving.time.mean.psu <- 58.4
 post.release.interference.period.mean <- 90
 #network.retention.multiplier <- 1
 network.retention.multiplier <- 0.75
