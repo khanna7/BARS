@@ -190,8 +190,8 @@ default.prep.bl.use.prop.gte <- 8.7/100
 
 prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)/2 #only needed for time 0 #COMMON
 
-default.prep.mean.days.usage.lt <- 200 #Study from 3 US cities https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4908080/ and Arthi's derivation: https://uchicago.box.com/s/xsgpttj1ypx19si06d6zrqwfup0e27tw 
-default.prep.mean.days.usage.gte <- 200 #as above
+default.prep.mean.days.usage.lt <- 30*9.5 #LA LGBT data: https://uchicago.box.com/s/g79by4jowdo5ng1vfpl098lbg2973r81
+default.prep.mean.days.usage.gte <- 30*9.5 #as above
 
 default.prep.yearly.increment.lt <- 0 #COMMON
 default.prep.yearly.increment.gte <- 0 #COMMON
