@@ -53,10 +53,10 @@ protected:
 TEST_F(JailTests, TestJailNetworkRetention) {
     Diagnoser diagnoser(5, 0, 1);
     
-    PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
-    PersonPtr p3 = make_shared<Person>(3, 10, true, 0, 1, diagnoser);
-    PersonPtr p4 = make_shared<Person>(4, 10, true, 0, 1, diagnoser);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p3 = make_shared<Person>(3, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p4 = make_shared<Person>(4, 10, true, true, 0, 1, diagnoser);
 
     Network<Person> net(false);
     net.addVertex(p1);
@@ -118,10 +118,10 @@ TEST_F(JailTests, TestJailNetworkRetention) {
 TEST_F(JailTests, TestJailCareDistruption) {
     Diagnoser diagnoser(5, 0, 1);
     
-    PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
-    PersonPtr p3 = make_shared<Person>(3, 10, true, 0, 1, diagnoser);
-    PersonPtr p4 = make_shared<Person>(4, 10, true, 0, 1, diagnoser);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p3 = make_shared<Person>(3, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p4 = make_shared<Person>(4, 10, true, true, 0, 1, diagnoser);
 
     Network<Person> net(false);
     net.addVertex(p1);
@@ -178,10 +178,10 @@ TEST_F(JailTests, TestJailCareDistruption) {
 TEST_F(JailTests, TestMultiJailStayCareDisruption) {
     Diagnoser diagnoser(5, 0, 1);
     
-    PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
-    PersonPtr p3 = make_shared<Person>(3, 10, true, 0, 1, diagnoser);
-    PersonPtr p4 = make_shared<Person>(4, 10, true, 0, 1, diagnoser);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p3 = make_shared<Person>(3, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p4 = make_shared<Person>(4, 10, true, true, 0, 1, diagnoser);
 
     Network<Person> net(false);
     net.addVertex(p1);
@@ -314,8 +314,8 @@ TEST_F(JailTests, TestInfRateCalc) {
 TEST_F(JailTests, TestJailInfection) {
 
     Diagnoser diagnoser(5, 0, 1);
-    PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
     Network<Person> net(false);
     net.addVertex(p1);
     net.addVertex(p2);
@@ -345,8 +345,8 @@ TEST_F(JailTests, TestJailInfection) {
 
 TEST_F(JailTests, TestJailInmateAddRemove) {
     Diagnoser diagnoser(5, 0, 1);
-    PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
     Network<Person> net(false);
     net.addVertex(p1);
     net.addVertex(p2);

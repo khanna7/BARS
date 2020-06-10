@@ -53,9 +53,10 @@ int calculate_role(int network_type) {
 
 PersonPtr PersonCreator::operator()(double tick, float age) {
     int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
+    bool polystimulant_user = repast::Random::instance()->nextDouble() >= 0.5;
     double size_of_timestep = Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP);
     Diagnoser diagnoser(detection_window_, 0);
-    PersonPtr person = std::make_shared<Person>(id++, age, status == 1, calculate_role(STEADY_NETWORK_TYPE),
+    PersonPtr person = std::make_shared<Person>(id++, age, status == 1, polystimulant_user, calculate_role(STEADY_NETWORK_TYPE),
             calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
     testing_configurator.configurePerson(person, size_of_timestep);
 
@@ -69,16 +70,16 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 PersonPtr PersonCreator::createPerson(Rcpp::List& val) {
     float age = as<float>(val["age"]);
     bool circum_status = as<bool>(val["circum.status"]);
+    bool polystimulant_user = repast::Random::instance()->nextDouble() >= 0.5;
     int role_main = as<int>(val["role_main"]);
     int role_casual = role_main;
     if (val.containsElementNamed("role_casual")) {
         role_casual = as<int>(val["role_casual"]);
     }
-
     //float next_test_at = tick + as<double>(val["time.until.next.test"]);
     // float detection_window,  unsigned int test_count, test_prob
     Diagnoser diagnoser(detection_window_, as<unsigned int>(val["number.of.tests"]), 0);
-    PersonPtr person = std::make_shared<Person>(id++, age, circum_status, role_main, role_casual, diagnoser);
+    PersonPtr person = std::make_shared<Person>(id++, age, circum_status, polystimulant_user, role_main, role_casual, diagnoser);
     return person;
 }
 

@@ -291,7 +291,7 @@ TEST(MiscTests, testTestingFunc) {
     }
 
     Diagnoser diagnoser(0, 0);
-    PersonPtr person = std::make_shared<Person>(1, 27, true, 1, 1, diagnoser);
+    PersonPtr person = std::make_shared<Person>(1, 27, true, true, 1, 1, diagnoser);
     TestingConfigurator config = create_testing_configurator();
 
     exp_min = 1 / 730.0;
@@ -322,7 +322,7 @@ TEST(MiscTests, testTestingFunc) {
 TEST(MiscTests, testPrepAdherenceConfig) {
 
     Diagnoser diagnoser(0, 0);
-    PersonPtr person = std::make_shared<Person>(1, 25.9, true, 1, 1, diagnoser);
+    PersonPtr person = std::make_shared<Person>(1, 25.9, true, true, 1, 1, diagnoser);
     PREPAdherenceConfigurator config = create_prep_adherence_configurator();
 
     /*

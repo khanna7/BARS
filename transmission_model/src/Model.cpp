@@ -1020,11 +1020,9 @@ void Model::step() {
     PersonToVALForSimulate p2val;
     float max_survival = Parameters::instance()->getFloatParameter(MAX_AGE);
     float size_of_timestep = Parameters::instance()->getIntParameter(SIZE_OF_TIMESTEP);
-       
-    if ((int) t % 100 == 0) {
-        std::cout << " ---- " << t << " ---- " << std::endl;
-    }
-   
+
+    std::cout << " ---- " << t << " ---- " << std::endl;
+
     // updates (i.e. simulates) the partner network
     simulate(R, net, p2val, condom_assigner, t);
 
