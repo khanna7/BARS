@@ -1061,7 +1061,11 @@ void Model::step() {
     stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
 
     for (auto iter = population.begin(); iter != population.end(); ++iter) {
-        stats->currentCounts().incrementVertexCount((*iter));
+        PersonPtr person = (*iter);
+        stats->currentCounts().incrementVertexCount(person);
+        if (!person->isInfected()) {
+            stats->currentCounts().incrementUninfected(person);
+        }
     }
 
     stats->resetForNextTimeStep();
@@ -1213,7 +1217,6 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
         } else {
             // don't count dead uninfected persons
             if (!person->isInfected()) {
-                stats->currentCounts().incrementUninfected(person);
                 // accumulate persons who may potentially go on PrEP
                 prep_manager.processPerson(person, net);
                 if (person->isOnPrep(true)) {  //care disruption
