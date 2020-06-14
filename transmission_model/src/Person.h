@@ -33,7 +33,9 @@ private:
     bool dead_, diagnosed_, testable_;
     Diagnoser diagnoser_;
     AdherenceData art_adherence_;
-
+    bool partner_was_jailed_;
+    int partner_was_jailed_expiration_tick_;
+    
     double score_;
 
     JailParameters jail_parameters_;
@@ -101,6 +103,24 @@ public:
 
     const AdherenceData artAdherence() const {
         return art_adherence_;
+    }
+
+    void setPartnerWasJailedToTrue(int at_tick);
+
+    void setPartnerWasJailedToFalse() {
+        partner_was_jailed_ = false;
+    }
+
+    bool partnerWasJailed() const {
+        return partner_was_jailed_;
+    }
+
+    void setPartnerWasJailedExpirationTick(double tick) {
+        partner_was_jailed_expiration_tick_ = tick;
+    }
+
+    int parterWasJailedExpirationTick() const {
+        return partner_was_jailed_expiration_tick_;
     }
 
     double score() const {

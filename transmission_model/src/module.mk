@@ -41,6 +41,7 @@ CPP_SOURCE = Person.cpp \
     PrepAgeFilter.cpp \
     Logger.cpp \
     Jail.cpp \
+    PartnerWasJailedExpirationEvent.cpp \
     JailEvents.cpp \
     CSVReader.cpp \
     JailInfectionRateCalc.cpp \

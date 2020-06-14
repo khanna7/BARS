@@ -83,7 +83,13 @@ void Jail::addPerson(PersonPtr person, double jail_duration, double tick) {
 
         std::vector<EdgePtr<Person>> edges;
         net_->getEdges(person, edges);
-
+        for (auto e : edges) {
+            if (e->v1() != person) {
+                e->v1()->setPartnerWasJailedToTrue(std::floor(tick));
+            } else {
+                e->v2()->setPartnerWasJailedToTrue(std::floor(tick));
+            }
+        }
         jailed_pop_net.emplace(person->id(), edges);
         net_->removeVertex(person);
     }

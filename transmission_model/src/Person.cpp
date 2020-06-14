@@ -5,19 +5,26 @@
  *      Author: nick
  */
 
+#include "repast_hpc/RepastProcess.h"
+#include "repast_hpc/Schedule.h"
+
 #include "Rcpp.h"
 
 #include "Person.h"
+#include "Parameters.h"
 #include "Stats.h"
+#include "PartnerWasJailedExpirationEvent.h"
 
 using namespace Rcpp;
+using namespace repast;
 
 namespace TransModel {
 
 Person::Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser diagnoser) :
         id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age), circum_status_(circum_status),
-        infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false), testable_(false),
-        diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), jail_parameters_{} {
+        infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false),
+        testable_(false), diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, partner_was_jailed_(false),
+        partner_was_jailed_expiration_tick_(0), score_(0), jail_parameters_{} {
         //diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), vulnerability_expiration_(0) {
 }
 
@@ -28,6 +35,15 @@ Person::Person(int id, float age, bool circum_status, int steady_role, int casua
 //}
 
 Person::~Person() {
+}
+
+void Person::setPartnerWasJailedToTrue(int at_tick) {
+    ScheduleRunner &runner = RepastProcess::instance()->getScheduleRunner();
+    int partner_was_jailed_expiration_time = Parameters::instance()->getIntParameter(PARTNER_WAS_JAILED_EXPIRATION_TIME);
+    int schedule_at_tick = at_tick + partner_was_jailed_expiration_time;
+    cout << "Setting has jailed partner to true " << id() << " for tick " << schedule_at_tick <<  endl;
+    partner_was_jailed_expiration_tick_ = schedule_at_tick;
+    runner.scheduleEvent(schedule_at_tick + 0.1, Schedule::FunctorPtr(new PartnerWasJailedExpirationEvent(make_shared<Person>(*this), schedule_at_tick)));
 }
 
 void Person::infect(float duration_of_infection, float time) {
