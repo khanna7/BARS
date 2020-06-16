@@ -43,6 +43,7 @@ void Person::setPartnerWasJailedToTrue(int at_tick) {
     int partner_was_jailed_expiration_time = Parameters::instance()->getIntParameter(PARTNER_WAS_JAILED_EXPIRATION_TIME);
     int schedule_at_tick = at_tick + partner_was_jailed_expiration_time;
     partner_was_jailed_expiration_tick_ = schedule_at_tick;
+    partner_was_jailed_ = true;
     runner.scheduleEvent(schedule_at_tick + 0.1, Schedule::FunctorPtr(new PartnerWasJailedExpirationEvent(this, schedule_at_tick)));
 }
 
