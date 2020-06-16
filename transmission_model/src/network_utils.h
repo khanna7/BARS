@@ -11,12 +11,12 @@
 #include <map>
 #include <exception>
 
-#include "RInside.h"
 
 #include "Network.h"
 #include "Stats.h"
 #include "CondomUseAssigner.h"
 #include "Parameters.h"
+#include "RInside.h"
 
 #include "boost/timer/timer.hpp"
 

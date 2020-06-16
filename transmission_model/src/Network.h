@@ -363,8 +363,7 @@ VertexIter<V> Network<V>::removeVertex(VertexIter<V> iter) {
 }
 
 template<typename V>
-std::shared_ptr<V> Network<V>::getVertex(unsigned int id)
-{
+std::shared_ptr<V> Network<V>::getVertex(unsigned int id) {
     auto iter = vertices.find(id);
     if (iter != vertices.end()) {
         return iter->second;
