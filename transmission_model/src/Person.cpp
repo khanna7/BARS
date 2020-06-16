@@ -41,9 +41,10 @@ void Person::setPartnerWasJailedToTrue(int at_tick) {
     ScheduleRunner &runner = RepastProcess::instance()->getScheduleRunner();
     int partner_was_jailed_expiration_time = Parameters::instance()->getIntParameter(PARTNER_WAS_JAILED_EXPIRATION_TIME);
     int schedule_at_tick = at_tick + partner_was_jailed_expiration_time;
-    cout << "Setting has jailed partner to true " << id() << " for tick " << schedule_at_tick <<  endl;
     partner_was_jailed_expiration_tick_ = schedule_at_tick;
-    runner.scheduleEvent(schedule_at_tick + 0.1, Schedule::FunctorPtr(new PartnerWasJailedExpirationEvent(make_shared<Person>(*this), schedule_at_tick)));
+    runner.scheduleEvent(schedule_at_tick + 0.1, Schedule::FunctorPtr(new PartnerWasJailedExpirationEvent(this, schedule_at_tick)));
+}
+
 }
 
 void Person::infect(float duration_of_infection, float time) {

@@ -18,11 +18,11 @@ namespace TransModel {
 class PartnerWasJailedExpirationEvent : public repast::Functor {
 
 private:
-    PersonPtr person_;
-    int to_false_tick_;
+    Person *person_;
+    int tick_;
 
 public:
-    PartnerWasJailedExpirationEvent(std::shared_ptr<Person> person, int to_false_tick);
+    PartnerWasJailedExpirationEvent(Person *person, int tick);
     virtual ~PartnerWasJailedExpirationEvent();
 
     void operator()();
