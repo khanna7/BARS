@@ -14,6 +14,7 @@
 #include "Parameters.h"
 #include "Stats.h"
 #include "PartnerWasJailedExpirationEvent.h"
+#include "ReleasedPartnerExpirationEvent.h"
 
 using namespace Rcpp;
 using namespace repast;
@@ -24,7 +25,7 @@ Person::Person(int id, float age, bool circum_status, int steady_role, int casua
         id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age), circum_status_(circum_status),
         infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false),
         testable_(false), diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, partner_was_jailed_(false),
-        partner_was_jailed_expiration_tick_(0), score_(0), jail_parameters_{} {
+        partner_was_jailed_expiration_tick_(0), released_partners_{}, score_(0), jail_parameters_{} {
         //diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), vulnerability_expiration_(0) {
 }
 
@@ -45,6 +46,24 @@ void Person::setPartnerWasJailedToTrue(int at_tick) {
     runner.scheduleEvent(schedule_at_tick + 0.1, Schedule::FunctorPtr(new PartnerWasJailedExpirationEvent(this, schedule_at_tick)));
 }
 
+void Person::addReleasedPartner(int id, int tick)
+{
+    ScheduleRunner &runner = RepastProcess::instance()->getScheduleRunner();
+    double released_partner_expiration_time = Parameters::instance()->getDoubleParameter(RELEASED_PARTNER_EXPIRATION_TIME);
+    double schedule_at_tick = tick + released_partner_expiration_time + 0.1;
+    released_partners_.insert(id);
+    runner.scheduleEvent(schedule_at_tick, Schedule::FunctorPtr(new ReleasedPartnerExpirationEvent(this, id)));
+}
+
+bool Person::hasReleasedPartner(int id) {
+    return std::find(released_partners_.begin(), released_partners_.end(), id) != released_partners_.end();
+}
+
+void Person::removeReleasedPartner(int id) {
+    auto iter = std::find(released_partners_.begin(), released_partners_.end(), id);
+    if (iter != released_partners_.end()) {
+        released_partners_.erase(iter);
+    }
 }
 
 void Person::infect(float duration_of_infection, float time) {
@@ -199,6 +218,7 @@ void Person::releasedFromJail(double time_of_release) {
     //std::cout << "Person: getOutJail():, time " << current_time << std::endl;
     jail_parameters_.accumulative_time_in_jail += (time_of_release - jail_parameters_.time_of_jail);
     jail_parameters_.is_in_jail = false;
+    jail_parameters_.time_of_release = time_of_release;
     if (jail_parameters_.is_first_time_jailed) { 
         jail_parameters_.is_first_time_jailed = false;
     }

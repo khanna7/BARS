@@ -508,6 +508,7 @@ post.release.interference.period.mean <- 90
 network.retention.multiplier <- 0.75
 
 partner.was.jailed.expiration.time <- 365
+released.partner.expiration.time <- 365
 
 # format is "at_timestep|new_val"
 # jail.infection.rate.multiplier.update <- "10.0|20.0"

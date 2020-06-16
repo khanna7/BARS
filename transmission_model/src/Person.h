@@ -35,7 +35,8 @@ private:
     AdherenceData art_adherence_;
     bool partner_was_jailed_;
     int partner_was_jailed_expiration_tick_;
-    
+    std::set<int> released_partners_;
+
     double score_;
 
     JailParameters jail_parameters_;
@@ -122,6 +123,12 @@ public:
     int parterWasJailedExpirationTick() const {
         return partner_was_jailed_expiration_tick_;
     }
+
+    void addReleasedPartner(int id, int tick);
+
+    bool hasReleasedPartner(int id);
+
+    void removeReleasedPartner(int id); 
 
     double score() const {
         return score_;
@@ -266,7 +273,14 @@ public:
     bool isJailed() const {
         return jail_parameters_.is_in_jail;
     }
-
+    void printReleaedPartners() {
+        std::cout << "printing released_partners_" << std::endl;
+        for (auto p : released_partners_) {
+            std::cout << p << " ";
+        }
+        std::cout << std::endl;
+    }
+    
     /**
      * Boolean function to check if a person is jailed (in jail).
      */
@@ -292,6 +306,10 @@ public:
         return jail_parameters_.serving_time;
     }
 
+    double timeOfRelease() const {
+        return jail_parameters_.time_of_release;
+    }
+    
     const JailParameters& jailParameters() const {
         return jail_parameters_;
     }
