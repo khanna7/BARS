@@ -57,7 +57,7 @@
      pr_receptive_casual <- 36.4/100
 
      # frequency of sex 
-     prop.casual.sex.acts <- 0.36 #units: per person per day (confirmed by Katrina)  
+     prop.casual.sex.acts <- 0.27 #units: per person per day (confirmed by Katrina)  
 
    # TIMESTEP
    size.of.timestep <- 1 #currently set as 1 day #COMMON
@@ -354,17 +354,17 @@ inf.red.w.condom <- 0.80
 	#   Because MSM would tend to congregate in cities
 	# - Calculations and query criteria are in
 	#   "Houston Mortality Calcs (from CDC Wonder).xslx"
-	asm.15_20 <- 0.000966 / (365 * 1)
-	asm.20_25 <- 0.001896 / (365 * 1)
-	asm.25_30 <- 0.001976 / (365 * 1)
-	asm.30_35 <- 0.001976 / (365 * 1)
-	asm.35_40 <- 0.003175 / (365 * 1)
-	asm.40_45 <- 0.003175 / (365 * 1)
-	asm.45_50 <- 0.006803 / (365 * 1)
-	asm.50_55 <- 0.006803 / (365 * 1)
-	asm.55_60 <- 0.017383 / (365 * 1)
-	asm.60_65 <- 0.017383 / (365 * 1)
-	asm.65_70 <- 0.033181 / (365 * 1)
+	asm.15_20 <- 0.000905 / (365 * 1)
+	asm.20_25 <- 0.001707 / (365 * 1)
+	asm.25_30 <- 0.001737 / (365 * 1)
+	asm.30_35 <- 0.002211 / (365 * 1)
+	asm.35_40 <- 0.002565 / (365 * 1)
+	asm.40_45 <- 0.003376 / (365 * 1)
+	asm.45_50 <- 0.005016 / (365 * 1)
+	asm.50_55 <- 0.007861 / (365 * 1)
+	asm.55_60 <- 0.012813 / (365 * 1)
+	asm.60_65 <- 0.019439 / (365 * 1)
+	asm.65_70 <- 0.025852 / (365 * 1)
 
 # CD4 Mortality 
   #Format is [min_max)
