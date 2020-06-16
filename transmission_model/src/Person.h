@@ -128,6 +128,10 @@ public:
 
     bool hasReleasedPartner(int id);
 
+    bool hasReleasedPartner() {
+        return released_partners_.size() > 0;
+    }
+    
     void removeReleasedPartner(int id); 
 
     double score() const {
