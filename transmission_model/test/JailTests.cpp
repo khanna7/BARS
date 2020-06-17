@@ -12,6 +12,8 @@
 #include "StatsBuilder.h"
 #include "utils.h"
 #include "CondomUseAssigner.h"
+#include "Network.h"
+#include "network_utils.h"
 
 #include "RInstance.h"
 #include "Rcpp.h"
@@ -24,6 +26,8 @@ class JailTests: public ::testing::Test {
 protected:
 
     JailTests() {
+        std::string cmd = "source(file=\"../test_data/network_tests.R\")";
+        RInstance::rptr->parseEvalQ(cmd);
 
         repast::Random::initialize(1);
         repast::RepastProcess::init("");
@@ -400,3 +404,45 @@ TEST_F(JailTests, TestInitJailInfCalc) {
     
 
 }
+
+TEST_F(JailTests, TestJailedAndReleasedStatuses) {
+	
+	Diagnoser diagnoser(5, 0, 1);
+	PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
+	PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
+	Network<Person> net(false);
+	net.addVertex(p1);
+	net.addVertex(p2);
+	net.addEdge(p2, p1);
+	const repast::Schedule& schedule = repast::RepastProcess::instance()->getScheduleRunner().schedule();
+
+	Parameters::instance()->putParameter(PARTNER_WAS_JAILED_EXPIRATION_TIME, 2.0);
+	Parameters::instance()->putParameter(RELEASED_PARTNER_EXPIRATION_TIME, 2.0);
+
+	// unifected for 3 then infected
+	JailInfRateCalculator calc(3, 1, 0);
+
+	Jail jail(&net, calc);
+
+	jail.addPerson(1, p1);
+	ASSERT_TRUE(p2->partnerWasJailed());
+	ASSERT_FALSE(p2->hasReleasedPartner());
+
+	jail.releasePerson(1, p1);
+	ASSERT_TRUE(p2->hasReleasedPartner());
+	ASSERT_TRUE(p2->hasReleasedPartner(p1->id()));
+
+	jail.addPerson(2, p1);
+	ASSERT_FALSE(p2->hasReleasedPartner());
+
+	const_cast<repast::Schedule&>(schedule).execute();
+	ASSERT_FALSE(p2->hasReleasedPartner());
+	ASSERT_TRUE(p2->partnerWasJailed());
+
+	const_cast<repast::Schedule&>(schedule).execute();
+	ASSERT_FALSE(p2->partnerWasJailed());
+
+}
+
+
+
