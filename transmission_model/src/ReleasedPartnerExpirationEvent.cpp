@@ -14,7 +14,6 @@ ReleasedPartnerExpirationEvent::ReleasedPartnerExpirationEvent(PersonPtr person,
 
 void ReleasedPartnerExpirationEvent::operator()() {
     if (!person_->isDead()) {
-        person_->printReleaedPartners();
         person_->removeReleasedPartner(id_);
     }
 }
