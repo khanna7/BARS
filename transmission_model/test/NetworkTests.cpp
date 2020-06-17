@@ -61,11 +61,13 @@ public:
 		return false;
 	}
 
-	void addReleasedPartner(int id, double tick) {}
+	void addReleasedPartner(int id) {}
 
 	void removeReleasedPartner(int id) {}
 
 };
+
+void scheduleReleasedPartnerExpiration(std::shared_ptr<Agent> ptr, int id, double tick) {}
 
 class Assigner  {
 
