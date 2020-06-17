@@ -14,6 +14,9 @@
 
 #include "GeometricDistribution.h"
 #include "Stats.h"
+#include "ReleasedPartnerExpirationEvent.h"
+#include "PartnerWasJailedExpirationEvent.h"
+
 
 #include "PrintHelper.h"
 
@@ -90,7 +93,8 @@ void Jail::addPerson(PersonPtr person, double jail_duration, double tick) {
             } else {
                 partner = e->v2();
             }
-            partner->setPartnerWasJailedToTrue(std::floor(tick));
+            partner->setPartnerWasJailed(true);
+            schedulePartnerWasJailedExpiration(partner, std::floor(tick));
             if (partner->hasReleasedPartner(person->id())) {
                 partner->removeReleasedPartner(person->id());
             }
@@ -187,9 +191,11 @@ void Jail::releasePerson(double tick, PersonPtr person) {
                 EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
                 new_edge->setCondomUseProbability(edge->condomUseProbability());
                 if (source->id() == person->id()) {
-                    target->addReleasedPartner(person->id(), tick);
+                    target->addReleasedPartner(person->id());
+                    scheduleReleasedPartnerExpiration(target, person->id(), tick);
                 } else {
-                    source->addReleasedPartner(person->id(), tick);
+                    source->addReleasedPartner(person->id());
+                    scheduleReleasedPartnerExpiration(source, person->id(), tick);
                 }
             }
         }

@@ -16,6 +16,7 @@
 #include "Stats.h"
 #include "CondomUseAssigner.h"
 #include "Parameters.h"
+#include "ReleasedPartnerExpirationEvent.h"
 #include "RInside.h"
 
 #include "boost/timer/timer.hpp"
@@ -142,9 +143,11 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
         if (to) {
             EdgePtr<V> ep = net.addEdge(out, in, edge_type);
             if (inp->hasPreviousJailHistory() && (time <= inp->timeOfRelease() + chaos_period)) {
-                outp->addReleasedPartner(in, time);
+                outp->addReleasedPartner(in);
+                scheduleReleasedPartnerExpiration(outp, in, time);
             } else if (outp->hasPreviousJailHistory() && (time <= outp->timeOfRelease() + chaos_period)) {
-                inp->addReleasedPartner(out, time);
+                inp->addReleasedPartner(out);
+                scheduleReleasedPartnerExpiration(inp, out, time);
             }
             edge_initializer.initEdge(ep);
             ++added;

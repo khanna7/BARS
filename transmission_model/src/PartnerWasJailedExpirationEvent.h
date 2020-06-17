@@ -8,9 +8,10 @@
 #ifndef SRC_PARTNERWASJAILEDEXPIRATIONEVENT_H_
 #define SRC_PARTNERWASJAILEDEXPIRATIONEVENT_H_
 
-#include <memory>
-
 #include "repast_hpc/Schedule.h"
+#include "repast_hpc/RepastProcess.h"
+
+#include "Parameters.h"
 #include "Person.h"
 
 namespace TransModel {
@@ -18,15 +19,17 @@ namespace TransModel {
 class PartnerWasJailedExpirationEvent : public repast::Functor {
 
 private:
-    Person *person_;
+    PersonPtr person_;
     int tick_;
 
 public:
-    PartnerWasJailedExpirationEvent(Person *person, int tick);
+    PartnerWasJailedExpirationEvent(PersonPtr person, int tick);
     virtual ~PartnerWasJailedExpirationEvent();
 
     void operator()();
 };
+
+void schedulePartnerWasJailedExpiration(PersonPtr Person, int tick);
 
 } /* namespace TransModel */
 

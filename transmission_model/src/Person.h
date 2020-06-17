@@ -106,10 +106,8 @@ public:
         return art_adherence_;
     }
 
-    void setPartnerWasJailedToTrue(int at_tick);
-
-    void setPartnerWasJailedToFalse() {
-        partner_was_jailed_ = false;
+    void setPartnerWasJailed(bool status) {
+        partner_was_jailed_ = status;
     }
 
     bool partnerWasJailed() const {
@@ -124,7 +122,7 @@ public:
         return partner_was_jailed_expiration_tick_;
     }
 
-    void addReleasedPartner(int id, int tick);
+    void addReleasedPartner(int id);
 
     bool hasReleasedPartner(int id);
 

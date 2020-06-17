@@ -10,15 +10,17 @@ namespace TransModel {
 
 class ReleasedPartnerExpirationEvent : public repast::Functor {
 private:
-    Person *person_;
+    PersonPtr person_;
     int id_;
 
 public:
-    ReleasedPartnerExpirationEvent(Person *person, int id);
+    ReleasedPartnerExpirationEvent(PersonPtr person, int id);
     virtual ~ReleasedPartnerExpirationEvent();
 
     void operator()();
 };
+
+void scheduleReleasedPartnerExpiration(PersonPtr Person, int id, double tick);
 
 } /* namespace TransModel */
 

@@ -13,8 +13,6 @@
 #include "Person.h"
 #include "Parameters.h"
 #include "Stats.h"
-#include "PartnerWasJailedExpirationEvent.h"
-#include "ReleasedPartnerExpirationEvent.h"
 
 using namespace Rcpp;
 using namespace repast;
@@ -38,22 +36,8 @@ Person::Person(int id, float age, bool circum_status, int steady_role, int casua
 Person::~Person() {
 }
 
-void Person::setPartnerWasJailedToTrue(int at_tick) {
-    ScheduleRunner &runner = RepastProcess::instance()->getScheduleRunner();
-    int partner_was_jailed_expiration_time = Parameters::instance()->getIntParameter(PARTNER_WAS_JAILED_EXPIRATION_TIME);
-    int schedule_at_tick = at_tick + partner_was_jailed_expiration_time;
-    partner_was_jailed_expiration_tick_ = schedule_at_tick;
-    partner_was_jailed_ = true;
-    runner.scheduleEvent(schedule_at_tick + 0.1, Schedule::FunctorPtr(new PartnerWasJailedExpirationEvent(this, schedule_at_tick)));
-}
-
-void Person::addReleasedPartner(int id, int tick)
-{
-    ScheduleRunner &runner = RepastProcess::instance()->getScheduleRunner();
-    double released_partner_expiration_time = Parameters::instance()->getDoubleParameter(RELEASED_PARTNER_EXPIRATION_TIME);
-    double schedule_at_tick = tick + released_partner_expiration_time + 0.1;
+void Person::addReleasedPartner(int id) {
     released_partners_.insert(id);
-    runner.scheduleEvent(schedule_at_tick, Schedule::FunctorPtr(new ReleasedPartnerExpirationEvent(this, id)));
 }
 
 bool Person::hasReleasedPartner(int id) {
