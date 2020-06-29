@@ -37,18 +37,15 @@ Person::~Person() {
 }
 
 void Person::addReleasedPartner(int id) {
-    released_partners_.insert(id);
+    released_partners_[id] = 0.;
 }
 
 bool Person::hasReleasedPartner(int id) {
-    return std::find(released_partners_.begin(), released_partners_.end(), id) != released_partners_.end();
+    return released_partners_.find(id) != released_partners_.end();
 }
 
 void Person::removeReleasedPartner(int id) {
-    auto iter = std::find(released_partners_.begin(), released_partners_.end(), id);
-    if (iter != released_partners_.end()) {
-        released_partners_.erase(iter);
-    }
+    released_partners_.erase(id);
 }
 
 void Person::infect(float duration_of_infection, float time) {

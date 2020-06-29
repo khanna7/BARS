@@ -405,43 +405,64 @@ TEST_F(JailTests, TestInitJailInfCalc) {
 
 }
 
+using namespace repast;
+
 TEST_F(JailTests, TestJailedAndReleasedStatuses) {
-	
-	Diagnoser diagnoser(5, 0, 1);
-	PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
-	PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
-	Network<Person> net(false);
-	net.addVertex(p1);
-	net.addVertex(p2);
-	net.addEdge(p2, p1);
-	const repast::Schedule& schedule = repast::RepastProcess::instance()->getScheduleRunner().schedule();
 
-	Parameters::instance()->putParameter(PARTNER_WAS_JAILED_EXPIRATION_TIME, 2.0);
-	Parameters::instance()->putParameter(RELEASED_PARTNER_EXPIRATION_TIME, 2.0);
+    Diagnoser diagnoser(5, 0, 1);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
 
-	// unifected for 3 then infected
-	JailInfRateCalculator calc(3, 1, 0);
+    Network<Person> net(false);
+    net.addVertex(p1);
+    net.addVertex(p2);
+    net.addEdge(p2, p1);
+    const repast::Schedule& schedule = repast::RepastProcess::instance()->getScheduleRunner().schedule();
 
-	Jail jail(&net, calc);
+    Parameters::instance()->putParameter(PARTNER_WAS_JAILED_EXPIRATION_TIME, 2.0);
+    Parameters::instance()->putParameter(RELEASED_PARTNER_EXPIRATION_TIME, 2.0);
 
-	jail.addPerson(1, p1);
-	ASSERT_TRUE(p2->partnerWasJailed());
-	ASSERT_FALSE(p2->hasReleasedPartner());
+    // unifected for 3 then infected
+    JailInfRateCalculator calc(3, 1, 0);
 
-	jail.releasePerson(1, p1);
-	ASSERT_TRUE(p2->hasReleasedPartner());
-	ASSERT_TRUE(p2->hasReleasedPartner(p1->id()));
+    Jail jail(&net, calc);
 
-	jail.addPerson(2, p1);
-	ASSERT_FALSE(p2->hasReleasedPartner());
+    /* jailed expiration at 3.1 */
+    jail.addPerson(1, p1);
+    ASSERT_TRUE(p2->partnerWasJailed());
+    ASSERT_FALSE(p2->hasReleasedPartner());
 
-	const_cast<repast::Schedule&>(schedule).execute();
-	ASSERT_FALSE(p2->hasReleasedPartner());
-	ASSERT_TRUE(p2->partnerWasJailed());
+    /* released expiration at 3.1 */
+    jail.releasePerson(2, p1);
+    ASSERT_TRUE(p2->hasReleasedPartner());
+    ASSERT_TRUE(p2->hasReleasedPartner(p1->id()));
 
-	const_cast<repast::Schedule&>(schedule).execute();
-	ASSERT_FALSE(p2->partnerWasJailed());
+    /* jailed expiration at 4.1 */
+    jail.addPerson(3, p1);
+    ASSERT_FALSE(p2->hasReleasedPartner());
 
+    /* released expiration at 5.1 */
+    jail.releasePerson(4, p1);
+    ASSERT_TRUE(p2->hasReleasedPartner());
+    ASSERT_TRUE(p2->partnerWasJailed());
+
+    /* jailed expiration at 3.1; should not change jailed status because jailing before this happened */
+    const_cast<repast::Schedule&>(schedule).execute();
+    ASSERT_TRUE(p2->partnerWasJailed());
+
+    /* released expiration at 3.1 should not change released status */
+    const_cast<repast::Schedule&>(schedule).execute();
+    ASSERT_TRUE(p2->hasReleasedPartner());
+
+    //const_cast<Schedule&>(schedule).schedule_event(3, mf);
+    /* jailed expiration at 4.1 */
+    const_cast<repast::Schedule&>(schedule).execute();
+    ASSERT_TRUE(p2->hasReleasedPartner());
+    ASSERT_FALSE(p2->partnerWasJailed());
+
+    /* released expiration at 5.1 */
+    const_cast<repast::Schedule&>(schedule).execute();
+    ASSERT_FALSE(p2->hasReleasedPartner());
 }
 
 

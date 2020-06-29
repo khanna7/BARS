@@ -35,7 +35,7 @@ private:
     AdherenceData art_adherence_;
     bool partner_was_jailed_;
     int partner_was_jailed_expiration_tick_;
-    std::set<int> released_partners_;
+    std::map<int, double> released_partners_;
 
     double score_;
 
@@ -129,7 +129,15 @@ public:
     bool hasReleasedPartner() {
         return released_partners_.size() > 0;
     }
-    
+
+    void setReleasedPartnerExpirationTick(int id, double tick) {
+        released_partners_[id] = tick;
+    }
+
+    double releasedPartnerExpirationTick(int id) {
+        return released_partners_.at(id);
+    }
+
     void removeReleasedPartner(int id); 
 
     double score() const {
@@ -278,7 +286,7 @@ public:
     void printReleaedPartners() {
         std::cout << "printing released_partners_" << std::endl;
         for (auto p : released_partners_) {
-            std::cout << p << " ";
+            std::cout << p.first << " ";
         }
         std::cout << std::endl;
     }

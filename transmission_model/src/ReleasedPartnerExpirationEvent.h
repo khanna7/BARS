@@ -12,15 +12,16 @@ class ReleasedPartnerExpirationEvent : public repast::Functor {
 private:
     PersonPtr person_;
     int id_;
+    double expiration_tick_;
 
 public:
-    ReleasedPartnerExpirationEvent(PersonPtr person, int id);
+    ReleasedPartnerExpirationEvent(PersonPtr person, int id, double expiration_tick);
     virtual ~ReleasedPartnerExpirationEvent();
 
     void operator()();
 };
 
-void scheduleReleasedPartnerExpiration(PersonPtr Person, int id, double tick);
+void scheduleReleasedPartnerExpiration(PersonPtr Person, int id, double scheduled_at_tick);
 
 } /* namespace TransModel */
 

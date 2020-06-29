@@ -23,13 +23,13 @@ private:
     int tick_;
 
 public:
-    PartnerWasJailedExpirationEvent(PersonPtr person, int tick);
+    PartnerWasJailedExpirationEvent(PersonPtr person, double tick);
     virtual ~PartnerWasJailedExpirationEvent();
 
     void operator()();
 };
 
-void schedulePartnerWasJailedExpiration(PersonPtr Person, int tick);
+void schedulePartnerWasJailedExpiration(PersonPtr Person, double tick);
 
 } /* namespace TransModel */
 

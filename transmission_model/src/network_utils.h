@@ -126,7 +126,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
     float post_release_interference_period_mean = Parameters::instance()->getFloatParameter(POST_RELEASE_INTERFERENCE_PERIOD_MEAN);
     GeometricDistribution post_release_interference_dur_gen = GeometricDistribution((1/post_release_interference_period_mean), 0);
 
-    int chaos_period = (int) post_release_interference_dur_gen.next();
+    double chaos_period = post_release_interference_dur_gen.next();
 
     // changes is a matrix with columns: "tail", "head", "to".
     // to  == 1 if tie is formed, otherwise 0
@@ -142,12 +142,21 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
         std::shared_ptr<V> outp = net.getVertex(out);
         if (to) {
             EdgePtr<V> ep = net.addEdge(out, in, edge_type);
+            std::shared_ptr<V> partner_of_released;
+            int released_id;
+            bool add = false;
             if (inp->hasPreviousJailHistory() && (time <= inp->timeOfRelease() + chaos_period)) {
-                outp->addReleasedPartner(in);
-                scheduleReleasedPartnerExpiration(outp, in, time);
+                partner_of_released = std::shared_ptr<V>(outp);
+                released_id = in;
+                add = true;
             } else if (outp->hasPreviousJailHistory() && (time <= outp->timeOfRelease() + chaos_period)) {
-                inp->addReleasedPartner(out);
-                scheduleReleasedPartnerExpiration(inp, out, time);
+                partner_of_released = std::shared_ptr<V>(inp);
+                released_id = out;
+                add = true;
+            }
+            if (add) {
+                partner_of_released->addReleasedPartner(released_id);
+                scheduleReleasedPartnerExpiration(partner_of_released, released_id, time);
             }
             edge_initializer.initEdge(ep);
             ++added;
