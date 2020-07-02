@@ -119,10 +119,11 @@
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month #COMMON
 
    ## ART adherence
+   # Subject to change!
    partial.art_adher.window.length <- 1*30 #COMMON (by design) 
-   art.prop.never.adherent <- 5.2/100 #from YMAP https://uchicago.box.com/s/1ryu33tf3ydtt1fr7v4podyw7sm1bwo7 (spreadsheet ART_adherence)
-   art.prop.part.neg.adherent <- 11.6/100 #ditto 
-   art.prop.part.plus.adherent <- 25/100 #ditto
+   art.prop.never.adherent <- 0.0615 #from YMAP https://uchicago.box.com/s/1ryu33tf3ydtt1fr7v4podyw7sm1bwo7 (spreadsheet ART_adherence)
+   art.prop.part.neg.adherent <- 0.43875 #ditto 
+   art.prop.part.plus.adherent <- 0.44975 #ditto
    art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent) 
 
    art.always.adherent.probability <- 0.95 #COMMON (by desgin)
@@ -162,13 +163,14 @@
     # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    art.init.lag.lt.1 <- "0.0355|0-7" #NHBS data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
-    art.init.lag.lt.2 <- "0.092875|7-30" #Assumed geometric distribution, and computed number of samples 
-    art.init.lag.lt.3 <- "0.19675|30-90" # see https://uchicago.box.com/s/i0ua9gvoammjpavseyszqr46g3vrrqav  
-    art.init.lag.lt.4 <- "0.220125|90-180" # for further details
-    art.init.lag.lt.5 <- "0.249875|180-365"
-    art.init.lag.lt.6 <- "0.163375|365-730"
-    art.init.lag.lt.7 <- "0.0415|730-1825"
+    # Updated by Mert. See la-diagnosis-initiation-dist.R
+    art.init.lag.lt.1 <- "0.26775|0-7" #NHBS data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
+    art.init.lag.lt.2 <- "0.172125|7-30" #Assumed geometric distribution, and computed number of samples 
+    art.init.lag.lt.3 <- "0.120125|30-90" # see https://uchicago.box.com/s/i0ua9gvoammjpavseyszqr46g3vrrqav  
+    art.init.lag.lt.4 <- "0.118|90-180" # for further details
+    art.init.lag.lt.5 <- "0.1485|180-365"
+    art.init.lag.lt.6 <- "0.122625|365-730"
+    art.init.lag.lt.7 <- "0.050875|730-1825"
 
     art.init.lag.gte.1 <- art.init.lag.lt.1
     art.init.lag.gte.2 <- art.init.lag.lt.2
@@ -354,6 +356,7 @@ inf.red.w.condom <- 0.80
 	#   Because MSM would tend to congregate in cities
 	# - Calculations and query criteria are in
 	#   "Houston Mortality Calcs (from CDC Wonder).xslx"
+	# Updated by Mert.
 	asm.15_20 <- 0.000905 / (365 * 1)
 	asm.20_25 <- 0.001707 / (365 * 1)
 	asm.25_30 <- 0.001737 / (365 * 1)
@@ -399,23 +402,24 @@ external.infections.age.factor = 1 # changed to 1 to remove more external infect
 
 # range of number of tests in last two years min-max, fraction of the population
 # Note: from Jing's word doc
-testing.prob.lt.1 = "1-2|0.50420168"
-testing.prob.lt.2 = "3-4|0.22689076"
-testing.prob.lt.3 = "5-6|0.15966387"
-testing.prob.lt.4 = "7-8|0.06722689"
-testing.prob.lt.5 = "9-10|0.00840336"
-testing.prob.lt.6 = "11-12|0.00840336"
-testing.prob.lt.7 = "13-16|0.02521008"
-testing.prob.lt.8 = "17-20|0"
-testing.prob.lt.9 = "21-30|0"
+# Updated by Mert. See testing-distribution.R
+testing.prob.lt.1 = "1-2|0.027875"
+testing.prob.lt.2 = "3-4|0.13625"
+testing.prob.lt.3 = "5-6|0.2735"
+testing.prob.lt.4 = "7-8|0.271625"
+testing.prob.lt.5 = "9-10|0.17975"
+testing.prob.lt.6 = "11-12|0.078625"
+testing.prob.lt.7 = "13-16|0.030875"
+testing.prob.lt.8 = "17-20|0.000625"
+testing.prob.lt.9 = "21-30|0.000875"
 
-testing.prob.gte.1 = "1-2|0.35714286"
-testing.prob.gte.2 = "3-4|0.35714286"
-testing.prob.gte.3 = "5-6|0.11428571"
-testing.prob.gte.4 = "7-8|0.1"
-testing.prob.gte.5 = "9-10|0.01428571"
-testing.prob.gte.6 = "11-12|0.02857143"
-testing.prob.gte.7 = "13-16|0.02857143"
+testing.prob.gte.1 = "1-2|0.1555"
+testing.prob.gte.2 = "3-4|0.350125"
+testing.prob.gte.3 = "5-6|0.30125"
+testing.prob.gte.4 = "7-8|0.1395"
+testing.prob.gte.5 = "9-10|0.03775"
+testing.prob.gte.6 = "11-12|0.00625"
+testing.prob.gte.7 = "13-16|0.0005"
 testing.prob.gte.8 = "17-20|0"
-testing.prob.gte.9 = "21-30|0"
+testing.prob.gte.9 = "21-30|0.009125"
 
