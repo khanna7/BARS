@@ -322,6 +322,16 @@
                            v=on.prep
                            )
 
+
+   ## substance use
+   meth.user <- rbinom(n, 1, meth.prop); table(meth.user)
+   ecstasy.user <- rbinom(n, 1, ecstasy.prop); table(ecstasy.user)
+   crack.user <- rbinom(n, 1, crack.prop); table(crack.user)
+   
+   n0 %v% "meth.user" <- meth.user; table(n0 %v% "meth.user", exclude=NULL)
+   n0 %v% "ecstasy.user" <- ecstasy.user; table(n0 %v% "ecstasy.user", exclude=NULL)
+   n0 %v% "crack.user" <- crack.user; table(n0 %v% "crack.user", exclude=NULL)
+   
    #####################
    ## FIT MODEL
    fit <- ergm(formation.n0, 
