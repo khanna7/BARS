@@ -535,4 +535,26 @@ network.retention.multiplier <- 0.75
 # is.network.disruption.on.update <- "30|TRUE"
 # is.care.disruption.on.update <- "30|TRUE"
 
+######################
+# substance use
+meth.prop <- 9.21/100 
+ecstasy.prop <- 4.02/100
+crack.prop <- 17.42/100
+
+# ART and substance use
+meth.decline.art.always.adherent <- 50/100
+ecstasy.decline.art.always.adherent <- 42/100
+crack.decline.art.always.adherent <- 39/100
+
+# PrEP and substance use
+meth.decline.prep.use <- 7.1/100
+ecstasy.decline.prep.use <- 5.4/100
+crack.decline.prep.use <- 4.6/100
+
+# Talk to John regarding PrEP and retention use
+
+# incarceration and substance use
+meth.increase.incar.rate <-
+ecstasy.increase.incar.rate <-
+crack.increase.incar.rate <- 
 
