@@ -27,7 +27,7 @@ private:
     int id_, steady_role_, casual_role_;
     float age_;
     bool circum_status_;
-    bool polystimulant_user_;
+    SubstanceUseType substance_use_;
     InfectionParameters infection_parameters_;
     float infectivity_;
     PrepParameters prep_;
@@ -40,7 +40,7 @@ private:
     JailParameters jail_parameters_;
 
 public:
-    Person(int id, float age, bool circum_status, bool polystimulant_user, int steady_role, int casual_role,
+    Person(int id, float age, bool circum_status, SubstanceUseType substance_use, int steady_role, int casual_role,
             Diagnoser diagnoser);
 
     virtual ~Person();
@@ -177,11 +177,11 @@ public:
     }
 
     bool isSubstanceUser() const {
-        return polystimulant_user_;
+        return this->substance_use_ != SubstanceUseType::NONE;
     }
 
-    bool isPolystimulantUser() const {
-        return polystimulant_user_;
+    bool isSubstanceUser(SubstanceUseType sut) const {
+        return substance_use_ == sut;
     }
 
     const PrepParameters prepParameters() const {

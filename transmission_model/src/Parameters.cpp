@@ -23,7 +23,10 @@ const std::string INPUT_AGE_THRESHOLD = "input.age.threshold";
 
 const std::string LT_SUFFIX = ".lt";
 const std::string GTE_SUFFIX = ".gte";
-const std::string PSU_SUFFIX = ".psu";
+
+const std::string METH_SUFFIX = ".meth";
+const std::string CRACK_SUFFIX = ".crack";
+const std::string ECSTASY_SUFFIX = ".ecstasy";
 
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";
@@ -119,8 +122,12 @@ const std::string DEFAULT_PREP_BALANCED_UNBALANCED = "default.prep.balanced.unba
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT = "default.prep.unbalanced.starting.prob.lt";
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE = "default.prep.unbalanced.starting.prob.gte";
 
-const std::string DEFAULT_PREP_USE_PROP_PSU = "default.prep.bl.use.prop.psu";
-const std::string DEFAULT_PREP_DAILY_STOP_PROB_PSU = "default.prep.daily.stop.prob.psu";
+const std::string DEFAULT_PREP_USE_PROP_METH = "default.prep.bl.use.prop.meth";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_METH = "default.prep.daily.stop.prob.meth";
+const std::string DEFAULT_PREP_USE_PROP_CRACK = "default.prep.bl.use.prop.crack";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_CRACK = "default.prep.daily.stop.prob.crack";
+const std::string DEFAULT_PREP_USE_PROP_ECSTASY = "default.prep.bl.use.prop.ecstasy";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB_ECSTASY = "default.prep.daily.stop.prob.ecstasy";
 
 const std::string YOR_PREP_ALPHA = "yor.prep.alpha";
 const std::string YOR_PREP_USE_PROP = "yor.prep.bl.use.prop";

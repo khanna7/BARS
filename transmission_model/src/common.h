@@ -37,6 +37,8 @@ const int RECEPTIVE = 2;
 
 enum class NetworkType {MAIN, CASUAL, ALL};
 
+enum class SubstanceUseType {METH, CRACK, ECSTASY, NONE};
+
 }
 
 

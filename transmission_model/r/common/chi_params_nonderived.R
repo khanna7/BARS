@@ -113,10 +113,20 @@
    #art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
    art.prop.always.adherent <- 0.32
 
-   art.prop.never.adherent.psu <- 0.3 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   art.prop.part.plus.adherent.psu <- 0.28
-   art.prop.part.neg.adherent.psu <- 0.32
-   art.prop.always.adherent.psu <- 0.1
+   art.prop.never.adherent.meth <- 0.3 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+   art.prop.part.plus.adherent.meth <- 0.28
+   art.prop.part.neg.adherent.meth <- 0.32
+   art.prop.always.adherent.meth <- 0.1
+
+   art.prop.never.adherent.crack <- 0.3 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+   art.prop.part.plus.adherent.crack <- 0.28
+   art.prop.part.neg.adherent.crack <- 0.32
+   art.prop.always.adherent.crack <- 0.1
+
+   art.prop.never.adherent.ecstasy <- 0.3 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+   art.prop.part.plus.adherent.ecstasy <- 0.28
+   art.prop.part.neg.adherent.ecstasy <- 0.32
+   art.prop.always.adherent.ecstasy <- 0.1
 
 
    art.always.adherent.probability <- 0.95
@@ -216,8 +226,14 @@ default.prep.mean.days.usage.gte <- 365
 
 #polystimulant users
 
-default.prep.bl.use.prop.psu <- 12.7/100
-default.prep.mean.days.usage.psu <- 365
+default.prep.bl.use.prop.meth <- 12.7/100
+default.prep.mean.days.usage.meth <- 365
+
+default.prep.bl.use.prop.crack <- 12.7/100
+default.prep.mean.days.usage.crack <- 365
+
+default.prep.bl.use.prop.ecstasy <- 12.7/100
+default.prep.mean.days.usage.ecstasy <- 365
 
 default.prep.yearly.increment.lt <- 0
 default.prep.yearly.increment.gte <- 0
@@ -345,10 +361,20 @@ prep.prop.always.adherent.gte <- 0.619
 prep.prop.part.plus.adherent.gte <- 0.10
 prep.prop.part.neg.adherent.gte <- 0.07
 
-prep.prop.never.adherent.psu <- 0.211
-prep.prop.always.adherent.psu <- 0.619
-prep.prop.part.plus.adherent.psu <- 0.10
-prep.prop.part.neg.adherent.psu <- 0.07
+prep.prop.never.adherent.meth <- 0.211
+prep.prop.always.adherent.meth <- 0.619
+prep.prop.part.plus.adherent.meth <- 0.10
+prep.prop.part.neg.adherent.meth <- 0.07
+
+prep.prop.never.adherent.crack <- 0.211
+prep.prop.always.adherent.crack <- 0.619
+prep.prop.part.plus.adherent.crack <- 0.10
+prep.prop.part.neg.adherent.crack <- 0.07
+
+prep.prop.never.adherent.ecstasy <- 0.211
+prep.prop.always.adherent.ecstasy <- 0.619
+prep.prop.part.plus.adherent.ecstasy <- 0.10
+prep.prop.part.neg.adherent.ecstasy <- 0.07
 
 prep.always.adherent.trans.reduction <- 0.95
 prep.never.adherent.trans.reduction <- 0.0
@@ -506,12 +532,16 @@ is.care.disruption.on <- FALSE
 
 #incarceration.prob <- 0.0
 incarceration.prob <- 0.0000787
-incarceration.prob.psu <- 0.0000787
+incarceration.prob.meth <- 0.0000787
+incarceration.prob.crack<- 0.0000787
+incarceration.prob.ecstasy <- 0.0000787
 #incarceration.prob <- 0.002
 
 #incarceration.with.cji.prob <- 0.0
 incarceration.with.cji.prob <- 0.0005173
-incarceration.with.cji.prob.psu <- 0.0005173
+incarceration.with.cji.prob.meth <- 0.0005173
+incarceration.with.cji.prob.crack <- 0.0005173
+incarceration.with.cji.prob.ecstasy <- 0.0005173
 #incarceration.with.cji.prob <- 0.002
 
 jail.infection.rate.window.size <- 90
@@ -520,7 +550,10 @@ jail.infection.rate.default <- 0.000091
 
 #jail.serving.time.mean <- 58
 jail.serving.time.mean <- 58.4
-jail.serving.time.mean.psu <- 58.4
+jail.serving.time.mean.meth <- 58.4
+jail.serving.time.mean.crack <- 58.4
+jail.serving.time.mean.ecstasy <- 58.4
+
 post.release.interference.period.mean <- 90
 #network.retention.multiplier <- 1
 network.retention.multiplier <- 0.75

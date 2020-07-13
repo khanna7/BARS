@@ -11,7 +11,10 @@ extern const std::string INPUT_AGE_THRESHOLD;
 
 extern const std::string LT_SUFFIX;
 extern const std::string GTE_SUFFIX;
-extern const std::string PSU_SUFFIX;
+
+extern const std::string METH_SUFFIX;
+extern const std::string CRACK_SUFFIX;
+extern const std::string ECSTASY_SUFFIX;
 
 extern const std::string NET_VAR;
 extern const std::string CASUAL_NET_VAR;
@@ -106,8 +109,13 @@ extern const std::string DEFAULT_PREP_BALANCED_UNBALANCED;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE;
 
-extern const std::string DEFAULT_PREP_USE_PROP_PSU;
-extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_PSU;
+
+extern const std::string DEFAULT_PREP_USE_PROP_METH;
+extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_METH;
+extern const std::string DEFAULT_PREP_USE_PROP_CRACK;
+extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_CRACK;
+extern const std::string DEFAULT_PREP_USE_PROP_ECSTASY;
+extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_ECSTASY;
 
 extern const std::string YOR_ADDITIONAL_PREP_LT;
 extern const std::string YOR_ADDITIONAL_PREP_GTE;

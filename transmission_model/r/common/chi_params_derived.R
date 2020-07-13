@@ -49,7 +49,9 @@
    default.prep.daily.stop.prob <- mean(c(default.prep.daily.stop.prob.lt, default.prep.daily.stop.prob.gte))
    prep.daily.stop.prob <- default.prep.daily.stop.prob.lt #needed only for time 0
 
-   default.prep.daily.stop.prob.psu <- 1/default.prep.mean.days.usage.psu
+   default.prep.daily.stop.prob.meth <- 1/default.prep.mean.days.usage.meth
+   default.prep.daily.stop.prob.crack <- 1/default.prep.mean.days.usage.crack
+   default.prep.daily.stop.prob.ecstasy <- 1/default.prep.mean.days.usage.ecstasy
 
    ### Young Old Ratio PrEP intervention parameters ###
    

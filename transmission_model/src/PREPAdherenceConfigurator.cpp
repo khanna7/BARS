@@ -43,18 +43,22 @@ ProbDist<AdherenceData> create_prep_adherence_dist(const std::string& threshold_
 PREPAdherenceConfigurator create_prep_adherence_configurator() {
     ProbDist<AdherenceData> lt_dist = create_prep_adherence_dist(LT_SUFFIX);
     ProbDist<AdherenceData> gte_dist = create_prep_adherence_dist(GTE_SUFFIX);
-    ProbDist<AdherenceData> psu_dist = create_prep_adherence_dist(PSU_SUFFIX);
+    ProbDist<AdherenceData> meth_dist = create_prep_adherence_dist(METH_SUFFIX);
+    ProbDist<AdherenceData> crack_dist = create_prep_adherence_dist(CRACK_SUFFIX);
+    ProbDist<AdherenceData> ecstasy_dist = create_prep_adherence_dist(ECSTASY_SUFFIX);
 
     float age_threshold = Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD);
     std::map<AdherenceCategory, double> cat_map;
     init_category_map(cat_map);
 
-    return PREPAdherenceConfigurator(lt_dist, gte_dist, age_threshold, psu_dist, cat_map);
+    return PREPAdherenceConfigurator(lt_dist, gte_dist, age_threshold, meth_dist, crack_dist, ecstasy_dist, cat_map);
 }
 
 PREPAdherenceConfigurator::PREPAdherenceConfigurator(ProbDist<AdherenceData> lt_dist, ProbDist<AdherenceData> gte_dist,
-        float age_threshold, ProbDist<AdherenceData> psu_dist, std::map<AdherenceCategory, double> cat_map) :
-    lt_dist_{lt_dist}, gte_dist_{gte_dist}, psu_dist_(psu_dist), age_threshold_{age_threshold}, cat_map_{cat_map} {
+ float age_threshold, ProbDist<AdherenceData> meth_dist, ProbDist<AdherenceData> crack_dist,
+ ProbDist<AdherenceData> ecstasy_dist, std::map<AdherenceCategory, double> cat_map) :
+    lt_dist_{lt_dist}, gte_dist_{gte_dist}, meth_dist_(meth_dist), crack_dist_(crack_dist), ecstasy_dist_(ecstasy_dist),
+    age_threshold_{age_threshold}, cat_map_{cat_map} {
 }
 
 PREPAdherenceConfigurator::~PREPAdherenceConfigurator() {
@@ -62,8 +66,12 @@ PREPAdherenceConfigurator::~PREPAdherenceConfigurator() {
 
 void PREPAdherenceConfigurator::configurePerson(std::shared_ptr<Person> person, double draw) {
     AdherenceData data;
-    if (person->isPolystimulantUser()) {
-        data = psu_dist_.draw(draw);
+    if (person->isSubstanceUser(SubstanceUseType::METH)) {
+        data = meth_dist_.draw(draw);
+    } else if (person->isSubstanceUser(SubstanceUseType::CRACK)) {
+        data = crack_dist_.draw(draw);
+    } else if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+        data = ecstasy_dist_.draw(draw);
     } else {
         data = person->age() < age_threshold_ ? lt_dist_.draw(draw) : gte_dist_.draw(draw);
     }

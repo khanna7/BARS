@@ -54,11 +54,32 @@ public:
     double calcPrepStopAdjustment() override;
 };
 
-class PolystimulantUsePrepFilter : public PrepFilter {
+class MethPrepFilter : public PrepFilter {
 
 public:
-    PolystimulantUsePrepFilter();
-    virtual ~PolystimulantUsePrepFilter();
+    MethPrepFilter();
+    virtual ~MethPrepFilter();
+
+    bool apply(PersonPtr person) override;
+    double calcPrepStopAdjustment() override;
+};
+
+
+class CrackPrepFilter : public PrepFilter {
+
+public:
+    CrackPrepFilter();
+    virtual ~CrackPrepFilter();
+
+    bool apply(PersonPtr person) override;
+    double calcPrepStopAdjustment() override;
+};
+
+class EcstasyPrepFilter : public PrepFilter {
+
+public:
+    EcstasyPrepFilter();
+    virtual ~EcstasyPrepFilter();
 
     bool apply(PersonPtr person) override;
     double calcPrepStopAdjustment() override;
