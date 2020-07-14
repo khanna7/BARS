@@ -587,7 +587,7 @@ crack.decline.prep.use <- 4.6/100
 # Talk to John regarding PrEP and retention use
 
 # incarceration and substance use
-meth.increase.incar.rate <-
-ecstasy.increase.incar.rate <-
-crack.increase.incar.rate <- 
+#meth.increase.incar.rate <-
+#ecstasy.increase.incar.rate <-
+#crack.increase.incar.rate <- 
 
