@@ -71,6 +71,9 @@ jail.serving.time.mean = 58
 
 post.release.interference.period.mean = 90
 
+partner.was.jailed.expiration.time = 36500
+released.partner.expiration.time = 36500
+
 network.retention.multiplier = 1
 
 # These are typically in derived but here for jail tests

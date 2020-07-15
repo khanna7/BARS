@@ -7,11 +7,11 @@
 
 #include "gtest/gtest.h"
 
-#include "RInstance.h"
 #include "Network.h"
 #include "network_utils.h"
 #include "StatsBuilder.h"
 #include "NetworkStats.h"
+#include "RInstance.h"
 
 using namespace TransModel;
 using namespace Rcpp;
@@ -48,7 +48,26 @@ public:
 	void setScore(double score) {
 		score_ = score;
 	}
+
+	bool hasPreviousJailHistory() {
+		return false;
+	}
+
+	int timeOfRelease() {
+		return -1;
+	}
+
+	bool hasReleasedPartner(int id) {
+		return false;
+	}
+
+	void addReleasedPartner(int id) {}
+
+	void removeReleasedPartner(int id) {}
+
 };
+
+void scheduleReleasedPartnerExpiration(std::shared_ptr<Agent> ptr, int id, double tick) {}
 
 class Assigner  {
 

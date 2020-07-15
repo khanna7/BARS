@@ -33,6 +33,9 @@ private:
     bool dead_, diagnosed_, testable_;
     Diagnoser diagnoser_;
     AdherenceData art_adherence_;
+    bool partner_was_jailed_;
+    int partner_was_jailed_expiration_tick_;
+    std::map<int, double> released_partners_;
 
     double score_;
 
@@ -102,6 +105,40 @@ public:
     const AdherenceData artAdherence() const {
         return art_adherence_;
     }
+
+    void setPartnerWasJailed(bool status) {
+        partner_was_jailed_ = status;
+    }
+
+    bool partnerWasJailed() const {
+        return partner_was_jailed_;
+    }
+
+    void setPartnerWasJailedExpirationTick(double tick) {
+        partner_was_jailed_expiration_tick_ = tick;
+    }
+
+    int parterWasJailedExpirationTick() const {
+        return partner_was_jailed_expiration_tick_;
+    }
+
+    void addReleasedPartner(int id);
+
+    bool hasReleasedPartner(int id);
+
+    bool hasReleasedPartner() {
+        return released_partners_.size() > 0;
+    }
+
+    void setReleasedPartnerExpirationTick(int id, double tick) {
+        released_partners_[id] = tick;
+    }
+
+    double releasedPartnerExpirationTick(int id) {
+        return released_partners_.at(id);
+    }
+
+    void removeReleasedPartner(int id); 
 
     double score() const {
         return score_;
@@ -246,7 +283,14 @@ public:
     bool isJailed() const {
         return jail_parameters_.is_in_jail;
     }
-
+    void printReleaedPartners() {
+        std::cout << "printing released_partners_" << std::endl;
+        for (auto p : released_partners_) {
+            std::cout << p.first << " ";
+        }
+        std::cout << std::endl;
+    }
+    
     /**
      * Boolean function to check if a person is jailed (in jail).
      */
@@ -272,6 +316,10 @@ public:
         return jail_parameters_.serving_time;
     }
 
+    double timeOfRelease() const {
+        return jail_parameters_.time_of_release;
+    }
+    
     const JailParameters& jailParameters() const {
         return jail_parameters_;
     }

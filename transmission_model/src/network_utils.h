@@ -11,11 +11,13 @@
 #include <map>
 #include <exception>
 
-#include "RInside.h"
 
 #include "Network.h"
 #include "Stats.h"
 #include "CondomUseAssigner.h"
+#include "Parameters.h"
+#include "ReleasedPartnerExpirationEvent.h"
+#include "RInside.h"
 
 #include "boost/timer/timer.hpp"
 
@@ -121,6 +123,11 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 template<typename V, typename EdgeInit>
 void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map,
         double time, EdgeInit& edge_initializer, int edge_type) {
+    float post_release_interference_period_mean = Parameters::instance()->getFloatParameter(POST_RELEASE_INTERFERENCE_PERIOD_MEAN);
+    GeometricDistribution post_release_interference_dur_gen = GeometricDistribution((1/post_release_interference_period_mean), 0);
+
+    double chaos_period = post_release_interference_dur_gen.next();
+
     // changes is a matrix with columns: "tail", "head", "to".
     // to  == 1 if tie is formed, otherwise 0
     IntegerMatrix matrix = as<IntegerMatrix>(changes);
@@ -130,9 +137,27 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
     for (int r = 0, n = matrix.rows(); r < n; ++r) {
         int in = idx_map.at(matrix(r, 0));
         int out = idx_map.at(matrix(r, 1));
-        int to = matrix(r, 2);
+        int to = matrix(r, 2); 
+        std::shared_ptr<V> inp = net.getVertex(in);
+        std::shared_ptr<V> outp = net.getVertex(out);
         if (to) {
             EdgePtr<V> ep = net.addEdge(out, in, edge_type);
+            std::shared_ptr<V> partner_of_released;
+            int released_id;
+            bool add = false;
+            if (inp->hasPreviousJailHistory() && (time <= inp->timeOfRelease() + chaos_period)) {
+                partner_of_released = std::shared_ptr<V>(outp);
+                released_id = in;
+                add = true;
+            } else if (outp->hasPreviousJailHistory() && (time <= outp->timeOfRelease() + chaos_period)) {
+                partner_of_released = std::shared_ptr<V>(inp);
+                released_id = out;
+                add = true;
+            }
+            if (add) {
+                partner_of_released->addReleasedPartner(released_id);
+                scheduleReleasedPartnerExpiration(partner_of_released, released_id, time);
+            }
             edge_initializer.initEdge(ep);
             ++added;
             Stats::instance()->recordPartnershipEvent(time, ep->id(), out, in, PartnershipEvent::STARTED, edge_type);
@@ -145,6 +170,13 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
                 }
                 std::cout << "At: " << time << ", "<< edge_type << ": " << out << ", " << in << std::endl;
                 throw std::domain_error("Updating from tergm changes: trying to remove an edge that doesn't exist");
+            } else {
+                if (inp->hasReleasedPartner(out)) {
+                    inp->removeReleasedPartner(out);
+                }
+                if (outp->hasReleasedPartner(in)) {
+                    outp->removeReleasedPartner(out);
+                }
             }
             Stats::instance()->recordPartnershipEvent(time, res->id(), out, in, PartnershipEvent::ENDED_DISSOLUTION, edge_type);
             ++removed;

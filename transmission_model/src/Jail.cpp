@@ -14,6 +14,9 @@
 
 #include "GeometricDistribution.h"
 #include "Stats.h"
+#include "ReleasedPartnerExpirationEvent.h"
+#include "PartnerWasJailedExpirationEvent.h"
+
 
 #include "PrintHelper.h"
 
@@ -83,7 +86,19 @@ void Jail::addPerson(PersonPtr person, double jail_duration, double tick) {
 
         std::vector<EdgePtr<Person>> edges;
         net_->getEdges(person, edges);
-
+        for (auto e : edges) {
+            PersonPtr partner;
+            if (e->v1() != person) {
+                partner = e->v1();
+            } else {
+                partner = e->v2();
+            }
+            partner->setPartnerWasJailed(true);
+            schedulePartnerWasJailedExpiration(partner, std::floor(tick));
+            if (partner->hasReleasedPartner(person->id())) {
+                partner->removeReleasedPartner(person->id());
+            }
+        }
         jailed_pop_net.emplace(person->id(), edges);
         net_->removeVertex(person);
     }
@@ -156,22 +171,33 @@ void Jail::releasePerson(double tick, PersonPtr person) {
         if ((source->id() == person->id() && !target->isJailed() && !target->isDead()) ||
         // if person is target, then make sure source is still valid
             (target->id() == person->id() && !source->isJailed() && !source->isDead())) {
-                double retention_prob;
-                if (edge->type() == STEADY_NETWORK_TYPE)  //0
-                    retention_prob = net_decay_prob_main[time_spent_in_jail];
-                else //CASUAL_NETWORK_TYPE, 1
-                  retention_prob = net_decay_prob_casual[time_spent_in_jail]; 
+            double retention_prob;
+            if (edge->type() == STEADY_NETWORK_TYPE)  //0
+                retention_prob = net_decay_prob_main[time_spent_in_jail];
+            else //CASUAL_NETWORK_TYPE, 1
+                retention_prob = net_decay_prob_casual[time_spent_in_jail]; 
 
-                if (Parameters::instance()->getBooleanParameter(IS_NETWORK_DISRUPTION_ON)) {
-                    if (Random::instance()->nextDouble() <= retention_prob * ret_multiplier) {
-                            EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
-                            new_edge->setCondomUseProbability(edge->condomUseProbability());
-                    }
+            bool add_edge = false;
+            if (Parameters::instance()->getBooleanParameter(IS_NETWORK_DISRUPTION_ON)) {
+                if (Random::instance()->nextDouble() <= retention_prob * ret_multiplier) {
+                    add_edge = true;
                 }
-                else {
-                    EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
-                    new_edge->setCondomUseProbability(edge->condomUseProbability());
+            }
+            else {
+                add_edge = true;
+            }
+
+            if (add_edge) {
+                EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
+                new_edge->setCondomUseProbability(edge->condomUseProbability());
+                if (source->id() == person->id()) {
+                    target->addReleasedPartner(person->id());
+                    scheduleReleasedPartnerExpiration(target, person->id(), tick);
+                } else {
+                    source->addReleasedPartner(person->id());
+                    scheduleReleasedPartnerExpiration(source, person->id(), tick);
                 }
+            }
         }
     }
 

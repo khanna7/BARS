@@ -78,7 +78,10 @@ network in the model at the end of the timestep
 * infected_never_jailed: number of persons at that timestep who are infected and have never been jailed
 * vertex_count_ever_jailed: total number of persons at that timestep who have ever been jailed
 * vertex_count_never_jailed: total number of persons at that timestep who have never been jailed
-
+* infected_jailed_partner: number of persons at that timestep who have become infected and have had a partner recently sent to jail
+* infected_released_partner: number of persons at that timestep who have become infected and have a partner who was recently released from jail
+* uninfected_jailed_partner: number of persons at that timestep who are uninfected and have a parter recently sent to jail
+* uninfected_released_partner: number of persons at that timestep who are uninfected and have a partner wo was recently released from jail
 
 
 ### Partnership Events

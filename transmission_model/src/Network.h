@@ -87,6 +87,7 @@ public:
     void addVertex(const std::shared_ptr<V>& vertex);
     bool removeVertex(const std::shared_ptr<V>& vertex);
     bool removeVertex(unsigned int id);
+    std::shared_ptr<V> getVertex(unsigned int id);
 
     VertexIter<V> removeVertex(VertexIter<V> iter);
 
@@ -373,6 +374,7 @@ bool Network<V>::removeVertex(unsigned int id) {
     return false;
 }
 
+
 template<typename V>
 VertexIter<V> Network<V>::removeVertex(VertexIter<V> iter) {
     VertexPtr<V> v = (*iter);
@@ -380,6 +382,16 @@ VertexIter<V> Network<V>::removeVertex(VertexIter<V> iter) {
     auto next_iter = ++iter;
     removeVertex(id);
     return next_iter;
+}
+
+template<typename V>
+std::shared_ptr<V> Network<V>::getVertex(unsigned int id) {
+    auto iter = vertices.find(id);
+    if (iter != vertices.end()) {
+        return iter->second;
+    } else {
+        return std::shared_ptr<V>(nullptr);
+    }
 }
 
 template<typename V>
@@ -438,6 +450,7 @@ EdgePtr<V> Network<V>::addEdge(const std::shared_ptr<V>& source, const std::shar
 }
 
 }
+
 
 /* namespace TransModel */
 

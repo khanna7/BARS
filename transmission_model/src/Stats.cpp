@@ -106,7 +106,9 @@ const std::string Counts::header(
         "on_art,on_prep,vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
         "pop,jail_pop,incarcerated,incarcerated_recidivist,infected_jail_pop,uninfected_jail_pop,infected_inside_jail,"
         "infected_at_incarceration,infected_partners_at_incarceration,infected_at_release,"
-        "infected_never_jailed,infected_ever_jailed,uninfected_never_jailed,uninfected_ever_jailed,vertex_count_never_jailed,vertex_count_ever_jailed"
+        "infected_never_jailed,infected_ever_jailed,uninfected_never_jailed,uninfected_ever_jailed,vertex_count_never_jailed,vertex_count_ever_jailed,"
+        "infected_jailed_partner,infected_released_partner,uninfected_jailed_partner,uninfected_released_partner,"
+        
         );
 
 
@@ -135,8 +137,9 @@ void Counts::writeTo(FileOutput& out) {
     << cd4m_deaths << "," << pop << "," << jail_pop << "," << incarcerated << ","  << incarcerated_recidivist << ","
     << infected_jail_pop  << "," << uninfected_in_jail << "," << infected_inside_jail << "," 
     << infected_at_incarceration << "," << infected_partners_at_incarceration << "," << infected_at_release << ","
-    << infected_never_jailed << "," << infected_ever_jailed << "," << uninfected_never_jailed << "," << uninfected_ever_jailed << "," << vertex_count_never_jailed << "," << vertex_count_ever_jailed << 
-    "\n";
+    << infected_never_jailed << "," << infected_ever_jailed << "," << uninfected_never_jailed << "," << uninfected_ever_jailed << "," << vertex_count_never_jailed << "," << vertex_count_ever_jailed << ","
+    << infected_jailed_partner << "," << infected_released_partner << "," << uninfected_jailed_partner << "," << uninfected_released_partner << "," 
+    << "\n";
 
 }
 
@@ -151,8 +154,9 @@ Counts::Counts(int min_age, int max_age) :
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, 
                 total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
                 infected_jail_pop{0}, pop{0}, jail_pop{0}, incarcerated{0}, incarcerated_recidivist{0}, infected_at_incarceration{0}, infected_partners_at_incarceration{0}, infected_at_release{0},
-                infected_never_jailed{0}, infected_ever_jailed{0}, uninfected_never_jailed{0}, uninfected_ever_jailed{0}, vertex_count_never_jailed{0}, vertex_count_ever_jailed{0},
-                uninfected_in_jail{0}
+                infected_never_jailed{0}, infected_ever_jailed{0}, uninfected_never_jailed{0}, uninfected_ever_jailed{0},vertex_count_never_jailed{0}, vertex_count_ever_jailed{0},
+                uninfected_in_jail{0},
+                infected_jailed_partner{0}, uninfected_jailed_partner{0}, infected_released_partner{0}, uninfected_released_partner{0}
 
 {
 }
@@ -185,12 +189,19 @@ void Counts::reset() {
     infected_never_jailed = infected_ever_jailed = uninfected_never_jailed = uninfected_ever_jailed = 0;
     vertex_count_never_jailed = vertex_count_ever_jailed = 0;
     uninfected_in_jail = 0;
+    infected_jailed_partner = infected_released_partner = uninfected_jailed_partner = uninfected_released_partner = 0;
 }
 
 
 void Counts::incrementInfected(PersonPtr& p) {
     ++internal_infected[(size_t)(std::floor(p->age())) - min_age_];
     ++total_internal_infected; 
+    if (p->hasReleasedPartner()) {
+        ++infected_released_partner;
+    }
+    if (p->partnerWasJailed()) {
+        ++infected_jailed_partner;
+    }
     if (p->isJailed()) {
         ++infected_ever_jailed;
         ++infected_inside_jail;
@@ -223,6 +234,12 @@ void Counts::incrementInfectedExternal(PersonPtr& p) {
 
 void Counts::incrementUninfected(PersonPtr& p) {
     ++uninfected[(size_t)(std::floor(p->age())) - min_age_];
+    if (p->hasReleasedPartner()) {
+        ++uninfected_released_partner;
+    }
+    if (p->partnerWasJailed()) {
+        ++uninfected_jailed_partner;
+    }
     if (p->isJailed()) {
         ++uninfected_ever_jailed;
         ++uninfected_in_jail;

@@ -309,6 +309,8 @@ const std::string NETWORK_RETENTION_MULTIPLIER_UPDATE = "network.retention.multi
 const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN_UPDATE = "post.release.interference.period.mean.update";
 const std::string IS_NETWORK_DISRUPTION_ON_UPDATE = "is.network.disruption.on.update";
 const std::string IS_CARE_DISRUPTION_ON_UPDATE = "is.care.disruption.on.update";
+const std::string PARTNER_WAS_JAILED_EXPIRATION_TIME = "partner.was.jailed.expiration.time";
+const std::string RELEASED_PARTNER_EXPIRATION_TIME = "released.partner.expiration.time";
 
 Parameters* Parameters::instance_ = 0;
 

@@ -1017,8 +1017,8 @@ void Model::step() {
     // updating cd4 counts, checking for death, diagnosing persons, etc.
     updateVitals(t, size_of_timestep, max_survival, uninfected);
     // select members of the population for infection from external sources
-    unsigned int outside_infection_count = runExternalInfections(uninfected, t);
-    jail.addOutsideInfectionRate(infected_count + outside_infection_count, uninfected_count);
+    runExternalInfections(uninfected, t);
+    jail.addOutsideInfectionRate(infected_count, uninfected_count);
     runJailInfections(t);
     previous_pop_size = current_pop_size;
     current_pop_size = population.size();

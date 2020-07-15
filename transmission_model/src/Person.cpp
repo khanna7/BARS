@@ -5,19 +5,25 @@
  *      Author: nick
  */
 
+#include "repast_hpc/RepastProcess.h"
+#include "repast_hpc/Schedule.h"
+
 #include "Rcpp.h"
 
 #include "Person.h"
+#include "Parameters.h"
 #include "Stats.h"
 
 using namespace Rcpp;
+using namespace repast;
 
 namespace TransModel {
 
 Person::Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser diagnoser) :
         id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age), circum_status_(circum_status),
-        infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false), testable_(false),
-        diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), jail_parameters_{} {
+        infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false),
+        testable_(false), diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, partner_was_jailed_(false),
+        partner_was_jailed_expiration_tick_(0), released_partners_{}, score_(0), jail_parameters_{} {
         //diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), vulnerability_expiration_(0) {
 }
 
@@ -28,6 +34,18 @@ Person::Person(int id, float age, bool circum_status, int steady_role, int casua
 //}
 
 Person::~Person() {
+}
+
+void Person::addReleasedPartner(int id) {
+    released_partners_[id] = 0.;
+}
+
+bool Person::hasReleasedPartner(int id) {
+    return released_partners_.find(id) != released_partners_.end();
+}
+
+void Person::removeReleasedPartner(int id) {
+    released_partners_.erase(id);
 }
 
 void Person::infect(float duration_of_infection, float time) {
@@ -182,6 +200,7 @@ void Person::releasedFromJail(double time_of_release) {
     //std::cout << "Person: getOutJail():, time " << current_time << std::endl;
     jail_parameters_.accumulative_time_in_jail += (time_of_release - jail_parameters_.time_of_jail);
     jail_parameters_.is_in_jail = false;
+    jail_parameters_.time_of_release = time_of_release;
     if (jail_parameters_.is_first_time_jailed) { 
         jail_parameters_.is_first_time_jailed = false;
     }
