@@ -89,7 +89,7 @@ protected:
 
 
 TEST_F(NetworkTests, TestAdds) {
-	Network<Agent> net(false);
+	Network<Agent> net;
 
 	AgentPtr one = std::make_shared<Agent>(1, 1);
 	AgentPtr two = std::make_shared<Agent>(2, 1);
@@ -161,11 +161,11 @@ TEST_F(NetworkTests, TestAdds) {
 	ASSERT_FALSE(net.hasEdge(two, three));
 	ASSERT_FALSE(net.hasEdge(two, three, 0));
 	ASSERT_TRUE(net.hasEdge(two, three, 10));
-	ASSERT_FALSE(net.hasEdge(three, two, 10));
+	ASSERT_TRUE(net.hasEdge(three, two, 10));
 }
 
 TEST_F(NetworkTests, TestEdgeGet) {
-	Network<Agent> net(false);
+	Network<Agent> net;
 
 	AgentPtr one = std::make_shared<Agent>(1, 1);
 	AgentPtr two = std::make_shared<Agent>(2, 1);
@@ -196,7 +196,7 @@ TEST_F(NetworkTests, TestEdgeGet) {
 }
 
 TEST_F(NetworkTests, TestRemoves) {
-	Network<Agent> net(false);
+	Network<Agent> net;
 
 	AgentPtr one = std::make_shared<Agent>(1, 1);
 	AgentPtr two = std::make_shared<Agent>(2, 1);
@@ -269,7 +269,7 @@ TEST_F(NetworkTests, TestRemoves) {
 }
 
 TEST_F(NetworkTests, TestRemovesByIter) {
-	Network<Agent> net(false);
+	Network<Agent> net;
 
 	AgentPtr one = std::make_shared<Agent>(1, 1);
 	AgentPtr two = std::make_shared<Agent>(2, 1);
@@ -345,7 +345,7 @@ TEST_F(NetworkTests, TestRemovesByIter) {
 }
 
 TEST_F(NetworkTests, TestRemovesByVertexIds) {
-	Network<Agent> net(false);
+	Network<Agent> net;
 
 	AgentPtr one = std::make_shared<Agent>(1, 1);
 	AgentPtr two = std::make_shared<Agent>(2, 1);
@@ -402,7 +402,7 @@ TEST_F(NetworkTests, TestRemovesByVertexIds) {
 }
 
 TEST_F(NetworkTests, TestStats) {
-	Network<Agent> net(false);
+	Network<Agent> net;
 
 	AgentPtr one = std::make_shared<Agent>(1, 1);
 	AgentPtr two = std::make_shared<Agent>(2, 1);
@@ -533,7 +533,7 @@ struct AgeSetter {
 };
 
 TEST_F(NetworkTests, CreateRNetTests) {
-	Network<Agent> net(false);
+	Network<Agent> net;
 	List init_net = as<List>((*RInstance::rptr)["sn"]);
 	AgentCreator creator;
 	Assigner assigner;
@@ -585,7 +585,7 @@ TEST_F(NetworkTests, CreateRNetTests) {
 }
 
 TEST_F(NetworkTests, InitNetTest) {
-	Network<Agent> net(false);
+	Network<Agent> net;
 	List rnet = as<List>((*RInstance::rptr)["sn"]);
 	AgentCreator creator;
 	Assigner assigner;

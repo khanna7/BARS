@@ -69,8 +69,9 @@ void create_r_network(double tick, List& rnet, Network<V>& net, std::map<unsigne
 
     int eidx = 1;
     for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
-        EdgePtr<V> edge = (*iter);
+        EdgePtr<V> edge = (*iter);  
         if (edge->type() == edge_type) {
+            
             unsigned int in_idx = v_to_idx_map.at(edge->v2()->id());
             unsigned int out_idx = v_to_idx_map.at(edge->v1()->id());
             mel(eidx - 1) = List::create(Named("atl") = List::create(Named("na") = false),
@@ -145,6 +146,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
                 }
                 std::cout << "At: " << time << ", "<< edge_type << ": " << out << ", " << in << std::endl;
                 throw std::domain_error("Updating from tergm changes: trying to remove an edge that doesn't exist");
+                
             }
             Stats::instance()->recordPartnershipEvent(time, res->id(), out, in, PartnershipEvent::ENDED_DISSOLUTION, edge_type);
             ++removed;
