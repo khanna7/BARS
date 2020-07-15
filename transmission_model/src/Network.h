@@ -62,7 +62,6 @@ template<typename V>
 class Network {
 
 private:
-    bool directed_;
     unsigned int edge_idx;
 
     VertexMap<V> vertices;
@@ -74,11 +73,15 @@ private:
     std::map<int, unsigned int> edge_counts;
 
     EdgePtr<V> doAddEdge(const std::shared_ptr<V>& source, const std::shared_ptr<V>& target, int type);
+    EdgePtr<V> doRemoveEdge(unsigned int v1_idx, unsigned int v2_idx, int type);
+    bool doHasEdge(unsigned int v1_idx, unsigned int v2_idx, int type);
+
     void removeEdges(unsigned int idx, EdgeList& el, std::vector<EdgePtr<V>>& removed_edges);
+
 
 public:
 
-    Network(bool directed);
+    Network();
     virtual ~Network();
 
     void addVertex(const std::shared_ptr<V>& vertex);
@@ -150,8 +153,7 @@ public:
 };
 
 template<typename V>
-Network<V>::Network(bool directed) :
-        directed_(directed), edge_idx(0), vertices(), edges(), oel(), iel(), edge_counts() {
+Network<V>::Network() : edge_idx(0), vertices(), edges(), oel(), iel(), edge_counts() {
 }
 
 template<typename V>
@@ -240,6 +242,15 @@ bool Network<V>::hasEdge(VertexPtr<V> v1, VertexPtr<V> v2, int type) {
 
 template<typename V>
 bool Network<V>::hasEdge(unsigned int v1_idx, unsigned int v2_idx, int type) {
+    bool has_edge = doHasEdge(v1_idx, v2_idx, type);
+    if (!has_edge) {
+        has_edge = doHasEdge(v2_idx, v1_idx, type);
+    }
+    return has_edge;
+}
+
+template<typename V>
+bool Network<V>::doHasEdge(unsigned int v1_idx, unsigned int v2_idx, int type) {
     auto iter = oel.find(v1_idx);
     if (iter == oel.end()) return false;
 
@@ -262,6 +273,17 @@ bool Network<V>::hasEdge(unsigned int v1_idx, unsigned int v2_idx, int type) {
 
 template<typename V>
 EdgePtr<V> Network<V>::removeEdge(unsigned int v1_idx, unsigned int v2_idx, int type) {
+    EdgePtr<V> edge = doRemoveEdge(v1_idx, v2_idx, type);
+    if (!edge) {
+       edge = doRemoveEdge(v2_idx, v1_idx, type);
+    }
+
+    return edge;
+}
+
+
+template<typename V>
+EdgePtr<V> Network<V>::doRemoveEdge(unsigned int v1_idx, unsigned int v2_idx, int type) {
     // defaults to nullptr
     EdgePtr<V> edge;
     auto iter = oel.find(v1_idx);

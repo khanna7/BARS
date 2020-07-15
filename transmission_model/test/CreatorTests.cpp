@@ -122,7 +122,7 @@ TEST_F(CreatorTests, TestUninfectedPersonCreation) {
     // make sure I have the right one
     ASSERT_NEAR(18.97795, as<double>(p_list["age"]), 0.00001);
 
-    Network<Person> net(false);
+    Network<Person> net;
     JailInfRateCalculator calc(3, 1, 0);
     Jail jail(&net, calc);
 
