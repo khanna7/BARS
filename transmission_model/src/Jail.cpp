@@ -94,10 +94,10 @@ void Jail::addPerson(PersonPtr person, double jail_duration, double tick) {
                 partner = e->v2();
             }
             partner->setPartnerWasJailed(true);
-            schedulePartnerWasJailedExpiration(partner, std::floor(tick));
+            /*schedulePartnerWasJailedExpiration(partner, std::floor(tick));
             if (partner->hasReleasedPartner(person->id())) {
                 partner->removeReleasedPartner(person->id());
-            }
+            }*/
         }
         jailed_pop_net.emplace(person->id(), edges);
         net_->removeVertex(person);
@@ -192,10 +192,10 @@ void Jail::releasePerson(double tick, PersonPtr person) {
                 new_edge->setCondomUseProbability(edge->condomUseProbability());
                 if (source->id() == person->id()) {
                     target->addReleasedPartner(person->id());
-                    scheduleReleasedPartnerExpiration(target, person->id(), tick);
+                    //scheduleReleasedPartnerExpiration(target, person->id(), tick);
                 } else {
                     source->addReleasedPartner(person->id());
-                    scheduleReleasedPartnerExpiration(source, person->id(), tick);
+                    //scheduleReleasedPartnerExpiration(source, person->id(), tick);
                 }
             }
         }

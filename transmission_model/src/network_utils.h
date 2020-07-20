@@ -123,11 +123,8 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
 template<typename V, typename EdgeInit>
 void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned int, unsigned int>& idx_map,
         double time, EdgeInit& edge_initializer, int edge_type) {
-    float post_release_interference_period_mean = Parameters::instance()->getFloatParameter(POST_RELEASE_INTERFERENCE_PERIOD_MEAN);
-    GeometricDistribution post_release_interference_dur_gen = GeometricDistribution((1/post_release_interference_period_mean), 0);
 
-    double chaos_period = post_release_interference_dur_gen.next();
-
+    double released_partner_formation_time = Parameters::instance()->getDoubleParameter(RELEASED_PARTNER_FORMATION_TIME);
     // changes is a matrix with columns: "tail", "head", "to".
     // to  == 1 if tie is formed, otherwise 0
     IntegerMatrix matrix = as<IntegerMatrix>(changes);
@@ -145,18 +142,17 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
             std::shared_ptr<V> partner_of_released;
             int released_id;
             bool add = false;
-            if (inp->hasPreviousJailHistory() && (time <= inp->timeOfRelease() + chaos_period)) {
+            if (inp->hasPreviousJailHistory() && (time <= inp->timeOfRelease() + released_partner_formation_time)) {
                 partner_of_released = std::shared_ptr<V>(outp);
                 released_id = in;
                 add = true;
-            } else if (outp->hasPreviousJailHistory() && (time <= outp->timeOfRelease() + chaos_period)) {
+            } else if (outp->hasPreviousJailHistory() && (time <= outp->timeOfRelease() + released_partner_formation_time)) {
                 partner_of_released = std::shared_ptr<V>(inp);
                 released_id = out;
                 add = true;
             }
             if (add) {
                 partner_of_released->addReleasedPartner(released_id);
-                scheduleReleasedPartnerExpiration(partner_of_released, released_id, time);
             }
             edge_initializer.initEdge(ep);
             ++added;
