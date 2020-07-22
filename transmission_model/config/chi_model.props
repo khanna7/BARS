@@ -1,11 +1,11 @@
 global.random.seed=42
 
 #stop.at = 36500 # 100 years
-#stop.at = 3650 # 10 years
+stop.at = 3650 # 10 years
 #stop.at = 1000
 #stop.at = 7300 # 20 years
 #stop.at = 730
-stop.at = 500
+#stop.at = 500
 
 net.variable.name = nw
 casual.net.variable.name = n_cas
