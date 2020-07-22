@@ -16,7 +16,7 @@ using namespace Rcpp;
 
 namespace TransModel {
 
-Person::Person(int id, float age, bool circum_status, SubstanceUseType substance_use, int steady_role, int casual_role, Diagnoser diagnoser) :
+Person::Person(int id, float age, bool circum_status, std::set<SubstanceUseType> substance_use, int steady_role, int casual_role, Diagnoser diagnoser) :
         id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age), circum_status_(circum_status),
         substance_use_(substance_use),infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false),
         diagnosed_(false), testable_(false), diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA},

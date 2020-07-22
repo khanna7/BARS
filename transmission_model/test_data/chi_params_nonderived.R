@@ -466,3 +466,10 @@ testing.prob.gte.9 = "21-30|0.007177778"
 incarceration.prob.for.entries <- 0.001
 min.jail.term.duration <- 3
 max.jail.term.duration <- 10
+
+# ART and substance use
+meth.decline.art.always.adherent <- 50/100
+ecstasy.decline.art.always.adherent <- 42/100
+crack.decline.art.always.adherent <- 39/100
+
+

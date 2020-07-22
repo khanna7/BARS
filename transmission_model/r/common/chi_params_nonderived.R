@@ -106,28 +106,11 @@
 
    ## ART adherence
    partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained
-   art.prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+
+   art.prop.always.adherent <- 0.32
+   art.prop.never.adherent <- 0.1
    art.prop.part.plus.adherent <- 0.28
    art.prop.part.neg.adherent <- 0.30
-
-   #art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
-   art.prop.always.adherent <- 0.32
-
-   art.prop.never.adherent.meth <- 0.3 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   art.prop.part.plus.adherent.meth <- 0.28
-   art.prop.part.neg.adherent.meth <- 0.32
-   art.prop.always.adherent.meth <- 0.1
-
-   art.prop.never.adherent.crack <- 0.3 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   art.prop.part.plus.adherent.crack <- 0.28
-   art.prop.part.neg.adherent.crack <- 0.32
-   art.prop.always.adherent.crack <- 0.1
-
-   art.prop.never.adherent.ecstasy <- 0.3 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   art.prop.part.plus.adherent.ecstasy <- 0.28
-   art.prop.part.neg.adherent.ecstasy <- 0.32
-   art.prop.always.adherent.ecstasy <- 0.1
-
 
    art.always.adherent.probability <- 0.95
    art.never.adherent.probability <- 0.05

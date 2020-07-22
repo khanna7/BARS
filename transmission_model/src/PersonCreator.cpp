@@ -53,16 +53,19 @@ int calculate_role(int network_type) {
 
 PersonPtr PersonCreator::operator()(double tick, float age) {
     int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
-    SubstanceUseType su_type;
-    double rand = repast::Random::instance()->nextDouble();
-    if (rand < 0.25) su_type = SubstanceUseType::METH;
-    if (rand < 0.5) su_type = SubstanceUseType::CRACK;
-    if (rand < 0.75) su_type = SubstanceUseType::ECSTASY;
-    else su_type = SubstanceUseType::NONE;
+    set<SubstanceUseType> su;
+    double meth_prop = Parameters::instance()->getDoubleParameter(METH_PROP);
+    double crack_prop = Parameters::instance()->getDoubleParameter(CRACK_PROP);
+    double ecstasy_prop = Parameters::instance()->getDoubleParameter(ECSTASY_PROP);
+    
+    repast::Random::instance()->nextDouble();
+    if (repast::Random::instance()->nextDouble() < meth_prop) su.insert(SubstanceUseType::METH);
+    if (repast::Random::instance()->nextDouble() < crack_prop) su.insert(SubstanceUseType::CRACK);
+    if (repast::Random::instance()->nextDouble() < ecstasy_prop) su.insert(SubstanceUseType::ECSTASY);
 
     double size_of_timestep = Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP);
     Diagnoser diagnoser(detection_window_, 0);
-    PersonPtr person = std::make_shared<Person>(id++, age, status == 1, su_type, calculate_role(STEADY_NETWORK_TYPE),
+    PersonPtr person = std::make_shared<Person>(id++, age, status == 1, su, calculate_role(STEADY_NETWORK_TYPE),
             calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
     testing_configurator.configurePerson(person, size_of_timestep);
 
@@ -85,16 +88,15 @@ PersonPtr PersonCreator::createPerson(Rcpp::List& val) {
         role_casual = as<int>(val["role_casual"]);
     }
 
-    SubstanceUseType su_type;
-    if (meth_user) { su_type = SubstanceUseType::METH; cout << "METH USER" << endl; }
-    else if (crack_user) { su_type = SubstanceUseType::CRACK; cout << "CRACK USER" << endl; }
-    else if (ecstasy_user) { su_type = SubstanceUseType::ECSTASY;cout << "ECSTASY USER" << endl; }
-    else { su_type = SubstanceUseType::NONE; cout << "NON USER" << endl; }
+    std::set<SubstanceUseType> su;
+    if (meth_user) su.insert(SubstanceUseType::METH);
+    if (crack_user) su.insert(SubstanceUseType::CRACK);
+    if (ecstasy_user) su.insert(SubstanceUseType::ECSTASY);
 
     //float next_test_at = tick + as<double>(val["time.until.next.test"]);
     // float detection_window,  unsigned int test_count, test_prob
     Diagnoser diagnoser(detection_window_, as<unsigned int>(val["number.of.tests"]), 0);
-    PersonPtr person = std::make_shared<Person>(id++, age, circum_status, su_type, role_main, role_casual, diagnoser);
+    PersonPtr person = std::make_shared<Person>(id++, age, circum_status, su, role_main, role_casual, diagnoser);
     return person;
 }
 

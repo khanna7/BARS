@@ -321,6 +321,10 @@ const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN_UPDATE = "post.release.i
 const std::string IS_NETWORK_DISRUPTION_ON_UPDATE = "is.network.disruption.on.update";
 const std::string IS_CARE_DISRUPTION_ON_UPDATE = "is.care.disruption.on.update";
 
+const std::string METH_PROP = "meth.prop";
+const std::string CRACK_PROP = "crack.prop";
+const std::string ECSTASY_PROP = "ecstasy.prop";
+
 Parameters* Parameters::instance_ = 0;
 
 std::ostream& operator<< (std::ostream& os, const Parameters* params) {

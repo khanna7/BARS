@@ -104,4 +104,46 @@
     ## PrEP
     
 #####################
-    ## Socioeconomic status
+   art.meth.to.distribute <- art.prop.always.adherent * meth.decline.art.always.adherent / 3
+   art.prop.never.adherent.meth <- art.prop.never.adherent + art.meth.to.distribute
+   art.prop.part.plus.adherent.meth <- art.prop.part.plus.adherent + art.meth.to.distribute
+   art.prop.part.neg.adherent.meth <- art.prop.part.neg.adherent + art.meth.to.distribute
+   art.prop.always.adherent.meth <- art.prop.always.adherent * (1 - meth.decline.art.always.adherent)
+
+   art.crack.to.distribute <- art.prop.always.adherent * crack.decline.art.always.adherent / 3
+   art.prop.never.adherent.crack <- art.prop.never.adherent + art.crack.to.distribute
+   art.prop.part.plus.adherent.crack <- art.prop.part.plus.adherent + art.crack.to.distribute
+   art.prop.part.neg.adherent.crack <- art.prop.part.neg.adherent + art.crack.to.distribute
+   art.prop.always.adherent.crack <- art.prop.always.adherent * (1 - crack.decline.art.always.adherent)
+
+   art.ecstasy.to.distribute <- art.prop.always.adherent * ecstasy.decline.art.always.adherent / 3
+   art.prop.never.adherent.ecstasy <- art.prop.never.adherent + art.ecstasy.to.distribute
+   art.prop.part.plus.adherent.ecstasy <- art.prop.part.plus.adherent + art.ecstasy.to.distribute
+   art.prop.part.neg.adherent.ecstasy <- art.prop.part.neg.adherent + art.ecstasy.to.distribute
+   art.prop.always.adherent.ecstasy <- art.prop.always.adherent * (1 - ecstasy.decline.art.always.adherent)
+
+   art.meth.crack.to.distribute <- (art.prop.always.adherent * (1 - meth.decline.art.always.adherent) * (1 -crack.decline.art.always.adherent)) / 3
+   art.prop.never.adherent.meth.crack <- art.prop.never.adherent + art.meth.crack.to.distribute
+   art.prop.part.plus.adherent.meth.crack <- art.prop.part.plus.adherent + art.meth.crack.to.distribute
+   art.prop.part.neg.adherent.meth.crack <- art.prop.part.neg.adherent + art.meth.crack.to.distribute
+   art.prop.always.adherent.meth.crack <- 1 - (art.prop.never.adherent.meth.crack + art.prop.part.plus.adherent.meth.crack + art.prop.part.neg.adherent.meth.crack)
+
+   art.crack.ecstasy.to.distribute <- (art.prop.always.adherent * (1 - crack.decline.art.always.adherent) * (1 -ecstasy.decline.art.always.adherent)) / 3
+   art.prop.never.adherent.crack.ecstasy <- art.prop.never.adherent + art.crack.ecstasy.to.distribute
+   art.prop.part.plus.adherent.crack.ecstasy <- art.prop.part.plus.adherent + art.crack.ecstasy.to.distribute
+   art.prop.part.neg.adherent.crack.ecstasy <- art.prop.part.neg.adherent + art.crack.ecstasy.to.distribute
+   art.prop.always.adherent.crack.ecstasy <- 1 - (art.prop.never.adherent.crack.ecstasy + art.prop.part.plus.adherent.crack.ecstasy + art.prop.part.neg.adherent.crack.ecstasy)
+
+   art.meth.ecstasy.to.distribute <- (art.prop.always.adherent * (1 - meth.decline.art.always.adherent) * (1 -ecstasy.decline.art.always.adherent)) / 3
+   art.prop.never.adherent.meth.ecstasy <- art.prop.never.adherent + art.meth.ecstasy.to.distribute
+   art.prop.part.plus.adherent.meth.ecstasy <- art.prop.part.plus.adherent + art.meth.ecstasy.to.distribute
+   art.prop.part.neg.adherent.meth.ecstasy <- art.prop.part.neg.adherent + art.meth.ecstasy.to.distribute
+   art.prop.always.adherent.meth.ecstasy <- 1 - (art.prop.never.adherent.meth.ecstasy + art.prop.part.plus.adherent.meth.ecstasy + art.prop.part.neg.adherent.meth.ecstasy)
+
+   art.meth.crack.ecstasy.to.distribute <- (art.prop.always.adherent * (1 - meth.decline.art.always.adherent) * (1 - crack.decline.art.always.adherent) * (1 -ecstasy.decline.art.always.adherent)) / 3
+   art.prop.never.adherent.meth.crack.ecstasy <- art.prop.never.adherent + art.meth.crack.ecstasy.to.distribute
+   art.prop.part.plus.adherent.meth.crack.ecstasy <- art.prop.part.plus.adherent + art.meth.crack.ecstasy.to.distribute
+   art.prop.part.neg.adherent.meth.crack.ecstasy <- art.prop.part.neg.adherent + art.meth.crack.ecstasy.to.distribute
+   art.prop.always.adherent.meth.crack.ecstasy <- 1 - (art.prop.never.adherent.meth.crack.ecstasy + art.prop.part.plus.adherent.meth.crack.ecstasy + art.prop.part.neg.adherent.meth.crack.ecstasy)
+
+## Socioeconomic status
