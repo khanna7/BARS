@@ -148,6 +148,7 @@ struct Counts {
     unsigned int infected_at_release;
 
     unsigned int infected_never_jailed, infected_ever_jailed;
+    unsigned int infected_via_transmission_never_jailed, infected_via_transmission_ever_jailed;
     unsigned int uninfected_never_jailed, uninfected_ever_jailed;
     unsigned int vertex_count_never_jailed, vertex_count_ever_jailed;
     unsigned int uninfected_in_jail;
