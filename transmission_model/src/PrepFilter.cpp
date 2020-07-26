@@ -53,7 +53,9 @@ MethPrepFilter::MethPrepFilter() {}
 MethPrepFilter::~MethPrepFilter() {}
 
 bool MethPrepFilter::apply(PersonPtr person) {
-    return person->isSubstanceUser(SubstanceUseType::METH);
+    return person->isSubstanceUser(SubstanceUseType::METH) &&
+            !person->isSubstanceUser(SubstanceUseType::CRACK) &&
+            !person->isSubstanceUser(SubstanceUseType::ECSTASY);
 }
 
 double MethPrepFilter::calcPrepStopAdjustment() {
@@ -65,7 +67,9 @@ CrackPrepFilter::CrackPrepFilter() {}
 CrackPrepFilter::~CrackPrepFilter() {}
 
 bool CrackPrepFilter::apply(PersonPtr person) {
-    return person->isSubstanceUser(SubstanceUseType::CRACK);
+    return person->isSubstanceUser(SubstanceUseType::CRACK) &&
+            !person->isSubstanceUser(SubstanceUseType::METH) &&
+            !person->isSubstanceUser(SubstanceUseType::ECSTASY);
 }
 
 double CrackPrepFilter::calcPrepStopAdjustment() {
@@ -77,10 +81,69 @@ EcstasyPrepFilter::EcstasyPrepFilter() {}
 EcstasyPrepFilter::~EcstasyPrepFilter() {}
 
 bool EcstasyPrepFilter::apply(PersonPtr person) {
-    return person->isSubstanceUser(SubstanceUseType::ECSTASY);
+    return person->isSubstanceUser(SubstanceUseType::ECSTASY) &&
+            !person->isSubstanceUser(SubstanceUseType::METH) &&
+            !person->isSubstanceUser(SubstanceUseType::CRACK);
 }
 
 double EcstasyPrepFilter::calcPrepStopAdjustment() {
     return 0;
 }
+
+MethCrackPrepFilter::MethCrackPrepFilter() {}
+
+MethCrackPrepFilter::~MethCrackPrepFilter() {}
+
+bool MethCrackPrepFilter::apply(PersonPtr person) {
+    return !person->isSubstanceUser(SubstanceUseType::ECSTASY) &&
+            person->isSubstanceUser(SubstanceUseType::METH) &&
+            person->isSubstanceUser(SubstanceUseType::CRACK);
+}
+
+double MethCrackPrepFilter::calcPrepStopAdjustment() {
+    return 0;
+}
+
+MethEcstasyPrepFilter::MethEcstasyPrepFilter() {}
+
+MethEcstasyPrepFilter::~MethEcstasyPrepFilter() {}
+
+bool MethEcstasyPrepFilter::apply(PersonPtr person) {
+    return person->isSubstanceUser(SubstanceUseType::ECSTASY) &&
+            person->isSubstanceUser(SubstanceUseType::METH) &&
+            !person->isSubstanceUser(SubstanceUseType::CRACK);
+}
+
+double MethEcstasyPrepFilter::calcPrepStopAdjustment() {
+    return 0;
+}
+
+CrackEcstasyPrepFilter::CrackEcstasyPrepFilter() {}
+
+CrackEcstasyPrepFilter::~CrackEcstasyPrepFilter() {}
+
+bool CrackEcstasyPrepFilter::apply(PersonPtr person) {
+    return person->isSubstanceUser(SubstanceUseType::ECSTASY) &&
+            !person->isSubstanceUser(SubstanceUseType::METH) &&
+            person->isSubstanceUser(SubstanceUseType::CRACK);
+}
+
+double CrackEcstasyPrepFilter::calcPrepStopAdjustment() {
+    return 0;
+}
+
+MethCrackEcstasyPrepFilter::MethCrackEcstasyPrepFilter() {}
+
+MethCrackEcstasyPrepFilter::~MethCrackEcstasyPrepFilter() {}
+
+bool MethCrackEcstasyPrepFilter::apply(PersonPtr person) {
+    return person->isSubstanceUser(SubstanceUseType::ECSTASY) &&
+            person->isSubstanceUser(SubstanceUseType::METH) &&
+            person->isSubstanceUser(SubstanceUseType::CRACK);
+}
+
+double MethCrackEcstasyPrepFilter::calcPrepStopAdjustment() {
+    return 0;
+}
+
 }

@@ -121,13 +121,10 @@ const std::string DEFAULT_PREP_YEARS_TO_INCREMENT = "default.prep.years.to.incre
 const std::string DEFAULT_PREP_BALANCED_UNBALANCED = "default.prep.balanced.unbalanced";
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT = "default.prep.unbalanced.starting.prob.lt";
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE = "default.prep.unbalanced.starting.prob.gte";
+const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB = "default.prep.unbalanced.starting.prob";
 
-const std::string DEFAULT_PREP_USE_PROP_METH = "default.prep.bl.use.prop.meth";
-const std::string DEFAULT_PREP_DAILY_STOP_PROB_METH = "default.prep.daily.stop.prob.meth";
-const std::string DEFAULT_PREP_USE_PROP_CRACK = "default.prep.bl.use.prop.crack";
-const std::string DEFAULT_PREP_DAILY_STOP_PROB_CRACK = "default.prep.daily.stop.prob.crack";
-const std::string DEFAULT_PREP_USE_PROP_ECSTASY = "default.prep.bl.use.prop.ecstasy";
-const std::string DEFAULT_PREP_DAILY_STOP_PROB_ECSTASY = "default.prep.daily.stop.prob.ecstasy";
+const std::string DEFAULT_PREP_USE_PROP = "default.prep.bl.use.prop";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB = "default.prep.daily.stop.prob";
 
 const std::string YOR_PREP_ALPHA = "yor.prep.alpha";
 const std::string YOR_PREP_USE_PROP = "yor.prep.bl.use.prop";

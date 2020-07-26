@@ -108,13 +108,10 @@ extern const std::string DEFAULT_PREP_YEARS_TO_INCREMENT;
 extern const std::string DEFAULT_PREP_BALANCED_UNBALANCED;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE;
+extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB;
 
-extern const std::string DEFAULT_PREP_USE_PROP_METH;
-extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_METH;
-extern const std::string DEFAULT_PREP_USE_PROP_CRACK;
-extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_CRACK;
-extern const std::string DEFAULT_PREP_USE_PROP_ECSTASY;
-extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_ECSTASY;
+extern const std::string DEFAULT_PREP_USE_PROP;
+extern const std::string DEFAULT_PREP_DAILY_STOP_PROB;
 
 extern const std::string YOR_ADDITIONAL_PREP_LT;
 extern const std::string YOR_ADDITIONAL_PREP_GTE;

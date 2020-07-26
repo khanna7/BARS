@@ -207,17 +207,6 @@ prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)
 default.prep.mean.days.usage.lt <- 365 #updated 23may2018
 default.prep.mean.days.usage.gte <- 365
 
-#polystimulant users
-
-default.prep.bl.use.prop.meth <- 12.7/100
-default.prep.mean.days.usage.meth <- 365
-
-default.prep.bl.use.prop.crack <- 12.7/100
-default.prep.mean.days.usage.crack <- 365
-
-default.prep.bl.use.prop.ecstasy <- 12.7/100
-default.prep.mean.days.usage.ecstasy <- 365
-
 default.prep.yearly.increment.lt <- 0
 default.prep.yearly.increment.gte <- 0
 default.prep.years.to.increment <- 0
@@ -225,6 +214,13 @@ default.prep.years.to.increment <- 0
 
 default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the 
 default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention
+default.prep.unbalanced.starting.prob.meth <- 1/365 #these params are in the nonderived file so we can decouple them from the 
+default.prep.unbalanced.starting.prob.crack <- 1/365 #stopping probabilities for the retention intervention
+default.prep.unbalanced.starting.prob.ecstasy <- 1/365 #these params are in the nonderived file so we can decouple them from the 
+default.prep.unbalanced.starting.prob.meth.crack <- 1/365 #stopping probabilities for the retention intervention
+default.prep.unbalanced.starting.prob.meth.ecstasy <- 1/365 #these params are in the nonderived file so we can decouple them from the 
+default.prep.unbalanced.starting.prob.crack.ecstasy <- 1/365 #stopping probabilities for the retention intervention
+default.prep.unbalanced.starting.prob.meth.crack.ecstasy <- 1/365 #these params are in the nonderived file so we can decouple them from the 
 
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" uptake and cessation
@@ -358,6 +354,26 @@ prep.prop.never.adherent.ecstasy <- 0.211
 prep.prop.always.adherent.ecstasy <- 0.619
 prep.prop.part.plus.adherent.ecstasy <- 0.10
 prep.prop.part.neg.adherent.ecstasy <- 0.07
+
+prep.prop.never.adherent.meth.crack <- 0.211
+prep.prop.always.adherent.meth.crack <- 0.619
+prep.prop.part.plus.adherent.meth.crack <- 0.10
+prep.prop.part.neg.adherent.meth.crack <- 0.07
+
+prep.prop.never.adherent.meth.ecstasy <- 0.211
+prep.prop.always.adherent.meth.ecstasy <- 0.619
+prep.prop.part.plus.adherent.meth.ecstasy <- 0.10
+prep.prop.part.neg.adherent.meth.ecstasy <- 0.07
+
+prep.prop.never.adherent.crack.ecstasy <- 0.211
+prep.prop.always.adherent.crack.ecstasy <- 0.619
+prep.prop.part.plus.adherent.crack.ecstasy <- 0.10
+prep.prop.part.neg.adherent.crack.ecstasy <- 0.07
+
+prep.prop.never.adherent.meth.crack.ecstasy <- 0.211
+prep.prop.always.adherent.meth.crack.ecstasy <- 0.619
+prep.prop.part.plus.adherent.meth.crack.ecstasy <- 0.10
+prep.prop.part.neg.adherent.meth.crack.ecstasy <- 0.07
 
 prep.always.adherent.trans.reduction <- 0.95
 prep.never.adherent.trans.reduction <- 0.0
@@ -533,9 +549,6 @@ jail.infection.rate.default <- 0.000091
 
 #jail.serving.time.mean <- 58
 jail.serving.time.mean <- 58.4
-jail.serving.time.mean.meth <- 58.4
-jail.serving.time.mean.crack <- 58.4
-jail.serving.time.mean.ecstasy <- 58.4
 
 post.release.interference.period.mean <- 90
 #network.retention.multiplier <- 1
@@ -563,9 +576,17 @@ ecstasy.decline.art.always.adherent <- 42/100
 crack.decline.art.always.adherent <- 39/100
 
 # PrEP and substance use
-meth.decline.prep.use <- 7.1/100
-ecstasy.decline.prep.use <- 5.4/100
-crack.decline.prep.use <- 4.6/100
+meth.prep.prop.use <- 7.1/100
+ecstasy.prep.prop.use <- 5.4/100
+crack.prep.prop.use <- 4.6/100
+
+default.prep.mean.days.usage.meth <- 365 #updated 23may2018
+default.prep.mean.days.usage.crack <- 365 #updated 23may2018
+default.prep.mean.days.usage.ecstasy <- 365 #updated 23may2018
+default.prep.mean.days.usage.meth.crack <- 365 #updated 23may2018
+default.prep.mean.days.usage.meth.ecstasy <- 365 #updated 23may2018
+default.prep.mean.days.usage.crack.ecstasy <- 365 #updated 23may2018
+default.prep.mean.days.usage.meth.crack.ecstasy <- 365 #updated 23may2018
 
 # Talk to John regarding PrEP and retention use
 

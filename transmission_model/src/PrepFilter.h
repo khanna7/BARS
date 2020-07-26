@@ -85,6 +85,45 @@ public:
     double calcPrepStopAdjustment() override;
 };
 
+class MethCrackPrepFilter : public PrepFilter {
+
+public:
+    MethCrackPrepFilter();
+    virtual ~MethCrackPrepFilter();
+
+    bool apply(PersonPtr person) override;
+    double calcPrepStopAdjustment() override;
+};
+
+class MethEcstasyPrepFilter : public PrepFilter {
+
+public:
+    MethEcstasyPrepFilter();
+    virtual ~MethEcstasyPrepFilter();
+
+    bool apply(PersonPtr person) override;
+    double calcPrepStopAdjustment() override;
+};
+
+class CrackEcstasyPrepFilter : public PrepFilter {
+
+public:
+    CrackEcstasyPrepFilter();
+    virtual ~CrackEcstasyPrepFilter();
+
+    bool apply(PersonPtr person) override;
+    double calcPrepStopAdjustment() override;
+};
+
+class MethCrackEcstasyPrepFilter : public PrepFilter {
+
+public:
+    MethCrackEcstasyPrepFilter();
+    virtual ~MethCrackEcstasyPrepFilter();
+
+    bool apply(PersonPtr person) override;
+    double calcPrepStopAdjustment() override;
+};
 }
 
 #endif

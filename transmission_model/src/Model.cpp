@@ -600,76 +600,71 @@ void init_random_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& v
     
 }
 
-void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
-    // Add the base
-    PrepUptakeData lt_base_data, gte_base_data, meth_base_data, crack_base_data, ecstasy_base_data;
-    lt_base_data.years_to_increment = meth_base_data.years_to_increment = crack_base_data.years_to_increment =
-        ecstasy_base_data.years_to_increment = gte_base_data.years_to_increment = 0;
-    lt_base_data.increment = meth_base_data.increment = crack_base_data.increment = ecstasy_base_data.increment =
-        gte_base_data.increment = 0;
-
-    lt_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
-    gte_base_data.use =  Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
-    lt_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-    gte_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
-
+void init_prep_uptake_data(PrepUptakeData &data, std::string suffix) {
+    data.years_to_increment = 0;
+    data.increment = 0;
+    
+    data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP + suffix);
+    data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB + suffix);
+    
     bool balanced = Parameters::instance()->getStringParameter(DEFAULT_PREP_BALANCED_UNBALANCED) == BALANCED;
     if (balanced) {
-        lt_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-        gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
+        data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB + suffix);
     } else {
-        lt_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
-        gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE);
+        data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB + suffix);
     }
+}
 
-    meth_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_METH);
-    meth_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_METH);
-
-    if (balanced) {
-        meth_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_METH);
-    } else {
-        meth_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
-    }
-
-    crack_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_CRACK);
-    crack_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_CRACK);
-
-    if (balanced) {
-        crack_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_CRACK);
-    } else {
-        crack_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
-    }
-
-    ecstasy_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_ECSTASY);
-    ecstasy_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_ECSTASY);
-
-    if (balanced) {
-        ecstasy_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_ECSTASY);
-    } else {
-        ecstasy_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
-    }
-
-    // these are immutable so we could reuse them, but they may not remain so in the future
+void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
+    // Add the base
+    PrepUptakeData lt_base_data, gte_base_data,
+            meth_base_data, crack_base_data, ecstasy_base_data,
+            meth_crack_base_data, meth_ecstasy_base_data, crack_ecstasy_base_data,
+            meth_crack_ecstasy_base_data;
+    
+    init_prep_uptake_data(lt_base_data, LT_SUFFIX);
+    init_prep_uptake_data(gte_base_data, GTE_SUFFIX);
+    init_prep_uptake_data(meth_base_data, METH_SUFFIX);
+    init_prep_uptake_data(crack_base_data, CRACK_SUFFIX);
+    init_prep_uptake_data(ecstasy_base_data, ECSTASY_SUFFIX);
+    init_prep_uptake_data(meth_crack_base_data, METH_SUFFIX + CRACK_SUFFIX);
+    init_prep_uptake_data(meth_ecstasy_base_data, METH_SUFFIX + ECSTASY_SUFFIX);
+    init_prep_uptake_data(crack_ecstasy_base_data, CRACK_SUFFIX + ECSTASY_SUFFIX);
+    init_prep_uptake_data(meth_crack_ecstasy_base_data, METH_SUFFIX + CRACK_SUFFIX + ECSTASY_SUFFIX);
+    
+    // these are immutable so we can reuse them
     std::shared_ptr<LTAgePrepFilter> lt_base = std::make_shared<LTAgePrepFilter>(age_threshold);
     std::shared_ptr<GTEAgePrepFilter> gte_base = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
     std::shared_ptr<NonSubstanceUsePrepFilter> non_sustance_user_base = std::make_shared<NonSubstanceUsePrepFilter>();
     std::shared_ptr<MethPrepFilter> meth_base = std::make_shared<MethPrepFilter>();
     std::shared_ptr<CrackPrepFilter> crack_base = std::make_shared<CrackPrepFilter>();
     std::shared_ptr<EcstasyPrepFilter> ecstasy_base = std::make_shared<EcstasyPrepFilter>();
+    std::shared_ptr<MethCrackPrepFilter> meth_crack_base = std::make_shared<MethCrackPrepFilter>();
+    std::shared_ptr<MethEcstasyPrepFilter> meth_ecstasy_base = std::make_shared<MethEcstasyPrepFilter>();
+    std::shared_ptr<CrackEcstasyPrepFilter> crack_ecstasy_base = std::make_shared<CrackEcstasyPrepFilter>();
+    std::shared_ptr<MethCrackEcstasyPrepFilter> meth_crack_ecstasy_base = std::make_shared<MethCrackEcstasyPrepFilter>();
 
     std::vector<std::shared_ptr<PrepFilter>> lt_filters_base({lt_base, non_sustance_user_base});
     std::vector<std::shared_ptr<PrepFilter>> gte_filters_base({gte_base, non_sustance_user_base});
     std::vector<std::shared_ptr<PrepFilter>> meth_user_filters_base({meth_base});
     std::vector<std::shared_ptr<PrepFilter>> crack_user_filters_base({crack_base});
     std::vector<std::shared_ptr<PrepFilter>> ecstasy_user_filters_base({ecstasy_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_crack_user_filters_base({meth_crack_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_ecstasy_user_filters_base({meth_ecstasy_base});
+    std::vector<std::shared_ptr<PrepFilter>> crack_ecstasy_user_filters_base({crack_ecstasy_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_crack_ecstasy_user_filters_base({meth_crack_ecstasy_base});
 
     vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_filters_base));
     vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_filters_base));
     vec.push_back(std::make_shared<BasePrepIntervention>(meth_base_data, meth_user_filters_base));
     vec.push_back(std::make_shared<BasePrepIntervention>(crack_base_data, crack_user_filters_base));
     vec.push_back(std::make_shared<BasePrepIntervention>(ecstasy_base_data, ecstasy_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(meth_crack_base_data, meth_crack_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(meth_ecstasy_base_data, meth_ecstasy_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(crack_ecstasy_base_data, crack_ecstasy_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(meth_crack_ecstasy_base_data, meth_crack_ecstasy_user_filters_base));
 
-    // Add the intervention
+    /*// Add the intervention
     PrepUptakeData lt_data, gte_data;
     lt_data.use = lt_base_data.use;
     gte_data.use = gte_base_data.use;
@@ -696,7 +691,7 @@ void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& 
     vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte_filters));
 
     std::cout << "Random Default Selection lt: " << lt_data << "\n";
-    std::cout << "Random Default Selection gte: " << gte_data << "\n";
+    std::cout << "Random Default Selection gte: " << gte_data << "\n";*/
 
 }
 
