@@ -591,7 +591,11 @@ default.prep.mean.days.usage.meth.crack.ecstasy <- 365 #updated 23may2018
 # Talk to John regarding PrEP and retention use
 
 # incarceration and substance use
-#meth.increase.incar.rate <-
-#ecstasy.increase.incar.rate <-
-#crack.increase.incar.rate <- 
+meth.increase.incar.rate <- 0.1
+ecstasy.increase.incar.rate <- 0.2
+crack.increase.incar.rate <- 0.3
+
+jail.serving.time.increase.meth <- 0.1
+jail.serving.time.increase.crack <- 0.1
+jail.serving.time.increase.ecstasy <- 0.1
 

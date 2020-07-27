@@ -1156,9 +1156,17 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     double incarceration_prob_meth = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + METH_SUFFIX);
     double incarceration_prob_crack = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + CRACK_SUFFIX);
     double incarceration_prob_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + ECSTASY_SUFFIX);
+    double incarceration_prob_meth_crack = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + METH_SUFFIX + CRACK_SUFFIX);
+    double incarceration_prob_meth_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + METH_SUFFIX + ECSTASY_SUFFIX);
+    double incarceration_prob_crack_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + CRACK_SUFFIX + ECSTASY_SUFFIX);
+    double incarceration_prob_meth_crack_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + METH_SUFFIX + CRACK_SUFFIX + ECSTASY_SUFFIX);
     double incarceration_with_cji_prob_meth = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + METH_SUFFIX);
     double incarceration_with_cji_prob_crack = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + CRACK_SUFFIX);
     double incarceration_with_cji_prob_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + ECSTASY_SUFFIX);
+    double incarceration_with_cji_prob_meth_crack = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + METH_SUFFIX + CRACK_SUFFIX);
+    double incarceration_with_cji_prob_meth_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + METH_SUFFIX + ECSTASY_SUFFIX);
+    double incarceration_with_cji_prob_crack_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + CRACK_SUFFIX + ECSTASY_SUFFIX);
+    double incarceration_with_cji_prob_meth_crack_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + METH_SUFFIX + CRACK_SUFFIX + ECSTASY_SUFFIX);
     for (auto iter = population.begin(); iter != population.end(); ) {
         PersonPtr person = (*iter);
         // update viral load, cd4
@@ -1226,15 +1234,32 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             }
 
             double prob;
-            if (person->isSubstanceUser(SubstanceUseType::METH)) prob = incarceration_prob_meth;
-            else if (person->isSubstanceUser(SubstanceUseType::CRACK)) prob = incarceration_prob_crack;
-            else if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) prob = incarceration_prob_ecstasy;
-            else prob = incarceration_prob;
             double prob_with_cji;
-            if (person->isSubstanceUser(SubstanceUseType::METH)) prob_with_cji = incarceration_with_cji_prob_meth;
-            else if (person->isSubstanceUser(SubstanceUseType::CRACK)) prob_with_cji = incarceration_with_cji_prob_crack;
-            else if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) prob_with_cji = incarceration_with_cji_prob_ecstasy;
-            else prob_with_cji = incarceration_with_cji_prob;
+            if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::CRACK) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+              prob = incarceration_prob_meth_crack_ecstasy;
+              prob_with_cji = incarceration_with_cji_prob_meth_ecstasy;
+            } else if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::CRACK)) {
+              prob = incarceration_prob_meth_crack;
+              prob_with_cji = incarceration_with_cji_prob_meth_crack;
+            } else if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+              prob = incarceration_prob_meth_ecstasy;
+              prob_with_cji = incarceration_prob_meth_ecstasy;
+            } else if (person->isSubstanceUser(SubstanceUseType::CRACK) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+              prob = incarceration_prob_crack_ecstasy;
+              prob_with_cji = incarceration_with_cji_prob_crack_ecstasy;
+            } else if (person->isSubstanceUser(SubstanceUseType::METH)) {
+              prob = incarceration_prob_meth;
+              prob_with_cji = incarceration_with_cji_prob_meth;
+            } else if (person->isSubstanceUser(SubstanceUseType::CRACK)) {
+              prob = incarceration_prob_crack;
+              prob_with_cji = incarceration_with_cji_prob_crack;
+            } else if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+              prob = incarceration_prob_ecstasy;
+              prob_with_cji = incarceration_with_cji_prob_ecstasy;
+            } else {
+              prob = incarceration_prob;
+              prob_with_cji = incarceration_with_cji_prob;
+            }
 
             doJailCheck(person, tick, prob_with_cji, prob);
 

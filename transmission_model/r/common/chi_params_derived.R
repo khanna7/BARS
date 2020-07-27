@@ -101,13 +101,13 @@
    default.prep.daily.stop.prob.crack.ecstasy <- 1/default.prep.mean.days.usage.crack.ecstasy
    default.prep.daily.stop.prob.meth.crack.ecstasy <- 1/default.prep.mean.days.usage.meth.crack.ecstasy
 
-   default.prep.bl.use.prop.meth <- meth.prep.prep.use
-   default.prep.bl.use.prop.crack <- crack.prop.prep.use
-   default.prep.bl.use.prop.ecstasy <- ecstasy.prop.prep.use
-   default.prep.bl.use.prop.meth.crack <- meth.decline.prep.use * crack.decline.prep.use
-   default.prep.bl.use.prop.meth.ecstasy <- meth.prop.prep.use * ecstasy.prop.prep.use
-   default.prep.bl.use.prop.crack.ecstasy <- crack.prop.prep.use * ecstasy.prop.prep.use
-   default.prep.bl.use.prop.meth.crack.ecstasy <- meth.prop.prep.use * crack.prop.prep.use * ecstasy.prop.prep.use
+   default.prep.bl.use.prop.meth <- meth.prep.prop.use
+   default.prep.bl.use.prop.crack <- crack.prep.prop.use
+   default.prep.bl.use.prop.ecstasy <- ecstasy.prep.prop.use
+   default.prep.bl.use.prop.meth.crack <- meth.prep.prop.use * crack.prep.prop.use
+   default.prep.bl.use.prop.meth.ecstasy <- meth.prep.prop.use * ecstasy.prep.prop.use
+   default.prep.bl.use.prop.crack.ecstasy <- crack.prep.prop.use * ecstasy.prep.prop.use
+   default.prep.bl.use.prop.meth.crack.ecstasy <- meth.prep.prop.use * crack.prep.prop.use * ecstasy.prep.prop.use
 
 
    ### Young Old Ratio PrEP intervention parameters ###
@@ -175,4 +175,29 @@
 #####################
     ## Socioeconomic status
 
-     ### Incarceration
+    ### Incarceration
+
+    incarceration.prob.meth <- incarceration.prob * (1 + meth.increase.incar.rate)
+    incarceration.prob.crack <- incarceration.prob * (1 + crack.increase.incar.rate)
+    incarceration.prob.ecstasy <- incarceration.prob * (1 + ecstasy.increase.incar.rate)
+    incarceration.prob.meth.crack <- incarceration.prob * (1 + meth.increase.incar.rate + crack.increase.incar.rate)
+    incarceration.prob.meth.ecstasy <- incarceration.prob * (1 + meth.increase.incar.rate + ecstasy.increase.incar.rate)
+    incarceration.prob.crack.ecstasy <- incarceration.prob * (1 + crack.increase.incar.rate + ecstasy.increase.incar.rate)
+    incarceration.prob.meth.crack.ecstasy <- incarceration.prob * (1 + meth.increase.incar.rate + crack.increase.incar.rate + ecstasy.increase.incar.rate)
+
+    incarceration.with.cji.prob.meth <- incarceration.with.cji.prob * (1 + meth.increase.incar.rate)
+    incarceration.with.cji.prob.crack <- incarceration.with.cji.prob * (1 + crack.increase.incar.rate)
+    incarceration.with.cji.prob.ecstasy <- incarceration.with.cji.prob * (1 + ecstasy.increase.incar.rate)
+    incarceration.with.cji.prob.meth.crack <- incarceration.with.cji.prob * (1 + meth.increase.incar.rate + crack.increase.incar.rate)
+    incarceration.with.cji.prob.meth.ecstasy <- incarceration.with.cji.prob * (1 + meth.increase.incar.rate + ecstasy.increase.incar.rate)
+    incarceration.with.cji.prob.crack.ecstasy <- incarceration.with.cji.prob * (1 + crack.increase.incar.rate + ecstasy.increase.incar.rate)
+    incarceration.with.cji.prob.meth.crack.ecstasy <- incarceration.with.cji.prob * (1 + meth.increase.incar.rate + crack.increase.incar.rate + ecstasy.increase.incar.rate)
+
+    jail.serving.time.mean.meth <- jail.serving.time.mean * (1 + jail.serving.time.increase.meth)
+    jail.serving.time.mean.crack <- jail.serving.time.mean * (1 + jail.serving.time.increase.crack)
+    jail.serving.time.mean.ecstasy <- jail.serving.time.mean * (1 + jail.serving.time.increase.ecstasy)
+    jail.serving.time.mean.meth.crack <- jail.serving.time.mean * (1 + jail.serving.time.increase.meth + jail.serving.time.increase.crack)
+    jail.serving.time.mean.meth.ecstasy <- jail.serving.time.mean * (1 + jail.serving.time.increase.meth + jail.serving.time.increase.ecstasy)
+    jail.serving.time.mean.crack.ecstasy <- jail.serving.time.mean * (1 + jail.serving.time.increase.crack + jail.serving.time.increase.ecstasy)
+    jail.serving.time.mean.meth.crack.ecstasy <- jail.serving.time.mean * (1 + jail.serving.time.increase.meth + jail.serving.time.increase.crack + jail.serving.time.increase.ecstasy)
+
