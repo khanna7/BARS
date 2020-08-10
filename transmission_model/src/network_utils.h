@@ -153,6 +153,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
             }
             if (add) {
                 partner_of_released->addReleasedPartner(released_id);
+                scheduleReleasedPartnerExpiration(partner_of_released, released_id, time);
             }
             edge_initializer.initEdge(ep);
             ++added;
