@@ -1237,13 +1237,13 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             double prob_with_cji;
             if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::CRACK) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
               prob = incarceration_prob_meth_crack_ecstasy;
-              prob_with_cji = incarceration_with_cji_prob_meth_ecstasy;
+              prob_with_cji = incarceration_with_cji_prob_meth_crack_ecstasy;
             } else if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::CRACK)) {
               prob = incarceration_prob_meth_crack;
               prob_with_cji = incarceration_with_cji_prob_meth_crack;
             } else if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
               prob = incarceration_prob_meth_ecstasy;
-              prob_with_cji = incarceration_prob_meth_ecstasy;
+              prob_with_cji = incarceration_with_cji_prob_meth_ecstasy;
             } else if (person->isSubstanceUser(SubstanceUseType::CRACK) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
               prob = incarceration_prob_crack_ecstasy;
               prob_with_cji = incarceration_with_cji_prob_crack_ecstasy;
