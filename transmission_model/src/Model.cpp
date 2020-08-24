@@ -1115,7 +1115,10 @@ void Model::updateJailStats(Stats* stats, PersonPtr person) {
     }
 
     ++stats->currentCounts().incarcerated;
-
+    if (person->isSubstanceUser(SubstanceUseType::METH)) ++stats->currentCounts().incarcerated_meth;
+    if (person->isSubstanceUser(SubstanceUseType::CRACK)) ++stats->currentCounts().incarcerated_crack;
+    if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) ++stats->currentCounts().incarcerated_ecstasy;
+    
     if (person->hasPreviousJailHistory()) {
         ++stats->currentCounts().incarcerated_recidivist;
     }
@@ -1212,6 +1215,9 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 if (person->isOnPrep(true)) {  //care disruption
                 //if (person->isOnPrep()) {
                     ++stats->currentCounts().on_prep;
+                    if (person->isSubstanceUser(SubstanceUseType::METH)) ++stats->currentCounts().on_prep_meth;
+                    if (person->isSubstanceUser(SubstanceUseType::CRACK)) ++stats->currentCounts().on_prep_crack;
+                    if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) ++stats->currentCounts().on_prep_ecstasy;
                 }
                 uninfected.push_back(person);
 
@@ -1266,6 +1272,10 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             if (person->isOnART(true)) { //care disruption 
             // if (person->isOnART()) {
                 ++stats->currentCounts().on_art;
+                if (person->isSubstanceUser(SubstanceUseType::METH)) ++stats->currentCounts().on_art_meth;
+                if (person->isSubstanceUser(SubstanceUseType::CRACK)) ++stats->currentCounts().on_art_crack;
+                if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) ++stats->currentCounts().on_art_ecstasy;
+                
             }
 
             if (crossed_thresh) {

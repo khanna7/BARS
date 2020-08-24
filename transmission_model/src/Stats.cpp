@@ -103,8 +103,12 @@ const std::string Counts::header(
         "steady_sex_acts,"
         "sd_steady_sex_with_condom,sd_steady_sex_without_condom,"
         "sc_steady_sex_with_condom,sc_steady_sex_without_condom,"
-        "on_art,on_prep,vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
-        "pop,jail_pop,incarcerated,incarcerated_recidivist,infected_jail_pop,uninfected_jail_pop,infected_inside_jail,"
+        "on_art,on_art_meth,on_art_crack,on_art_ecstasy,"
+        "on_prep,on_prep_meth,on_prep_crack,on_prep_ecstasy,"
+        "vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
+        "pop,jail_pop,incarcerated,incarcerated_recidivist,"
+        "incarcerated_meth,incarcerated_crack,incarcerated_ecstasy,"
+        "infected_jail_pop,uninfected_jail_pop,infected_inside_jail,"
         "infected_at_incarceration,infected_partners_at_incarceration,infected_at_release,"
         "infected_never_jailed,infected_ever_jailed,uninfected_never_jailed,uninfected_ever_jailed,vertex_count_never_jailed,vertex_count_ever_jailed"
         );
@@ -131,8 +135,11 @@ void Counts::writeTo(FileOutput& out) {
     << steady_sex_acts << ","
     << sd_steady_sex_with_condom << "," << sd_steady_sex_without_condom << ","
     << sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom << ","
-    << on_art << "," << on_prep << "," << vl_supp_per_positives << "," << vl_supp_per_diagnosis << ","
+    << on_art << "," << on_art_meth << "," << on_art_crack << "," << on_art_ecstasy << ","
+    << on_prep << "," << on_prep_meth << "," << on_prep_crack << "," << on_prep_ecstasy << ","
+    << vl_supp_per_positives << "," << vl_supp_per_diagnosis << ","
     << cd4m_deaths << "," << pop << "," << jail_pop << "," << incarcerated << ","  << incarcerated_recidivist << ","
+    << incarcerated_meth << "," << incarcerated_crack << "," << incarcerated_ecstasy << ","
     << infected_jail_pop  << "," << uninfected_in_jail << "," << infected_inside_jail << "," 
     << infected_at_incarceration << "," << infected_partners_at_incarceration << "," << infected_at_release << ","
     << infected_never_jailed << "," << infected_ever_jailed << "," << uninfected_never_jailed << "," << uninfected_ever_jailed << "," << vertex_count_never_jailed << "," << vertex_count_ever_jailed << 
@@ -146,11 +153,14 @@ Counts::Counts(int min_age, int max_age) :
                 sd_steady_sex_with_condom{0}, sd_steady_sex_without_condom {0},
                 sc_casual_sex_with_condom{0}, sc_casual_sex_without_condom{0},
                 sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
-                on_art{0}, on_prep{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
+                on_art{0}, on_prep{0}, on_art_meth{0}, on_art_crack{0}, on_art_ecstasy{0},
+                on_prep_meth{0}, on_prep_crack{0}, on_prep_ecstasy{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, 
                 total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
-                infected_jail_pop{0}, pop{0}, jail_pop{0}, incarcerated{0}, incarcerated_recidivist{0}, infected_at_incarceration{0}, infected_partners_at_incarceration{0}, infected_at_release{0},
+                infected_jail_pop{0}, pop{0}, jail_pop{0}, incarcerated{0}, incarcerated_recidivist{0},
+                incarcerated_meth{0}, incarcerated_crack{0}, incarcerated_ecstasy{0},
+                infected_at_incarceration{0}, infected_partners_at_incarceration{0}, infected_at_release{0},
                 infected_never_jailed{0}, infected_ever_jailed{0}, uninfected_never_jailed{0}, uninfected_ever_jailed{0}, vertex_count_never_jailed{0}, vertex_count_ever_jailed{0},
                 uninfected_in_jail{0}
 
@@ -166,6 +176,8 @@ void Counts::reset() {
     sc_casual_sex_with_condom = sc_casual_sex_without_condom = 0;
     sc_steady_sex_with_condom = sc_steady_sex_without_condom = 0;
     on_art = on_prep = 0;
+    on_art_meth = on_art_crack = on_art_ecstasy = 0;
+    on_prep_meth = on_prep_crack = on_prep_ecstasy = 0;
     vl_supp_per_positives = vl_supp_per_diagnosis = 0;
     std::fill(uninfected.begin(), uninfected.end(), 0);
     std::fill(internal_infected.begin(), internal_infected.end(), 0);
@@ -179,6 +191,7 @@ void Counts::reset() {
     jail_pop=0;
     incarcerated=0;
     incarcerated_recidivist=0;
+    incarcerated_meth = incarcerated_crack = incarcerated_ecstasy = 0;
     infected_at_incarceration=0;
     infected_partners_at_incarceration=0;
     infected_at_release=0;

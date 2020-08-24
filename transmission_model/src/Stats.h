@@ -126,6 +126,9 @@ struct Counts {
     unsigned int sc_casual_sex_with_condom, sc_casual_sex_without_condom;
     unsigned int sc_steady_sex_with_condom, sc_steady_sex_without_condom;
     unsigned int on_art, on_prep;
+    unsigned int on_art_meth, on_art_crack, on_art_ecstasy;
+    unsigned int on_prep_meth, on_prep_crack, on_prep_ecstasy;
+    
     //unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
     //	vertex_count_u26, vertex_count_gte26;
     //unsigned int external_infected_u26, external_infected_gte26, infected_at_entry_u26, infected_at_entry_gte26;
@@ -143,6 +146,7 @@ struct Counts {
     unsigned int jail_pop;     
     unsigned int incarcerated;   //nb of jailed each cycle
     unsigned int incarcerated_recidivist;   
+    unsigned int incarcerated_meth, incarcerated_crack, incarcerated_ecstasy;
     unsigned int infected_at_incarceration;  
     unsigned int infected_partners_at_incarceration;  
     unsigned int infected_at_release;
