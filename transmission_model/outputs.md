@@ -67,9 +67,18 @@ network in the model at the end of the timestep
 * sc_steady_sex_with_condom: the number of sex acts between sero-concordant steady partners in which a condom was used.
 * sc_steady_sex_without_condom: the number of sex acts between sero-concordant steady partners in which a condom was not used.
 * on_art: the number of persons on ART at this time step.
+* on_art_meth: the number of persons on ART who use meth at this time step.
+* on_art_crack: the number of persons on ART who use crack at this time step.
+* on_art_ecstasy: the number of persons on ART who use ecstasy at this time step.
 * on_prep: the number of persons on PrEP at this time.
+* on_prep_meth: the number of persons on PrEP who use meth at this time.
+* on_prep_crack: the number of persons on PrEP who use crack at this time.
+* on_prep_ecstasy: the number of persons on PrEP who use ecstasy at this time.
 * vl_supp_per_positives: the number of virally suppressed individuals who have been infected for at least time.to.full.supp divided by the number of infected persons who have been infected for at least time.to.full.supp.
 * vl_supp_per_diagnosed: the number of virally suppressed individuals who have been diagnosed as positive for at least time.to.full.supp divided by the number of persons who have been diagnosed as positive for at least time.to.full.supp
+* incarerated_meth: the number of persons in jail at that timestep who use meth
+* incarerated_crack: the number of persons in jail at that timestep who use crack
+* incarerated_ecstasy: the number of persons in jail at that timestep who use ecstasy
 * infected_jail_pop: the number of persons in jail at that timestep who are infected
 * uninfected_jail_pop: the number of persons in jail at that timestep are uninfected
 * uninfected_ever_jailed: number of persons at that timestep who are uninfected and have been jailed
