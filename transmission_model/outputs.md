@@ -58,6 +58,9 @@ network in the model at the end of the timestep
 * sd_casual_sex_without_condom: the number of sex acts between sero-discordant casual partners in which a condom was not used.
 * sc_casual_sex_with_condom: the number of sex acts between sero-concordant casual partners in which a condom was used.
 * pop: the total number of population.
+* pop_meth: total number of meth users.
+* pop_crack: total number of crack users.
+* pop_ecstasy: total number of ecstasy users.
 * jail_pop: the total number of jail population.
 * jail_pop_meth: the total number of jail population who are meth users.
 * jail_pop_crack: the total number of jail population who are crack users.
