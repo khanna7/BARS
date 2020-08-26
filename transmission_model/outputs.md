@@ -32,9 +32,15 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * infected_via_transmission: the total number of persons infected via transmission at that timestep
 * infected_via_transmission_N: the total number of persons of age N infected via transmission at that timestep. N is currently
 18 - 34 with one column for each age.
+* infected_via_transmission_meth: number of persons using meth infected via transmission at that timestep
+* infected_via_transmission_crack: number of persons using crack infected via transmission at that timestep
+* infected_via_transmission_ecstasy: number of persons using ecstasy infected via transmission at that timestep
 * infected_externally: the number of persons infected via external infection at that timestep
 * infected_external_N: the total number of persons of age N infected externally at that timestep. N is currently
 18 - 34 with one column for each age.
+* infected_externally_meth: number of persons using meth infected externally at that timestep
+* infected_externally_crack: number of persons using crack infected externally at that timestep
+* infected_externally_ecstasy: number of persons using ecstasy infected externally at that timestep
 * infected_at_entry: the number of persons who were infected when entering the model at that timestep.
 * infected_at_entry_N: the total number of persons of age N infected when entering the model at that timestep. N is currently
 18 - 34 with one column for each age.

@@ -75,10 +75,14 @@ const std::string Counts::header(
         "infected_via_transmission_26,infected_via_transmission_27,infected_via_transmission_28,infected_via_transmission_29,infected_via_transmission_30,"
         "infected_via_transmission_31,infected_via_transmission_32,infected_via_transmission_33,infected_via_transmission_34,"
 
+        "infected_via_transmission_meth,infected_via_transmission_crack,infected_via_transmission_ecstasy,"
+
         "infected_externally,infected_external_18,infected_external_19,infected_external_20,"
         "infected_external_21,infected_external_22,infected_external_23,infected_external_24,infected_external_25,"
         "infected_external_26,infected_external_27,infected_external_28,infected_external_29,infected_external_30,"
         "infected_external_31,infected_external_32,infected_external_33,infected_external_34,"
+
+        "infected_externally_meth,infected_externally_crack,infected_externally_ecstasy,"
 
         "infected_at_entry,infected_at_entry_18,infected_at_entry_19,infected_at_entry_20,"
         "infected_at_entry_21,infected_at_entry_22,infected_at_entry_23,infected_at_entry_24,infected_at_entry_25,"
@@ -125,7 +129,9 @@ void write_vector_out(std::vector<unsigned int>& vec, FileOutput& out) {
 void Counts::writeTo(FileOutput& out) {
     out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths;
     write_vector_out(internal_infected, out);
+    out << "," << internal_infected_meth << "," << internal_infected_crack << "," << internal_infected_ecstasy;
     write_vector_out(external_infected, out);
+    out << "," << external_infected_meth << "," << external_infected_crack << ", " << external_infected_ecstasy;
     write_vector_out(infected_at_entry, out);
     write_vector_out(uninfected, out);
     out << "," << main_edge_count << "," << casual_edge_count;
@@ -161,6 +167,8 @@ Counts::Counts(int min_age, int max_age) :
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, 
                 total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
+                internal_infected_meth{0}, internal_infected_crack{0}, internal_infected_ecstasy{0},
+                external_infected_meth{0}, external_infected_crack{0}, external_infected_ecstasy{0},
                 infected_jail_pop{0}, pop{0}, jail_pop{0}, jail_pop_meth{0}, jail_pop_crack{0}, jail_pop_ecstasy{0},
                 incarcerated{0}, incarcerated_recidivist{0},
                 incarcerated_meth{0}, incarcerated_crack{0}, incarcerated_ecstasy{0},
@@ -190,6 +198,8 @@ void Counts::reset() {
     std::fill(vertex_count.begin(), vertex_count.end(), 0);
     overlaps = 0;
     infected_inside_jail=0;
+    internal_infected_meth = internal_infected_crack = internal_infected_ecstasy = 0;
+    external_infected_meth = external_infected_crack = external_infected_ecstasy = 0;
     infected_jail_pop=0;
     pop=0;
     jail_pop=0;
@@ -209,6 +219,9 @@ void Counts::reset() {
 void Counts::incrementInfected(PersonPtr& p) {
     ++internal_infected[(size_t)(std::floor(p->age())) - min_age_];
     ++total_internal_infected; 
+    if (p->isSubstanceUser(SubstanceUseType::METH)) ++internal_infected_meth;
+    if (p->isSubstanceUser(SubstanceUseType::CRACK)) ++internal_infected_crack;
+    if (p->isSubstanceUser(SubstanceUseType::ECSTASY)) ++internal_infected_ecstasy;
     if (p->isJailed()) {
         ++infected_ever_jailed;
         ++infected_inside_jail;
@@ -235,6 +248,9 @@ void Counts::incrementInfectedAtEntry(PersonPtr& p) {
 
 void Counts::incrementInfectedExternal(PersonPtr& p) {
     ++external_infected[(size_t)(std::floor(p->age())) - min_age_];
+    if (p->isSubstanceUser(SubstanceUseType::METH)) ++external_infected_meth;
+    if (p->isSubstanceUser(SubstanceUseType::CRACK)) ++external_infected_crack;
+    if (p->isSubstanceUser(SubstanceUseType::ECSTASY)) ++external_infected_ecstasy;
     if (p->hasPreviousJailHistory() || p->isJailed()) ++infected_ever_jailed;
     else ++infected_never_jailed;  
 }
