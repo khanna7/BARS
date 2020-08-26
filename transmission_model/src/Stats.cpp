@@ -110,7 +110,9 @@ const std::string Counts::header(
         "on_art,on_art_meth,on_art_crack,on_art_ecstasy,"
         "on_prep,on_prep_meth,on_prep_crack,on_prep_ecstasy,"
         "vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
-        "pop,pop_meth,pop_crack,pop_ecstasy,jail_pop,jail_pop_meth,jail_pop_crack,jail_pop_ecstasy,"
+        "pop,pop_meth,pop_crack,pop_ecstasy,"
+        "pop_infected_meth,pop_infected_crack,pop_infected_ecstasy"
+        "jail_pop,jail_pop_meth,jail_pop_crack,jail_pop_ecstasy,"
         "incarcerated,incarcerated_recidivist,"
         "incarcerated_meth,incarcerated_crack,incarcerated_ecstasy,"
         "infected_jail_pop,uninfected_jail_pop,infected_inside_jail,"
@@ -146,6 +148,7 @@ void Counts::writeTo(FileOutput& out) {
     << on_prep << "," << on_prep_meth << "," << on_prep_crack << "," << on_prep_ecstasy << ","
     << vl_supp_per_positives << "," << vl_supp_per_diagnosis << "," << cd4m_deaths << ","
     << pop << "," << pop_meth << "," << pop_crack << "," << pop_ecstasy << ","
+    << pop_infected_meth << "," << pop_infected_crack << "," << pop_infected_ecstasy << ","
     << jail_pop << ","<< jail_pop_meth << "," << jail_pop_crack << "," << jail_pop_ecstasy << ","
     << incarcerated << ","  << incarcerated_recidivist << ","
     << incarcerated_meth << "," << incarcerated_crack << "," << incarcerated_ecstasy << ","
@@ -170,6 +173,7 @@ Counts::Counts(int min_age, int max_age) :
                 internal_infected_meth{0}, internal_infected_crack{0}, internal_infected_ecstasy{0},
                 external_infected_meth{0}, external_infected_crack{0}, external_infected_ecstasy{0},
                 infected_jail_pop{0}, pop{0}, pop_meth{0}, pop_crack{0}, pop_ecstasy{0},
+                pop_infected_meth{0}, pop_infected_crack{0}, pop_infected_ecstasy{0},
                 jail_pop{0}, jail_pop_meth{0}, jail_pop_crack{0}, jail_pop_ecstasy{0},
                 incarcerated{0}, incarcerated_recidivist{0},
                 incarcerated_meth{0}, incarcerated_crack{0}, incarcerated_ecstasy{0},
@@ -204,6 +208,7 @@ void Counts::reset() {
     infected_jail_pop=0;
     pop=0;
     pop_meth = pop_crack = pop_ecstasy = 0;
+    pop_infected_meth = pop_infected_crack = pop_infected_ecstasy = 0;
     jail_pop=0;
     jail_pop_meth = jail_pop_crack = jail_pop_ecstasy = 0;
     incarcerated=0;
@@ -268,9 +273,18 @@ void Counts::incrementUninfected(PersonPtr& p) {
 
 void Counts::incrementVertexCount(PersonPtr p) {
     ++vertex_count[(size_t)(std::floor(p->age())) - min_age_];
-    if (p->isSubstanceUser(SubstanceUseType::METH)) ++pop_meth;
-    if (p->isSubstanceUser(SubstanceUseType::CRACK)) ++pop_crack;
-    if (p->isSubstanceUser(SubstanceUseType::ECSTASY)) ++pop_ecstasy;
+    if (p->isSubstanceUser(SubstanceUseType::METH)) {
+        ++pop_meth;
+        if (p->isInfected()) ++pop_infected_meth;
+    }
+    if (p->isSubstanceUser(SubstanceUseType::CRACK)) {
+        ++pop_crack;
+        if (p->isInfected()) ++pop_infected_crack;
+    }
+    if (p->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+        ++pop_ecstasy;
+        if (p->isInfected()) ++pop_infected_ecstasy;
+    }
     if (p->isJailed()) {
         ++vertex_count_ever_jailed;
         ++jail_pop;

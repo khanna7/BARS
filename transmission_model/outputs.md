@@ -61,6 +61,9 @@ network in the model at the end of the timestep
 * pop_meth: total number of meth users.
 * pop_crack: total number of crack users.
 * pop_ecstasy: total number of ecstasy users.
+* pop_infected_meth: total number of infected meth users
+* pop_infected_crack: total number of infected crack users
+* pop_infected_ecstasy: total number of infected ecstasy users
 * jail_pop: the total number of jail population.
 * jail_pop_meth: the total number of jail population who are meth users.
 * jail_pop_crack: the total number of jail population who are crack users.
