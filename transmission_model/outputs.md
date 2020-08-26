@@ -53,6 +53,9 @@ network in the model at the end of the timestep
 * sc_casual_sex_with_condom: the number of sex acts between sero-concordant casual partners in which a condom was used.
 * pop: the total number of population.
 * jail_pop: the total number of jail population.
+* jail_pop_meth: the total number of jail population who are meth users.
+* jail_pop_crack: the total number of jail population who are crack users.
+* jail_pop_ecstasy: the total number of jail population who are ecstasy users.
 * infected_jail_pop: the number of infected persons currently in jail.
 * incarcerated: the number of incarcerated persons.
 * incarcerated_recidivist: the number of recidivist incarcerated persons (those with previous CJI history).

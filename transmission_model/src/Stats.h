@@ -144,6 +144,7 @@ struct Counts {
     unsigned int infected_jail_pop; 
     unsigned int pop;   
     unsigned int jail_pop;     
+    unsigned int jail_pop_meth, jail_pop_crack, jail_pop_ecstasy;
     unsigned int incarcerated;   //nb of jailed each cycle
     unsigned int incarcerated_recidivist;   
     unsigned int incarcerated_meth, incarcerated_crack, incarcerated_ecstasy;
