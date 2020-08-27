@@ -111,7 +111,7 @@ const std::string Counts::header(
         "on_prep,on_prep_meth,on_prep_crack,on_prep_ecstasy,"
         "vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
         "pop,pop_meth,pop_crack,pop_ecstasy,"
-        "pop_infected_meth,pop_infected_crack,pop_infected_ecstasy"
+        "pop_infected_meth,pop_infected_crack,pop_infected_ecstasy,"
         "jail_pop,jail_pop_meth,jail_pop_crack,jail_pop_ecstasy,"
         "incarcerated,incarcerated_recidivist,"
         "incarcerated_meth,incarcerated_crack,incarcerated_ecstasy,"
