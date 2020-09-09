@@ -39,6 +39,9 @@ struct PREPEvent {
     int p_id;
     // 0 is off prep, 1 is off because infected, 2 is on
     int type;
+    bool meth;
+    bool crack;
+    bool ecstasy;
 
     void writeTo(FileOutput& out);
 };
@@ -225,7 +228,7 @@ public:
     void recordDeathEvent(double time, const PersonPtr& person, const std::string& cause);
     void recordTestingEvent(double time, int p_id, bool result);
     void recordARTEvent(double time, int p_id, bool onART);
-    void recordPREPEvent(double time, int p_id, int type);
+    void recordPREPEvent(double time, int p_id, int type, bool meth, bool crack, bool ecstasy);
 };
 
 } /* namespace TransModel */

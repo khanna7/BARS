@@ -179,7 +179,8 @@ void PersonCreator::initUninfectedPerson(PersonPtr person, Rcpp::List& val, doub
     PrepStatus status = as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF;
     if (status == PrepStatus::ON && model_tick > 0) {
         // if model_tick == 0 then event will be recorded in Model::initPrepCessation
-        Stats::instance()->recordPREPEvent(model_tick, person->id(), static_cast<int>(PrepStatus::ON));
+        Stats::instance()->recordPREPEvent(model_tick, person->id(), static_cast<int>(PrepStatus::ON), person->isSubstanceUser(SubstanceUseType::METH),
+                                           person->isSubstanceUser(SubstanceUseType::CRACK), person->isSubstanceUser(SubstanceUseType::ECSTASY));
     }
 
     // same values as when a person is created from scratch

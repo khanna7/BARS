@@ -126,7 +126,8 @@ bool Person::diagnose(double tick) {
         Stats::instance()->recordTestingEvent(tick, id_, diagnosed_);
         if (diagnosed_ && prep_.status() == PrepStatus::ON) {
             prep_.off(PrepStatus::OFF_INFECTED);
-            Stats::instance()->recordPREPEvent(tick, id(), static_cast<int>(PrepStatus::OFF_INFECTED));
+            Stats::instance()->recordPREPEvent(tick, id(), static_cast<int>(PrepStatus::OFF_INFECTED), isSubstanceUser(SubstanceUseType::METH),
+                                               isSubstanceUser(SubstanceUseType::CRACK), isSubstanceUser(SubstanceUseType::ECSTASY));
             Stats::instance()->personDataRecorder()->recordPREPStop(this, tick, PrepStatus::OFF_INFECTED);
         }
     }

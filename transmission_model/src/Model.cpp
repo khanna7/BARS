@@ -937,7 +937,8 @@ void Model::initPrepCessation() {
             double stop_time = person->prepParameters().stopTime();
             runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
             double start_time = person->prepParameters().startTime();
-            Stats::instance()->recordPREPEvent(start_time, person->id(), static_cast<int>(PrepStatus::ON));
+            Stats::instance()->recordPREPEvent(start_time, person->id(), static_cast<int>(PrepStatus::ON), person->isSubstanceUser(SubstanceUseType::METH),
+                                               person->isSubstanceUser(SubstanceUseType::CRACK), person->isSubstanceUser(SubstanceUseType::ECSTASY));
             Stats::instance()->personDataRecorder()->recordPREPStart(person, start_time);
         }
     }

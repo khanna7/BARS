@@ -19,10 +19,10 @@ void ARTEvent::writeTo(FileOutput& out) {
     out << tick << "," << p_id << "," << (int)type << "\n";
 }
 
-const std::string PREPEvent::header("\"tick\",\"p_id\",\"event_type\"");
+const std::string PREPEvent::header("\"tick\",\"p_id\",\"event_type\",\"meth\",\"crack\",\"ecstasy\"");
 
 void PREPEvent::writeTo(FileOutput& out) {
-    out << tick << "," << p_id << "," << type << "\n";
+    out << tick << "," << p_id << "," << type << "," << meth << "," << crack << "," << ecstasy << "\n";
 }
 
 const std::string TestingEvent::header("\"tick\",\"p_id\",\"result\"");
@@ -325,8 +325,8 @@ void Stats::recordARTEvent(double time, int p_id, bool onART) {
     art_event_writer->addOutput(ARTEvent{time, p_id, onART});
 }
 
-void Stats::recordPREPEvent(double time, int p_id, int type) {
-    prep_event_writer->addOutput(PREPEvent{time, p_id, type});
+void Stats::recordPREPEvent(double time, int p_id, int type, bool meth, bool crack, bool ecstasy) {
+    prep_event_writer->addOutput(PREPEvent{time, p_id, type, meth, crack, ecstasy});
 }
 
 void Stats::recordPartnershipEvent(double t, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type) {
