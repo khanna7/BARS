@@ -413,7 +413,7 @@ TEST_F(JailTests, TestJailedAndReleasedStatuses) {
     PersonPtr p1 = make_shared<Person>(1, 10, true, 0, 1, diagnoser);
     PersonPtr p2 = make_shared<Person>(2, 10, true, 0, 1, diagnoser);
 
-    Network<Person> net(false);
+    Network<Person> net;
     net.addVertex(p1);
     net.addVertex(p2);
     net.addEdge(p2, p1);
