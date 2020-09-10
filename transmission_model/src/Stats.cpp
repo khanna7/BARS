@@ -57,7 +57,7 @@ void InfectionEvent::writeTo(FileOutput& out) {
             << p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "," << network_type << "\n";
 }
 
-const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"p1_meth\",\"p2_meth\",\"p1_crack\",\"p2_crack\",\"p1_ecstasy\",\"p2_ecstasy\",\"type\",\"network_type\"");
+const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"p1_meth\",\"p1_crack\",\"p1_ecstasy\",\"p2_meth\",\"p2_crack\",\"p2_ecstasy\",\"type\",\"network_type\"");
 
 PartnershipEvent::PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, 
                                    bool p1_meth, bool p2_meth, bool p1_crack, bool p2_crack,

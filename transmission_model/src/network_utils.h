@@ -153,10 +153,10 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
             ++added;
             Stats::instance()->recordPartnershipEvent(time, ep->id(), out, in,
                                                       p_out->isSubstanceUser(SubstanceUseType::METH),
-                                                      p_in->isSubstanceUser(SubstanceUseType::METH),
                                                       p_out->isSubstanceUser(SubstanceUseType::CRACK),
-                                                      p_in->isSubstanceUser(SubstanceUseType::CRACK),
                                                       p_out->isSubstanceUser(SubstanceUseType::ECSTASY),
+                                                      p_in->isSubstanceUser(SubstanceUseType::METH),
+                                                      p_in->isSubstanceUser(SubstanceUseType::CRACK),
                                                       p_in->isSubstanceUser(SubstanceUseType::ECSTASY),
                                                       PartnershipEvent::STARTED, edge_type);
         } else {
