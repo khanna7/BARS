@@ -1200,7 +1200,13 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             for (auto edge : edges) {
                 //cout << edge->id() << "," << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
                 Stats::instance()->recordPartnershipEvent(tick, edge->id(), edge->v1()->id(), edge->v2()->id(),
-                        pevent_type, edge->type());
+                                                          edge->v1()->isSubstanceUser(SubstanceUseType::METH),
+                                                          edge->v2()->isSubstanceUser(SubstanceUseType::METH),
+                                                          edge->v1()->isSubstanceUser(SubstanceUseType::CRACK),
+                                                          edge->v2()->isSubstanceUser(SubstanceUseType::CRACK),
+                                                          edge->v1()->isSubstanceUser(SubstanceUseType::ECSTASY),
+                                                          edge->v2()->isSubstanceUser(SubstanceUseType::ECSTASY),
+                                                          pevent_type, edge->type());
             }
             net.removeVertex(person);
             iter = population.erase(iter);

@@ -57,14 +57,18 @@ void InfectionEvent::writeTo(FileOutput& out) {
             << p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "," << network_type << "\n";
 }
 
-const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"type\",\"network_type\"");
+const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"p1_meth\",\"p2_meth\",\"p1_crack\",\"p2_crack\",\"p1_ecstasy\",\"p2_ecstasy\",\"type\",\"network_type\"");
 
-PartnershipEvent::PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type) :
-        tick_(tick), edge_id_(edge_id), p1_id(p1), p2_id(p2), type_ { type }, network_type { net_type } {
+PartnershipEvent::PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, 
+                                   bool p1_meth, bool p2_meth, bool p1_crack, bool p2_crack,
+                                   bool p1_ecstasy, bool p2_ecstasy, PEventType type, int net_type) :
+        tick_(tick), edge_id_(edge_id), p1_id(p1), p2_id(p2), p1_meth(p1_meth), p2_meth(p2_meth),
+        p1_crack(p1_crack), p2_crack(p2_crack), p1_ecstasy(p1_ecstasy), p2_ecstasy(p2_ecstasy),
+        type_ { type }, network_type { net_type } {
 }
 
 void PartnershipEvent::writeTo(FileOutput& out) {
-    out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "," << network_type << "\n";
+    out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << p1_meth << "," << p2_meth << ","  << p1_crack << "," << p2_crack << "," << p1_ecstasy << "," << p2_ecstasy << "," << static_cast<int>(type_) << "," << network_type << "\n";
 }
 
 const std::string Counts::header(
@@ -329,8 +333,9 @@ void Stats::recordPREPEvent(double time, int p_id, int type, bool meth, bool cra
     prep_event_writer->addOutput(PREPEvent{time, p_id, type, meth, crack, ecstasy});
 }
 
-void Stats::recordPartnershipEvent(double t, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type) {
-    pevent_writer->addOutput(PartnershipEvent { t, edge_id, p1, p2, event_type, net_type });
+void Stats::recordPartnershipEvent(double t, unsigned int edge_id, int p1, int p2, bool p1_meth, bool p2_meth, bool p1_crack, bool p2_crack,
+                                   bool p1_ecstasy, bool p2_ecstasy, PartnershipEvent::PEventType event_type, int net_type) {
+    pevent_writer->addOutput(PartnershipEvent { t, edge_id, p1, p2, p1_meth, p2_meth, p1_crack, p2_crack, p1_ecstasy, p2_ecstasy, event_type, net_type });
 }
 
 void Stats::recordTestingEvent(double time, int p_id, bool result) {

@@ -132,11 +132,33 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
         int in = idx_map.at(matrix(r, 0));
         int out = idx_map.at(matrix(r, 1));
         int to = matrix(r, 2);
+        PersonPtr p_in, p_out;
+        for (auto v = net.verticesBegin(); v != net.verticesEnd(); ++v) {
+            if (p_in != nullptr && p_out != nullptr) break;
+            if ((*v)->id() == in) {
+                p_in = *v;
+            
+            }
+            if ((*v)->id() == out) {
+                p_out = *v;
+            }
+        }
+        if (p_in == nullptr || p_out == nullptr) {
+            std::cerr << "Could not find person in net" << std::endl;
+            exit(1);
+        }
         if (to) {
             EdgePtr<V> ep = net.addEdge(out, in, edge_type);
             edge_initializer.initEdge(ep);
             ++added;
-            Stats::instance()->recordPartnershipEvent(time, ep->id(), out, in, PartnershipEvent::STARTED, edge_type);
+            Stats::instance()->recordPartnershipEvent(time, ep->id(), out, in,
+                                                      p_out->isSubstanceUser(SubstanceUseType::METH),
+                                                      p_in->isSubstanceUser(SubstanceUseType::METH),
+                                                      p_out->isSubstanceUser(SubstanceUseType::CRACK),
+                                                      p_in->isSubstanceUser(SubstanceUseType::CRACK),
+                                                      p_out->isSubstanceUser(SubstanceUseType::ECSTASY),
+                                                      p_in->isSubstanceUser(SubstanceUseType::ECSTASY),
+                                                      PartnershipEvent::STARTED, edge_type);
         } else {
             EdgePtr<V> res = net.removeEdge(out, in, edge_type);
             if (!res) {
@@ -148,7 +170,14 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
                 throw std::domain_error("Updating from tergm changes: trying to remove an edge that doesn't exist");
                 
             }
-            Stats::instance()->recordPartnershipEvent(time, res->id(), out, in, PartnershipEvent::ENDED_DISSOLUTION, edge_type);
+            Stats::instance()->recordPartnershipEvent(time, res->id(), out, in, 
+                                                      p_out->isSubstanceUser(SubstanceUseType::METH),
+                                                      p_in->isSubstanceUser(SubstanceUseType::METH),
+                                                      p_out->isSubstanceUser(SubstanceUseType::CRACK),
+                                                      p_in->isSubstanceUser(SubstanceUseType::CRACK),
+                                                      p_out->isSubstanceUser(SubstanceUseType::ECSTASY),
+                                                      p_in->isSubstanceUser(SubstanceUseType::ECSTASY),
+                                                      PartnershipEvent::ENDED_DISSOLUTION, edge_type);
             ++removed;
         }
     }
