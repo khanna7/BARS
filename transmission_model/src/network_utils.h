@@ -139,25 +139,25 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
         std::shared_ptr<V> outp = net.getVertex(out);
         if (to) {
             EdgePtr<V> ep = net.addEdge(out, in, edge_type);
-            std::shared_ptr<V> partner_of_released;
-            int released_id;
-            bool add = false;
+            bool released_partner_in,released_partner_out;
+            released_partner_in = released_partner_out = false;
+            bool in_disruption_period_in, in_disruption_period_out;
+            in_disruption_period_in = in_disruption_period_out = false;
             if (inp->hasPreviousJailHistory() && (time <= inp->timeOfRelease() + released_partner_formation_time)) {
-                partner_of_released = std::shared_ptr<V>(outp);
-                released_id = in;
-                add = true;
-            } else if (outp->hasPreviousJailHistory() && (time <= outp->timeOfRelease() + released_partner_formation_time)) {
-                partner_of_released = std::shared_ptr<V>(inp);
-                released_id = out;
-                add = true;
+                released_partner_out = true;
+                outp->addReleasedPartner(in);
+                scheduleReleasedPartnerExpiration(outp, in, time);
             }
-            if (add) {
-                partner_of_released->addReleasedPartner(released_id);
-                scheduleReleasedPartnerExpiration(partner_of_released, released_id, time);
+            if (outp->hasPreviousJailHistory() && (time <= outp->timeOfRelease() + released_partner_formation_time)) {
+                released_partner_in = true;
+                inp->addReleasedPartner(out);
+                scheduleReleasedPartnerExpiration(inp, out, time);
             }
+            if (inp->isARTForcedOff()) in_disruption_period_in = true;
+            if (outp->isARTForcedOff()) in_disruption_period_out = true;
             edge_initializer.initEdge(ep);
             ++added;
-            Stats::instance()->recordPartnershipEvent(time, ep->id(), out, in, PartnershipEvent::STARTED, edge_type);
+            Stats::instance()->recordPartnershipEvent(time, ep->id(), out, in, PartnershipEvent::STARTED, edge_type, in_disruption_period_in, released_partner_out, in_disruption_period_out, released_partner_in);
         } else {
             EdgePtr<V> res = net.removeEdge(out, in, edge_type);
             if (!res) {
@@ -175,7 +175,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
                     outp->removeReleasedPartner(out);
                 }
             }
-            Stats::instance()->recordPartnershipEvent(time, res->id(), out, in, PartnershipEvent::ENDED_DISSOLUTION, edge_type);
+            Stats::instance()->recordPartnershipEvent(time, res->id(), out, in, PartnershipEvent::ENDED_DISSOLUTION, edge_type, false, false, false, false);
             ++removed;
         }
     }

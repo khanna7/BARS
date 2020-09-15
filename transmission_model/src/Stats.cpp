@@ -57,14 +57,16 @@ void InfectionEvent::writeTo(FileOutput& out) {
             << p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "," << network_type << "\n";
 }
 
-const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"type\",\"network_type\"");
+const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"type\",\"network_type\",\"in_disruption_p2\",\"released_partner_p1\",\"in_disruption_p1\",\"released_partner_p2\"");
 
-PartnershipEvent::PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type) :
-        tick_(tick), edge_id_(edge_id), p1_id(p1), p2_id(p2), type_ { type }, network_type { net_type } {
+PartnershipEvent::PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type, bool in_disruption_p2, bool released_partner_p1, bool in_disruption_p1, bool released_partner_p2):
+        tick_(tick), edge_id_(edge_id), p1_id(p1), p2_id(p2), type_ { type }, network_type { net_type },
+        in_disruption_p2(in_disruption_p2), released_partner_p1(released_partner_p1), in_disruption_p1(in_disruption_p1), released_partner_p2(released_partner_p2)
+{
 }
 
 void PartnershipEvent::writeTo(FileOutput& out) {
-    out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "," << network_type << "\n";
+    out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "," << network_type << "," << in_disruption_p2 << "," << released_partner_p1 << "," << in_disruption_p1 << "," << released_partner_p2 << "\n";
 }
 
 const std::string Counts::header(
@@ -299,16 +301,17 @@ void Stats::resetForNextTimeStep() {
     current_counts.reset();
 }
 
+void Stats::recordPartnershipEvent(double time, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type, bool in_disruption_p2, bool released_partner_p1, bool in_disruption_p1, bool released_partner_p2)
+{
+    pevent_writer->addOutput(PartnershipEvent { time, edge_id, p1, p2, event_type, net_type, in_disruption_p2, released_partner_p1, in_disruption_p1, released_partner_p2});
+}
+
 void Stats::recordARTEvent(double time, int p_id, bool onART) {
     art_event_writer->addOutput(ARTEvent{time, p_id, onART});
 }
 
 void Stats::recordPREPEvent(double time, int p_id, int type) {
     prep_event_writer->addOutput(PREPEvent{time, p_id, type});
-}
-
-void Stats::recordPartnershipEvent(double t, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type) {
-    pevent_writer->addOutput(PartnershipEvent { t, edge_id, p1, p2, event_type, net_type });
 }
 
 void Stats::recordTestingEvent(double time, int p_id, bool result) {

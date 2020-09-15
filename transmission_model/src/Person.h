@@ -269,6 +269,9 @@ public:
         return infection_parameters_.art_status;
     }
 
+    bool isARTForcedOff() {
+        return infection_parameters_.art_forced_off;
+    }
 
     /**
      * to set on/off ART flag 
@@ -276,7 +279,7 @@ public:
     void setArtForcedOff(bool forced){
         infection_parameters_.art_forced_off = forced;
     }
- 
+
     /**
      * Boolean function to check if a person is jailed (in jail).
      */
@@ -290,7 +293,7 @@ public:
         }
         std::cout << std::endl;
     }
-    
+
     /**
      * Boolean function to check if a person is jailed (in jail).
      */

@@ -1179,7 +1179,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             for (auto edge : edges) {
                 //cout << edge->id() << "," << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
                 Stats::instance()->recordPartnershipEvent(tick, edge->id(), edge->v1()->id(), edge->v2()->id(),
-                        pevent_type, edge->type());
+                        pevent_type, edge->type(), false, false, false, false);
             }
             net.removeVertex(person);
             iter = population.erase(iter);

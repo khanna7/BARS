@@ -105,8 +105,11 @@ struct PartnershipEvent {
     int p1_id, p2_id;
     PEventType type_;
     int network_type;
-
-    PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type);
+    bool in_disruption_p2;
+    bool released_partner_p1;
+    bool in_disruption_p1;
+    bool released_partner_p2;
+    PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type, bool in_disruption_p2, bool released_partner_p1, bool in_disruption_p1, bool released_partner_p2);
     void writeTo(FileOutput& out);
 
 };
@@ -209,7 +212,7 @@ public:
         return instance_;
     }
 
-    void recordPartnershipEvent(double time, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type);
+    void recordPartnershipEvent(double time, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type, bool in_disruption_p2, bool released_partner_p1, bool in_disruption_p1, bool released_partner_p2);
     void recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom, int net_type);
 
     /**
