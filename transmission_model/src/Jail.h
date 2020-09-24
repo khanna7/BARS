@@ -69,6 +69,8 @@ public:
     void scheduleEndArtForcedOff(PersonPtr person, double at);
     void scheduleEndPrepForcedOff(PersonPtr person, double at);
 
+    double endArtForcedOffAt(int id);
+
     void updateInfRateMult(double mult);
 
 
@@ -160,8 +162,7 @@ public:
      */
     void artOverrideEnded(PersonPtr person);
 
-
-
+    OffArtFlagEndEvent *getOffArtFlagEndEvent(PersonPtr person);
 };
 
 class ReleaseEvent : public repast::Functor {

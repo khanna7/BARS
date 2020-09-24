@@ -13,8 +13,9 @@ OffArtFlagEndEvent::OffArtFlagEndEvent(std::shared_ptr<Person> person, Jail* jai
 void OffArtFlagEndEvent::operator()() {
     // might be dead prior to this event occuring
     if (!person_->isDead()) {
-        jail_->artOverrideEnded(person_);
         if (!canceled) {
+            std::cout << "offArtFlagEndEvent: " << scheduledFor() << " " << person_->id() << std::endl; 
+            jail_->artOverrideEnded(person_);
             person_->setArtForcedOff(false);
         }
     }

@@ -998,7 +998,7 @@ void Model::step() {
     }
    
     // updates (i.e. simulates) the partner network
-    simulate(R, net, p2val, condom_assigner, t);
+    simulate(R, net, p2val, condom_assigner, t, std::make_shared<Jail>(this->jail));
 
     if (Parameters::instance()->getBooleanParameter(COUNT_OVERLAPS)) {
         countOverlap();

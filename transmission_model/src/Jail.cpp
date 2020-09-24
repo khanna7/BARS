@@ -163,6 +163,25 @@ void Jail::releasePerson(double tick, PersonPtr person) {
     float ret_multiplier = Parameters::instance()->getFloatParameter(NETWORK_RETENTION_MULTIPLIER);
     int time_spent_in_jail = tick - person->timeOfJail(); //time spent in jail, in case it would be different from person->jailServingTime()
 
+    double off_art_flag_change_time;
+
+    if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
+        //double vulnerability_mean = vulnerabilityMean(person->jailServingTime());
+        float post_release_interference_period_mean = Parameters::instance()->getFloatParameter(POST_RELEASE_INTERFERENCE_PERIOD_MEAN);
+        GeometricDistribution post_release_interference_dur_gen = GeometricDistribution((1/post_release_interference_period_mean), 0);
+
+        int post_release_interf_duration_prep = (int) post_release_interference_dur_gen.next();
+        // + 0.1 in case this tick
+        double off_prep_flag_change_time = tick + post_release_interf_duration_prep + 0.1;
+        scheduleEndPrepForcedOff(person, off_prep_flag_change_time);
+            
+        person->setArtForcedOff(true); //care disruption; PrEP has been already off when jailed
+        int post_release_interf_duration_art = (int) post_release_interference_dur_gen.next();
+        off_art_flag_change_time = tick + post_release_interf_duration_art + 0.1;    
+        std::cout << person->id() << " forced off for this many days: " << post_release_interf_duration_art << endl;
+        scheduleEndArtForcedOff(person, off_art_flag_change_time);
+    }
+
     for (auto edge : edges) {
         PersonPtr source = edge->v1();
         PersonPtr target = edge->v2();
@@ -191,31 +210,21 @@ void Jail::releasePerson(double tick, PersonPtr person) {
                 EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
                 new_edge->setCondomUseProbability(edge->condomUseProbability());
                 if (source->id() == person->id()) {
-                    target->addReleasedPartner(person->id());
-                    scheduleReleasedPartnerExpiration(target, person->id(), tick);
+                    if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
+                        target->addReleasedPartner(person->id());
+                        scheduleReleasedPartnerExpiration(target, person->id(), off_art_flag_change_time);
+                        
+                    }
                 } else {
-                    source->addReleasedPartner(person->id());
-                    scheduleReleasedPartnerExpiration(source, person->id(), tick);
+                    if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
+                        source->addReleasedPartner(person->id());
+                        scheduleReleasedPartnerExpiration(source, person->id(), off_art_flag_change_time);
+                    }
                 }
             }
         }
     }
 
-    if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
-        //double vulnerability_mean = vulnerabilityMean(person->jailServingTime());
-        float post_release_interference_period_mean = Parameters::instance()->getFloatParameter(POST_RELEASE_INTERFERENCE_PERIOD_MEAN);
-        GeometricDistribution post_release_interference_dur_gen = GeometricDistribution((1/post_release_interference_period_mean), 0);
-
-        int post_release_interf_duration_prep = (int) post_release_interference_dur_gen.next();
-        // + 0.1 in case this tick
-        double off_prep_flag_change_time = tick + post_release_interf_duration_prep + 0.1;
-        scheduleEndPrepForcedOff(person, off_prep_flag_change_time);
-            
-        person->setArtForcedOff(true); //care disruption; PrEP has been already off when jailed
-        int post_release_interf_duration_art = (int) post_release_interference_dur_gen.next();
-        double off_art_flag_change_time = tick + post_release_interf_duration_art + 0.1;    
-        scheduleEndArtForcedOff(person, off_art_flag_change_time);
-    }
 
     jailed_pop_net.erase(person->id());
     total_released_++;
@@ -236,7 +245,7 @@ void Jail::scheduleEndPrepForcedOff(PersonPtr person, double at) {
     prep_evts[person->id()] = prep_evt;
     schedule.scheduleEvent(at, Schedule::FunctorPtr(prep_evt));
 }
-    
+
 void Jail::scheduleEndArtForcedOff(PersonPtr person, double at) {
     ScheduleRunner& schedule = RepastProcess::instance()->getScheduleRunner();
     OffArtFlagEndEvent* art_evt = new OffArtFlagEndEvent(person, this, at);
@@ -646,6 +655,15 @@ void Jail::prepOverrideEnded(PersonPtr person) {
 
 void Jail::artOverrideEnded(PersonPtr person) {
     art_evts.erase(person->id());
+}
+
+OffArtFlagEndEvent *Jail::getOffArtFlagEndEvent(PersonPtr person)
+{
+    auto a_iter = art_evts.find(person->id());
+    if (a_iter != art_evts.end()) {
+        return a_iter->second;
+    }
+    return nullptr;
 }
 
 void initialize_jail(Jail& jail, Rcpp::List& network, std::vector<PersonPtr>& population) {

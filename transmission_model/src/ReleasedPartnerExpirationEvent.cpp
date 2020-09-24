@@ -15,6 +15,7 @@ ReleasedPartnerExpirationEvent::ReleasedPartnerExpirationEvent(PersonPtr person,
 void ReleasedPartnerExpirationEvent::operator()() {
     if (!person_->isDead()) {
         if (person_->hasReleasedPartner(id_) && person_->releasedPartnerExpirationTick(id_) == expiration_tick_) {
+            std::cout << "ReleasedPartnerExpirationEvent " << expiration_tick_ << " " << person_->id() << " -> " << id_ << std::endl;
             person_->removeReleasedPartner(id_);
         }
     }
@@ -23,12 +24,11 @@ void ReleasedPartnerExpirationEvent::operator()() {
 ReleasedPartnerExpirationEvent::~ReleasedPartnerExpirationEvent() {
 }
 
-void scheduleReleasedPartnerExpiration(PersonPtr person, int id, double scheduled_at_tick) {
+void scheduleReleasedPartnerExpiration(PersonPtr person, int id, double scheduled_for) {
     ScheduleRunner &runner = RepastProcess::instance()->getScheduleRunner();
-    double released_partner_expiration_time = Parameters::instance()->getDoubleParameter(RELEASED_PARTNER_EXPIRATION_TIME);
-    double expire_at_tick = scheduled_at_tick + released_partner_expiration_time + 0.1;
-    person->setReleasedPartnerExpirationTick(id, expire_at_tick);
-    runner.scheduleEvent(expire_at_tick, Schedule::FunctorPtr(new ReleasedPartnerExpirationEvent(person, id, expire_at_tick)));
+    person->setReleasedPartnerExpirationTick(id, scheduled_for);
+    std::cout << "Schedule releasedPartnerExpirationEvent " << scheduled_for << " " << person->id() << " -> " << id << std::endl;
+    runner.scheduleEvent(scheduled_for, Schedule::FunctorPtr(new ReleasedPartnerExpirationEvent(person, id, scheduled_for)));
 }
 
 } /* namespace TrnasModel */
