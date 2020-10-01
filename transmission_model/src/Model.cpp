@@ -71,6 +71,14 @@ PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
         return PartnershipEvent::PEventType::ENDED_DEATH_INFECTION;
     else if (cod == CauseOfDeath::ASM_CD4) 
         return PartnershipEvent::PEventType::ENDED_DEATH_ASM_CD4;
+    else if (cod == CauseOfDeath::ASM_METH)
+        return PartnershipEvent::PEventType::ENDED_DEATH_ASM_METH;
+    else if (cod == CauseOfDeath::ASM_CD4_METH)
+        return PartnershipEvent::PEventType::ENDED_DEATH_ASM_CD4_METH;
+    else if (cod == CauseOfDeath::ASM_CRACK)
+        return PartnershipEvent::PEventType::ENDED_DEATH_ASM_CRACK;
+    else if (cod == CauseOfDeath::ASM_CD4_CRACK)
+        return PartnershipEvent::PEventType::ENDED_DEATH_ASM_CD4_CRACK;
     else {
         throw std::invalid_argument("No PEvent for specified CauseOfDeath");
     }
@@ -837,6 +845,33 @@ RangeWithProbability create_ASM_runner() {
     return creator.createRangeWithProbability();
 }
 
+RangeWithProbability create_ASM_runner_stimulants(SubstanceUseType type) {
+    RangeWithProbabilityCreator creator;
+    vector<string> keys;
+    Parameters::instance()->getKeys(ASM_PREFIX, keys);
+    double sum = 0.0, avg = 0.0, ratio = 0.0;
+    int n = 0;
+    double min = 0.0, max = 0.0;
+    for (auto& key : keys) {
+        RangeWithProbabilityCreator::parseRangeString(key, &min, &max);
+        if (min < 35) {
+            double prob = Parameters::instance()->getDoubleParameter(key);
+            sum += prob;
+            n++;
+        }
+    }
+    avg = sum / n;
+    double stim_rate = 0.0;
+    if (type == SubstanceUseType::METH) stim_rate = Parameters::instance()->getDoubleParameter(MORTALITY_RATE_METH);
+    else if (type == SubstanceUseType::CRACK) stim_rate = Parameters::instance()->getDoubleParameter(MORTALITY_RATE_CRACK);
+    ratio = stim_rate / avg;
+    for (auto& key : keys) {
+        double prob = Parameters::instance()->getDoubleParameter(key);
+        creator.addBin(key, prob * ratio);
+    }
+    return creator.createRangeWithProbability();
+}
+
 RangeWithProbability create_cd4m_runner(const std::string& prefix) {
     RangeWithProbabilityCreator creator;
     vector<string> keys;
@@ -876,7 +911,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
                     Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_DEFAULT))),
                 person_creator { trans_runner, Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator, &jail}, prep_manager(),	
                 condom_assigner { create_condom_use_assigner() },
-                asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)}, 
+                asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)},
+                asm_runner_meth { create_ASM_runner_stimulants(SubstanceUseType::METH) },
+                asm_runner_crack { create_ASM_runner_stimulants(SubstanceUseType::CRACK) },
                 age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}
                  {
 
@@ -1404,26 +1441,55 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
     }
 
     if (cod == CauseOfDeath::NONE) { 
-        double increase = 0;
+        double increase_art = 0;
         if (person->isOnART(true)) { //care disruption
         //if (person->isOnART()) {
-            increase = cd4m_treated_runner.lookup(person->infectionParameters().cd4_count);
+            increase_art = cd4m_treated_runner.lookup(person->infectionParameters().cd4_count);
         }
-
-        if (asm_runner.run(person->age(), increase, Random::instance()->nextDouble())) {
-            // asm deaths
-            ++death_count;
-            Stats::instance()->personDataRecorder()->recordDeath(person, tick);
-            if (increase > 0) {
-                ++Stats::instance()->currentCounts().cd4m_deaths;
-                Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4);
-                cod = CauseOfDeath::ASM_CD4;
-            } else {
-                ++Stats::instance()->currentCounts().asm_deaths;
-                Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
-                cod = CauseOfDeath::ASM;
+        if (person->isSubstanceUser(SubstanceUseType::METH)) {
+            if (asm_runner_meth.run(person->age(), increase_art, Random::instance()->nextDouble())) {
+                ++death_count;
+                Stats::instance()->personDataRecorder()->recordDeath(person, tick);
+                if (increase_art > 0) {
+                    //++Stats::instance()->currentCounts().cd4m_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4_METH);
+                    cod = CauseOfDeath::ASM_CD4_METH;
+                } else {
+                    //++Stats::instance()->currentCounts().asm_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_METH);
+                    cod = CauseOfDeath::ASM_METH;
+                }
             }
-        } 
+        } else if (person->isSubstanceUser(SubstanceUseType::CRACK)) {
+            if (asm_runner_crack.run(person->age(), increase_art, Random::instance()->nextDouble())) {
+                ++death_count;
+                Stats::instance()->personDataRecorder()->recordDeath(person, tick);
+                if (increase_art > 0) {
+                    //++Stats::instance()->currentCounts().cd4m_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4_CRACK);
+                    cod = CauseOfDeath::ASM_CD4_CRACK;
+                } else {
+                    //++Stats::instance()->currentCounts().asm_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CRACK);
+                    cod = CauseOfDeath::ASM_CRACK;
+                }
+            }
+        } else {
+            if (asm_runner.run(person->age(), increase_art, Random::instance()->nextDouble())) {
+                // asm deaths
+                ++death_count;
+                Stats::instance()->personDataRecorder()->recordDeath(person, tick);
+                if (increase_art > 0) {
+                    ++Stats::instance()->currentCounts().cd4m_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4);
+                    cod = CauseOfDeath::ASM_CD4;
+                } else {
+                    ++Stats::instance()->currentCounts().asm_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
+                    cod = CauseOfDeath::ASM;
+                }
+            }
+        }
     }
 
     person->setDead(cod != CauseOfDeath::NONE);

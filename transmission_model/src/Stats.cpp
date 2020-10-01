@@ -36,6 +36,10 @@ const std::string DeathEvent::AGE("AGE");
 const std::string DeathEvent::INFECTION("INFECTION");
 const std::string DeathEvent::ASM("ASM");
 const std::string DeathEvent::ASM_CD4("ASM+CD4");
+const std::string DeathEvent::ASM_METH("ASM+METH");
+const std::string DeathEvent::ASM_CD4_METH("ASM+CD4+METH");
+const std::string DeathEvent::ASM_CRACK("ASM+CRACK");
+const std::string DeathEvent::ASM_CD4_CRACK("ASM+CD4+CRACK");
 
 void DeathEvent::writeTo(FileOutput& out) {
     out << tick << "," << p_id << "," << age << "," << art_status << "," << cause << "\n";

@@ -588,6 +588,10 @@ default.prep.mean.days.usage.meth.ecstasy <- 365 #updated 23may2018
 default.prep.mean.days.usage.crack.ecstasy <- 365 #updated 23may2018
 default.prep.mean.days.usage.meth.crack.ecstasy <- 365 #updated 23may2018
 
+# Mortality and substance use
+mortality.rate.meth <- 0.000052
+mortality.rate.crack <- 0.000025
+
 # Talk to John regarding PrEP and retention use
 
 # incarceration and substance use

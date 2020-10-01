@@ -322,6 +322,11 @@ const std::string METH_PROP = "meth.prop";
 const std::string CRACK_PROP = "crack.prop";
 const std::string ECSTASY_PROP = "ecstasy.prop";
 
+const std::string STIMULANT_USE_MORTALITY_INCREASE = "stimulant.use.mortality.increase";
+
+const std::string MORTALITY_RATE_METH = "mortality.rate.meth";
+const std::string MORTALITY_RATE_CRACK = "mortality.rate.crack";
+
 Parameters* Parameters::instance_ = 0;
 
 std::ostream& operator<< (std::ostream& os, const Parameters* params) {

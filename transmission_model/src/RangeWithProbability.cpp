@@ -40,13 +40,13 @@ double RangeWithProbability::lookup(float rangeValue) {
     throw std::domain_error("Error in RangeWithProbabilty::run: rangeValue " + std::to_string(rangeValue) + " is not within any bin range");
 }
 
+
 RangeWithProbabilityCreator::RangeWithProbabilityCreator() {
 }
 RangeWithProbabilityCreator::~RangeWithProbabilityCreator() {
 }
 
-void RangeWithProbabilityCreator::addBin(const std::string& bin_definition, double bin_probability) {
-// asm.15-19
+void RangeWithProbabilityCreator::parseRangeString(const std::string &bin_definition, double *min, double *max) {
     std::vector<string> tokens;
     boost::split(tokens, bin_definition, boost::is_any_of("."));
 
@@ -57,25 +57,29 @@ void RangeWithProbabilityCreator::addBin(const std::string& bin_definition, doub
     std::string range = tokens[1];
     tokens.clear();
     boost::split(tokens, range, boost::is_any_of("_"));
-    double min = 0, max = 0;
     if (tokens.size() == 1) {
-        min = stod(tokens[0]);
-        max = min;
+        *min = stod(tokens[0]);
+        *max = *min;
     } else if (tokens.size() == 2) {
-        min = stod(tokens[0]);
-        max = stod(tokens[1]);
+        *min = stod(tokens[0]);
+        *max = stod(tokens[1]);
     } else {
         throw std::invalid_argument("Bad bin definition in RangeWithProbability: " + bin_definition);
     }
 
-    if (min < 0 || max < 0 || max < min) {
+    if (*min < 0 || *max < 0 || *max < *min) {
         throw std::invalid_argument(
                 "Bad bin definition in RangeWithProbability: " + bin_definition
                         + ",  min and max must be > 0 and max must be > min.");
     }
+    return;
+}
 
+void RangeWithProbabilityCreator::addBin(const std::string& bin_definition, double bin_probability) {
+// asm.15-19
+    double min = 0.0, max = 0.0;
+    parseRangeString(bin_definition, &min, &max);
     addBin(min, max, bin_probability);
-
 }
 
 std::ostream& operator<< (std::ostream& os, const RangeWithProbability& rp) {
