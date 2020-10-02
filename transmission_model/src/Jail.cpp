@@ -177,8 +177,7 @@ void Jail::releasePerson(double tick, PersonPtr person) {
             
         person->setArtForcedOff(true); //care disruption; PrEP has been already off when jailed
         int post_release_interf_duration_art = (int) post_release_interference_dur_gen.next();
-        off_art_flag_change_time = tick + post_release_interf_duration_art + 0.1;    
-        std::cout << person->id() << " forced off for this many days: " << post_release_interf_duration_art << endl;
+        off_art_flag_change_time = tick + post_release_interf_duration_art + 0.1;
         scheduleEndArtForcedOff(person, off_art_flag_change_time);
     }
 
@@ -209,16 +208,17 @@ void Jail::releasePerson(double tick, PersonPtr person) {
             if (add_edge) {
                 EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
                 new_edge->setCondomUseProbability(edge->condomUseProbability());
+                double expiration_time = Parameters::instance()->getDoubleParameter(RELEASED_PARTNER_EXPIRATION_TIME);
                 if (source->id() == person->id()) {
                     if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
                         target->addReleasedPartner(person->id());
-                        scheduleReleasedPartnerExpiration(target, person->id(), off_art_flag_change_time);
+                        scheduleReleasedPartnerExpiration(target, person->id(), off_art_flag_change_time + expiration_time);
                         
                     }
                 } else {
                     if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
                         source->addReleasedPartner(person->id());
-                        scheduleReleasedPartnerExpiration(source, person->id(), off_art_flag_change_time);
+                        scheduleReleasedPartnerExpiration(source, person->id(), off_art_flag_change_time + expiration_time);
                     }
                 }
             }

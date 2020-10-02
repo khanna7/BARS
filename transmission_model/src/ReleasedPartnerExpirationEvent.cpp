@@ -15,7 +15,6 @@ ReleasedPartnerExpirationEvent::ReleasedPartnerExpirationEvent(PersonPtr person,
 void ReleasedPartnerExpirationEvent::operator()() {
     if (!person_->isDead()) {
         if (person_->hasReleasedPartner(id_) && person_->releasedPartnerExpirationTick(id_) == expiration_tick_) {
-            std::cout << "ReleasedPartnerExpirationEvent " << expiration_tick_ << " " << person_->id() << " -> " << id_ << std::endl;
             person_->removeReleasedPartner(id_);
         }
     }
@@ -27,7 +26,6 @@ ReleasedPartnerExpirationEvent::~ReleasedPartnerExpirationEvent() {
 void scheduleReleasedPartnerExpiration(PersonPtr person, int id, double scheduled_for) {
     ScheduleRunner &runner = RepastProcess::instance()->getScheduleRunner();
     person->setReleasedPartnerExpirationTick(id, scheduled_for);
-    std::cout << "Schedule releasedPartnerExpirationEvent " << scheduled_for << " " << person->id() << " -> " << id << std::endl;
     runner.scheduleEvent(scheduled_for, Schedule::FunctorPtr(new ReleasedPartnerExpirationEvent(person, id, scheduled_for)));
 }
 

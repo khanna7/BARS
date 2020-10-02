@@ -14,12 +14,10 @@ void OffArtFlagEndEvent::operator()() {
     // might be dead prior to this event occuring
     if (!person_->isDead()) {
         if (!canceled) {
-            std::cout << "offArtFlagEndEvent: " << scheduledFor() << " " << person_->id() << std::endl; 
             jail_->artOverrideEnded(person_);
             person_->setArtForcedOff(false);
         }
     }
-
 }
 
 
@@ -37,7 +35,5 @@ void OffPrepFlagEndEvent::operator()() {
         }
     }
 }
-
-
 
 }
