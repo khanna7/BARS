@@ -126,7 +126,8 @@ struct Counts {
     double tick;
     unsigned int main_edge_count, casual_edge_count,
     //size, internal_infected, external_infected, infected_at_entry, uninfected,
-    entries, age_deaths, infection_deaths, asm_deaths;
+    entries, age_deaths, infection_deaths, asm_deaths, asm_meth_deaths, cd4m_meth_deaths,
+    asm_crack_deaths, cd4m_crack_deaths;
     int overlaps;
     unsigned int sex_acts, casual_sex_acts, steady_sex_acts;
     unsigned int sd_casual_sex_with_condom, sd_casual_sex_without_condom;

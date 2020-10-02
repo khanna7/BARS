@@ -1451,11 +1451,11 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
                 ++death_count;
                 Stats::instance()->personDataRecorder()->recordDeath(person, tick);
                 if (increase_art > 0) {
-                    //++Stats::instance()->currentCounts().cd4m_deaths;
+                    ++Stats::instance()->currentCounts().cd4m_meth_deaths;
                     Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4_METH);
                     cod = CauseOfDeath::ASM_CD4_METH;
                 } else {
-                    //++Stats::instance()->currentCounts().asm_deaths;
+                    ++Stats::instance()->currentCounts().asm_meth_deaths;
                     Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_METH);
                     cod = CauseOfDeath::ASM_METH;
                 }
@@ -1465,11 +1465,11 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
                 ++death_count;
                 Stats::instance()->personDataRecorder()->recordDeath(person, tick);
                 if (increase_art > 0) {
-                    //++Stats::instance()->currentCounts().cd4m_deaths;
+                    ++Stats::instance()->currentCounts().cd4m_crack_deaths;
                     Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4_CRACK);
                     cod = CauseOfDeath::ASM_CD4_CRACK;
                 } else {
-                    //++Stats::instance()->currentCounts().asm_deaths;
+                    ++Stats::instance()->currentCounts().asm_crack_deaths;
                     Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CRACK);
                     cod = CauseOfDeath::ASM_CRACK;
                 }

@@ -76,7 +76,7 @@ void PartnershipEvent::writeTo(FileOutput& out) {
 }
 
 const std::string Counts::header(
-        "tick,entries,max_age_exits,infection_deaths,asm_deaths,"
+        "tick,entries,max_age_exits,infection_deaths,asm_deaths,asm_deaths_meth,asm_deaths_crack,"
 
         "infected_via_transmission,infected_via_transmission_18,infected_via_transmission_19,infected_via_transmission_20,"
         "infected_via_transmission_21,infected_via_transmission_22,infected_via_transmission_23,infected_via_transmission_24,infected_via_transmission_25,"
@@ -117,7 +117,7 @@ const std::string Counts::header(
         "sc_steady_sex_with_condom,sc_steady_sex_without_condom,"
         "on_art,on_art_meth,on_art_crack,on_art_ecstasy,"
         "on_prep,on_prep_meth,on_prep_crack,on_prep_ecstasy,"
-        "vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
+        "vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,cd4m_meth_deaths,cd4m_crack_deaths,"
         "pop,pop_meth,pop_crack,pop_ecstasy,"
         "pop_infected_meth,pop_infected_crack,pop_infected_ecstasy,"
         "jail_pop,jail_pop_meth,jail_pop_crack,jail_pop_ecstasy,"
@@ -137,7 +137,8 @@ void write_vector_out(std::vector<unsigned int>& vec, FileOutput& out) {
 }
 
 void Counts::writeTo(FileOutput& out) {
-    out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths;
+    out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths << ","
+    << asm_meth_deaths <<"," << asm_crack_deaths;
     write_vector_out(internal_infected, out);
     out << "," << internal_infected_meth << "," << internal_infected_crack << "," << internal_infected_ecstasy;
     write_vector_out(external_infected, out);
@@ -155,6 +156,7 @@ void Counts::writeTo(FileOutput& out) {
     << on_art << "," << on_art_meth << "," << on_art_crack << "," << on_art_ecstasy << ","
     << on_prep << "," << on_prep_meth << "," << on_prep_crack << "," << on_prep_ecstasy << ","
     << vl_supp_per_positives << "," << vl_supp_per_diagnosis << "," << cd4m_deaths << ","
+    << cd4m_meth_deaths << "," << cd4m_crack_deaths << ","
     << pop << "," << pop_meth << "," << pop_crack << "," << pop_ecstasy << ","
     << pop_infected_meth << "," << pop_infected_crack << "," << pop_infected_ecstasy << ","
     << jail_pop << ","<< jail_pop_meth << "," << jail_pop_crack << "," << jail_pop_ecstasy << ","
@@ -168,7 +170,7 @@ void Counts::writeTo(FileOutput& out) {
 }
 
 Counts::Counts(int min_age, int max_age) :
-        tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, asm_deaths{0}, overlaps { 0 }, sex_acts { 0 },
+    tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, asm_deaths{0}, asm_meth_deaths{0}, cd4m_meth_deaths{0}, asm_crack_deaths{0}, cd4m_crack_deaths{0}, overlaps { 0 }, sex_acts { 0 },
                 casual_sex_acts{0}, steady_sex_acts{0}, sd_casual_sex_with_condom{0}, sd_casual_sex_without_condom{0},
                 sd_steady_sex_with_condom{0}, sd_steady_sex_without_condom {0},
                 sc_casual_sex_with_condom{0}, sc_casual_sex_without_condom{0},
@@ -180,8 +182,9 @@ Counts::Counts(int min_age, int max_age) :
                 total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
                 internal_infected_meth{0}, internal_infected_crack{0}, internal_infected_ecstasy{0},
                 external_infected_meth{0}, external_infected_crack{0}, external_infected_ecstasy{0},
-                infected_jail_pop{0}, pop{0}, pop_meth{0}, pop_crack{0}, pop_ecstasy{0},
+                infected_jail_pop{0}, pop{0}, 
                 pop_infected_meth{0}, pop_infected_crack{0}, pop_infected_ecstasy{0},
+                pop_meth{0}, pop_crack{0}, pop_ecstasy{0},
                 jail_pop{0}, jail_pop_meth{0}, jail_pop_crack{0}, jail_pop_ecstasy{0},
                 incarcerated{0}, incarcerated_recidivist{0},
                 incarcerated_meth{0}, incarcerated_crack{0}, incarcerated_ecstasy{0},
@@ -194,7 +197,7 @@ Counts::Counts(int min_age, int max_age) :
 
 void Counts::reset() {
     tick = 0;
-    main_edge_count = casual_edge_count = entries = age_deaths = infection_deaths = asm_deaths = cd4m_deaths = 0;
+    main_edge_count = casual_edge_count = entries = age_deaths = infection_deaths = asm_deaths = cd4m_deaths = asm_meth_deaths = cd4m_meth_deaths = asm_crack_deaths = cd4m_crack_deaths = 0;
     sex_acts = 0, casual_sex_acts = 0, steady_sex_acts = 0;
     sd_casual_sex_with_condom = sd_casual_sex_without_condom = 0;
     sd_steady_sex_with_condom = sd_steady_sex_without_condom = 0;
