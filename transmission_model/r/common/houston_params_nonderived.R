@@ -202,17 +202,9 @@ default.prep.balanced.unbalanced <- 'balanced' #COMMON
 
 serodiscordant.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
 serodiscordant.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
-<<<<<<< HEAD
 
 serodiscordant.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
 serodiscordant.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte 
-
-=======
-
-serodiscordant.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
-serodiscordant.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte 
-
->>>>>>> 703633f4c86e03f3be1ee0952deff02942091a46
 serodiscordant.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
 serodiscordant.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
