@@ -1,41 +1,72 @@
-## non-derived chicago parameters
-## initial values of parameters
+################################
+# NON-DERIVED LA PARAMETERS
+###############################
 
    #####################
    ## NETWORK (steady)
 
-     n <- 10000
+     n <- 8000 # see https://uchicago.box.com/s/0fvs36er4tn7om8ftmlgz6lgtts1cw61
 
-   ## empirical degree information
-     deg_seq <- c(61.02, 34.65, 3.54)*n/100 #YMAP: https://uchicago.box.com/s/xsgpttj1ypx19si06d6zrqwfup0e27tw 
-     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n #derived from deg_seq above
 
-     # Note: This data doesn't exist for Houston YMAP
-     # using estimates from NHBS data
-     # Box Sync/BARS/Data-and-Summaries/Houston/Houston_Mean_Duration_of_Partnerships.xlsx: https://uchicago.box.com/s/jhigs6hunkjhn8vfpxiadtvm3k9xt2yz (i cant find this summary though)
-     duration <- 970 
+   # empirical degree information: 
+      # see file "Copy of NHBS_PARAMS_request 032619.xlsx" in "Box Sync/BARS/Data-and-Summaries/LA_Data/"
 
-     ## role
-     pr_insertive_main <- 0.25 #YMAP: https://uchicago.box.com/s/ynfyzxgpkz0ynhib1sa046dlzjyfkch8
-     pr_receptive_main <- 0.24 #ditto
+   # main network  
+     # degree distribution
+     main.deg0 <- 64 #these are numbers of partners reported in the last 3 months. we are treating these as xscn counts
+     main.deg1 <- 39
+     main.deg2 <- 4
+     main.deg3 <- 0
+     tot.main.deg <- sum(c(main.deg0, main.deg1, main.deg2, main.deg3))
 
-     ## agemixing
-     ## note: in chicago, the age diff was the mean of the diffs, not the sqrts
-     absdiff.sqrtage.main <- 0.312 #YMAP: https://uchicago.box.com/s/ynfyzxgpkz0ynhib1sa046dlzjyfkch8
-     absdiff.sqrtage.casual <- 0.344 #ditto
+     main_deg_seq <- (c(main.deg0, main.deg1, main.deg2, main.deg3)/tot.main.deg)*n 
+     main_mean_deg <- ((0*main_deg_seq[1])+(1*main_deg_seq[2])+(2*main_deg_seq[3]))/n #derived from main_deg_seq above
 
-   #####################
-   ## TIMESTEP
+     # partnership duration
+     dur_main <- 840 
+
+     # sexual role
+     pr_insertive_main <- 0.237 
+     pr_receptive_main <- 0.368 
+
+     # agemixing
+     ## LA data are given in matrix form
+     ## Aditya will check with Nick on whether we can change a term 
+     ## in the formation ERGM without modifications on the C++ code.
+     
+     # frequency of sex
+     prop.steady.sex.acts <- 0.08 #per person per day, confirmed by Katrina 
+                                 
+   # casual network 
+     
+     # partnership duration
+     dur_cas <- 135
+
+     # degree distribution
+     cas.deg0 <- 55 
+     cas.deg1 <- 38
+     cas.deg2 <- 2
+     cas.deg3 <- 2
+     tot.cas.deg <- sum(cas.deg0, cas.deg1, cas.deg2, cas.deg3)
+ 
+     cas_deg_seq <- (c(cas.deg0, cas.deg1, cas.deg2, cas.deg3)/tot.cas.deg)*n 
+     cas_mean_deg <- ((0*cas_deg_seq[1])+(1*cas_deg_seq[2])+(2*cas_deg_seq[3])+3*(cas_deg_seq[4]))/n #derived from cas_deg_seq above
+
+     # role
+     pr_insertive_casual <- 38.6/100
+     pr_receptive_casual <- 36.4/100
+
+     # frequency of sex 
+     prop.casual.sex.acts <- 0.27 #units: per person per day (confirmed by Katrina)  
+
+   # TIMESTEP
    size.of.timestep <- 1 #currently set as 1 day #COMMON
 
    #####################
    ## DEMOGRAPHIC
    min.age <- 18 #COMMON (by design)
    max.age <- 34 #COMMON
-   daily.entry.rate <- 2 #range (1.8-2, as per arthi's data for n=10K, for constant population over 100yr burn-in)
-   ## distribution of ages (between min and max)
-   ## number of births (n.births: for now take it as 1% per year)
-   ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
+   daily.entry.rate <- 2 #will need to be investigated 
 
    #####################
    ## BIOLOGICAL
@@ -59,11 +90,9 @@
    dur.inf <- duration.of.infection #COMMON #CAN BE DELETED, BUT DOUBLE CHECK
    late.stage.viral.load <- 5.05 ## (max?) #COMMON
 
-   #time.to.full.supp <- 4*30/size.of.timestep ## old: 4 months
    time.to.full.supp <- 1*30/size.of.timestep ## from DHHS (refer to John) #COMMON
    undetectable.vl <- log(200, base=10) #updated to 200 from 50 on 17may2018 #COMMON
 
-   #uninfected.cd4.level <- 518 #(might draw uniformly from a range)
    uninfected.cd4.level <- 916 #updated value as per nina's suggestion from Mallory Witt (2013), CID. #COMMON
 
    ## (to compute cd4 in infected but ART-naive)
@@ -83,11 +112,6 @@
   cd4.at.infection.male <- uninfected.cd4.level  #needs to be the same as `uninfected.cd4.level` #COMMON
   untreated.cd4.daily.decline <- 0.14 # (for men and women) #COMMON
 
-   ## healthy level of CD4: sample from some distribution, or should it be the same for all uninfected men?
-
-  ## (viral load)
-  ##undetectable.vl <- log(50, base=10) #see above -- needs to be 200
-
    #####################
    ## ART
    #baseline.art.coverage.rate <- 0.60 NOT NEEDED
@@ -95,15 +119,11 @@
    per.day.cd4.recovery <- 15/30 ## rate of 15 cells/month #COMMON
 
    ## ART adherence
+   # Subject to change!
    partial.art_adher.window.length <- 1*30 #COMMON (by design) 
-<<<<<<< HEAD
-   art.prop.never.adherent <- 3/100 #from YMAP https://uchicago.box.com/s/1ryu33tf3ydtt1fr7v4podyw7sm1bwo7 
-   art.prop.part.neg.adherent <- 12/100 #ditto 
-=======
-   art.prop.never.adherent <- 5.2/100 #from YMAP https://uchicago.box.com/s/1ryu33tf3ydtt1fr7v4podyw7sm1bwo7 (spreadsheet ART_adherence)
-   art.prop.part.neg.adherent <- 11.6/100 #ditto 
->>>>>>> 703633f4c86e03f3be1ee0952deff02942091a46
-   art.prop.part.plus.adherent <- 25/100 #ditto
+   art.prop.never.adherent <- 0.0615 #from YMAP https://uchicago.box.com/s/1ryu33tf3ydtt1fr7v4podyw7sm1bwo7 (spreadsheet ART_adherence)
+   art.prop.part.neg.adherent <- 0.43875 #ditto 
+   art.prop.part.plus.adherent <- 0.44975 #ditto
    art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent) 
 
    art.always.adherent.probability <- 0.95 #COMMON (by desgin)
@@ -127,67 +147,53 @@
    ## insertive partner transmission rel. to receptive partner
       inf.part.insertive.mult <- 2 #COMMON
 
-   #####################
-   ## Casual (non-main)
-      ## duration
-      # Note: computed from NHBS data
-      dur_cas <- 388
-      ## degree 
-      cas_deg_seq <- c(59, 25.68, 10.36)*n/100
-
-      ## nedges
-
-      ## role
-      pr_insertive_casual <- 21.64/100
-      pr_receptive_casual <- 32.09/100
-
-      ## serosorting
 
     #####################
-    ## Testing, diagnosis and linkage-to-care
-    detection.window <- 22 #COMMON
+    # CARE CONTINUUM
+    # Parameters are in Box/BARS/Data-and-Summaries/LA_Data/Copy of NHBS_PARAMS_request 032619.xlsx
+    #####################
+
+    # testing, diagnosis and linkage-to-care
+    detection.window <- 22 #common
     mean.time.until.next.test <- 365*1 #FOR INITIALIZATION ONLY #COMMON
-    #lag.bet.diagnosis.and.art.init <- 30
-    non.testers.prop.lt <- 5.40/100 #NHBS-5 
-    non.testers.prop.gte <- 2.70/100 #NHBS-5
+
+    non.testers.prop.lt <- 6.40/100 
+    non.testers.prop.gte <- 0.00/100 
 
     # lag between diagnosis and ART init
     # format is probability, min range val - max range val
     # range is in days
-    art.init.lag.lt.1 <- "0.038|0-7" #NHBS-5 data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
-    art.init.lag.lt.2 <- "0.1003|7-30" #Assumed geometric distribution, and computed number of samples in each bin: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
-    art.init.lag.lt.3 <- "0.211|30-90"
-    art.init.lag.lt.4 <- "0.2287|90-180"
-    art.init.lag.lt.5 <- "0.2453|180-365"
-    art.init.lag.lt.6 <- "0.1456|365-730"
-    art.init.lag.lt.7 <- "0.0311|730-1825"
+    # Updated by Mert. See la-diagnosis-initiation-dist.R
+    art.init.lag.lt.1 <- "0.26775|0-7" #NHBS data provided information on mean time between diagnosis and ART initiation: https://uchicago.box.com/s/tl92m9afecco3mwt64y5xsnxmxsvm0wn
+    art.init.lag.lt.2 <- "0.172125|7-30" #Assumed geometric distribution, and computed number of samples 
+    art.init.lag.lt.3 <- "0.120125|30-90" # see https://uchicago.box.com/s/i0ua9gvoammjpavseyszqr46g3vrrqav  
+    art.init.lag.lt.4 <- "0.118|90-180" # for further details
+    art.init.lag.lt.5 <- "0.1485|180-365"
+    art.init.lag.lt.6 <- "0.122625|365-730"
+    art.init.lag.lt.7 <- "0.050875|730-1825"
 
-    art.init.lag.gte.1 <- "0.038|0-7" 
-    art.init.lag.gte.2 <- "0.1003|7-30"   
-    art.init.lag.gte.3 <- "0.211|30-90"
-    art.init.lag.gte.4 <- "0.2287|90-180"
-    art.init.lag.gte.5 <- "0.2453|180-365"
-    art.init.lag.gte.6 <- "0.1456|365-730"
-    art.init.lag.gte.7 <- "0.0311|730-1825"
-    art.init.lag.gte.8 <- "0.000|1825-1825"
+    art.init.lag.gte.1 <- art.init.lag.lt.1
+    art.init.lag.gte.2 <- art.init.lag.lt.2
+    art.init.lag.gte.3 <- art.init.lag.lt.3
+    art.init.lag.gte.4 <- art.init.lag.lt.4
+    art.init.lag.gte.5 <- art.init.lag.lt.5
+    art.init.lag.gte.6 <- art.init.lag.lt.6
+    art.init.lag.gte.7 <- art.init.lag.lt.7
 
-#####################
-## 
-
-## PrEP Uptake Scheme ##
+# PrEP Uptake Scheme 
 
 # one of default, young_old_ratio, serodiscordant, eigen, or degree
 prep.uptake <- 'default'
 
 ## Default PrEP  parameters ###
 
-default.prep.bl.use.prop.lt <- 20/100 #Based on NHBS-5 for Houston
-default.prep.bl.use.prop.gte <- 20/100 #Based on NHBS-5 for Houston
+default.prep.bl.use.prop.lt <- 8.7/100 
+default.prep.bl.use.prop.gte <- 8.7/100 
 
 prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)/2 #only needed for time 0 #COMMON
 
-default.prep.mean.days.usage.lt <- 200 #Study from 3 US cities https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4908080/ and Arthi's derivation: https://uchicago.box.com/s/xsgpttj1ypx19si06d6zrqwfup0e27tw 
-default.prep.mean.days.usage.gte <- 200 #as above
+default.prep.mean.days.usage.lt <- 30*9.5 #LA LGBT data: https://uchicago.box.com/s/g79by4jowdo5ng1vfpl098lbg2973r81
+default.prep.mean.days.usage.gte <- 30*9.5 #as above
 
 default.prep.yearly.increment.lt <- 0 #COMMON
 default.prep.yearly.increment.gte <- 0 #COMMON
@@ -206,17 +212,10 @@ default.prep.balanced.unbalanced <- 'balanced' #COMMON
 
 serodiscordant.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
 serodiscordant.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
-<<<<<<< HEAD
 
 serodiscordant.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
 serodiscordant.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte 
 
-=======
-
-serodiscordant.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
-serodiscordant.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte 
-
->>>>>>> 703633f4c86e03f3be1ee0952deff02942091a46
 serodiscordant.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt 
 serodiscordant.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 
@@ -289,21 +288,8 @@ prep.never.adherent.trans.reduction <- 0.0
 prep.partial.pos.adherent.trans.reduction <- 0.81
 prep.partial.neg.adherent.trans.reduction <- 0.31
 
-
-#####################
-    ## Socioeconomic status
-    ##insurance.prop <-
-    ##incarceration.prop <-
-
-######################
-    ## Sexual Behavior
-    # num.sex.acts.base <- 2.4
-    # Note: from Jing's word doc (on 2018-03-14): https://uchicago.box.com/s/fy4vpbc1x5z0wor5ub2w1l95qy36f5pv
-    # Using a weighting of 1/3, 1/7, 1/14, 1/30
-    prop.steady.sex.acts <- 0.26 # of steady partnerships on a given day, in how many does a sex act (w or w/o condom) occur?
-                                 #same as freq.of.sex parameter in data table
-    prop.casual.sex.acts <- 0.23 #same as above, but for casual
-    inf.red.w.condom <- 0.80
+# TRANSMISSION
+inf.red.w.condom <- 0.80
 
 # sd -- sero-discordant
 # each partnership falls in one of these buckets with
@@ -370,22 +356,23 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 	#   Because MSM would tend to congregate in cities
 	# - Calculations and query criteria are in
 	#   "Houston Mortality Calcs (from CDC Wonder).xslx"
-	asm.15_20 <- 0.000966 / (365 * 1)
-	asm.20_25 <- 0.001896 / (365 * 1)
-	asm.25_30 <- 0.001976 / (365 * 1)
-	asm.30_35 <- 0.001976 / (365 * 1)
-	asm.35_40 <- 0.003175 / (365 * 1)
-	asm.40_45 <- 0.003175 / (365 * 1)
-	asm.45_50 <- 0.006803 / (365 * 1)
-	asm.50_55 <- 0.006803 / (365 * 1)
-	asm.55_60 <- 0.017383 / (365 * 1)
-	asm.60_65 <- 0.017383 / (365 * 1)
-	asm.65_70 <- 0.033181 / (365 * 1)
+	# Updated by Mert.
+	asm.15_20 <- 0.000905 / (365 * 1)
+	asm.20_25 <- 0.001707 / (365 * 1)
+	asm.25_30 <- 0.001737 / (365 * 1)
+	asm.30_35 <- 0.002211 / (365 * 1)
+	asm.35_40 <- 0.002565 / (365 * 1)
+	asm.40_45 <- 0.003376 / (365 * 1)
+	asm.45_50 <- 0.005016 / (365 * 1)
+	asm.50_55 <- 0.007861 / (365 * 1)
+	asm.55_60 <- 0.012813 / (365 * 1)
+	asm.60_65 <- 0.019439 / (365 * 1)
+	asm.65_70 <- 0.025852 / (365 * 1)
 
-### CD4 Mortality ###
-### Format is [min_max)
-# for treated persons within the specified range
-# ASM is increased by the specified amount
+# CD4 Mortality 
+  #Format is [min_max)
+  #for treated persons within the specified range
+  #ASM is increased by the specified amount
 cd4m_treated.0_50	<- 51 / 100
 cd4m_treated.50_100 <- 37 / 100
 cd4m_treated.100_200 <- 26 / 100
@@ -415,61 +402,24 @@ external.infections.age.factor = 1 # changed to 1 to remove more external infect
 
 # range of number of tests in last two years min-max, fraction of the population
 # Note: from Jing's word doc
-testing.prob.lt.1 = "1-2|0.50420168"
-testing.prob.lt.2 = "3-4|0.22689076"
-testing.prob.lt.3 = "5-6|0.15966387"
-testing.prob.lt.4 = "7-8|0.06722689"
-testing.prob.lt.5 = "9-10|0.00840336"
-testing.prob.lt.6 = "11-12|0.00840336"
-testing.prob.lt.7 = "13-16|0.02521008"
-testing.prob.lt.8 = "17-20|0"
-testing.prob.lt.9 = "21-30|0"
+# Updated by Mert. See testing-distribution.R
+testing.prob.lt.1 = "1-2|0.027875"
+testing.prob.lt.2 = "3-4|0.13625"
+testing.prob.lt.3 = "5-6|0.2735"
+testing.prob.lt.4 = "7-8|0.271625"
+testing.prob.lt.5 = "9-10|0.17975"
+testing.prob.lt.6 = "11-12|0.078625"
+testing.prob.lt.7 = "13-16|0.030875"
+testing.prob.lt.8 = "17-20|0.000625"
+testing.prob.lt.9 = "21-30|0.000875"
 
-testing.prob.gte.1 = "1-2|0.35714286"
-testing.prob.gte.2 = "3-4|0.35714286"
-testing.prob.gte.3 = "5-6|0.11428571"
-testing.prob.gte.4 = "7-8|0.1"
-testing.prob.gte.5 = "9-10|0.01428571"
-testing.prob.gte.6 = "11-12|0.02857143"
-testing.prob.gte.7 = "13-16|0.02857143"
+testing.prob.gte.1 = "1-2|0.1555"
+testing.prob.gte.2 = "3-4|0.350125"
+testing.prob.gte.3 = "5-6|0.30125"
+testing.prob.gte.4 = "7-8|0.1395"
+testing.prob.gte.5 = "9-10|0.03775"
+testing.prob.gte.6 = "11-12|0.00625"
+testing.prob.gte.7 = "13-16|0.0005"
 testing.prob.gte.8 = "17-20|0"
-testing.prob.gte.9 = "21-30|0"
+testing.prob.gte.9 = "21-30|0.009125"
 
-#============================================
-# jail
-is.network.disruption.on <- FALSE
-is.care.disruption.on <- FALSE
-
-incarceration.prob <- 0.0
-incarceration.with.cji.prob <- 0.0
-
-jail.infection.rate.window.size <- 90
-jail.infection.rate.multiplier <- 0.5
-jail.infection.rate.default <- 0.000091 
-
-jail.serving.time.mean <- 58.4
-post.release.interference.period.mean <- 90
-network.retention.multiplier <- 1
-
-#---------------------------------
-
-#prep.intervention.at <- 365
-prep.intervention.at <- 0 #needs to be set depending on whether it is burnin or intervention
-prep.intervention <- 'random' #call other interventions (e.g. eigenvector/degree/sdc in the upf if/when needed)
-
-## Random Selection Intervention 
-random.base.prep.bl.use.prop.lt <- default.prep.bl.use.prop.lt 
-random.base.prep.bl.use.prop.gte <- default.prep.bl.use.prop.gte
-random.base.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
-random.base.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
-random.intrv.prep.mean.days.usage.lt <- default.prep.mean.days.usage.lt
-random.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
-random.intrv.prep.yearly.increment.lt <- 0 #set in upf when submitting the intervention job
-random.intrv.prep.yearly.increment.gte <- 0 #ditto
-random.intrv.prep.years.to.increment <- 0 #ditto
-
-#---------
-
-partner.was.jailed.expiration.time <- 365
-released.partner.expiration.time <- 365
-released.partner.formation.time <- 182

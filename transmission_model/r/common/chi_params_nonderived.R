@@ -265,7 +265,8 @@ yor.prep.additional.gte <- 0.4
 
 serodiscordant.base.prep.bl.use.prop.lt <- 12.7/100
 serodiscordant.base.prep.bl.use.prop.gte <- 14.7/100
-serodiscordant.base.prep.mean.days.usage.lt <- 365 #updated 23may2018
+#updated 23may2018:
+serodiscordant.base.prep.mean.days.usage.lt <- 365 
 serodiscordant.base.prep.mean.days.usage.gte <- 365
 
 serodiscordant.intrv.prep.mean.days.usage.lt <- 365
@@ -507,6 +508,7 @@ post.release.interference.period.mean <- 90
 #network.retention.multiplier <- 1
 network.retention.multiplier <- 0.75
 
+
 partner.was.jailed.expiration.time <- 365
 released.partner.expiration.time <- 365
 released.partner.formation.time <- 182
@@ -520,5 +522,7 @@ released.partner.formation.time <- 182
 # post.release.interference.period.mean.update <- "100|32"
 # is.network.disruption.on.update <- "30|TRUE"
 # is.care.disruption.on.update <- "30|TRUE"
+
+
 
 
