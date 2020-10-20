@@ -86,9 +86,9 @@ struct InfectionEvent {
 
     double tick;
     int p1_id, p2_id;
-    float p1_age, p2_age;
+    float p1_age, p2_age, p1_time_since_release;
     float p1_viral_load, p2_viral_load, p1_infectivity, p1_cd4, p2_cd4;
-    bool p1_art, p1_on_prep, p2_on_prep, condom_used;
+    bool p1_art, p1_on_prep, p2_on_prep, p1_ever_jailed, p2_ever_jailed, condom_used;
     int network_type;
 
     void writeTo(FileOutput& out);

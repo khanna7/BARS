@@ -48,13 +48,13 @@ void Biomarker::writeTo(FileOutput& out) {
 }
 
 const std::string InfectionEvent::header(
-        "\"tick\",\"infector\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\","
-                "\"condom_used\",\"infectee\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p1_on_prep\",\"network_type\"");
+        "\"tick\",\"infector\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\",\"p1_ever_jailed\",\"p1_time_since_jailed\","
+        "\"condom_used\",\"infectee\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p2_on_prep\",\"p2_ever_jailed\",\"network_type\"");
 
 void InfectionEvent::writeTo(FileOutput& out) {
     out << tick << "," << p1_id << "," << p1_age << "," << p1_viral_load << "," << p1_cd4 << "," << p1_art << ","
-            << p1_on_prep << "," << p1_infectivity << "," << condom_used << "," << p2_id << "," << p2_age << ","
-            << p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "," << network_type << "\n";
+            << p1_on_prep << "," << p1_infectivity << "," << p1_ever_jailed << "," << p1_time_since_release << "," << condom_used << "," << p2_id << "," << p2_age << ","
+            << p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "," << p2_ever_jailed << "," << network_type << "\n";
 }
 
 const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"type\",\"network_type\",\"in_disruption_p2\",\"released_partner_p1\",\"in_disruption_p1\",\"released_partner_p2\"");
@@ -328,11 +328,14 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p) {
     evt.p1_infectivity = p->infectivity();
     evt.p1_viral_load = p->infectionParameters().viral_load;
     evt.p1_on_prep = p->isOnPrep(true);
+    evt.p1_ever_jailed = false;
+    evt.p1_time_since_release = -1;
     evt.p2_id = -1;
     evt.p2_age = 0;
     evt.p2_cd4 = 0;
     evt.p2_viral_load = 0;
     evt.p2_on_prep = false;
+    evt.p2_ever_jailed = false;
     evt.condom_used = false;
     evt.network_type = -1;
     ievent_writer->addOutput(evt);
@@ -348,11 +351,15 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p1, const PersonP
     evt.p1_infectivity = p1->infectivity();
     evt.p1_viral_load = p1->infectionParameters().viral_load;
     evt.p1_on_prep = p1->isOnPrep(true);
+    evt.p1_ever_jailed = p1->hasPreviousJailHistory();
+    if (p1->hasPreviousJailHistory()) evt.p1_time_since_release = time - p1->timeOfRelease();
+    else evt.p1_time_since_release = -1;
     evt.p2_id = p2->id();
     evt.p2_age = p2->age();
     evt.p2_cd4 = p2->infectionParameters().cd4_count;
     evt.p2_viral_load = p2->infectionParameters().viral_load;
     evt.p2_on_prep = p2->isOnPrep(true);
+    evt.p2_ever_jailed = p2->hasPreviousJailHistory();
     evt.condom_used = condom;
     evt.network_type = net_type;
     ievent_writer->addOutput(evt);
