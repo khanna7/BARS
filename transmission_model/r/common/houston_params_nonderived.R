@@ -96,13 +96,9 @@
 
    ## ART adherence
    partial.art_adher.window.length <- 1*30 #COMMON (by design) 
-<<<<<<< HEAD
+
    art.prop.never.adherent <- 3/100 #from YMAP https://uchicago.box.com/s/1ryu33tf3ydtt1fr7v4podyw7sm1bwo7 
-   art.prop.part.neg.adherent <- 12/100 #ditto 
-=======
-   art.prop.never.adherent <- 5.2/100 #from YMAP https://uchicago.box.com/s/1ryu33tf3ydtt1fr7v4podyw7sm1bwo7 (spreadsheet ART_adherence)
    art.prop.part.neg.adherent <- 11.6/100 #ditto 
->>>>>>> 703633f4c86e03f3be1ee0952deff02942091a46
    art.prop.part.plus.adherent <- 25/100 #ditto
    art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent) 
 
