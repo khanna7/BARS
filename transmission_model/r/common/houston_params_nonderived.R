@@ -455,3 +455,9 @@ random.intrv.prep.mean.days.usage.gte <- default.prep.mean.days.usage.gte
 random.intrv.prep.yearly.increment.lt <- 0 #set in upf when submitting the intervention job
 random.intrv.prep.yearly.increment.gte <- 0 #ditto
 random.intrv.prep.years.to.increment <- 0 #ditto
+
+#---------
+
+partner.was.jailed.expiration.time <- 365
+released.partner.expiration.time <- 365
+released.partner.formation.time <- 182
