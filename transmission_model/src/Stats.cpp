@@ -48,12 +48,12 @@ void Biomarker::writeTo(FileOutput& out) {
 }
 
 const std::string InfectionEvent::header(
-        "\"tick\",\"infector\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\",\"p1_ever_jailed\",\"p1_time_since_jailed\","
+        "\"tick\",\"infector\",\"p1_age\",\"p1_viral_load\",\"p1_cd4\",\"p1_art_status\",\"p1_on_prep\",\"p1_infectivity\",\"p1_ever_jailed\",\"p1_time_since_released\",\"p1_art_disrupted\","
         "\"condom_used\",\"infectee\",\"p2_age\",\"p2_viral_load\",\"p2_cd4\",\"p2_on_prep\",\"p2_ever_jailed\",\"network_type\"");
 
 void InfectionEvent::writeTo(FileOutput& out) {
     out << tick << "," << p1_id << "," << p1_age << "," << p1_viral_load << "," << p1_cd4 << "," << p1_art << ","
-            << p1_on_prep << "," << p1_infectivity << "," << p1_ever_jailed << "," << p1_time_since_release << "," << condom_used << "," << p2_id << "," << p2_age << ","
+            << p1_on_prep << "," << p1_infectivity << "," << p1_ever_jailed << "," << p1_time_since_release << "," << p1_art_disrupted << "," << condom_used << "," << p2_id << "," << p2_age << ","
             << p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "," << p2_ever_jailed << "," << network_type << "\n";
 }
 
@@ -330,6 +330,7 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p) {
     evt.p1_on_prep = p->isOnPrep(true);
     evt.p1_ever_jailed = false;
     evt.p1_time_since_release = -1;
+    evt.p1_art_disrupted = p->isARTForcedOff();
     evt.p2_id = -1;
     evt.p2_age = 0;
     evt.p2_cd4 = 0;
@@ -354,6 +355,7 @@ void Stats::recordInfectionEvent(double time, const PersonPtr& p1, const PersonP
     evt.p1_ever_jailed = p1->hasPreviousJailHistory();
     if (p1->hasPreviousJailHistory()) evt.p1_time_since_release = time - p1->timeOfRelease();
     else evt.p1_time_since_release = -1;
+    evt.p1_art_disrupted = p1->isARTForcedOff();
     evt.p2_id = p2->id();
     evt.p2_age = p2->age();
     evt.p2_cd4 = p2->infectionParameters().cd4_count;
