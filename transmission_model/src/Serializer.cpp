@@ -68,9 +68,9 @@ void Serializer::operator()() {
         ++seralized_id;
     }
     
-    Rcpp::NumericVector v(jail_->jail_inf_calc.rates.begin(), jail_->jail_inf_calc.rates.end());
+    //Rcpp::NumericVector v(jail_->jail_inf_calc.rates.begin(), jail_->jail_inf_calc.rates.end());
     List gal = rnet["gal"];
-    gal["external.infection.rates"] = v;
+    //gal["external.infection.rates"] = v;
     gal["jail.events"] = schedule_jail_events;
     rnet["gal"] = gal;
     
