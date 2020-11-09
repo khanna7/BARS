@@ -511,6 +511,8 @@ partner.was.jailed.expiration.time <- 365
 released.partner.expiration.time <- 365
 released.partner.formation.time <- 182
 
+recently.jailed.time <- 90
+
 # format is "at_timestep|new_val"
 # jail.infection.rate.multiplier.update <- "10.0|20.0"
 # incarceration.prob.update <- "10.0|0.5"
