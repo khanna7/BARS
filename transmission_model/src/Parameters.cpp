@@ -313,6 +313,7 @@ const std::string PARTNER_WAS_JAILED_EXPIRATION_TIME = "partner.was.jailed.expir
 const std::string RELEASED_PARTNER_EXPIRATION_TIME = "released.partner.expiration.time";
 const std::string RELEASED_PARTNER_FORMATION_TIME = "released.partner.formation.time";
 const std::string RECENTLY_JAILED_TIME = "recently.jailed.time";
+const std::string NOT_RECENTLY_JAILED_TIME = "not.recently.jailed.time";
 
 Parameters* Parameters::instance_ = 0;
 

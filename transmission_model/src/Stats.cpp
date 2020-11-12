@@ -118,7 +118,8 @@ const std::string Counts::header(
         "infected_via_transmission_ever_jailed,uninfected_never_jailed,uninfected_ever_jailed,vertex_count_never_jailed,vertex_count_ever_jailed,"
         "infected_jailed_partner,infected_released_partner,uninfected_jailed_partner,uninfected_released_partner,"
         "infected_jailed_and_released_partner,uninfected_jailed_and_released_partner,"
-        "infected_recently_jailed,uninfected_recently_jailed"
+        "infected_recently_jailed,uninfected_recently_jailed,"
+        "infected_not_recently_jailed,uninfected_not_recently_jailed"
         
         );
 
@@ -153,7 +154,9 @@ void Counts::writeTo(FileOutput& out) {
     << uninfected_never_jailed << "," << uninfected_ever_jailed << "," << vertex_count_never_jailed << "," << vertex_count_ever_jailed << ","
     << infected_jailed_partner << "," << infected_released_partner << "," << uninfected_jailed_partner << "," << uninfected_released_partner << "," 
     << infected_jailed_and_released_partner << "," << uninfected_jailed_and_released_partner << ","
-    << infected_recently_jailed << "," << uninfected_recently_jailed << "\n";
+    << infected_recently_jailed << "," << uninfected_recently_jailed << ","
+    << infected_not_recently_jailed << "," << uninfected_not_recently_jailed
+    <<  "\n";
 
 }
 
@@ -172,7 +175,8 @@ Counts::Counts(int min_age, int max_age) :
                 uninfected_in_jail{0},
                 infected_jailed_partner{0}, uninfected_jailed_partner{0}, infected_released_partner{0}, uninfected_released_partner{0},
                 infected_jailed_and_released_partner{0}, uninfected_jailed_and_released_partner{0},
-                infected_recently_jailed{0}, uninfected_recently_jailed{0}
+                infected_recently_jailed{0}, uninfected_recently_jailed{0},
+                infected_not_recently_jailed{0}, uninfected_not_recently_jailed{0}
 {
 }
 
@@ -207,12 +211,14 @@ void Counts::reset() {
     infected_jailed_partner = infected_released_partner = uninfected_jailed_partner = uninfected_released_partner = 0;
     infected_jailed_and_released_partner = uninfected_jailed_and_released_partner = 0;
     infected_recently_jailed = uninfected_recently_jailed = 0;
+    infected_not_recently_jailed = uninfected_not_recently_jailed = 0;
 }
 
 
 void Counts::incrementInfected(PersonPtr& p) {
     double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
     double recently_jailed_time = Parameters::instance()->getDoubleParameter(RECENTLY_JAILED_TIME);
+    double not_recently_jailed_time = Parameters::instance()->getDoubleParameter(NOT_RECENTLY_JAILED_TIME);
     
     ++internal_infected[(size_t)(std::floor(p->age())) - min_age_];
     ++total_internal_infected; 
@@ -232,10 +238,15 @@ void Counts::incrementInfected(PersonPtr& p) {
         ++total_infected_inside_jail;
         ++infected_recently_jailed;
     } else if (p->hasPreviousJailHistory()) {
-        if ((p->timeOfRelease() - ts) < recently_jailed_time) ++infected_recently_jailed;
+        if ((p->timeOfRelease() - ts) < recently_jailed_time) {
+            ++infected_recently_jailed;
+        } else if ((p->timeOfRelease() - ts) > not_recently_jailed_time) {
+            ++infected_not_recently_jailed;
+        }
         ++infected_ever_jailed;
         ++infected_via_transmission_ever_jailed;
    }  else {
+        ++infected_not_recently_jailed;
         ++infected_never_jailed;
         ++infected_via_transmission_never_jailed;
     }
@@ -266,6 +277,7 @@ void Counts::incrementInfectedExternal(PersonPtr& p) {
 void Counts::incrementUninfected(PersonPtr& p) {
     double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
     double recently_jailed_time = Parameters::instance()->getDoubleParameter(RECENTLY_JAILED_TIME);
+    double not_recently_jailed_time = Parameters::instance()->getDoubleParameter(NOT_RECENTLY_JAILED_TIME);
     ++uninfected[(size_t)(std::floor(p->age())) - min_age_];
     if (p->hasReleasedPartner()) {
         ++uninfected_released_partner;
@@ -281,10 +293,16 @@ void Counts::incrementUninfected(PersonPtr& p) {
         ++uninfected_in_jail;
         ++uninfected_recently_jailed;
     } else if (p->hasPreviousJailHistory()) {
-        if ((p->timeOfRelease() - ts) < recently_jailed_time)
+        if ((p->timeOfRelease() - ts) < recently_jailed_time) {
             ++uninfected_recently_jailed;
+        } else if ((p->timeOfRelease() - ts) > not_recently_jailed_time) {
+            ++uninfected_not_recently_jailed;
+        }
         ++uninfected_ever_jailed;
-    } else ++uninfected_never_jailed; 
+    } else {
+        ++uninfected_never_jailed;
+        ++uninfected_not_recently_jailed;
+    }
 }
 
 void Counts::incrementVertexCount(PersonPtr p) {

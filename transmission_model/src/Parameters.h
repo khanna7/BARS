@@ -301,6 +301,7 @@ extern const std::string PARTNER_WAS_JAILED_EXPIRATION_TIME;
 extern const std::string RELEASED_PARTNER_EXPIRATION_TIME;
 extern const std::string RELEASED_PARTNER_FORMATION_TIME;
 extern const std::string RECENTLY_JAILED_TIME;
+extern const std::string NOT_RECENTLY_JAILED_TIME;
 
 /**
  * Parameters singleton that contains the model properties.
