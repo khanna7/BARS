@@ -238,9 +238,9 @@ void Counts::incrementInfected(PersonPtr& p) {
         ++total_infected_inside_jail;
         ++infected_recently_jailed;
     } else if (p->hasPreviousJailHistory()) {
-        if ((p->timeOfRelease() - ts) < recently_jailed_time) {
+        if ((ts - p->timeOfRelease()) < recently_jailed_time) {
             ++infected_recently_jailed;
-        } else if ((p->timeOfRelease() - ts) > not_recently_jailed_time) {
+        } else if ((ts - p->timeOfRelease()) > not_recently_jailed_time) {
             ++infected_not_recently_jailed;
         }
         ++infected_ever_jailed;
@@ -293,9 +293,9 @@ void Counts::incrementUninfected(PersonPtr& p) {
         ++uninfected_in_jail;
         ++uninfected_recently_jailed;
     } else if (p->hasPreviousJailHistory()) {
-        if ((p->timeOfRelease() - ts) < recently_jailed_time) {
+        if ((ts - p->timeOfRelease()) < recently_jailed_time) {
             ++uninfected_recently_jailed;
-        } else if ((p->timeOfRelease() - ts) > not_recently_jailed_time) {
+        } else if ((ts - p->timeOfRelease()) > not_recently_jailed_time) {
             ++uninfected_not_recently_jailed;
         }
         ++uninfected_ever_jailed;
