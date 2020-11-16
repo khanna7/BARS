@@ -161,7 +161,10 @@ struct Counts {
     unsigned int infected_jailed_and_released_partner, uninfected_jailed_and_released_partner;
     unsigned int infected_recently_jailed, uninfected_recently_jailed;
     unsigned int infected_not_recently_jailed, uninfected_not_recently_jailed;
-
+    unsigned int infected_jailed_partner_only, uninfected_jailed_partner_only;
+    unsigned int infected_released_partner_only, uninfected_released_partner_only;
+    
+    
     Counts(int min_age, int max_age);
     void reset();
     void writeTo(FileOutput& out);

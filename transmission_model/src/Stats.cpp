@@ -119,7 +119,9 @@ const std::string Counts::header(
         "infected_jailed_partner,infected_released_partner,uninfected_jailed_partner,uninfected_released_partner,"
         "infected_jailed_and_released_partner,uninfected_jailed_and_released_partner,"
         "infected_recently_jailed,uninfected_recently_jailed,"
-        "infected_not_recently_jailed,uninfected_not_recently_jailed"
+        "infected_not_recently_jailed,uninfected_not_recently_jailed,"
+        "infected_jailed_partner_only,uninfected_jailed_partner_only,"
+        "infected_released_partner_only,uninfected_released_partner_only"
         
         );
 
@@ -155,7 +157,9 @@ void Counts::writeTo(FileOutput& out) {
     << infected_jailed_partner << "," << infected_released_partner << "," << uninfected_jailed_partner << "," << uninfected_released_partner << "," 
     << infected_jailed_and_released_partner << "," << uninfected_jailed_and_released_partner << ","
     << infected_recently_jailed << "," << uninfected_recently_jailed << ","
-    << infected_not_recently_jailed << "," << uninfected_not_recently_jailed
+    << infected_not_recently_jailed << "," << uninfected_not_recently_jailed << ","
+    << infected_jailed_partner_only << "," << uninfected_jailed_partner_only << ","
+    << infected_released_partner_only << "," << uninfected_released_partner_only
     <<  "\n";
 
 }
@@ -176,7 +180,9 @@ Counts::Counts(int min_age, int max_age) :
                 infected_jailed_partner{0}, uninfected_jailed_partner{0}, infected_released_partner{0}, uninfected_released_partner{0},
                 infected_jailed_and_released_partner{0}, uninfected_jailed_and_released_partner{0},
                 infected_recently_jailed{0}, uninfected_recently_jailed{0},
-                infected_not_recently_jailed{0}, uninfected_not_recently_jailed{0}
+                infected_not_recently_jailed{0}, uninfected_not_recently_jailed{0},
+                infected_jailed_partner_only{0}, uninfected_jailed_partner_only{0},
+                infected_released_partner_only{0}, uninfected_released_partner_only{0}
 {
 }
 
@@ -212,6 +218,9 @@ void Counts::reset() {
     infected_jailed_and_released_partner = uninfected_jailed_and_released_partner = 0;
     infected_recently_jailed = uninfected_recently_jailed = 0;
     infected_not_recently_jailed = uninfected_not_recently_jailed = 0;
+    infected_jailed_partner_only = uninfected_jailed_partner_only = 0;
+    infected_released_partner_only = uninfected_released_partner_only = 0;
+    
 }
 
 
@@ -227,6 +236,12 @@ void Counts::incrementInfected(PersonPtr& p) {
     }
     if (p->partnerWasJailed()) {
         ++infected_jailed_partner;
+    }
+    if (p->hasReleasedPartner() && !p->partnerWasJailed()) {
+        ++infected_released_partner_only;
+    }
+    if (p->partnerWasJailed() && !p->hasReleasedPartner()) {
+        ++infected_jailed_partner_only;
     }
     if (p->hasReleasedPartner() && p->partnerWasJailed()) {
         ++infected_jailed_and_released_partner;
@@ -284,6 +299,12 @@ void Counts::incrementUninfected(PersonPtr& p) {
     }
     if (p->partnerWasJailed()) {
         ++uninfected_jailed_partner;
+    }
+    if (p->hasReleasedPartner() && !p->partnerWasJailed()) {
+        ++uninfected_released_partner_only;
+    }
+    if (p->partnerWasJailed() && !p->hasReleasedPartner()) {
+        ++uninfected_jailed_partner_only;
     }
     if (p->hasReleasedPartner() && p->partnerWasJailed()) {
         ++uninfected_jailed_and_released_partner;
