@@ -121,7 +121,8 @@ const std::string Counts::header(
         "infected_recently_jailed,uninfected_recently_jailed,"
         "infected_not_recently_jailed,uninfected_not_recently_jailed,"
         "infected_jailed_partner_only,uninfected_jailed_partner_only,"
-        "infected_released_partner_only,uninfected_released_partner_only"
+        "infected_released_partner_only,uninfected_released_partner_only,"
+        "infected_by_post_release_partner"
         
         );
 
@@ -159,7 +160,8 @@ void Counts::writeTo(FileOutput& out) {
     << infected_recently_jailed << "," << uninfected_recently_jailed << ","
     << infected_not_recently_jailed << "," << uninfected_not_recently_jailed << ","
     << infected_jailed_partner_only << "," << uninfected_jailed_partner_only << ","
-    << infected_released_partner_only << "," << uninfected_released_partner_only
+    << infected_released_partner_only << "," << uninfected_released_partner_only << ","
+    << infected_by_post_release_partner
     <<  "\n";
 
 }
@@ -182,7 +184,8 @@ Counts::Counts(int min_age, int max_age) :
                 infected_recently_jailed{0}, uninfected_recently_jailed{0},
                 infected_not_recently_jailed{0}, uninfected_not_recently_jailed{0},
                 infected_jailed_partner_only{0}, uninfected_jailed_partner_only{0},
-                infected_released_partner_only{0}, uninfected_released_partner_only{0}
+                infected_released_partner_only{0}, uninfected_released_partner_only{0},
+                infected_by_post_release_partner{0}
 {
 }
 
@@ -220,6 +223,7 @@ void Counts::reset() {
     infected_not_recently_jailed = uninfected_not_recently_jailed = 0;
     infected_jailed_partner_only = uninfected_jailed_partner_only = 0;
     infected_released_partner_only = uninfected_released_partner_only = 0;
+    infected_by_post_release_partner = 0;
     
 }
 
@@ -265,6 +269,11 @@ void Counts::incrementInfected(PersonPtr& p) {
         ++infected_never_jailed;
         ++infected_via_transmission_never_jailed;
     }
+}
+
+void Counts::incrementInfectedByPostReleasePartner()
+{
+    ++infected_by_post_release_partner;
 }
 
 void Counts::incrementInjectedJailPopCount() {

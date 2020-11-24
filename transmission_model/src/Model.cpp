@@ -1416,8 +1416,7 @@ void record_sex_act(int edge_type, bool condom_used, bool discordant, Stats* sta
 }
 
 unsigned int Model::runTransmission(double time_stamp) {
-    vector<PersonPtr> infecteds;
-
+    vector<std::pair<PersonPtr,PersonPtr>> infecteds;
     Stats* stats = Stats::instance();
     for (auto iter = net.edgesBegin(); iter != net.edgesEnd(); ++iter) {
         int type = (*iter)->type();
@@ -1432,14 +1431,14 @@ unsigned int Model::runTransmission(double time_stamp) {
                 discordant = true;
 
                 if (trans_runner->determineInfection(out_p, in_p, condom_used, type)) {
-                    infecteds.push_back(in_p);
+                    infecteds.push_back(pair<PersonPtr, PersonPtr>(in_p, out_p));
                     Stats::instance()->recordInfectionEvent(time_stamp, out_p, in_p, false, (*iter)->type());
                 }
             } else if (!out_p->isInfected() && in_p->isInfected()) {
                 discordant = true;
 
                 if (trans_runner->determineInfection(in_p, out_p, condom_used, type)) {
-                    infecteds.push_back(out_p);
+                    infecteds.push_back(pair<PersonPtr, PersonPtr>(out_p, in_p));
                     Stats::instance()->recordInfectionEvent(time_stamp, in_p, out_p, false, (*iter)->type());
                 }
             }
@@ -1448,14 +1447,17 @@ unsigned int Model::runTransmission(double time_stamp) {
     }
 
     unsigned int new_infected_count = 0;
-    for (auto& person : infecteds) {
+    for (auto& i : infecteds) {
         // if person has multiple partners who are infected,
         // person gets multiple chances to become infected from them
         // and so may appear more than once in the infecteds list
-        if (!person->isInfected()) {
-            infectPerson(person, time_stamp);
-            stats->currentCounts().incrementInfected(person);
-            stats->personDataRecorder()->recordInfection(person, time_stamp, InfectionSource::INTERNAL);
+        if (!i.first->isInfected()) {
+            infectPerson(i.first, time_stamp);
+            if (i.first->hasReleasedPartner(i.second->id())) {
+                stats->currentCounts().incrementInfectedByPostReleasePartner();
+            }
+            stats->currentCounts().incrementInfected(i.first);
+            stats->personDataRecorder()->recordInfection(i.first, time_stamp, InfectionSource::INTERNAL);
             stats->currentCounts().incrementNewlyInfected();   //infected after burnin     
             ++new_infected_count;
         }

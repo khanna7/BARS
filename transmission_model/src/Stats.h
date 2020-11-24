@@ -163,12 +163,13 @@ struct Counts {
     unsigned int infected_not_recently_jailed, uninfected_not_recently_jailed;
     unsigned int infected_jailed_partner_only, uninfected_jailed_partner_only;
     unsigned int infected_released_partner_only, uninfected_released_partner_only;
-    
+    unsigned int infected_by_post_release_partner;
     
     Counts(int min_age, int max_age);
     void reset();
     void writeTo(FileOutput& out);
     void incrementInfected(PersonPtr& p);
+    void incrementInfectedByPostReleasePartner();
     void incrementInjectedJailPopCount();
     void incrementNewlyInfected();
     void incrementInfectedAtEntry(PersonPtr& p);

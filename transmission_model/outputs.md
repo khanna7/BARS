@@ -82,7 +82,7 @@ network in the model at the end of the timestep
 * infected_released_partner: number of persons at that timestep who have become infected and have a partner who was recently released from jail
 * uninfected_jailed_partner: number of persons at that timestep who are uninfected and have a parter recently sent to jail
 * uninfected_released_partner: number of persons at that timestep who are uninfected and have a partner wo was recently released from jail
-
+* infected_by_post_release_partner: number of persons at that timestep who are infected by a partner who was recently released from jail
 
 ### Partnership Events
 Partnership events are recorded in the file defined by *partnership.events.file* in the model properties file. The format is csv with each row recording an event. The columns are:
