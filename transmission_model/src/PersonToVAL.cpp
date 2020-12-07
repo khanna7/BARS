@@ -16,6 +16,10 @@ List PersonToVAL::operator()(const PersonPtr& p, int idx, double tick) const {
     vertex["cd4.count.today"] = p->infectionParameters().cd4_count;
     vertex["circum.status"] = p->isCircumcised();
 
+    vertex["meth.user"] = p->isSubstanceUser(SubstanceUseType::METH);
+    vertex["crack.user"] = p->isSubstanceUser(SubstanceUseType::CRACK);
+    vertex["ecstasy.user"] = p->isSubstanceUser(SubstanceUseType::ECSTASY);
+
     vertex["diagnosed"] = p->isDiagnosed();
     if (p->isDiagnosed()) {
         vertex["time_of_diagnosis"] = p->infectionParameters().time_of_diagnosis;
