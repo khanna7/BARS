@@ -32,6 +32,7 @@ extern const std::string DEATH_EVENT_FILE;
 extern const std::string TESTING_EVENT_FILE;
 extern const std::string ART_EVENT_FILE;
 extern const std::string PREP_EVENT_FILE;
+extern const std::string VIRAL_LOAD_EVENT_FILE;
 extern const std::string PERSON_DATA_FILE;
 extern const std::string NET_SAVE_FILE;
 extern const std::string CASUAL_NET_SAVE_FILE;

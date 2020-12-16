@@ -58,7 +58,7 @@ StatsWriter<T>::StatsWriter(const std::string& fname, const std::string& header,
 template<typename T>
 void StatsWriter<T>::addOutput(const T& output) {
     data.push_back(output);
-    if (data.size() == buffer_) {
+    if (data.size() >= buffer_) {
         writeData();
     }
 }
@@ -68,6 +68,7 @@ void StatsWriter<T>::writeData() {
     for (auto& item : data) {
         item.writeTo(out);
     }
+    out.flush();
     data.clear();
 }
 

@@ -46,6 +46,7 @@ const std::string DEATH_EVENT_FILE = "death.events.file";
 const std::string TESTING_EVENT_FILE = "testing.events.file";
 const std::string ART_EVENT_FILE = "art.events.file";
 const std::string PREP_EVENT_FILE = "prep.events.file";
+const std::string VIRAL_LOAD_EVENT_FILE = "viral.load.events.file";
 const std::string PERSON_DATA_FILE = "person.data.file";
 const std::string NET_SAVE_FILE = "net.save.file";
 const std::string CASUAL_NET_SAVE_FILE = "casual.net.save.file";

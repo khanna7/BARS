@@ -113,6 +113,9 @@ void Jail::addPerson(PersonPtr person, double jail_duration, double tick) {
     total_jailed_++;
     if (person->hasPreviousJailHistory())
         total_jailed_with_hist_++;
+    if (person->monitorViralLoad()) {
+        Stats::instance()->recordViralLoadEvent(tick, person, ViralLoadEvent::VLEventType::INCARCERATED);
+    }
 }
 
 void Jail::updateInfRateMult(double mult) {
@@ -232,6 +235,10 @@ void Jail::releasePerson(double tick, PersonPtr person) {
     Stats* stats = Stats::instance();
     if (person->isInfected()) {
         ++stats->currentCounts().infected_at_release;
+    }
+    if (person->isARTForcedOff() && person->isInfected()) {
+        person->setMonitorViralLoad(true);
+        stats->recordViralLoadEvent(tick, person, ViralLoadEvent::VLEventType::RELEASED);
     }
 }
 

@@ -102,14 +102,24 @@ StatsBuilder* StatsBuilder::personDataRecorder(const std::string& fname) {
     return this;
 }
 
+StatsBuilder* StatsBuilder::viralLoadEventWriter(const std::string& fname, unsigned int buffer) {
+    if (fname == "") {
+        viral_load_event_writer = std::make_shared<NullStatsWriter<ViralLoadEvent>>();
+    } else {
+        viral_load_event_writer = std::make_shared<StatsWriter<ViralLoadEvent>>(out_dir_ + "/" + fname, ViralLoadEvent::header,
+                buffer);
+    }
+    return this;
+}
+
 void StatsBuilder::createStatsSingleton(int min_age, int max_age) {
     if (counts_writer && pevent_writer && ievent_writer && biomarker_writer && death_writer && tevent_writer
-            && art_event_writer && prep_event_writer) {
+            && art_event_writer && prep_event_writer && viral_load_event_writer) {
         if (Stats::instance_ != nullptr) {
             delete Stats::instance_;
         }
         Stats::instance_ = new Stats(counts_writer, pevent_writer, ievent_writer, biomarker_writer, death_writer,
-                pd_fname, tevent_writer, art_event_writer, prep_event_writer, min_age, max_age);
+                pd_fname, tevent_writer, art_event_writer, prep_event_writer, viral_load_event_writer, min_age, max_age);
     } else {
         throw std::domain_error("Stats must be fully initialized from StatsBuilder before being used.");
     }

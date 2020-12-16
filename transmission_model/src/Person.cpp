@@ -22,7 +22,7 @@ namespace TransModel {
 Person::Person(int id, float age, bool circum_status, int steady_role, int casual_role, Diagnoser diagnoser) :
         id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age), circum_status_(circum_status),
         infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false),
-        testable_(false), diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, partner_was_jailed_(false),
+        testable_(false), monitor_viral_load(false), diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, partner_was_jailed_(false),
         partner_was_jailed_expiration_tick_(0), released_partners_{}, score_(0), jail_parameters_{} {
         //diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), vulnerability_expiration_(0) {
 }
@@ -77,6 +77,10 @@ void Person::setViralLoad(float viral_load) {
     infection_parameters_.viral_load = viral_load;
 }
 
+void Person::setMonitorViralLoad(bool status) {
+    monitor_viral_load = status;
+}
+
 void Person::setInfectivity(float infectivity) {
     infectivity_ = infectivity;
 }
@@ -91,6 +95,14 @@ void Person::goOnART(float time_stamp) {
     infection_parameters_.time_of_art_init = time_stamp;
     infection_parameters_.cd4_at_art_init = infection_parameters_.cd4_count;
     infection_parameters_.vl_at_art_init = infection_parameters_.viral_load;
+}
+
+void Person::setArtForcedOff(bool forced) {
+    infection_parameters_.art_forced_off = forced;
+    if (infection_parameters_.art_status && !forced) {
+        infection_parameters_.time_since_art_init = 0;
+        infection_parameters_.time_of_art_init = RepastProcess::instance()->getScheduleRunner().currentTick();
+    }
 }
 
 void Person::goOffPrep(PrepStatus off_status) {

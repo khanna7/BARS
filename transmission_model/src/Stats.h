@@ -115,6 +115,22 @@ struct PartnershipEvent {
 
 };
 
+struct ViralLoadEvent {
+
+    static const std::string header;
+
+    enum VLEventType { INCARCERATED, RELEASED, VIRALLY_SUPRESSED, BIOMARKERS };
+
+    double tick;
+    int p_id;
+    float viral_load;
+    bool art_status;
+    bool art_forced_off;
+    VLEventType type_;
+
+    void writeTo(FileOutput& out);
+};
+
 struct Counts {
 
     static const std::string header;
@@ -190,6 +206,7 @@ private:
     std::shared_ptr<StatsWriterI<TestingEvent>> tevent_writer;
     std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer;
     std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer;
+    std::shared_ptr<StatsWriterI<ViralLoadEvent>> viral_load_event_writer;
 
     std::shared_ptr<PersonDataRecorderI> pd_recorder;
 
@@ -200,7 +217,8 @@ private:
             std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
             std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
             std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer,
-            std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, int min_age, int max_age);
+            std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, std::shared_ptr<StatsWriterI<ViralLoadEvent>> viral_load_event_writer,
+            int min_age, int max_age);
 
 public:
     virtual ~Stats();
@@ -231,6 +249,7 @@ public:
     void recordTestingEvent(double time, int p_id, bool result);
     void recordARTEvent(double time, int p_id, bool onART);
     void recordPREPEvent(double time, int p_id, int type);
+    void recordViralLoadEvent(double time, const PersonPtr& person, ViralLoadEvent::VLEventType event_type);
 };
 
 } /* namespace TransModel */

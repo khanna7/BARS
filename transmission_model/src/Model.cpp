@@ -187,7 +187,7 @@ void init_stats() {
     builder.testingEventWriter(get_stats_filename(TESTING_EVENT_FILE));
     builder.artEventWriter(get_stats_filename(ART_EVENT_FILE));
     builder.prepEventWriter(get_stats_filename(PREP_EVENT_FILE));
-
+    builder.viralLoadEventWriter(get_stats_filename(VIRAL_LOAD_EVENT_FILE), 1);
     int min_age = Parameters::instance()->getIntParameter(MIN_AGE);
     int max_age = Parameters::instance()->getIntParameter(MAX_AGE);
 
@@ -1072,7 +1072,7 @@ void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTSched
     scheduler->addPerson(person);
 }
 
-void Model::updateDisease(PersonPtr person) {
+void Model::updateDisease(PersonPtr person, double tick) {
     if (person->isOnART(true)) { //care disruption mechanism
     //if (person->isOnART()) { 
         float slope = viral_load_slope_calculator.calculateSlope(person->infectionParameters());
@@ -1081,6 +1081,13 @@ void Model::updateDisease(PersonPtr person) {
 
     float viral_load = viral_load_calculator.calculateViralLoad(person->infectionParameters());
     person->setViralLoad(viral_load);
+    if (person->monitorViralLoad()) {
+        float undetectable = (float) Parameters::instance()->getDoubleParameter(UNDETECTABLE_VL);
+        if (person->infectionParameters().viral_load <= undetectable) {
+            Stats::instance()->recordViralLoadEvent(tick, person, ViralLoadEvent::VLEventType::VIRALLY_SUPRESSED);
+            person->setMonitorViralLoad(false);
+        }
+    }
     // update cd4
     float cd4 = cd4_calculator.calculateCD4(person->age(), person->infectionParameters());
     person->setCD4Count(cd4);
@@ -1154,7 +1161,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
         PersonPtr person = (*iter);
         // update viral load, cd4
         if (person->isInfected()) {
-            updateDisease(person);
+            updateDisease(person, tick);
         }
 
         if (persons_to_log.find(person->id()) != persons_to_log.end()) {

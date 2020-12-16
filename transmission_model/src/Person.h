@@ -31,6 +31,7 @@ private:
     float infectivity_;
     PrepParameters prep_;
     bool dead_, diagnosed_, testable_;
+    bool monitor_viral_load;
     Diagnoser diagnoser_;
     AdherenceData art_adherence_;
     bool partner_was_jailed_;
@@ -88,6 +89,10 @@ public:
 
     float infectivity() const {
         return infectivity_;
+    }
+
+    bool monitorViralLoad() {
+        return monitor_viral_load;
     }
 
     float timeSinceInfection() const {
@@ -151,6 +156,8 @@ public:
     void setCD4Count(float cd4_count);
 
     void setViralLoadARTSlope(float slope);
+
+    void setMonitorViralLoad(bool status);
 
     void setInfectivity(float infectivity);
 
@@ -276,9 +283,7 @@ public:
     /**
      * to set on/off ART flag 
      */
-    void setArtForcedOff(bool forced){
-        infection_parameters_.art_forced_off = forced;
-    }
+    void setArtForcedOff(bool forced);
 
     /**
      * Boolean function to check if a person is jailed (in jail).

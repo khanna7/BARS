@@ -28,6 +28,7 @@ private:
     std::shared_ptr<StatsWriterI<TestingEvent>> tevent_writer;
     std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer;
     std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer;
+    std::shared_ptr<StatsWriterI<ViralLoadEvent>> viral_load_event_writer;
     std::string out_dir_;
 
 public:
@@ -43,7 +44,7 @@ public:
     StatsBuilder* personDataRecorder(const std::string& fname);
     StatsBuilder* artEventWriter(const std::string& fname,  unsigned int buffer = 1000);
     StatsBuilder* prepEventWriter(const std::string& fname,  unsigned int buffer = 1000);
-
+    StatsBuilder* viralLoadEventWriter(const std::string& fname, unsigned int buffer = 1000);
 
     void createStatsSingleton(int min_age, int max_age);
 };

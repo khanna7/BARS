@@ -75,6 +75,12 @@ void PartnershipEvent::writeTo(FileOutput& out) {
     out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "," << network_type << "," << in_disruption_p2 << "," << released_partner_p1 << "," << in_disruption_p1 << "," << released_partner_p2 << "\n";
 }
 
+const std::string ViralLoadEvent::header("\"tick\",\"p_id\",\"viral_load\",\"art_status\",\"art_forced_off\",\"type\"");
+
+void ViralLoadEvent::writeTo(FileOutput &out) {
+    out << tick << "," << p_id << "," << viral_load << "," << art_status << "," << art_forced_off << "," << type_ << "\n";
+}
+
 const std::string Counts::header(
         "tick,entries,max_age_exits,infection_deaths,asm_deaths,"
 
@@ -350,10 +356,11 @@ Stats::Stats(std::shared_ptr<StatsWriterI<Counts>> counts, std::shared_ptr<Stats
         std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
         std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
         std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_writer,
-        std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, int min_age, int max_age) :
-        counts_writer { counts }, current_counts {min_age, max_age}, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
-                bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer}, art_event_writer {art_writer}, prep_event_writer{prep_writer},
-                pd_recorder{nullptr} {
+        std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, std::shared_ptr<StatsWriterI<ViralLoadEvent>> viral_load_writer,
+        int min_age, int max_age) :
+        counts_writer { counts }, current_counts {min_age, max_age}, pevent_writer { pevents }, ievent_writer { infection_event_writer },
+        biomarker_writer { bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer}, art_event_writer {art_writer}, prep_event_writer{prep_writer},
+        viral_load_event_writer {viral_load_writer }, pd_recorder{nullptr} {
 
     if (person_data_fname == "") {
         pd_recorder = std::make_shared<NullPersonDataRecorder>();
@@ -381,6 +388,18 @@ void Stats::recordARTEvent(double time, int p_id, bool onART) {
 
 void Stats::recordPREPEvent(double time, int p_id, int type) {
     prep_event_writer->addOutput(PREPEvent{time, p_id, type});
+}
+
+void Stats::recordViralLoadEvent(double time, const PersonPtr& p, ViralLoadEvent::VLEventType event_type) {
+    cout << "recordingViralLoadEvent " << p->id() << " " << event_type << endl;
+    ViralLoadEvent evt;
+    evt.tick = time;
+    evt.p_id = p->id();
+    evt.viral_load = p->infectionParameters().viral_load;
+    evt.art_status = p->infectionParameters().art_status;
+    evt.art_forced_off = p->infectionParameters().art_forced_off;
+    evt.type_ = event_type;
+    viral_load_event_writer->addOutput(evt);
 }
 
 void Stats::recordTestingEvent(double time, int p_id, bool result) {
