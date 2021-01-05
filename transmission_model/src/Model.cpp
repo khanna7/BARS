@@ -1372,6 +1372,9 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
     }
 
     person->setDead(cod != CauseOfDeath::NONE);
+    if (person->monitorViralLoad() && person->isDead()) {
+        Stats::instance()->recordViralLoadEvent(tick, person, ViralLoadEvent::VLEventType::DEATH);
+    }
     return cod;
 }
 

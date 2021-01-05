@@ -119,7 +119,7 @@ struct ViralLoadEvent {
 
     static const std::string header;
 
-    enum VLEventType { INCARCERATED, RELEASED, VIRALLY_SUPRESSED, BIOMARKERS };
+    enum VLEventType { INCARCERATED, RELEASED, VIRALLY_SUPRESSED, BIOMARKERS, DEATH, AGED_OUT };
 
     double tick;
     int p_id;
