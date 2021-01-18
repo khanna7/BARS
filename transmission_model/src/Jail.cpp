@@ -98,6 +98,7 @@ void Jail::addPerson(PersonPtr person, double jail_duration, double tick) {
             if (partner->hasReleasedPartner(person->id())) {
                 partner->removeReleasedPartner(person->id());
             }
+            Stats::instance()->recordPartnershipEvent(tick, e->id(), e->v1()->id(), e->v2()->id(), PartnershipEvent::ENDED_INCARCERATED, e->type());
         }
         jailed_pop_net.emplace(person->id(), edges);
         net_->removeVertex(person);
@@ -116,6 +117,7 @@ void Jail::addPerson(PersonPtr person, double jail_duration, double tick) {
     if (person->monitorViralLoad()) {
         Stats::instance()->recordViralLoadEvent(tick, person, ViralLoadEvent::VLEventType::INCARCERATED);
     }
+    Stats::instance()->recordJailEvent(tick, person->id(), JailEvent::JailEventType::INCARCERATED);
 }
 
 void Jail::updateInfRateMult(double mult) {
@@ -224,6 +226,7 @@ void Jail::releasePerson(double tick, PersonPtr person) {
                         scheduleReleasedPartnerExpiration(source, person->id(), off_art_flag_change_time + expiration_time);
                     }
                 }
+                Stats::instance()->recordPartnershipEvent(tick, new_edge->id(), source->id(), target->id(), PartnershipEvent::STARTED_RELEASED, new_edge->type());
             }
         }
     }
@@ -240,6 +243,7 @@ void Jail::releasePerson(double tick, PersonPtr person) {
         person->setMonitorViralLoad(true);
         stats->recordViralLoadEvent(tick, person, ViralLoadEvent::VLEventType::RELEASED);
     }
+    stats->recordJailEvent(tick, person->id(), JailEvent::JailEventType::RELEASED);
 }
 
 void Jail::scheduleEndPrepForcedOff(PersonPtr person, double at) {

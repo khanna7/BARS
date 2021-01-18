@@ -99,18 +99,14 @@ struct PartnershipEvent {
 
     static const std::string header;
 
-    enum PEventType {ENDED_DISSOLUTION, STARTED, ENDED_DEATH_INFECTION, ENDED_DEATH_ASM, ENDED_AGING_OUT, ENDED_DEATH_ASM_CD4};
+    enum PEventType {ENDED_DISSOLUTION, STARTED, ENDED_DEATH_INFECTION, ENDED_DEATH_ASM, ENDED_AGING_OUT, ENDED_DEATH_ASM_CD4, ENDED_INCARCERATED, STARTED_RELEASED};
 
     double tick_;
     unsigned int edge_id_;
     int p1_id, p2_id;
     PEventType type_;
     int network_type;
-    bool in_disruption_p2;
-    bool released_partner_p1;
-    bool in_disruption_p1;
-    bool released_partner_p2;
-    PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type, bool in_disruption_p2, bool released_partner_p1, bool in_disruption_p1, bool released_partner_p2);
+    PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type);
     void writeTo(FileOutput& out);
 
 };
@@ -127,6 +123,19 @@ struct ViralLoadEvent {
     bool art_status;
     bool art_forced_off;
     VLEventType type_;
+
+    void writeTo(FileOutput& out);
+};
+
+struct JailEvent {
+
+    static const std::string header;
+
+    enum JailEventType { INCARCERATED, RELEASED };
+
+    double tick;
+    int p_id;
+    JailEventType type_;
 
     void writeTo(FileOutput& out);
 };
@@ -207,6 +216,7 @@ private:
     std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer;
     std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer;
     std::shared_ptr<StatsWriterI<ViralLoadEvent>> viral_load_event_writer;
+    std::shared_ptr<StatsWriterI<JailEvent>> jail_event_writer;
 
     std::shared_ptr<PersonDataRecorderI> pd_recorder;
 
@@ -218,7 +228,7 @@ private:
             std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
             std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer,
             std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, std::shared_ptr<StatsWriterI<ViralLoadEvent>> viral_load_event_writer,
-            int min_age, int max_age);
+            std::shared_ptr<StatsWriterI<JailEvent>> jail_event_writer, int min_age, int max_age);
 
 public:
     virtual ~Stats();
@@ -237,7 +247,7 @@ public:
         return instance_;
     }
 
-    void recordPartnershipEvent(double time, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type, bool in_disruption_p2, bool released_partner_p1, bool in_disruption_p1, bool released_partner_p2);
+    void recordPartnershipEvent(double time, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type);
     void recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom, int net_type);
 
     /**
@@ -250,6 +260,7 @@ public:
     void recordARTEvent(double time, int p_id, bool onART);
     void recordPREPEvent(double time, int p_id, int type);
     void recordViralLoadEvent(double time, const PersonPtr& person, ViralLoadEvent::VLEventType event_type);
+    void recordJailEvent(double time, int p_id, JailEvent::JailEventType event_type);
 };
 
 } /* namespace TransModel */

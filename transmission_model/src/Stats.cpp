@@ -63,22 +63,27 @@ void InfectionEvent::writeTo(FileOutput& out) {
             << p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "," << p2_ever_jailed << "," << p2_is_post_release_partner << "," << network_type << "\n";
 }
 
-const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"type\",\"network_type\",\"in_disruption_p2\",\"released_partner_p1\",\"in_disruption_p1\",\"released_partner_p2\"");
+const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"type\",\"network_type\"");
 
-PartnershipEvent::PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type, bool in_disruption_p2, bool released_partner_p1, bool in_disruption_p1, bool released_partner_p2):
-        tick_(tick), edge_id_(edge_id), p1_id(p1), p2_id(p2), type_ { type }, network_type { net_type },
-        in_disruption_p2(in_disruption_p2), released_partner_p1(released_partner_p1), in_disruption_p1(in_disruption_p1), released_partner_p2(released_partner_p2)
+PartnershipEvent::PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type):
+        tick_(tick), edge_id_(edge_id), p1_id(p1), p2_id(p2), type_ { type }, network_type { net_type }
 {
 }
 
 void PartnershipEvent::writeTo(FileOutput& out) {
-    out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "," << network_type << "," << in_disruption_p2 << "," << released_partner_p1 << "," << in_disruption_p1 << "," << released_partner_p2 << "\n";
+    out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "," << network_type << "\n";
 }
 
 const std::string ViralLoadEvent::header("\"tick\",\"p_id\",\"viral_load\",\"art_status\",\"art_forced_off\",\"type\"");
 
 void ViralLoadEvent::writeTo(FileOutput &out) {
     out << tick << "," << p_id << "," << viral_load << "," << art_status << "," << art_forced_off << "," << type_ << "\n";
+}
+
+const std::string JailEvent::header("\"tick\",\"p_id\",\"type\"");
+
+void JailEvent::writeTo(FileOutput &out) {
+    out << tick << "," << p_id << "," << type_ << "\n";
 }
 
 const std::string Counts::header(
@@ -356,11 +361,11 @@ Stats::Stats(std::shared_ptr<StatsWriterI<Counts>> counts, std::shared_ptr<Stats
         std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
         std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
         std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_writer,
-        std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, std::shared_ptr<StatsWriterI<ViralLoadEvent>> viral_load_writer,
+        std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, std::shared_ptr<StatsWriterI<ViralLoadEvent>> viral_load_writer, std::shared_ptr<StatsWriterI<JailEvent> > jail_writer,
         int min_age, int max_age) :
         counts_writer { counts }, current_counts {min_age, max_age}, pevent_writer { pevents }, ievent_writer { infection_event_writer },
         biomarker_writer { bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer}, art_event_writer {art_writer}, prep_event_writer{prep_writer},
-        viral_load_event_writer {viral_load_writer }, pd_recorder{nullptr} {
+        viral_load_event_writer {viral_load_writer }, jail_event_writer { jail_writer }, pd_recorder{nullptr} {
 
     if (person_data_fname == "") {
         pd_recorder = std::make_shared<NullPersonDataRecorder>();
@@ -377,9 +382,9 @@ void Stats::resetForNextTimeStep() {
     current_counts.reset();
 }
 
-void Stats::recordPartnershipEvent(double time, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type, bool in_disruption_p2, bool released_partner_p1, bool in_disruption_p1, bool released_partner_p2)
+void Stats::recordPartnershipEvent(double time, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type)
 {
-    pevent_writer->addOutput(PartnershipEvent { time, edge_id, p1, p2, event_type, net_type, in_disruption_p2, released_partner_p1, in_disruption_p1, released_partner_p2});
+    pevent_writer->addOutput(PartnershipEvent { time, edge_id, p1, p2, event_type, net_type});
 }
 
 void Stats::recordARTEvent(double time, int p_id, bool onART) {
@@ -391,7 +396,6 @@ void Stats::recordPREPEvent(double time, int p_id, int type) {
 }
 
 void Stats::recordViralLoadEvent(double time, const PersonPtr& p, ViralLoadEvent::VLEventType event_type) {
-    cout << "recordingViralLoadEvent " << p->id() << " " << event_type << endl;
     ViralLoadEvent evt;
     evt.tick = time;
     evt.p_id = p->id();
@@ -400,6 +404,10 @@ void Stats::recordViralLoadEvent(double time, const PersonPtr& p, ViralLoadEvent
     evt.art_forced_off = p->infectionParameters().art_forced_off;
     evt.type_ = event_type;
     viral_load_event_writer->addOutput(evt);
+}
+
+void Stats::recordJailEvent(double time, int p_id, JailEvent::JailEventType event_type) {
+    jail_event_writer->addOutput(JailEvent{time, p_id, event_type});
 }
 
 void Stats::recordTestingEvent(double time, int p_id, bool result) {

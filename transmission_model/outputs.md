@@ -96,6 +96,9 @@ Partnership events are recorded in the file defined by *partnership.events.file*
   * 2: partnership dissolved due to death by infection of one of the partners
   * 3: partnership dissolved due to death by age specific mortality of one of the partners
   * 4: partnership dissolved due to aging out of the model
+  * 5: partnership dissolved due to death by age specific mortality CD4 of one of the partners
+  * 6: partnership dissolved due to incarceration of one of the partners
+  * 7: partnership started due to release of one of the partners
 * network_type: the type of network in which the event occurred
   * 0: the main network
   * 1: the casual network

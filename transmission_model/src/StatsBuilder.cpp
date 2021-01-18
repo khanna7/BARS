@@ -112,6 +112,16 @@ StatsBuilder* StatsBuilder::viralLoadEventWriter(const std::string& fname, unsig
     return this;
 }
 
+StatsBuilder* StatsBuilder::jailEventWriter(const std::string& fname, unsigned int buffer) {
+    if (fname == "") {
+        jail_event_writer = std::make_shared<NullStatsWriter<JailEvent>>();
+    } else {
+        jail_event_writer = std::make_shared<StatsWriter<JailEvent>>(out_dir_ + "/" + fname, JailEvent::header,
+                buffer);
+    }
+    return this;
+}
+
 void StatsBuilder::createStatsSingleton(int min_age, int max_age) {
     if (counts_writer && pevent_writer && ievent_writer && biomarker_writer && death_writer && tevent_writer
             && art_event_writer && prep_event_writer && viral_load_event_writer) {
@@ -119,7 +129,7 @@ void StatsBuilder::createStatsSingleton(int min_age, int max_age) {
             delete Stats::instance_;
         }
         Stats::instance_ = new Stats(counts_writer, pevent_writer, ievent_writer, biomarker_writer, death_writer,
-                pd_fname, tevent_writer, art_event_writer, prep_event_writer, viral_load_event_writer, min_age, max_age);
+                pd_fname, tevent_writer, art_event_writer, prep_event_writer, viral_load_event_writer, jail_event_writer, min_age, max_age);
     } else {
         throw std::domain_error("Stats must be fully initialized from StatsBuilder before being used.");
     }

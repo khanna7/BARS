@@ -179,7 +179,7 @@ void init_stats() {
     // 19-30,30-100
     StatsBuilder builder(output_directory(Parameters::instance()));
     builder.countsWriter(get_stats_filename(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
-    builder.partnershipEventWriter(get_stats_filename(PARTNERSHIP_EVENTS_FILE));
+    builder.partnershipEventWriter(get_stats_filename(PARTNERSHIP_EVENTS_FILE), 1);
     builder.infectionEventWriter(get_stats_filename(INFECTION_EVENTS_FILE));
     builder.biomarkerWriter(get_stats_filename(BIOMARKER_FILE));
     builder.deathEventWriter(get_stats_filename(DEATH_EVENT_FILE));
@@ -188,6 +188,7 @@ void init_stats() {
     builder.artEventWriter(get_stats_filename(ART_EVENT_FILE));
     builder.prepEventWriter(get_stats_filename(PREP_EVENT_FILE));
     builder.viralLoadEventWriter(get_stats_filename(VIRAL_LOAD_EVENT_FILE), 1);
+    builder.jailEventWriter(get_stats_filename(JAIL_EVENT_FILE), 1);
     int min_age = Parameters::instance()->getIntParameter(MIN_AGE);
     int max_age = Parameters::instance()->getIntParameter(MAX_AGE);
 
@@ -1186,7 +1187,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             for (auto edge : edges) {
                 //cout << edge->id() << "," << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
                 Stats::instance()->recordPartnershipEvent(tick, edge->id(), edge->v1()->id(), edge->v2()->id(),
-                        pevent_type, edge->type(), false, false, false, false);
+                        pevent_type, edge->type());
             }
             net.removeVertex(person);
             iter = population.erase(iter);
