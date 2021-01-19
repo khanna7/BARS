@@ -98,11 +98,19 @@ Partnership events are recorded in the file defined by *partnership.events.file*
   * 4: partnership dissolved due to aging out of the model
   * 5: partnership dissolved due to death by age specific mortality CD4 of one of the partners
   * 6: partnership dissolved due to incarceration of one of the partners
-  * 7: partnership started due to release of one of the partners
+  * 7: partnership restarted upon release of one of the partners
 * network_type: the type of network in which the event occurred
   * 0: the main network
   * 1: the casual network
   
+### Incarceration Events
+Incarceration events are recorded in the file defined by *jail.events.file* in the model properties file.  The format is csv with each row recording an event.  The columns are:
+* tick: time step of the event
+* p_id: the id of the person involved
+* type: the type of event.
+  * 0: incarceration
+  * 1: release
+
 ### Infection Events
 Infection events are recorded in the file defined by *infection.events.file* in the model properties file. The format is csv with each row recording an infection event. An infection event is recorded when one person infects another. An infection event is also recorded when an infected persons enters the model. In that case, only the person 1 attributes are recorded. The columns are:
 * tick: the time step at which the event occurred.
