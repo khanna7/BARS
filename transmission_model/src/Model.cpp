@@ -1266,7 +1266,12 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 uninfected.push_back(person);
 
             } else {
-
+                if (person->isOnART(true)) {  //care disruption
+                    ++stats->currentCounts().on_art;
+                    if (person->isSubstanceUser(SubstanceUseType::METH)) ++stats->currentCounts().on_art_meth;
+                    if (person->isSubstanceUser(SubstanceUseType::CRACK)) ++stats->currentCounts().on_art_crack;
+                    if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) ++stats->currentCounts().on_art_ecstasy;
+                }
                 if ( person->infectionParameters().time_since_infection >= time_to_full_supp) {
                     ++inf_count;
                     if (person->infectionParameters().viral_load < VS_VL_COUNT) {
