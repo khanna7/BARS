@@ -213,17 +213,17 @@ void Jail::releasePerson(double tick, PersonPtr person) {
             if (add_edge) {
                 EdgePtr<Person> new_edge = net_->addEdge(source, target, edge->type());
                 new_edge->setCondomUseProbability(edge->condomUseProbability());
-                double expiration_time = Parameters::instance()->getDoubleParameter(RELEASED_PARTNER_EXPIRATION_TIME);
+                double expiration_time = Parameters::instance()->getDoubleParameter(RELEASED_PARTNER_FORMATION_TIME);
                 if (source->id() == person->id()) {
                     if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
                         target->addReleasedPartner(person->id());
-                        scheduleReleasedPartnerExpiration(target, person->id(), off_art_flag_change_time + expiration_time);
+                        scheduleReleasedPartnerExpiration(target, person->id(), tick + expiration_time);
                         
                     }
                 } else {
                     if (Parameters::instance()->getBooleanParameter(IS_CARE_DISRUPTION_ON)) {
                         source->addReleasedPartner(person->id());
-                        scheduleReleasedPartnerExpiration(source, person->id(), off_art_flag_change_time + expiration_time);
+                        scheduleReleasedPartnerExpiration(source, person->id(), tick + expiration_time);
                     }
                 }
                 Stats::instance()->recordPartnershipEvent(tick, new_edge->id(), source->id(), target->id(), PartnershipEvent::STARTED_RELEASED, new_edge->type());

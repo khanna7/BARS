@@ -146,21 +146,15 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
             bool in_disruption_period_in, in_disruption_period_out;
             in_disruption_period_in = in_disruption_period_out = false;
             double expiration_time = Parameters::instance()->getDoubleParameter(RELEASED_PARTNER_EXPIRATION_TIME);
-            if (inp->hasPreviousJailHistory()) {
-                OffArtFlagEndEvent *a_evt = jail->getOffArtFlagEndEvent(inp);
-                if (a_evt != nullptr) {
-                    released_partner_out = true;
-                    outp->addReleasedPartner(in);
-                    scheduleReleasedPartnerExpiration(outp, in, a_evt->scheduledFor() + expiration_time);
-                }
+            if (inp->hasPreviousJailHistory() && (time <= inp->timeOfRelease() + released_partner_formation_time)) {
+                released_partner_out = true;
+                outp->addReleasedPartner(in);
+                scheduleReleasedPartnerExpiration(outp, in, inp->timeOfRelease() + released_partner_formation_time);
             }
-            if (outp->hasPreviousJailHistory()) {
-                OffArtFlagEndEvent *a_evt = jail->getOffArtFlagEndEvent(outp);
-                if (a_evt != nullptr) {
-                    released_partner_in = true;
-                    inp->addReleasedPartner(out);
-                    scheduleReleasedPartnerExpiration(inp, out, a_evt->scheduledFor() + expiration_time);
-                }
+            if (outp->hasPreviousJailHistory() && (time <= outp->timeOfRelease() + released_partner_formation_time)) {
+                released_partner_in = true;
+                inp->addReleasedPartner(out);
+                scheduleReleasedPartnerExpiration(inp, out, outp->timeOfRelease() + released_partner_formation_time);
             }
             if (inp->isARTForcedOff()) in_disruption_period_in = true;
             if (outp->isARTForcedOff()) in_disruption_period_out = true;
