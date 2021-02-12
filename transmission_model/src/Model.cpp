@@ -90,7 +90,10 @@ struct PersonToVALForSimulate {
 
         return List::create(Named("na") = false, Named("vertex_names") = idx, Named("role_main") = v->steady_role(),
                 Named("role_casual") = v->casual_role(), Named("inf.status") = v->isInfected(),
-                Named("diagnosed") = v->isDiagnosed(), Named("age") = v->age(), Named("sqrt.age") = sqrt(v->age()));
+                Named("diagnosed") = v->isDiagnosed(), Named("age") = v->age(), Named("sqrt.age") = sqrt(v->age()),
+                Named("crack.user") = v->isSubstanceUser(SubstanceUseType::CRACK),
+                Named("meth.user") = v->isSubstanceUser(SubstanceUseType::METH),
+                Named("ecstasy.user") = v->isSubstanceUser(SubstanceUseType::ECSTASY));
     }
 };
 
