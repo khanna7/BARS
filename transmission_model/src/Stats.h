@@ -62,6 +62,8 @@ struct Biomarker {
     int p_id;
     float viral_load, cd4;
     bool on_art;
+    bool art_forced_off;
+    int days_since_infection;
 
     void writeTo(FileOutput& out);
 };

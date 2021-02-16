@@ -181,7 +181,7 @@ void init_stats() {
     builder.countsWriter(get_stats_filename(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
     builder.partnershipEventWriter(get_stats_filename(PARTNERSHIP_EVENTS_FILE), 1);
     builder.infectionEventWriter(get_stats_filename(INFECTION_EVENTS_FILE));
-    builder.biomarkerWriter(get_stats_filename(BIOMARKER_FILE));
+    builder.biomarkerWriter(get_stats_filename(BIOMARKER_FILE), 1);
     builder.deathEventWriter(get_stats_filename(DEATH_EVENT_FILE));
     builder.personDataRecorder(get_stats_filename(PERSON_DATA_FILE));
     builder.testingEventWriter(get_stats_filename(TESTING_EVENT_FILE));
@@ -1164,7 +1164,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
         if (person->isInfected()) {
             updateDisease(person, tick);
         }
-
+        
+        if (person->monitorViralLoad()) persons_to_log.insert(person->id());
         if (persons_to_log.find(person->id()) != persons_to_log.end()) {
             stats->recordBiomarker(tick, person);
         }

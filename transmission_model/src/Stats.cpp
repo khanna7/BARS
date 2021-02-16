@@ -47,10 +47,10 @@ void DeathEvent::writeTo(FileOutput& out) {
     out << tick << "," << p_id << "," << age << "," << art_status << "," << cause << "\n";
 }
 
-const std::string Biomarker::header("\"tick\",\"p_id\",\"viral_load\",\"cd4_count\",\"art_status\"");
+const std::string Biomarker::header("\"tick\",\"p_id\",\"viral_load\",\"cd4_count\",\"art_status\",\"art_forced_off\",\"days_since_infection\"");
 
 void Biomarker::writeTo(FileOutput& out) {
-    out << tick << "," << p_id << "," << viral_load << "," << cd4 << "," << on_art << "\n";
+    out << tick << "," << p_id << "," << viral_load << "," << cd4 << "," << on_art << "," << art_forced_off << "," << days_since_infection << "\n";
 }
 
 const std::string InfectionEvent::header(
@@ -472,6 +472,8 @@ void Stats::recordBiomarker(double time, const PersonPtr& person) {
     marker.on_art = person->infectionParameters().art_status;
     marker.p_id = person->id();
     marker.viral_load = person->infectionParameters().viral_load;
+    marker.art_forced_off = person->infectionParameters().art_forced_off;
+    marker.days_since_infection = person->infectionParameters().time_since_infection;
     biomarker_writer->addOutput(marker);
 }
 
