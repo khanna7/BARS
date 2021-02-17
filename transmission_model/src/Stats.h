@@ -64,6 +64,8 @@ struct Biomarker {
     bool on_art;
     bool art_forced_off;
     int days_since_infection;
+    bool in_jail;
+    int days_since_release;
 
     void writeTo(FileOutput& out);
 };
