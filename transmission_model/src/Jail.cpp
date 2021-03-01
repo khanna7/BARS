@@ -246,24 +246,24 @@ void Jail::releasePerson(double tick, PersonPtr person) {
       adherence check, just let that go on unaffected.  Make sure agent
       is not forced off ART. */
     if (person->isInfected()) {
-        if (!person->isDiagnosed()) {
-            person->setDiagnosed(tick);
-            initialize_art_adherence(person, tick, AdherenceCategory::ALWAYS);
-            person->goOnART(tick);
-            Stats::instance()->personDataRecorder()->recordARTStart(person, tick);
-            Stats::instance()->recordARTEvent(tick, person->id(), true);
-        } else {
-            if (!person->isOnART(false)) {
+        if (Parameters::instance()->getBooleanParameter(IS_POST_RELEASE_ART_ON)) {
+            if (!person->isDiagnosed()) {
+                person->setDiagnosed(tick);
+                initialize_art_adherence(person, tick, AdherenceCategory::ALWAYS);
                 person->goOnART(tick);
                 Stats::instance()->personDataRecorder()->recordARTStart(person, tick);
                 Stats::instance()->recordARTEvent(tick, person->id(), true);
+            } else {
+                if (!person->isOnART(false)) {
+                    person->goOnART(tick);
+                    Stats::instance()->personDataRecorder()->recordARTStart(person, tick);
+                    Stats::instance()->recordARTEvent(tick, person->id(), true);
+                }
+                double prob = Parameters::instance()->getDoubleParameter(ART_ALWAYS_ADHERENT_PROB);
+                person->setArtAdherence({prob, AdherenceCategory::ALWAYS});
             }
-            double prob = Parameters::instance()->getDoubleParameter(ART_ALWAYS_ADHERENT_PROB);
-            person->setArtAdherence({prob, AdherenceCategory::ALWAYS});
+            if (person->isARTForcedOff()) person->setArtForcedOff(false);
         }
-        if (person->isARTForcedOff()) person->setArtForcedOff(false);
-    /*}
-    if (person->isARTForcedOff() && person->isInfected()) {*/
         person->setMonitorViralLoad(true);
         stats->recordViralLoadEvent(tick, person, ViralLoadEvent::VLEventType::RELEASED);
     }

@@ -488,6 +488,7 @@ testing.prob.gte.9 <- "21-30|0.007177778"
 # jail
 is.network.disruption.on <- FALSE
 is.care.disruption.on <- FALSE
+is.post.release.art.on <- FALSE
 
 #incarceration.prob <- 0.0
 incarceration.prob <- 0.0000787

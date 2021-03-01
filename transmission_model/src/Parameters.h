@@ -276,6 +276,7 @@ extern const std::string NETWORK_DECAY_PROB_CASUAL_FILE;
 
 extern const std::string IS_NETWORK_DISRUPTION_ON;
 extern const std::string IS_CARE_DISRUPTION_ON;
+extern const std::string IS_POST_RELEASE_ART_ON;
 
 extern const std::string INCARCERATION_PROB;
 // prob for previously incarcerated

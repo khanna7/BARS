@@ -289,6 +289,7 @@ const std::string NETWORK_DECAY_PROB_CASUAL_FILE = "network.decay.prob.casual.fi
 
 const std::string IS_NETWORK_DISRUPTION_ON = "is.network.disruption.on";
 const std::string IS_CARE_DISRUPTION_ON = "is.care.disruption.on";
+const std::string IS_POST_RELEASE_ART_ON = "is.post.release.art.on";
 
 const std::string INCARCERATION_PROB = "incarceration.prob";
 // prob for previously incarcerated
