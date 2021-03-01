@@ -19,6 +19,8 @@
 
 namespace TransModel {
 
+class PersonDataRecorderI;
+
 struct ARTEvent {
 
     static const std::string header;

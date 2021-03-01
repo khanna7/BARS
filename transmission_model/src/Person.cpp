@@ -141,21 +141,25 @@ bool Person::deadOfInfection() {
             infection_parameters_.time_since_infection >= infection_parameters_.dur_inf;
 }
 
+void Person::setDiagnosed(double tick) {
+    diagnosed_ = true;
+    infection_parameters_.time_of_diagnosis = tick;
+    infection_parameters_.time_since_diagnosed = 0;
+    Stats::instance()->personDataRecorder()->recordDiagnosis(this, tick);
+    if (prep_.status() == PrepStatus::ON) {
+        prep_.off(PrepStatus::OFF_INFECTED);
+        Stats::instance()->recordPREPEvent(tick, id(), static_cast<int>(PrepStatus::OFF_INFECTED));
+        Stats::instance()->personDataRecorder()->recordPREPStop(this, tick, PrepStatus::OFF_INFECTED);
+    }
+}
+
 bool Person::diagnose(double tick) {
     Result result = diagnoser_.test(tick, infection_parameters_);
-    diagnosed_ = result == Result::POSITIVE;
-    if (diagnosed_) {
-        infection_parameters_.time_of_diagnosis = tick;
-        infection_parameters_.time_since_diagnosed = 0;
-        Stats::instance()->personDataRecorder()->recordDiagnosis(this, tick);
+    if (result == Result::POSITIVE) {
+        setDiagnosed(tick);
     }
     if (result != Result::NO_TEST) {
         Stats::instance()->recordTestingEvent(tick, id_, diagnosed_);
-        if (diagnosed_ && prep_.status() == PrepStatus::ON) {
-            prep_.off(PrepStatus::OFF_INFECTED);
-            Stats::instance()->recordPREPEvent(tick, id(), static_cast<int>(PrepStatus::OFF_INFECTED));
-            Stats::instance()->personDataRecorder()->recordPREPStop(this, tick, PrepStatus::OFF_INFECTED);
-        }
     }
     return diagnosed_;
 }

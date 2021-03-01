@@ -14,6 +14,7 @@
 #include "AdherenceCategory.h"
 #include "PrepParameters.h"
 #include "JailParameters.h"
+#include "Stats.h"
 
 namespace TransModel {
 
@@ -103,6 +104,8 @@ public:
         return diagnoser_;
     }
 
+    void setDiagnosed(double tick);
+    
     void setArtAdherence(AdherenceData data) {
         art_adherence_ = data;
     }
