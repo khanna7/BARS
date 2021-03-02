@@ -1321,15 +1321,6 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 
             doJailCheck(person, tick, prob_with_cji, prob);
 
-            if (person->isOnART(true)) { //care disruption 
-            // if (person->isOnART()) {
-                ++stats->currentCounts().on_art;
-                if (person->isSubstanceUser(SubstanceUseType::METH)) ++stats->currentCounts().on_art_meth;
-                if (person->isSubstanceUser(SubstanceUseType::CRACK)) ++stats->currentCounts().on_art_crack;
-                if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) ++stats->currentCounts().on_art_ecstasy;
-                
-            }
-
             if (crossed_thresh) {
                 // crossed_thresh means Person crossed from less than to greater than equal
                 // age category so testing and adherece parameters need to be updated to
