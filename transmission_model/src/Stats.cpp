@@ -47,10 +47,14 @@ void DeathEvent::writeTo(FileOutput& out) {
     out << tick << "," << p_id << "," << age << "," << art_status << "," << cause << "\n";
 }
 
-const std::string Biomarker::header("\"tick\",\"p_id\",\"viral_load\",\"cd4_count\",\"art_status\",\"art_forced_off\",\"days_since_infection\",\"in_jail\",\"days_since_release\"");
+const std::string Biomarker::header("\"tick\",\"p_id\",\"viral_load\",\"cd4_count\",\"art_status\",\"art_forced_off\",\"days_since_infection\",\"never_jailed\",\"in_jail\",\"days_since_release\"");
 
 void Biomarker::writeTo(FileOutput& out) {
-    out << tick << "," << p_id << "," << viral_load << "," << cd4 << "," << on_art << "," << art_forced_off << "," << days_since_infection << "," << in_jail << "," << days_since_release << "\n";
+    if (never_jailed) {
+        out << tick << "," << p_id << "," << viral_load << "," << cd4 << "," << on_art << "," << art_forced_off << "," << days_since_infection << "," << never_jailed << "," << "NA" << "," << "NA" << "\n";
+    } else {
+        out << tick << "," << p_id << "," << viral_load << "," << cd4 << "," << on_art << "," << art_forced_off << "," << days_since_infection << "," << never_jailed << "," << in_jail << "," << days_since_release << "\n";
+    }
 }
 
 const std::string InfectionEvent::header(
@@ -474,6 +478,7 @@ void Stats::recordBiomarker(double time, const PersonPtr& person) {
     marker.viral_load = person->infectionParameters().viral_load;
     marker.art_forced_off = person->infectionParameters().art_forced_off;
     marker.days_since_infection = person->infectionParameters().time_since_infection;
+    marker.never_jailed = !person->hasPreviousJailHistory();
     marker.in_jail = person->isJailed();
     marker.days_since_release = time - person->timeOfRelease();
     biomarker_writer->addOutput(marker);
