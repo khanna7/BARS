@@ -60,8 +60,23 @@ Jail::Jail(Network<Person>* net, JailInfRateCalculator calc) :
 Jail::~Jail() {}
 
 double get_jail_time(PersonPtr person) {
-    std::string suffix = person->isPolystimulantUser() ? PSU_SUFFIX : "";
-    //double serving_time_prob = Parameters::instance()->getDoubleParameter(JAIL_SERVING_TIME_MEAN_PROB);
+    std::string suffix = "";
+    if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::CRACK) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+      suffix = METH_SUFFIX + CRACK_SUFFIX + ECSTASY_SUFFIX;
+    } else if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::CRACK)) {
+      suffix = METH_SUFFIX + CRACK_SUFFIX;
+    } else if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+      suffix = METH_SUFFIX + ECSTASY_SUFFIX;
+    } else if (person->isSubstanceUser(SubstanceUseType::CRACK) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+      suffix = CRACK_SUFFIX + ECSTASY_SUFFIX;
+    } else if (person->isSubstanceUser(SubstanceUseType::METH)) {
+      suffix = METH_SUFFIX;
+    } else if (person->isSubstanceUser(SubstanceUseType::CRACK)) {
+      suffix = CRACK_SUFFIX;
+    } else if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+      suffix = ECSTASY_SUFFIX;
+    }
+
     double serving_time_mean = Parameters::instance()->getDoubleParameter(JAIL_SERVING_TIME_MEAN + suffix);
     GeometricDistribution jail_term_gen = GeometricDistribution((1/serving_time_mean), 0);
     double jail_serving_time = jail_term_gen.next();

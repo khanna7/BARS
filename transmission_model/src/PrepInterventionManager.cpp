@@ -70,7 +70,8 @@ void PrepIntervention::putOnPrep(double tick, std::shared_ptr<Person>& person, P
     double stop_time = tick + delay;
     person->goOnPrep(tick, stop_time);
     Stats* stats = Stats::instance();
-    stats->recordPREPEvent(tick, person->id(), static_cast<int>(cause));
+    stats->recordPREPEvent(tick, person->id(), static_cast<int>(cause), person->isSubstanceUser(SubstanceUseType::METH),
+                           person->isSubstanceUser(SubstanceUseType::CRACK), person->isSubstanceUser(SubstanceUseType::ECSTASY));
     stats->personDataRecorder()->recordPREPStart(person, tick);
     runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
 }

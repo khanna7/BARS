@@ -1,11 +1,11 @@
 global.random.seed=42
 
 #stop.at = 36500 # 100 years
-#stop.at = 3650 # 10 years
+stop.at = 3650 # 10 years
 #stop.at = 1000
 #stop.at = 7300 # 20 years
 #stop.at = 730
-stop.at = 500
+#stop.at = 500
 
 net.variable.name = nw
 casual.net.variable.name = n_cas
@@ -14,7 +14,7 @@ r.parameters.non.derived = ../r/common/chi_params_nonderived.R
 r.parameters.derived = ../r/common/chi_params_derived.R
 
 r.file = ../r/network_model/transmission_model_tergmlite.R
-initial.data.file = ../r/network_model/chi_net_n5000.RData
+initial.data.file = ../r/network_model/cas_net_n10000.RData
 
 # if these properties are not commented out
 # then these networks will replace existing ones

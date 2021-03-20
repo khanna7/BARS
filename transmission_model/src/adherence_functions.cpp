@@ -34,8 +34,14 @@ void initialize_art_adherence(std::shared_ptr<Person> person, double tick, Adher
 
 void initialize_art_adherence(std::shared_ptr<Person> person, double first_art_at_tick) {
     std::string suffix = "";
-    if (person->isPolystimulantUser()) {
-        suffix = PSU_SUFFIX;
+    if (person->isSubstanceUser(SubstanceUseType::METH)) {
+        suffix += METH_SUFFIX;
+    }
+    if (person->isSubstanceUser(SubstanceUseType::CRACK)) {
+        suffix += CRACK_SUFFIX;
+    }
+    if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+        suffix += ECSTASY_SUFFIX;
     }
 
     double always = Parameters::instance()->getDoubleParameter(ART_PROP_ALWAYS_ADHERENT + suffix);

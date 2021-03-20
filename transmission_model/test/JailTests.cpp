@@ -52,13 +52,14 @@ protected:
 
 TEST_F(JailTests, TestJailNetworkRetention) {
     Diagnoser diagnoser(5, 0, 1);
+    set<SubstanceUseType> su;
     
-    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p3 = make_shared<Person>(3, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p4 = make_shared<Person>(4, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p3 = make_shared<Person>(3, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p4 = make_shared<Person>(4, 10, true, su, 0, 1, diagnoser);
 
-    Network<Person> net(false);
+    Network<Person> net;
     net.addVertex(p1);
     net.addVertex(p2);
     net.addVertex(p3);
@@ -117,13 +118,14 @@ TEST_F(JailTests, TestJailNetworkRetention) {
 
 TEST_F(JailTests, TestJailCareDistruption) {
     Diagnoser diagnoser(5, 0, 1);
+    set<SubstanceUseType> su;
     
-    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p3 = make_shared<Person>(3, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p4 = make_shared<Person>(4, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p3 = make_shared<Person>(3, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p4 = make_shared<Person>(4, 10, true, su, 0, 1, diagnoser);
 
-    Network<Person> net(false);
+    Network<Person> net;
     net.addVertex(p1);
     net.addVertex(p2);
     net.addVertex(p3);
@@ -177,13 +179,14 @@ TEST_F(JailTests, TestJailCareDistruption) {
 
 TEST_F(JailTests, TestMultiJailStayCareDisruption) {
     Diagnoser diagnoser(5, 0, 1);
+    set<SubstanceUseType> su;
     
-    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p3 = make_shared<Person>(3, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p4 = make_shared<Person>(4, 10, true, true, 0, 1, diagnoser);
+    PersonPtr p1 = make_shared<Person>(1, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p3 = make_shared<Person>(3, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p4 = make_shared<Person>(4, 10, true, su, 0, 1, diagnoser);
 
-    Network<Person> net(false);
+    Network<Person> net;
     net.addVertex(p1);
     net.addVertex(p2);
     net.addVertex(p3);
@@ -314,9 +317,11 @@ TEST_F(JailTests, TestInfRateCalc) {
 TEST_F(JailTests, TestJailInfection) {
 
     Diagnoser diagnoser(5, 0, 1);
-    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
-    Network<Person> net(false);
+    set<SubstanceUseType> su;
+    
+    PersonPtr p1 = make_shared<Person>(1, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, su, 0, 1, diagnoser);
+    Network<Person> net;
     net.addVertex(p1);
     net.addVertex(p2);
     net.addEdge(p2, p1);
@@ -345,9 +350,11 @@ TEST_F(JailTests, TestJailInfection) {
 
 TEST_F(JailTests, TestJailInmateAddRemove) {
     Diagnoser diagnoser(5, 0, 1);
-    PersonPtr p1 = make_shared<Person>(1, 10, true, true, 0, 1, diagnoser);
-    PersonPtr p2 = make_shared<Person>(2, 10, true, true, 0, 1, diagnoser);
-    Network<Person> net(false);
+    set<SubstanceUseType> su;
+    
+    PersonPtr p1 = make_shared<Person>(1, 10, true, su, 0, 1, diagnoser);
+    PersonPtr p2 = make_shared<Person>(2, 10, true, su, 0, 1, diagnoser);
+    Network<Person> net;
     net.addVertex(p1);
     net.addVertex(p2);
     net.addEdge(p2, p1);
@@ -369,7 +376,7 @@ TEST_F(JailTests, TestJailInmateAddRemove) {
 }
 
 TEST_F(JailTests, TestInitJailInfCalc) {
-    Network<Person> net(false);
+    Network<Person> net;
     
     JailInfRateCalculator calc(90, 0.5, 0.000009);
     Rcpp::List network = RInstance::rptr->parseEval("readRDS(\"../test_data/main_network_500.RDS\")");

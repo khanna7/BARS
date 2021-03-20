@@ -71,6 +71,14 @@ PartnershipEvent::PEventType cod_to_PEvent(CauseOfDeath cod) {
         return PartnershipEvent::PEventType::ENDED_DEATH_INFECTION;
     else if (cod == CauseOfDeath::ASM_CD4) 
         return PartnershipEvent::PEventType::ENDED_DEATH_ASM_CD4;
+    else if (cod == CauseOfDeath::ASM_METH)
+        return PartnershipEvent::PEventType::ENDED_DEATH_ASM_METH;
+    else if (cod == CauseOfDeath::ASM_CD4_METH)
+        return PartnershipEvent::PEventType::ENDED_DEATH_ASM_CD4_METH;
+    else if (cod == CauseOfDeath::ASM_CRACK)
+        return PartnershipEvent::PEventType::ENDED_DEATH_ASM_CRACK;
+    else if (cod == CauseOfDeath::ASM_CD4_CRACK)
+        return PartnershipEvent::PEventType::ENDED_DEATH_ASM_CD4_CRACK;
     else {
         throw std::invalid_argument("No PEvent for specified CauseOfDeath");
     }
@@ -82,7 +90,10 @@ struct PersonToVALForSimulate {
 
         return List::create(Named("na") = false, Named("vertex_names") = idx, Named("role_main") = v->steady_role(),
                 Named("role_casual") = v->casual_role(), Named("inf.status") = v->isInfected(),
-                Named("diagnosed") = v->isDiagnosed(), Named("age") = v->age(), Named("sqrt.age") = sqrt(v->age()));
+                Named("diagnosed") = v->isDiagnosed(), Named("age") = v->age(), Named("sqrt.age") = sqrt(v->age()),
+                Named("crack.user") = v->isSubstanceUser(SubstanceUseType::CRACK),
+                Named("meth.user") = v->isSubstanceUser(SubstanceUseType::METH),
+                Named("ecstasy.user") = v->isSubstanceUser(SubstanceUseType::ECSTASY));
     }
 };
 
@@ -600,52 +611,71 @@ void init_random_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& v
     
 }
 
-void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
-    // Add the base
-    PrepUptakeData lt_base_data, gte_base_data, polystimulant_user_base_data;
-    lt_base_data.years_to_increment = polystimulant_user_base_data.years_to_increment = 0;
-    gte_base_data.years_to_increment  = 0;
-    lt_base_data.increment = polystimulant_user_base_data.increment = 0;
-    gte_base_data.increment = 0;
-
-    lt_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
-    gte_base_data.use =  Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
-    lt_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-    gte_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
-
+void init_prep_uptake_data(PrepUptakeData &data, std::string suffix) {
+    data.years_to_increment = 0;
+    data.increment = 0;
+    
+    data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP + suffix);
+    data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB + suffix);
+    
     bool balanced = Parameters::instance()->getStringParameter(DEFAULT_PREP_BALANCED_UNBALANCED) == BALANCED;
     if (balanced) {
-        lt_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-        gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
+        data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB + suffix);
     } else {
-        lt_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
-        gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE);
+        data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB + suffix);
     }
+}
 
-    polystimulant_user_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_PSU);
-    polystimulant_user_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_PSU);
-
-    if (balanced) {
-        polystimulant_user_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_PSU);
-    } else {
-        polystimulant_user_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
-    }
-
-    // these are immutable so we could reuse them, but they may not remain so in the future
+void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
+    // Add the base
+    PrepUptakeData lt_base_data, gte_base_data,
+            meth_base_data, crack_base_data, ecstasy_base_data,
+            meth_crack_base_data, meth_ecstasy_base_data, crack_ecstasy_base_data,
+            meth_crack_ecstasy_base_data;
+    
+    init_prep_uptake_data(lt_base_data, LT_SUFFIX);
+    init_prep_uptake_data(gte_base_data, GTE_SUFFIX);
+    init_prep_uptake_data(meth_base_data, METH_SUFFIX);
+    init_prep_uptake_data(crack_base_data, CRACK_SUFFIX);
+    init_prep_uptake_data(ecstasy_base_data, ECSTASY_SUFFIX);
+    init_prep_uptake_data(meth_crack_base_data, METH_SUFFIX + CRACK_SUFFIX);
+    init_prep_uptake_data(meth_ecstasy_base_data, METH_SUFFIX + ECSTASY_SUFFIX);
+    init_prep_uptake_data(crack_ecstasy_base_data, CRACK_SUFFIX + ECSTASY_SUFFIX);
+    init_prep_uptake_data(meth_crack_ecstasy_base_data, METH_SUFFIX + CRACK_SUFFIX + ECSTASY_SUFFIX);
+    
+    // these are immutable so we can reuse them
     std::shared_ptr<LTAgePrepFilter> lt_base = std::make_shared<LTAgePrepFilter>(age_threshold);
     std::shared_ptr<GTEAgePrepFilter> gte_base = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
     std::shared_ptr<NonSubstanceUsePrepFilter> non_sustance_user_base = std::make_shared<NonSubstanceUsePrepFilter>();
-    std::shared_ptr<PolystimulantUsePrepFilter> polystimulant_user_base = std::make_shared<PolystimulantUsePrepFilter>();
+    std::shared_ptr<MethPrepFilter> meth_base = std::make_shared<MethPrepFilter>();
+    std::shared_ptr<CrackPrepFilter> crack_base = std::make_shared<CrackPrepFilter>();
+    std::shared_ptr<EcstasyPrepFilter> ecstasy_base = std::make_shared<EcstasyPrepFilter>();
+    std::shared_ptr<MethCrackPrepFilter> meth_crack_base = std::make_shared<MethCrackPrepFilter>();
+    std::shared_ptr<MethEcstasyPrepFilter> meth_ecstasy_base = std::make_shared<MethEcstasyPrepFilter>();
+    std::shared_ptr<CrackEcstasyPrepFilter> crack_ecstasy_base = std::make_shared<CrackEcstasyPrepFilter>();
+    std::shared_ptr<MethCrackEcstasyPrepFilter> meth_crack_ecstasy_base = std::make_shared<MethCrackEcstasyPrepFilter>();
 
     std::vector<std::shared_ptr<PrepFilter>> lt_filters_base({lt_base, non_sustance_user_base});
     std::vector<std::shared_ptr<PrepFilter>> gte_filters_base({gte_base, non_sustance_user_base});
-    std::vector<std::shared_ptr<PrepFilter>> polystimulant_user_filters_base({polystimulant_user_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_user_filters_base({meth_base});
+    std::vector<std::shared_ptr<PrepFilter>> crack_user_filters_base({crack_base});
+    std::vector<std::shared_ptr<PrepFilter>> ecstasy_user_filters_base({ecstasy_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_crack_user_filters_base({meth_crack_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_ecstasy_user_filters_base({meth_ecstasy_base});
+    std::vector<std::shared_ptr<PrepFilter>> crack_ecstasy_user_filters_base({crack_ecstasy_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_crack_ecstasy_user_filters_base({meth_crack_ecstasy_base});
 
     vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_filters_base));
     vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_filters_base));
-    vec.push_back(std::make_shared<BasePrepIntervention>(polystimulant_user_base_data, polystimulant_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(meth_base_data, meth_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(crack_base_data, crack_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(ecstasy_base_data, ecstasy_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(meth_crack_base_data, meth_crack_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(meth_ecstasy_base_data, meth_ecstasy_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(crack_ecstasy_base_data, crack_ecstasy_user_filters_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(meth_crack_ecstasy_base_data, meth_crack_ecstasy_user_filters_base));
 
-    // Add the intervention
+    /*// Add the intervention
     PrepUptakeData lt_data, gte_data;
     lt_data.use = lt_base_data.use;
     gte_data.use = gte_base_data.use;
@@ -665,57 +695,16 @@ void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& 
     std::shared_ptr<GTEAgePrepFilter> gte = std::make_shared<GTEAgePrepFilter>(age_threshold, max_age);
     std::shared_ptr<NonSubstanceUsePrepFilter> non_sustance_user = std::make_shared<NonSubstanceUsePrepFilter>();
 
-    std::vector<std::shared_ptr<PrepFilter>> lt_filters({lt_base, non_sustance_user});
-    std::vector<std::shared_ptr<PrepFilter>> gte_filters({gte_base, non_sustance_user});
+    std::vector<std::shared_ptr<PrepFilter>> lt_filters({lt, non_sustance_user});
+    std::vector<std::shared_ptr<PrepFilter>> gte_filters({gte, non_sustance_user});
 
     vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt_filters));
     vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte_filters));
 
     std::cout << "Random Default Selection lt: " << lt_data << "\n";
-    std::cout << "Random Default Selection gte: " << gte_data << "\n";
+    std::cout << "Random Default Selection gte: " << gte_data << "\n";*/
 
-    // PrepUseData data;
-    // data.base_use_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
-    // data.base_use_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
-    // data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-    // data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
-
-    // data.increment_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_LT);
-    // data.increment_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_GTE);
-    // data.years_to_increase = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARS_TO_INCREMENT);
-
-    // bool balanced = Parameters::instance()->getStringParameter(DEFAULT_PREP_BALANCED_UNBALANCED) == BALANCED;
-    // if (balanced) {
-    //     data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-    //     data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
-    // } else {
-    //     data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
-    //     data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE);
-    // }
-
-    // std::cout << data << std::endl;
-
-    // return std::make_shared<IncrementingPrepUptakeManager>(data, age_threshold);
 }
-
-// std::shared_ptr<ProportionalPrepUptakeManager> create_yor_intervention(float age_threshold) {
-//     PrepUseData data;
-
-//     data.base_use_yor = Parameters::instance()->getDoubleParameter(YOR_PREP_USE_PROP);
-//     // the cessation rnd generator uses lte and gte but that's not applicable for yor, so we
-//     // just make them the same.
-//     data.daily_stop_prob_lt =  Parameters::instance()->getDoubleParameter(YOR_PREP_DAILY_STOP_PROB);
-//     data.daily_stop_prob_gte =  Parameters::instance()->getDoubleParameter(YOR_PREP_DAILY_STOP_PROB);
-//     data.alpha = Parameters::instance()->getDoubleParameter(YOR_PREP_ALPHA);
-//     data.increment_yor = Parameters::instance()->getDoubleParameter(YOR_PREP_YEARLY_INCREMENT);
-//     data.years_to_increase = Parameters::instance()->getDoubleParameter(YOR_PREP_YEARS_TO_INCREMENT);
-//     data.yor_old_extra = Parameters::instance()->getDoubleParameter(YOR_ADDITIONAL_PREP_GTE);
-//     data.yor_young_extra = Parameters::instance()->getDoubleParameter(YOR_ADDITIONAL_PREP_LT);
-
-//     std::cout << data << std::endl;
-
-//     return std::make_shared<ProportionalPrepUptakeManager>(data, age_threshold);
-// }
 
 void initialize_prep_interventions(PrepInterventionManager& prep_manager) {
 
@@ -859,6 +848,33 @@ RangeWithProbability create_ASM_runner() {
     return creator.createRangeWithProbability();
 }
 
+RangeWithProbability create_ASM_runner_stimulants(SubstanceUseType type) {
+    RangeWithProbabilityCreator creator;
+    vector<string> keys;
+    Parameters::instance()->getKeys(ASM_PREFIX, keys);
+    double sum = 0.0, avg = 0.0, ratio = 0.0;
+    int n = 0;
+    double min = 0.0, max = 0.0;
+    for (auto& key : keys) {
+        RangeWithProbabilityCreator::parseRangeString(key, &min, &max);
+        if (min < 35) {
+            double prob = Parameters::instance()->getDoubleParameter(key);
+            sum += prob;
+            n++;
+        }
+    }
+    avg = sum / n;
+    double stim_rate = 0.0;
+    if (type == SubstanceUseType::METH) stim_rate = Parameters::instance()->getDoubleParameter(MORTALITY_RATE_METH);
+    else if (type == SubstanceUseType::CRACK) stim_rate = Parameters::instance()->getDoubleParameter(MORTALITY_RATE_CRACK);
+    ratio = stim_rate / avg;
+    for (auto& key : keys) {
+        double prob = Parameters::instance()->getDoubleParameter(key);
+        creator.addBin(key, prob * ratio);
+    }
+    return creator.createRangeWithProbability();
+}
+
 RangeWithProbability create_cd4m_runner(const std::string& prefix) {
     RangeWithProbabilityCreator creator;
     vector<string> keys;
@@ -889,7 +905,7 @@ RangeWithProbability create_cd4m_runner(const std::string& prefix) {
 // }
 
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
-        R(ri), net(false), population{}, trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
+        R(ri), net(), population{}, trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
                 create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
                 0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, trans_params { }, art_lag_calculator {
                 create_art_lag_calc() },  
@@ -898,7 +914,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
                     Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_DEFAULT))),
                 person_creator { trans_runner, Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator, &jail}, prep_manager(),	
                 condom_assigner { create_condom_use_assigner() },
-                asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)}, 
+                asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)},
+                asm_runner_meth { create_ASM_runner_stimulants(SubstanceUseType::METH) },
+                asm_runner_crack { create_ASM_runner_stimulants(SubstanceUseType::CRACK) },
                 age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}
                  {
 
@@ -959,7 +977,8 @@ void Model::initPrepCessation() {
             double stop_time = person->prepParameters().stopTime();
             runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new PrepCessationEvent(person, stop_time)));
             double start_time = person->prepParameters().startTime();
-            Stats::instance()->recordPREPEvent(start_time, person->id(), static_cast<int>(PrepStatus::ON));
+            Stats::instance()->recordPREPEvent(start_time, person->id(), static_cast<int>(PrepStatus::ON), person->isSubstanceUser(SubstanceUseType::METH),
+                                               person->isSubstanceUser(SubstanceUseType::CRACK), person->isSubstanceUser(SubstanceUseType::ECSTASY));
             Stats::instance()->personDataRecorder()->recordPREPStart(person, start_time);
         }
     }
@@ -1137,7 +1156,10 @@ void Model::updateJailStats(Stats* stats, PersonPtr person) {
     }
 
     ++stats->currentCounts().incarcerated;
-
+    if (person->isSubstanceUser(SubstanceUseType::METH)) ++stats->currentCounts().incarcerated_meth;
+    if (person->isSubstanceUser(SubstanceUseType::CRACK)) ++stats->currentCounts().incarcerated_crack;
+    if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) ++stats->currentCounts().incarcerated_ecstasy;
+    
     if (person->hasPreviousJailHistory()) {
         ++stats->currentCounts().incarcerated_recidivist;
     }
@@ -1175,8 +1197,20 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     double incarceration_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB);
     //double incarceration_prob_prev = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_PREV);
     double incarceration_with_cji_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB);
-    double incarceration_prob_psu = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + PSU_SUFFIX);
-    double incarceration_with_cji_prob_psu = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + PSU_SUFFIX);
+    double incarceration_prob_meth = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + METH_SUFFIX);
+    double incarceration_prob_crack = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + CRACK_SUFFIX);
+    double incarceration_prob_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + ECSTASY_SUFFIX);
+    double incarceration_prob_meth_crack = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + METH_SUFFIX + CRACK_SUFFIX);
+    double incarceration_prob_meth_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + METH_SUFFIX + ECSTASY_SUFFIX);
+    double incarceration_prob_crack_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + CRACK_SUFFIX + ECSTASY_SUFFIX);
+    double incarceration_prob_meth_crack_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB + METH_SUFFIX + CRACK_SUFFIX + ECSTASY_SUFFIX);
+    double incarceration_with_cji_prob_meth = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + METH_SUFFIX);
+    double incarceration_with_cji_prob_crack = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + CRACK_SUFFIX);
+    double incarceration_with_cji_prob_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + ECSTASY_SUFFIX);
+    double incarceration_with_cji_prob_meth_crack = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + METH_SUFFIX + CRACK_SUFFIX);
+    double incarceration_with_cji_prob_meth_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + METH_SUFFIX + ECSTASY_SUFFIX);
+    double incarceration_with_cji_prob_crack_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + CRACK_SUFFIX + ECSTASY_SUFFIX);
+    double incarceration_with_cji_prob_meth_crack_ecstasy = Parameters::instance()->getDoubleParameter(INCARCERATION_WITH_CJI_PROB + METH_SUFFIX + CRACK_SUFFIX + ECSTASY_SUFFIX);
     for (auto iter = population.begin(); iter != population.end(); ) {
         PersonPtr person = (*iter);
         // update viral load, cd4
@@ -1206,7 +1240,13 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             for (auto edge : edges) {
                 //cout << edge->id() << "," << static_cast<int>(cod) << "," << static_cast<int>(pevent_type) << endl;
                 Stats::instance()->recordPartnershipEvent(tick, edge->id(), edge->v1()->id(), edge->v2()->id(),
-                        pevent_type, edge->type());
+                                                          edge->v1()->isSubstanceUser(SubstanceUseType::METH),
+                                                          edge->v2()->isSubstanceUser(SubstanceUseType::METH),
+                                                          edge->v1()->isSubstanceUser(SubstanceUseType::CRACK),
+                                                          edge->v2()->isSubstanceUser(SubstanceUseType::CRACK),
+                                                          edge->v1()->isSubstanceUser(SubstanceUseType::ECSTASY),
+                                                          edge->v2()->isSubstanceUser(SubstanceUseType::ECSTASY),
+                                                          pevent_type, edge->type());
             }
             net.removeVertex(person);
             iter = population.erase(iter);
@@ -1222,11 +1262,19 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 if (person->isOnPrep(true)) {  //care disruption
                 //if (person->isOnPrep()) {
                     ++stats->currentCounts().on_prep;
+                    if (person->isSubstanceUser(SubstanceUseType::METH)) ++stats->currentCounts().on_prep_meth;
+                    if (person->isSubstanceUser(SubstanceUseType::CRACK)) ++stats->currentCounts().on_prep_crack;
+                    if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) ++stats->currentCounts().on_prep_ecstasy;
                 }
                 uninfected.push_back(person);
 
             } else {
-
+                if (person->isOnART(true)) {  //care disruption
+                    ++stats->currentCounts().on_art;
+                    if (person->isSubstanceUser(SubstanceUseType::METH)) ++stats->currentCounts().on_art_meth;
+                    if (person->isSubstanceUser(SubstanceUseType::CRACK)) ++stats->currentCounts().on_art_crack;
+                    if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) ++stats->currentCounts().on_art_ecstasy;
+                }
                 if ( person->infectionParameters().time_since_infection >= time_to_full_supp) {
                     ++inf_count;
                     if (person->infectionParameters().viral_load < VS_VL_COUNT) {
@@ -1242,15 +1290,36 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                     }
                 }
             }
-            
-            double prob = person->isPolystimulantUser() ? incarceration_prob_psu : incarceration_prob;
-            double prob_with_cji = person->isPolystimulantUser() ? incarceration_with_cji_prob_psu : incarceration_with_cji_prob;
-            doJailCheck(person, tick, prob_with_cji, prob);
 
-            if (person->isOnART(true)) { //care disruption 
-            // if (person->isOnART()) {
-                ++stats->currentCounts().on_art;
+            double prob;
+            double prob_with_cji;
+            if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::CRACK) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+              prob = incarceration_prob_meth_crack_ecstasy;
+              prob_with_cji = incarceration_with_cji_prob_meth_crack_ecstasy;
+            } else if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::CRACK)) {
+              prob = incarceration_prob_meth_crack;
+              prob_with_cji = incarceration_with_cji_prob_meth_crack;
+            } else if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+              prob = incarceration_prob_meth_ecstasy;
+              prob_with_cji = incarceration_with_cji_prob_meth_ecstasy;
+            } else if (person->isSubstanceUser(SubstanceUseType::CRACK) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+              prob = incarceration_prob_crack_ecstasy;
+              prob_with_cji = incarceration_with_cji_prob_crack_ecstasy;
+            } else if (person->isSubstanceUser(SubstanceUseType::METH)) {
+              prob = incarceration_prob_meth;
+              prob_with_cji = incarceration_with_cji_prob_meth;
+            } else if (person->isSubstanceUser(SubstanceUseType::CRACK)) {
+              prob = incarceration_prob_crack;
+              prob_with_cji = incarceration_with_cji_prob_crack;
+            } else if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+              prob = incarceration_prob_ecstasy;
+              prob_with_cji = incarceration_with_cji_prob_ecstasy;
+            } else {
+              prob = incarceration_prob;
+              prob_with_cji = incarceration_with_cji_prob;
             }
+
+            doJailCheck(person, tick, prob_with_cji, prob);
 
             if (crossed_thresh) {
                 // crossed_thresh means Person crossed from less than to greater than equal
@@ -1371,26 +1440,55 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
     }
 
     if (cod == CauseOfDeath::NONE) { 
-        double increase = 0;
+        double increase_art = 0;
         if (person->isOnART(true)) { //care disruption
         //if (person->isOnART()) {
-            increase = cd4m_treated_runner.lookup(person->infectionParameters().cd4_count);
+            increase_art = cd4m_treated_runner.lookup(person->infectionParameters().cd4_count);
         }
-
-        if (asm_runner.run(person->age(), increase, Random::instance()->nextDouble())) {
-            // asm deaths
-            ++death_count;
-            Stats::instance()->personDataRecorder()->recordDeath(person, tick);
-            if (increase > 0) {
-                ++Stats::instance()->currentCounts().cd4m_deaths;
-                Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4);
-                cod = CauseOfDeath::ASM_CD4;
-            } else {
-                ++Stats::instance()->currentCounts().asm_deaths;
-                Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
-                cod = CauseOfDeath::ASM;
+        if (person->isSubstanceUser(SubstanceUseType::METH)) {
+            if (asm_runner_meth.run(person->age(), increase_art, Random::instance()->nextDouble())) {
+                ++death_count;
+                Stats::instance()->personDataRecorder()->recordDeath(person, tick);
+                if (increase_art > 0) {
+                    ++Stats::instance()->currentCounts().cd4m_meth_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4_METH);
+                    cod = CauseOfDeath::ASM_CD4_METH;
+                } else {
+                    ++Stats::instance()->currentCounts().asm_meth_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_METH);
+                    cod = CauseOfDeath::ASM_METH;
+                }
             }
-        } 
+        } else if (person->isSubstanceUser(SubstanceUseType::CRACK)) {
+            if (asm_runner_crack.run(person->age(), increase_art, Random::instance()->nextDouble())) {
+                ++death_count;
+                Stats::instance()->personDataRecorder()->recordDeath(person, tick);
+                if (increase_art > 0) {
+                    ++Stats::instance()->currentCounts().cd4m_crack_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4_CRACK);
+                    cod = CauseOfDeath::ASM_CD4_CRACK;
+                } else {
+                    ++Stats::instance()->currentCounts().asm_crack_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CRACK);
+                    cod = CauseOfDeath::ASM_CRACK;
+                }
+            }
+        } else {
+            if (asm_runner.run(person->age(), increase_art, Random::instance()->nextDouble())) {
+                // asm deaths
+                ++death_count;
+                Stats::instance()->personDataRecorder()->recordDeath(person, tick);
+                if (increase_art > 0) {
+                    ++Stats::instance()->currentCounts().cd4m_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM_CD4);
+                    cod = CauseOfDeath::ASM_CD4;
+                } else {
+                    ++Stats::instance()->currentCounts().asm_deaths;
+                    Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
+                    cod = CauseOfDeath::ASM;
+                }
+            }
+        }
     }
 
     person->setDead(cod != CauseOfDeath::NONE);

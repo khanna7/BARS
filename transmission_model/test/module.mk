@@ -5,7 +5,8 @@ SRC = NetworkTests.cpp \
     RTests.cpp \
     CreatorTests.cpp \
     MiscTests.cpp \
-    JailTests.cpp
+    JailTests.cpp \
+    SubstanceUseTests.cpp
     
 #MiscTests.cpp \
     

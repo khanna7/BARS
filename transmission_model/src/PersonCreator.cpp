@@ -53,10 +53,19 @@ int calculate_role(int network_type) {
 
 PersonPtr PersonCreator::operator()(double tick, float age) {
     int status = (int) repast::Random::instance()->getGenerator(CIRCUM_STATUS_BINOMIAL)->next();
-    bool polystimulant_user = repast::Random::instance()->nextDouble() >= 0.5;
+    set<SubstanceUseType> su;
+    double meth_prop = Parameters::instance()->getDoubleParameter(METH_PROP);
+    double crack_prop = Parameters::instance()->getDoubleParameter(CRACK_PROP);
+    double ecstasy_prop = Parameters::instance()->getDoubleParameter(ECSTASY_PROP);
+    
+    repast::Random::instance()->nextDouble();
+    if (repast::Random::instance()->nextDouble() < meth_prop) su.insert(SubstanceUseType::METH);
+    if (repast::Random::instance()->nextDouble() < crack_prop) su.insert(SubstanceUseType::CRACK);
+    if (repast::Random::instance()->nextDouble() < ecstasy_prop) su.insert(SubstanceUseType::ECSTASY);
+
     double size_of_timestep = Parameters::instance()->getDoubleParameter(SIZE_OF_TIMESTEP);
     Diagnoser diagnoser(detection_window_, 0);
-    PersonPtr person = std::make_shared<Person>(id++, age, status == 1, polystimulant_user, calculate_role(STEADY_NETWORK_TYPE),
+    PersonPtr person = std::make_shared<Person>(id++, age, status == 1, su, calculate_role(STEADY_NETWORK_TYPE),
             calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
     testing_configurator.configurePerson(person, size_of_timestep);
 
@@ -70,16 +79,24 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 PersonPtr PersonCreator::createPerson(Rcpp::List& val) {
     float age = as<float>(val["age"]);
     bool circum_status = as<bool>(val["circum.status"]);
-    bool polystimulant_user = repast::Random::instance()->nextDouble() >= 0.5;
+    bool meth_user = as<bool>(val["meth.user"]);
+    bool crack_user = as<bool>(val["crack.user"]);
+    bool ecstasy_user = as<bool>(val["ecstasy.user"]);
     int role_main = as<int>(val["role_main"]);
     int role_casual = role_main;
     if (val.containsElementNamed("role_casual")) {
         role_casual = as<int>(val["role_casual"]);
     }
+
+    std::set<SubstanceUseType> su;
+    if (meth_user) su.insert(SubstanceUseType::METH);
+    if (crack_user) su.insert(SubstanceUseType::CRACK);
+    if (ecstasy_user) su.insert(SubstanceUseType::ECSTASY);
+
     //float next_test_at = tick + as<double>(val["time.until.next.test"]);
     // float detection_window,  unsigned int test_count, test_prob
     Diagnoser diagnoser(detection_window_, as<unsigned int>(val["number.of.tests"]), 0);
-    PersonPtr person = std::make_shared<Person>(id++, age, circum_status, polystimulant_user, role_main, role_casual, diagnoser);
+    PersonPtr person = std::make_shared<Person>(id++, age, circum_status, su, role_main, role_casual, diagnoser);
     return person;
 }
 
@@ -162,7 +179,8 @@ void PersonCreator::initUninfectedPerson(PersonPtr person, Rcpp::List& val, doub
     PrepStatus status = as<bool>(val["prep.status"]) ? PrepStatus::ON : PrepStatus::OFF;
     if (status == PrepStatus::ON && model_tick > 0) {
         // if model_tick == 0 then event will be recorded in Model::initPrepCessation
-        Stats::instance()->recordPREPEvent(model_tick, person->id(), static_cast<int>(PrepStatus::ON));
+        Stats::instance()->recordPREPEvent(model_tick, person->id(), static_cast<int>(PrepStatus::ON), person->isSubstanceUser(SubstanceUseType::METH),
+                                           person->isSubstanceUser(SubstanceUseType::CRACK), person->isSubstanceUser(SubstanceUseType::ECSTASY));
     }
 
     // same values as when a person is created from scratch

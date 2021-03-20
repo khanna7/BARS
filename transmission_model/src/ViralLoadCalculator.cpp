@@ -25,7 +25,7 @@ float ViralLoadCalculator::calculateViralLoadART(const InfectionParameters& infe
 }
 
 float ViralLoadCalculator::calculateViralLoad(const InfectionParameters& infection_params) {
-    if (infection_params.art_status) {
+    if (infection_params.art_status && !infection_params.art_forced_off) {
         // AK: (art.status[i] == 1 && (art.type[i] == 1 || art.type[i] == 4)
         return calculateViralLoadART(infection_params);
     } else {

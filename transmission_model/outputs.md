@@ -32,9 +32,15 @@ The aggregate data consist of various aggregate per time step stats (e.g. the to
 * infected_via_transmission: the total number of persons infected via transmission at that timestep
 * infected_via_transmission_N: the total number of persons of age N infected via transmission at that timestep. N is currently
 18 - 34 with one column for each age.
+* infected_via_transmission_meth: number of persons using meth infected via transmission at that timestep
+* infected_via_transmission_crack: number of persons using crack infected via transmission at that timestep
+* infected_via_transmission_ecstasy: number of persons using ecstasy infected via transmission at that timestep
 * infected_externally: the number of persons infected via external infection at that timestep
 * infected_external_N: the total number of persons of age N infected externally at that timestep. N is currently
 18 - 34 with one column for each age.
+* infected_externally_meth: number of persons using meth infected externally at that timestep
+* infected_externally_crack: number of persons using crack infected externally at that timestep
+* infected_externally_ecstasy: number of persons using ecstasy infected externally at that timestep
 * infected_at_entry: the number of persons who were infected when entering the model at that timestep.
 * infected_at_entry_N: the total number of persons of age N infected when entering the model at that timestep. N is currently
 18 - 34 with one column for each age.
@@ -52,7 +58,16 @@ network in the model at the end of the timestep
 * sd_casual_sex_without_condom: the number of sex acts between sero-discordant casual partners in which a condom was not used.
 * sc_casual_sex_with_condom: the number of sex acts between sero-concordant casual partners in which a condom was used.
 * pop: the total number of population.
+* pop_meth: total number of meth users.
+* pop_crack: total number of crack users.
+* pop_ecstasy: total number of ecstasy users.
+* pop_infected_meth: total number of infected meth users
+* pop_infected_crack: total number of infected crack users
+* pop_infected_ecstasy: total number of infected ecstasy users
 * jail_pop: the total number of jail population.
+* jail_pop_meth: the total number of jail population who are meth users.
+* jail_pop_crack: the total number of jail population who are crack users.
+* jail_pop_ecstasy: the total number of jail population who are ecstasy users.
 * infected_jail_pop: the number of infected persons currently in jail.
 * incarcerated: the number of incarcerated persons.
 * incarcerated_recidivist: the number of recidivist incarcerated persons (those with previous CJI history).
@@ -67,9 +82,18 @@ network in the model at the end of the timestep
 * sc_steady_sex_with_condom: the number of sex acts between sero-concordant steady partners in which a condom was used.
 * sc_steady_sex_without_condom: the number of sex acts between sero-concordant steady partners in which a condom was not used.
 * on_art: the number of persons on ART at this time step.
+* on_art_meth: the number of persons on ART who use meth at this time step.
+* on_art_crack: the number of persons on ART who use crack at this time step.
+* on_art_ecstasy: the number of persons on ART who use ecstasy at this time step.
 * on_prep: the number of persons on PrEP at this time.
+* on_prep_meth: the number of persons on PrEP who use meth at this time.
+* on_prep_crack: the number of persons on PrEP who use crack at this time.
+* on_prep_ecstasy: the number of persons on PrEP who use ecstasy at this time.
 * vl_supp_per_positives: the number of virally suppressed individuals who have been infected for at least time.to.full.supp divided by the number of infected persons who have been infected for at least time.to.full.supp.
 * vl_supp_per_diagnosed: the number of virally suppressed individuals who have been diagnosed as positive for at least time.to.full.supp divided by the number of persons who have been diagnosed as positive for at least time.to.full.supp
+* incarerated_meth: the number of persons in jail at that timestep who use meth
+* incarerated_crack: the number of persons in jail at that timestep who use crack
+* incarerated_ecstasy: the number of persons in jail at that timestep who use ecstasy
 * infected_jail_pop: the number of persons in jail at that timestep who are infected
 * uninfected_jail_pop: the number of persons in jail at that timestep are uninfected
 * uninfected_ever_jailed: number of persons at that timestep who are uninfected and have been jailed

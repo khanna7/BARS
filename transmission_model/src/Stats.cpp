@@ -19,10 +19,10 @@ void ARTEvent::writeTo(FileOutput& out) {
     out << tick << "," << p_id << "," << (int)type << "\n";
 }
 
-const std::string PREPEvent::header("\"tick\",\"p_id\",\"event_type\"");
+const std::string PREPEvent::header("\"tick\",\"p_id\",\"event_type\",\"meth\",\"crack\",\"ecstasy\"");
 
 void PREPEvent::writeTo(FileOutput& out) {
-    out << tick << "," << p_id << "," << type << "\n";
+    out << tick << "," << p_id << "," << type << "," << meth << "," << crack << "," << ecstasy << "\n";
 }
 
 const std::string TestingEvent::header("\"tick\",\"p_id\",\"result\"");
@@ -36,6 +36,10 @@ const std::string DeathEvent::AGE("AGE");
 const std::string DeathEvent::INFECTION("INFECTION");
 const std::string DeathEvent::ASM("ASM");
 const std::string DeathEvent::ASM_CD4("ASM+CD4");
+const std::string DeathEvent::ASM_METH("ASM+METH");
+const std::string DeathEvent::ASM_CD4_METH("ASM+CD4+METH");
+const std::string DeathEvent::ASM_CRACK("ASM+CRACK");
+const std::string DeathEvent::ASM_CD4_CRACK("ASM+CD4+CRACK");
 
 void DeathEvent::writeTo(FileOutput& out) {
     out << tick << "," << p_id << "," << age << "," << art_status << "," << cause << "\n";
@@ -57,28 +61,36 @@ void InfectionEvent::writeTo(FileOutput& out) {
             << p2_viral_load << "," << p2_cd4 << "," << p2_on_prep << "," << network_type << "\n";
 }
 
-const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"type\",\"network_type\"");
+const std::string PartnershipEvent::header("\"tick\",\"edge_id\",\"p1\",\"p2\",\"p1_meth\",\"p1_crack\",\"p1_ecstasy\",\"p2_meth\",\"p2_crack\",\"p2_ecstasy\",\"type\",\"network_type\"");
 
-PartnershipEvent::PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type) :
-        tick_(tick), edge_id_(edge_id), p1_id(p1), p2_id(p2), type_ { type }, network_type { net_type } {
+PartnershipEvent::PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, 
+                                   bool p1_meth, bool p2_meth, bool p1_crack, bool p2_crack,
+                                   bool p1_ecstasy, bool p2_ecstasy, PEventType type, int net_type) :
+        tick_(tick), edge_id_(edge_id), p1_id(p1), p2_id(p2), p1_meth(p1_meth), p2_meth(p2_meth),
+        p1_crack(p1_crack), p2_crack(p2_crack), p1_ecstasy(p1_ecstasy), p2_ecstasy(p2_ecstasy),
+        type_ { type }, network_type { net_type } {
 }
 
 void PartnershipEvent::writeTo(FileOutput& out) {
-    out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << static_cast<int>(type_) << "," << network_type << "\n";
+    out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << p1_meth << "," << p2_meth << ","  << p1_crack << "," << p2_crack << "," << p1_ecstasy << "," << p2_ecstasy << "," << static_cast<int>(type_) << "," << network_type << "\n";
 }
 
 const std::string Counts::header(
-        "tick,entries,max_age_exits,infection_deaths,asm_deaths,"
+        "tick,entries,max_age_exits,infection_deaths,asm_deaths,asm_deaths_meth,asm_deaths_crack,"
 
         "infected_via_transmission,infected_via_transmission_18,infected_via_transmission_19,infected_via_transmission_20,"
         "infected_via_transmission_21,infected_via_transmission_22,infected_via_transmission_23,infected_via_transmission_24,infected_via_transmission_25,"
         "infected_via_transmission_26,infected_via_transmission_27,infected_via_transmission_28,infected_via_transmission_29,infected_via_transmission_30,"
         "infected_via_transmission_31,infected_via_transmission_32,infected_via_transmission_33,infected_via_transmission_34,"
 
+        "infected_via_transmission_meth,infected_via_transmission_crack,infected_via_transmission_ecstasy,"
+
         "infected_externally,infected_external_18,infected_external_19,infected_external_20,"
         "infected_external_21,infected_external_22,infected_external_23,infected_external_24,infected_external_25,"
         "infected_external_26,infected_external_27,infected_external_28,infected_external_29,infected_external_30,"
         "infected_external_31,infected_external_32,infected_external_33,infected_external_34,"
+
+        "infected_externally_meth,infected_externally_crack,infected_externally_ecstasy,"
 
         "infected_at_entry,infected_at_entry_18,infected_at_entry_19,infected_at_entry_20,"
         "infected_at_entry_21,infected_at_entry_22,infected_at_entry_23,infected_at_entry_24,infected_at_entry_25,"
@@ -103,8 +115,15 @@ const std::string Counts::header(
         "steady_sex_acts,"
         "sd_steady_sex_with_condom,sd_steady_sex_without_condom,"
         "sc_steady_sex_with_condom,sc_steady_sex_without_condom,"
-        "on_art,on_prep,vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
-        "pop,jail_pop,incarcerated,incarcerated_recidivist,infected_jail_pop,uninfected_jail_pop,infected_inside_jail,"
+        "on_art,on_art_meth,on_art_crack,on_art_ecstasy,"
+        "on_prep,on_prep_meth,on_prep_crack,on_prep_ecstasy,"
+        "vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,cd4m_meth_deaths,cd4m_crack_deaths,"
+        "pop,pop_meth,pop_crack,pop_ecstasy,"
+        "pop_infected_meth,pop_infected_crack,pop_infected_ecstasy,"
+        "jail_pop,jail_pop_meth,jail_pop_crack,jail_pop_ecstasy,"
+        "incarcerated,incarcerated_recidivist,"
+        "incarcerated_meth,incarcerated_crack,incarcerated_ecstasy,"
+        "infected_jail_pop,uninfected_jail_pop,infected_inside_jail,"
         "infected_at_incarceration,infected_partners_at_incarceration,infected_at_release,"
         "infected_never_jailed,infected_ever_jailed,uninfected_never_jailed,uninfected_ever_jailed,vertex_count_never_jailed,vertex_count_ever_jailed"
         );
@@ -118,9 +137,12 @@ void write_vector_out(std::vector<unsigned int>& vec, FileOutput& out) {
 }
 
 void Counts::writeTo(FileOutput& out) {
-    out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths;
+    out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths << ","
+    << asm_meth_deaths <<"," << asm_crack_deaths;
     write_vector_out(internal_infected, out);
+    out << "," << internal_infected_meth << "," << internal_infected_crack << "," << internal_infected_ecstasy;
     write_vector_out(external_infected, out);
+    out << "," << external_infected_meth << "," << external_infected_crack << ", " << external_infected_ecstasy;
     write_vector_out(infected_at_entry, out);
     write_vector_out(uninfected, out);
     out << "," << main_edge_count << "," << casual_edge_count;
@@ -131,8 +153,15 @@ void Counts::writeTo(FileOutput& out) {
     << steady_sex_acts << ","
     << sd_steady_sex_with_condom << "," << sd_steady_sex_without_condom << ","
     << sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom << ","
-    << on_art << "," << on_prep << "," << vl_supp_per_positives << "," << vl_supp_per_diagnosis << ","
-    << cd4m_deaths << "," << pop << "," << jail_pop << "," << incarcerated << ","  << incarcerated_recidivist << ","
+    << on_art << "," << on_art_meth << "," << on_art_crack << "," << on_art_ecstasy << ","
+    << on_prep << "," << on_prep_meth << "," << on_prep_crack << "," << on_prep_ecstasy << ","
+    << vl_supp_per_positives << "," << vl_supp_per_diagnosis << "," << cd4m_deaths << ","
+    << cd4m_meth_deaths << "," << cd4m_crack_deaths << ","
+    << pop << "," << pop_meth << "," << pop_crack << "," << pop_ecstasy << ","
+    << pop_infected_meth << "," << pop_infected_crack << "," << pop_infected_ecstasy << ","
+    << jail_pop << ","<< jail_pop_meth << "," << jail_pop_crack << "," << jail_pop_ecstasy << ","
+    << incarcerated << ","  << incarcerated_recidivist << ","
+    << incarcerated_meth << "," << incarcerated_crack << "," << incarcerated_ecstasy << ","
     << infected_jail_pop  << "," << uninfected_in_jail << "," << infected_inside_jail << "," 
     << infected_at_incarceration << "," << infected_partners_at_incarceration << "," << infected_at_release << ","
     << infected_never_jailed << "," << infected_ever_jailed << "," << uninfected_never_jailed << "," << uninfected_ever_jailed << "," << vertex_count_never_jailed << "," << vertex_count_ever_jailed << 
@@ -141,16 +170,25 @@ void Counts::writeTo(FileOutput& out) {
 }
 
 Counts::Counts(int min_age, int max_age) :
-        tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, asm_deaths{0}, overlaps { 0 }, sex_acts { 0 },
+    tick { 0 }, main_edge_count { 0 }, casual_edge_count { 0 }, entries { 0 }, age_deaths { 0 }, infection_deaths { 0 }, asm_deaths{0}, asm_meth_deaths{0}, cd4m_meth_deaths{0}, asm_crack_deaths{0}, cd4m_crack_deaths{0}, overlaps { 0 }, sex_acts { 0 },
                 casual_sex_acts{0}, steady_sex_acts{0}, sd_casual_sex_with_condom{0}, sd_casual_sex_without_condom{0},
                 sd_steady_sex_with_condom{0}, sd_steady_sex_without_condom {0},
                 sc_casual_sex_with_condom{0}, sc_casual_sex_without_condom{0},
                 sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
-                on_art{0}, on_prep{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
+                on_art{0}, on_prep{0}, on_art_meth{0}, on_art_crack{0}, on_art_ecstasy{0},
+                on_prep_meth{0}, on_prep_crack{0}, on_prep_ecstasy{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, 
                 total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
-                infected_jail_pop{0}, pop{0}, jail_pop{0}, incarcerated{0}, incarcerated_recidivist{0}, infected_at_incarceration{0}, infected_partners_at_incarceration{0}, infected_at_release{0},
+                internal_infected_meth{0}, internal_infected_crack{0}, internal_infected_ecstasy{0},
+                external_infected_meth{0}, external_infected_crack{0}, external_infected_ecstasy{0},
+                infected_jail_pop{0}, pop{0}, 
+                pop_infected_meth{0}, pop_infected_crack{0}, pop_infected_ecstasy{0},
+                pop_meth{0}, pop_crack{0}, pop_ecstasy{0},
+                jail_pop{0}, jail_pop_meth{0}, jail_pop_crack{0}, jail_pop_ecstasy{0},
+                incarcerated{0}, incarcerated_recidivist{0},
+                incarcerated_meth{0}, incarcerated_crack{0}, incarcerated_ecstasy{0},
+                infected_at_incarceration{0}, infected_partners_at_incarceration{0}, infected_at_release{0},
                 infected_never_jailed{0}, infected_ever_jailed{0}, uninfected_never_jailed{0}, uninfected_ever_jailed{0}, vertex_count_never_jailed{0}, vertex_count_ever_jailed{0},
                 uninfected_in_jail{0}
 
@@ -159,13 +197,15 @@ Counts::Counts(int min_age, int max_age) :
 
 void Counts::reset() {
     tick = 0;
-    main_edge_count = casual_edge_count = entries = age_deaths = infection_deaths = asm_deaths = cd4m_deaths = 0;
+    main_edge_count = casual_edge_count = entries = age_deaths = infection_deaths = asm_deaths = cd4m_deaths = asm_meth_deaths = cd4m_meth_deaths = asm_crack_deaths = cd4m_crack_deaths = 0;
     sex_acts = 0, casual_sex_acts = 0, steady_sex_acts = 0;
     sd_casual_sex_with_condom = sd_casual_sex_without_condom = 0;
     sd_steady_sex_with_condom = sd_steady_sex_without_condom = 0;
     sc_casual_sex_with_condom = sc_casual_sex_without_condom = 0;
     sc_steady_sex_with_condom = sc_steady_sex_without_condom = 0;
     on_art = on_prep = 0;
+    on_art_meth = on_art_crack = on_art_ecstasy = 0;
+    on_prep_meth = on_prep_crack = on_prep_ecstasy = 0;
     vl_supp_per_positives = vl_supp_per_diagnosis = 0;
     std::fill(uninfected.begin(), uninfected.end(), 0);
     std::fill(internal_infected.begin(), internal_infected.end(), 0);
@@ -174,11 +214,17 @@ void Counts::reset() {
     std::fill(vertex_count.begin(), vertex_count.end(), 0);
     overlaps = 0;
     infected_inside_jail=0;
+    internal_infected_meth = internal_infected_crack = internal_infected_ecstasy = 0;
+    external_infected_meth = external_infected_crack = external_infected_ecstasy = 0;
     infected_jail_pop=0;
     pop=0;
+    pop_meth = pop_crack = pop_ecstasy = 0;
+    pop_infected_meth = pop_infected_crack = pop_infected_ecstasy = 0;
     jail_pop=0;
+    jail_pop_meth = jail_pop_crack = jail_pop_ecstasy = 0;
     incarcerated=0;
     incarcerated_recidivist=0;
+    incarcerated_meth = incarcerated_crack = incarcerated_ecstasy = 0;
     infected_at_incarceration=0;
     infected_partners_at_incarceration=0;
     infected_at_release=0;
@@ -191,6 +237,9 @@ void Counts::reset() {
 void Counts::incrementInfected(PersonPtr& p) {
     ++internal_infected[(size_t)(std::floor(p->age())) - min_age_];
     ++total_internal_infected; 
+    if (p->isSubstanceUser(SubstanceUseType::METH)) ++internal_infected_meth;
+    if (p->isSubstanceUser(SubstanceUseType::CRACK)) ++internal_infected_crack;
+    if (p->isSubstanceUser(SubstanceUseType::ECSTASY)) ++internal_infected_ecstasy;
     if (p->isJailed()) {
         ++infected_ever_jailed;
         ++infected_inside_jail;
@@ -217,6 +266,9 @@ void Counts::incrementInfectedAtEntry(PersonPtr& p) {
 
 void Counts::incrementInfectedExternal(PersonPtr& p) {
     ++external_infected[(size_t)(std::floor(p->age())) - min_age_];
+    if (p->isSubstanceUser(SubstanceUseType::METH)) ++external_infected_meth;
+    if (p->isSubstanceUser(SubstanceUseType::CRACK)) ++external_infected_crack;
+    if (p->isSubstanceUser(SubstanceUseType::ECSTASY)) ++external_infected_ecstasy;
     if (p->hasPreviousJailHistory() || p->isJailed()) ++infected_ever_jailed;
     else ++infected_never_jailed;  
 }
@@ -232,9 +284,24 @@ void Counts::incrementUninfected(PersonPtr& p) {
 
 void Counts::incrementVertexCount(PersonPtr p) {
     ++vertex_count[(size_t)(std::floor(p->age())) - min_age_];
+    if (p->isSubstanceUser(SubstanceUseType::METH)) {
+        ++pop_meth;
+        if (p->isInfected()) ++pop_infected_meth;
+    }
+    if (p->isSubstanceUser(SubstanceUseType::CRACK)) {
+        ++pop_crack;
+        if (p->isInfected()) ++pop_infected_crack;
+    }
+    if (p->isSubstanceUser(SubstanceUseType::ECSTASY)) {
+        ++pop_ecstasy;
+        if (p->isInfected()) ++pop_infected_ecstasy;
+    }
     if (p->isJailed()) {
         ++vertex_count_ever_jailed;
         ++jail_pop;
+        if (p->isSubstanceUser(SubstanceUseType::METH)) ++jail_pop_meth;
+        if (p->isSubstanceUser(SubstanceUseType::CRACK)) ++jail_pop_crack;
+        if (p->isSubstanceUser(SubstanceUseType::ECSTASY)) ++jail_pop_ecstasy;
     } else if (p->hasPreviousJailHistory()) ++vertex_count_ever_jailed;
     else ++vertex_count_never_jailed;
 }
@@ -269,12 +336,13 @@ void Stats::recordARTEvent(double time, int p_id, bool onART) {
     art_event_writer->addOutput(ARTEvent{time, p_id, onART});
 }
 
-void Stats::recordPREPEvent(double time, int p_id, int type) {
-    prep_event_writer->addOutput(PREPEvent{time, p_id, type});
+void Stats::recordPREPEvent(double time, int p_id, int type, bool meth, bool crack, bool ecstasy) {
+    prep_event_writer->addOutput(PREPEvent{time, p_id, type, meth, crack, ecstasy});
 }
 
-void Stats::recordPartnershipEvent(double t, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type) {
-    pevent_writer->addOutput(PartnershipEvent { t, edge_id, p1, p2, event_type, net_type });
+void Stats::recordPartnershipEvent(double t, unsigned int edge_id, int p1, int p2, bool p1_meth, bool p2_meth, bool p1_crack, bool p2_crack,
+                                   bool p1_ecstasy, bool p2_ecstasy, PartnershipEvent::PEventType event_type, int net_type) {
+    pevent_writer->addOutput(PartnershipEvent { t, edge_id, p1, p2, p1_meth, p2_meth, p1_crack, p2_crack, p1_ecstasy, p2_ecstasy, event_type, net_type });
 }
 
 void Stats::recordTestingEvent(double time, int p_id, bool result) {

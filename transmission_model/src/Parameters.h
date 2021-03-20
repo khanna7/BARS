@@ -11,7 +11,10 @@ extern const std::string INPUT_AGE_THRESHOLD;
 
 extern const std::string LT_SUFFIX;
 extern const std::string GTE_SUFFIX;
-extern const std::string PSU_SUFFIX;
+
+extern const std::string METH_SUFFIX;
+extern const std::string CRACK_SUFFIX;
+extern const std::string ECSTASY_SUFFIX;
 
 extern const std::string NET_VAR;
 extern const std::string CASUAL_NET_VAR;
@@ -105,9 +108,10 @@ extern const std::string DEFAULT_PREP_YEARS_TO_INCREMENT;
 extern const std::string DEFAULT_PREP_BALANCED_UNBALANCED;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE;
+extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB;
 
-extern const std::string DEFAULT_PREP_USE_PROP_PSU;
-extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_PSU;
+extern const std::string DEFAULT_PREP_USE_PROP;
+extern const std::string DEFAULT_PREP_DAILY_STOP_PROB;
 
 extern const std::string YOR_ADDITIONAL_PREP_LT;
 extern const std::string YOR_ADDITIONAL_PREP_GTE;
@@ -302,6 +306,12 @@ extern const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN_UPDATE;
 extern const std::string IS_NETWORK_DISRUPTION_ON_UPDATE;
 extern const std::string IS_CARE_DISRUPTION_ON_UPDATE;
 
+extern const std::string METH_PROP;
+extern const std::string CRACK_PROP;
+extern const std::string ECSTASY_PROP;
+
+extern const std::string MORTALITY_RATE_METH;
+extern const std::string MORTALITY_RATE_CRACK;
 
 /**
  * Parameters singleton that contains the model properties.

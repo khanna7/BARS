@@ -39,6 +39,9 @@ struct PREPEvent {
     int p_id;
     // 0 is off prep, 1 is off because infected, 2 is on
     int type;
+    bool meth;
+    bool crack;
+    bool ecstasy;
 
     void writeTo(FileOutput& out);
 };
@@ -69,7 +72,7 @@ struct Biomarker {
 struct DeathEvent {
 
     static const std::string header;
-    static const std::string AGE, INFECTION, ASM, ASM_CD4;
+    static const std::string AGE, INFECTION, ASM, ASM_CD4, ASM_METH, ASM_CD4_METH, ASM_CRACK, ASM_CD4_CRACK;
 
     double tick;
     int p_id;
@@ -98,15 +101,20 @@ struct PartnershipEvent {
 
     static const std::string header;
 
-    enum PEventType {ENDED_DISSOLUTION, STARTED, ENDED_DEATH_INFECTION, ENDED_DEATH_ASM, ENDED_AGING_OUT, ENDED_DEATH_ASM_CD4};
+    enum PEventType {ENDED_DISSOLUTION, STARTED, ENDED_DEATH_INFECTION, ENDED_DEATH_ASM, ENDED_AGING_OUT, ENDED_DEATH_ASM_CD4, ENDED_DEATH_ASM_METH, ENDED_DEATH_ASM_CD4_METH, ENDED_DEATH_ASM_CRACK, ENDED_DEATH_ASM_CD4_CRACK};
 
     double tick_;
     unsigned int edge_id_;
     int p1_id, p2_id;
+    bool p1_meth, p2_meth;
+    bool p1_crack, p2_crack;
+    bool p1_ecstasy, p2_ecstasy;
     PEventType type_;
     int network_type;
 
-    PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, PEventType type, int net_type);
+    PartnershipEvent(double tick, unsigned int edge_id, int p1, int p2, bool p1_meth,
+                     bool p2_meth, bool p1_crack, bool p2_creck, bool p1_ecstasy,
+                     bool p2_ecsasy, PEventType type, int net_type);
     void writeTo(FileOutput& out);
 
 };
@@ -118,7 +126,8 @@ struct Counts {
     double tick;
     unsigned int main_edge_count, casual_edge_count,
     //size, internal_infected, external_infected, infected_at_entry, uninfected,
-    entries, age_deaths, infection_deaths, asm_deaths;
+    entries, age_deaths, infection_deaths, asm_deaths, asm_meth_deaths, cd4m_meth_deaths,
+    asm_crack_deaths, cd4m_crack_deaths;
     int overlaps;
     unsigned int sex_acts, casual_sex_acts, steady_sex_acts;
     unsigned int sd_casual_sex_with_condom, sd_casual_sex_without_condom;
@@ -126,6 +135,9 @@ struct Counts {
     unsigned int sc_casual_sex_with_condom, sc_casual_sex_without_condom;
     unsigned int sc_steady_sex_with_condom, sc_steady_sex_without_condom;
     unsigned int on_art, on_prep;
+    unsigned int on_art_meth, on_art_crack, on_art_ecstasy;
+    unsigned int on_prep_meth, on_prep_crack, on_prep_ecstasy;
+    
     //unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
     //	vertex_count_u26, vertex_count_gte26;
     //unsigned int external_infected_u26, external_infected_gte26, infected_at_entry_u26, infected_at_entry_gte26;
@@ -138,11 +150,17 @@ struct Counts {
     unsigned int total_internal_infected_new; //as above, excpet it does not inlcude those infected during burnin but only new infected cases after burnin
     unsigned int total_infected_inside_jail; //accumulative total number of agents in jail who were infected by internal infections
     unsigned int infected_inside_jail;   //this is to keep internal infections inside the jail at each cycle 
+    unsigned int internal_infected_meth, internal_infected_crack, internal_infected_ecstasy;
+    unsigned int external_infected_meth, external_infected_crack, external_infected_ecstasy;
     unsigned int infected_jail_pop; 
     unsigned int pop;   
+    unsigned int pop_infected_meth, pop_infected_crack, pop_infected_ecstasy;
+    unsigned int pop_meth, pop_crack, pop_ecstasy;
     unsigned int jail_pop;     
+    unsigned int jail_pop_meth, jail_pop_crack, jail_pop_ecstasy;
     unsigned int incarcerated;   //nb of jailed each cycle
     unsigned int incarcerated_recidivist;   
+    unsigned int incarcerated_meth, incarcerated_crack, incarcerated_ecstasy;
     unsigned int infected_at_incarceration;  
     unsigned int infected_partners_at_incarceration;  
     unsigned int infected_at_release;
@@ -205,7 +223,9 @@ public:
         return instance_;
     }
 
-    void recordPartnershipEvent(double time, unsigned int edge_id, int p1, int p2, PartnershipEvent::PEventType event_type, int net_type);
+    void recordPartnershipEvent(double time, unsigned int edge_id, int p1, int p2, bool p1_meth, bool p2_meth,
+                                bool p1_crack, bool p2_crack, bool p1_ecstasy, bool p2_ecstasy,
+                                PartnershipEvent::PEventType event_type, int net_type);
     void recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom, int net_type);
 
     /**
@@ -216,7 +236,7 @@ public:
     void recordDeathEvent(double time, const PersonPtr& person, const std::string& cause);
     void recordTestingEvent(double time, int p_id, bool result);
     void recordARTEvent(double time, int p_id, bool onART);
-    void recordPREPEvent(double time, int p_id, int type);
+    void recordPREPEvent(double time, int p_id, int type, bool meth, bool crack, bool ecstasy);
 };
 
 } /* namespace TransModel */

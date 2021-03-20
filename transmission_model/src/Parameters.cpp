@@ -23,7 +23,10 @@ const std::string INPUT_AGE_THRESHOLD = "input.age.threshold";
 
 const std::string LT_SUFFIX = ".lt";
 const std::string GTE_SUFFIX = ".gte";
-const std::string PSU_SUFFIX = ".psu";
+
+const std::string METH_SUFFIX = ".meth";
+const std::string CRACK_SUFFIX = ".crack";
+const std::string ECSTASY_SUFFIX = ".ecstasy";
 
 const std::string NET_VAR = "net.variable.name";
 const std::string CASUAL_NET_VAR = "casual.net.variable.name";
@@ -118,9 +121,10 @@ const std::string DEFAULT_PREP_YEARS_TO_INCREMENT = "default.prep.years.to.incre
 const std::string DEFAULT_PREP_BALANCED_UNBALANCED = "default.prep.balanced.unbalanced";
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT = "default.prep.unbalanced.starting.prob.lt";
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE = "default.prep.unbalanced.starting.prob.gte";
+const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB = "default.prep.unbalanced.starting.prob";
 
-const std::string DEFAULT_PREP_USE_PROP_PSU = "default.prep.bl.use.prop.psu";
-const std::string DEFAULT_PREP_DAILY_STOP_PROB_PSU = "default.prep.daily.stop.prob.psu";
+const std::string DEFAULT_PREP_USE_PROP = "default.prep.bl.use.prop";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB = "default.prep.daily.stop.prob";
 
 const std::string YOR_PREP_ALPHA = "yor.prep.alpha";
 const std::string YOR_PREP_USE_PROP = "yor.prep.bl.use.prop";
@@ -313,6 +317,15 @@ const std::string NETWORK_RETENTION_MULTIPLIER_UPDATE = "network.retention.multi
 const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN_UPDATE = "post.release.interference.period.mean.update";
 const std::string IS_NETWORK_DISRUPTION_ON_UPDATE = "is.network.disruption.on.update";
 const std::string IS_CARE_DISRUPTION_ON_UPDATE = "is.care.disruption.on.update";
+
+const std::string METH_PROP = "meth.prop";
+const std::string CRACK_PROP = "crack.prop";
+const std::string ECSTASY_PROP = "ecstasy.prop";
+
+const std::string STIMULANT_USE_MORTALITY_INCREASE = "stimulant.use.mortality.increase";
+
+const std::string MORTALITY_RATE_METH = "mortality.rate.meth";
+const std::string MORTALITY_RATE_CRACK = "mortality.rate.crack";
 
 Parameters* Parameters::instance_ = 0;
 

@@ -21,7 +21,8 @@ void PrepCessationEvent::operator()() {
     if (!person_->isDead() && person_->isOnPrep(false)) {
         person_->goOffPrep(PrepStatus::OFF);
         Stats::instance()->personDataRecorder()->recordPREPStop(person_.get(), timestamp_, PrepStatus::OFF);
-        Stats::instance()->recordPREPEvent(timestamp_, person_->id(), static_cast<int>(PrepStatus::OFF));
+        Stats::instance()->recordPREPEvent(timestamp_, person_->id(), static_cast<int>(PrepStatus::OFF), person_->isSubstanceUser(SubstanceUseType::METH),
+                                           person_->isSubstanceUser(SubstanceUseType::CRACK), person_->isSubstanceUser(SubstanceUseType::ECSTASY));
     }
 }
 

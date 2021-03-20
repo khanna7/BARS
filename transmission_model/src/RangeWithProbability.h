@@ -9,6 +9,7 @@
 #define SRC_RANGEWITHPROBABILITY_H_
 
 #include <vector>
+#include <string>
 
 namespace TransModel {
 
@@ -44,6 +45,7 @@ public:
     RangeWithProbabilityCreator();
     virtual ~RangeWithProbabilityCreator();
 
+    static void parseRangeString(const std::string& bin_definition, double *min, double *max);
     void addBin(float min, float max, double prob);
     /**
      * @bin_defintion format is x.min_max where x is ignored

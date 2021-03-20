@@ -106,18 +106,11 @@
 
    ## ART adherence
    partial.art_adher.window.length <- 1*30 #1 month window over which consistency in behavior is maintained
-   art.prop.never.adherent <- 0.1 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
+
+   art.prop.always.adherent <- 0.32
+   art.prop.never.adherent <- 0.1
    art.prop.part.plus.adherent <- 0.28
    art.prop.part.neg.adherent <- 0.30
-
-   #art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
-   art.prop.always.adherent <- 0.32
-
-   art.prop.never.adherent.psu <- 0.3 #denominator here is number who initiate ART. We can assign "adherence behavior" as an attribute.
-   art.prop.part.plus.adherent.psu <- 0.28
-   art.prop.part.neg.adherent.psu <- 0.32
-   art.prop.always.adherent.psu <- 0.1
-
 
    art.always.adherent.probability <- 0.95
    art.never.adherent.probability <- 0.05
@@ -214,11 +207,6 @@ prep.bl.use.prop <- (default.prep.bl.use.prop.lt + default.prep.bl.use.prop.gte)
 default.prep.mean.days.usage.lt <- 365 #updated 23may2018
 default.prep.mean.days.usage.gte <- 365
 
-#polystimulant users
-
-default.prep.bl.use.prop.psu <- 12.7/100
-default.prep.mean.days.usage.psu <- 365
-
 default.prep.yearly.increment.lt <- 0
 default.prep.yearly.increment.gte <- 0
 default.prep.years.to.increment <- 0
@@ -226,6 +214,13 @@ default.prep.years.to.increment <- 0
 
 default.prep.unbalanced.starting.prob.lt <- 1/365 #these params are in the nonderived file so we can decouple them from the 
 default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for the retention intervention
+default.prep.unbalanced.starting.prob.meth <- 1/365 #these params are in the nonderived file so we can decouple them from the 
+default.prep.unbalanced.starting.prob.crack <- 1/365 #stopping probabilities for the retention intervention
+default.prep.unbalanced.starting.prob.ecstasy <- 1/365 #these params are in the nonderived file so we can decouple them from the 
+default.prep.unbalanced.starting.prob.meth.crack <- 1/365 #stopping probabilities for the retention intervention
+default.prep.unbalanced.starting.prob.meth.ecstasy <- 1/365 #these params are in the nonderived file so we can decouple them from the 
+default.prep.unbalanced.starting.prob.crack.ecstasy <- 1/365 #stopping probabilities for the retention intervention
+default.prep.unbalanced.starting.prob.meth.crack.ecstasy <- 1/365 #these params are in the nonderived file so we can decouple them from the 
 
 # "balanced" - use prep uptake algorithm that "balances" uptake and cessation
 # "unbalanced" - use prep uptake algorithm that does not "balance" uptake and cessation
@@ -345,10 +340,40 @@ prep.prop.always.adherent.gte <- 0.619
 prep.prop.part.plus.adherent.gte <- 0.10
 prep.prop.part.neg.adherent.gte <- 0.07
 
-prep.prop.never.adherent.psu <- 0.211
-prep.prop.always.adherent.psu <- 0.619
-prep.prop.part.plus.adherent.psu <- 0.10
-prep.prop.part.neg.adherent.psu <- 0.07
+prep.prop.never.adherent.meth <- 0.211
+prep.prop.always.adherent.meth <- 0.619
+prep.prop.part.plus.adherent.meth <- 0.10
+prep.prop.part.neg.adherent.meth <- 0.07
+
+prep.prop.never.adherent.crack <- 0.211
+prep.prop.always.adherent.crack <- 0.619
+prep.prop.part.plus.adherent.crack <- 0.10
+prep.prop.part.neg.adherent.crack <- 0.07
+
+prep.prop.never.adherent.ecstasy <- 0.211
+prep.prop.always.adherent.ecstasy <- 0.619
+prep.prop.part.plus.adherent.ecstasy <- 0.10
+prep.prop.part.neg.adherent.ecstasy <- 0.07
+
+prep.prop.never.adherent.meth.crack <- 0.211
+prep.prop.always.adherent.meth.crack <- 0.619
+prep.prop.part.plus.adherent.meth.crack <- 0.10
+prep.prop.part.neg.adherent.meth.crack <- 0.07
+
+prep.prop.never.adherent.meth.ecstasy <- 0.211
+prep.prop.always.adherent.meth.ecstasy <- 0.619
+prep.prop.part.plus.adherent.meth.ecstasy <- 0.10
+prep.prop.part.neg.adherent.meth.ecstasy <- 0.07
+
+prep.prop.never.adherent.crack.ecstasy <- 0.211
+prep.prop.always.adherent.crack.ecstasy <- 0.619
+prep.prop.part.plus.adherent.crack.ecstasy <- 0.10
+prep.prop.part.neg.adherent.crack.ecstasy <- 0.07
+
+prep.prop.never.adherent.meth.crack.ecstasy <- 0.211
+prep.prop.always.adherent.meth.crack.ecstasy <- 0.619
+prep.prop.part.plus.adherent.meth.crack.ecstasy <- 0.10
+prep.prop.part.neg.adherent.meth.crack.ecstasy <- 0.07
 
 prep.always.adherent.trans.reduction <- 0.95
 prep.never.adherent.trans.reduction <- 0.0
@@ -506,12 +531,16 @@ is.care.disruption.on <- FALSE
 
 #incarceration.prob <- 0.0
 incarceration.prob <- 0.0000787
-incarceration.prob.psu <- 0.0000787
+incarceration.prob.meth <- 0.0000787
+incarceration.prob.crack<- 0.0000787
+incarceration.prob.ecstasy <- 0.0000787
 #incarceration.prob <- 0.002
 
 #incarceration.with.cji.prob <- 0.0
 incarceration.with.cji.prob <- 0.0005173
-incarceration.with.cji.prob.psu <- 0.0005173
+incarceration.with.cji.prob.meth <- 0.0005173
+incarceration.with.cji.prob.crack <- 0.0005173
+incarceration.with.cji.prob.ecstasy <- 0.0005173
 #incarceration.with.cji.prob <- 0.002
 
 jail.infection.rate.window.size <- 90
@@ -520,7 +549,7 @@ jail.infection.rate.default <- 0.000091
 
 #jail.serving.time.mean <- 58
 jail.serving.time.mean <- 58.4
-jail.serving.time.mean.psu <- 58.4
+
 post.release.interference.period.mean <- 90
 #network.retention.multiplier <- 1
 network.retention.multiplier <- 0.75
@@ -547,14 +576,21 @@ ecstasy.decline.art.always.adherent <- 42/100
 crack.decline.art.always.adherent <- 39/100
 
 # PrEP and substance use
-meth.decline.prep.use <- 7.1/100
-ecstasy.decline.prep.use <- 5.4/100
-crack.decline.prep.use <- 4.6/100
+meth.prep.prop.use <- 7.1/100
+ecstasy.prep.prop.use <- 5.4/100
+crack.prep.prop.use <- 4.6/100
+
+default.prep.mean.days.usage.meth <- 365 #updated 23may2018
+default.prep.mean.days.usage.crack <- 365 #updated 23may2018
+default.prep.mean.days.usage.ecstasy <- 365 #updated 23may2018
+default.prep.mean.days.usage.meth.crack <- 365 #updated 23may2018
+default.prep.mean.days.usage.meth.ecstasy <- 365 #updated 23may2018
+default.prep.mean.days.usage.crack.ecstasy <- 365 #updated 23may2018
+default.prep.mean.days.usage.meth.crack.ecstasy <- 365 #updated 23may2018
+
+# Mortality and substance use
+mortality.rate.meth <- 0.000052
+mortality.rate.crack <- 0.000025
 
 # Talk to John regarding PrEP and retention use
-
-# incarceration and substance use
-#meth.increase.incar.rate <-
-#ecstasy.increase.incar.rate <-
-#crack.increase.incar.rate <- 
 
