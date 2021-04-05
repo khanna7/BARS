@@ -1,8 +1,8 @@
 #global.random.seed=42
 global.random.seed=1
 
+#stop.at = 50
 stop.at = 36500
-#stop.at = 3650 
 #stop.at = 7300 # 20 years
 #stop.at = 730
 
@@ -14,27 +14,31 @@ r.parameters.non.derived = ../r/common/chi_params_nonderived.R
 r.parameters.derived = ../r/common/chi_params_derived.R
 
 r.file = ../r/network_model/transmission_model_tergmlite.R
-initial.data.file = ../r/network_model/cas_net_n10000.RData
+#initial.data.file = ../r/network_model/cas_net_n10000_nouse.RData
+initial.data.file = ../r/network_model/cas_net_n10000_1.RData
 
 # if these properties are not commented out
 # then these networks will replace existing ones (NEED to comment these out for calibration)
-main.network.file = ../r/network_model/v57-calib-inst-248-only-main_network_36500.RDS
-casual.network.file = ../r/network_model/v57-calib-inst-248-only-casual_network_36500.RDS
-#----
+#main.network.file = ../r/network_model/mainnetBaseline.RDS
+#casual.network.file = ../r/network_model/casnetBaseline.RDS
+
+main.network.file = ../r/network_model/mainnetdruguse1.RDS
+casual.network.file = ../r/network_model/casnetdruguse1.RDS
+
 
 output.directory = ./output
 per.tick.counts.output.file = counts.csv
-#partnership.events.file = partnership_events.csv
+partnership.events.file = partnership_events.csv
 #infection.events.file = infection_events.csv
 
 #biomarker.log.file = biomarker_log.csv
 biomarker.persons.to.log = random:5
 
 #death.events.file = exit_events.csv
-#person.data.file = person_data.csv
+person.data.file = person_data.csv
 #testing.events.file = testing_events.csv
-#art.events.file = art_events.csv
-#prep.events.file = prep_events.csv
+art.events.file = art_events.csv
+prep.events.file = prep_events.csv
 
 #serodiscordant.prep.log.file = serodiscordant_log.csv
 #default.prep.log.file = base_prep_log.csv

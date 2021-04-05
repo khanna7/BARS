@@ -16,13 +16,24 @@
    source("common-functions.R")
    #####################
    ## MODEL SETUP
-   formation <- ~edges+degree(0:2)+absdiff("age")
+   formation <- ~edges+degree(0:2)+absdiff("age")+nodefactor("ecstasy.user")+nodefactor("crack.user")+nodefactor("meth.user")
 
    dissolution <- ~offset(edges)
    #theta.diss <- log(duration-1)
    # theta.diss <- should be 6.43 (corresponding to duration of 512 and death correction with 16-year life expectancy). set in derived param file
 
-   target.stats <- c(nedges, deg_seq[1:3], absdiff.main*nedges)  
+   target.stats <- c(nedges, deg_seq[1:3], absdiff.main*nedges,235.9258,
+                     1069.17,643.6685)  
+   
+   # Ecstasy:
+   #    .448*402*1.31=235.9258
+   # Meth:
+   #    .448*921*1.56=643.6685
+   # Crack:
+   #    .448*1742*1.37=1069.17
+   
+   
+   
    constraints <- ~.
 
    formation.n0 <- update.formula(formation, n0~.)
@@ -327,11 +338,12 @@
    meth.user <- rbinom(n, 1, meth.prop); table(meth.user)
    ecstasy.user <- rbinom(n, 1, ecstasy.prop); table(ecstasy.user)
    crack.user <- rbinom(n, 1, crack.prop); table(crack.user)
-   
+   #meth.user<-ecstasy.user<-crack.user<-rep(0,10000)
    n0 %v% "meth.user" <- meth.user; table(n0 %v% "meth.user", exclude=NULL)
    n0 %v% "ecstasy.user" <- ecstasy.user; table(n0 %v% "ecstasy.user", exclude=NULL)
    n0 %v% "crack.user" <- crack.user; table(n0 %v% "crack.user", exclude=NULL)
    
+
    #####################
    ## FIT MODEL
    fit <- ergm(formation.n0, 
@@ -346,17 +358,17 @@
    theta.form[1] <- theta.form[1] - theta.diss
 
    #####################
-   ## SIMULATE (for testing)
-    # hetdeg.diag.sim <- simulate(n0,
-    #                             formation=formation.n0,
-    #                             dissolution=dissolution,
-    #                             coef.form=theta.form,
-    #                             coef.diss=theta.diss,
-    #                             time.slices=2e4,
-    #                             #time.slices=1e2,
-    #                             constraints=constraints,
-    #                             monitor=~edges+degree(0:5)
-    #                             )
+   # SIMULATE (for testing)
+   hetdeg.diag.sim <- simulate(n0,
+                               formation=formation.n0,
+                               dissolution=dissolution,
+                               coef.form=theta.form,
+                               coef.diss=theta.diss,
+                               time.slices=2e4,
+                               #time.slices=1e2,
+                               constraints=constraints,
+                               monitor=~edges+degree(0:5)
+                               )
 # 
 #    #####################
 #    ## TEST
@@ -371,5 +383,6 @@
    
    #####################
    ## SAVE BINARY
-   save.image(file="initialized-model_n10000.RData")
+   save.image(file="../network_model/initialized-model_n10000_1.RData")
+   #save.image(file="../network_model/initialized-model_n10000_no_use.RData")
    

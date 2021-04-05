@@ -25,7 +25,7 @@ check_directory_exists
 # TODO edit the number of processes as required.
 #export PROCS=644
 #export PROCS=32
-export PROCS=272
+export PROCS=3
 #export PROCS=4
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
@@ -92,7 +92,8 @@ log_script
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/baseline_one.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr_low_one.txt
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr_one.txt 
-UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/calibrate-jcm.txt 
+UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-baseline-1.txt 
+#UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-base10yr.txt 
 
 
 UPF_NAME=$( basename $UPF_DATA_FILE )

@@ -11,12 +11,12 @@
    library(networkDynamic)
    library(tergm)
 
-   load(file="initialized-model_n10000.RData")
-
+   load(file="../network_model/initialized-model_n10000_1.RData")
+   #load(file="../network_model/initialized-model_n10000_no_use.RData")
    #####################
    ## MODEL SETUP
    net <- fit$network
-   formation_cas <- net~edges+degree(0:2)+absdiff("age")
+   formation_cas <- net~edges+degree(0:2)+absdiff("age")+nodefactor("ecstasy.user")+nodefactor("crack.user")+nodefactor("meth.user")
                        
 
    dissolution_cas <- net~offset(edges)
@@ -24,8 +24,16 @@
    #theta.diss_cas <- should be 5.13 when assuming 160-day ptshp duration and 16-year life expectancy. See `derived` param file for details.
    target.stats_cas <- c(cas_n_edges,
                          cas_deg_seq[1:3],
-                         cas_n_edges*absdiff.casual 
+                         cas_n_edges*absdiff.casual,
+                         241.192,1093.035,658.0361
                          )
+   
+   # Ecstasy:
+   #    .458*402*1.31=241.192
+   # Meth:
+   #    .458*921*1.56=658.0361
+   # Crack:
+   #    .458*1742*1.37=1093.035
 
 
    constraints_cas <- ~.
@@ -56,12 +64,12 @@
    theta.form_cas <- cas_fit$coef 
    theta.form_cas[1] <- theta.form_cas[1] - theta.diss_cas
 
-    cas_sim_test <- simulate(net,
+    cas_sim_test <- simulate(n0,
                                 formation=formation.n_cas,
                                 dissolution=dissolution_cas,
                                 coef.form=theta.form_cas, 
                                 coef.diss=theta.diss_cas,
-                                time.slices=2e4,
+                                time.slices=2,#2e4,
                                 #time.slices=1e2,
                                 constraints=constraints_cas,
                                 monitor=~edges+degree(0:5))
@@ -77,6 +85,8 @@
 
    #####################
    ## SAVE BINARY
-   save.image(file="cas_net_n10000.RData")
+   #save.image(file="cas_net_n10000.RData")
+   save.image(file="../network_model/cas_net_n10000_1.RData")
+   #save.image(file="../network_model/cas_net_n10000_nouse.RData")
 
    

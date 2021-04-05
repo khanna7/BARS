@@ -340,40 +340,40 @@ prep.prop.always.adherent.gte <- 0.619
 prep.prop.part.plus.adherent.gte <- 0.10
 prep.prop.part.neg.adherent.gte <- 0.07
 
-prep.prop.never.adherent.meth <- 0.211
-prep.prop.always.adherent.meth <- 0.619
-prep.prop.part.plus.adherent.meth <- 0.10
-prep.prop.part.neg.adherent.meth <- 0.07
+prep.prop.never.adherent.meth <- 0.338
+prep.prop.always.adherent.meth <- 0.24
+prep.prop.part.plus.adherent.meth <- 0.226
+prep.prop.part.neg.adherent.meth <- 0.196
 
-prep.prop.never.adherent.crack <- 0.211
-prep.prop.always.adherent.crack <- 0.619
-prep.prop.part.plus.adherent.crack <- 0.10
-prep.prop.part.neg.adherent.crack <- 0.07
+prep.prop.never.adherent.crack <- 0.338
+prep.prop.always.adherent.crack <- 0.24
+prep.prop.part.plus.adherent.crack <- 0.226
+prep.prop.part.neg.adherent.crack <- 0.196
 
-prep.prop.never.adherent.ecstasy <- 0.211
-prep.prop.always.adherent.ecstasy <- 0.619
-prep.prop.part.plus.adherent.ecstasy <- 0.10
-prep.prop.part.neg.adherent.ecstasy <- 0.07
+prep.prop.never.adherent.ecstasy <- 0.338
+prep.prop.always.adherent.ecstasy <- 0.24
+prep.prop.part.plus.adherent.ecstasy <- 0.226
+prep.prop.part.neg.adherent.ecstasy <- 0.196
 
-prep.prop.never.adherent.meth.crack <- 0.211
-prep.prop.always.adherent.meth.crack <- 0.619
-prep.prop.part.plus.adherent.meth.crack <- 0.10
-prep.prop.part.neg.adherent.meth.crack <- 0.07
+prep.prop.never.adherent.meth.crack <- 0.338
+prep.prop.always.adherent.meth.crack <- 0.24
+prep.prop.part.plus.adherent.meth.crack <- 0.226
+prep.prop.part.neg.adherent.meth.crack <- 0.196
 
-prep.prop.never.adherent.meth.ecstasy <- 0.211
-prep.prop.always.adherent.meth.ecstasy <- 0.619
-prep.prop.part.plus.adherent.meth.ecstasy <- 0.10
-prep.prop.part.neg.adherent.meth.ecstasy <- 0.07
+prep.prop.never.adherent.meth.ecstasy <- 0.338
+prep.prop.always.adherent.meth.ecstasy <- 0.24
+prep.prop.part.plus.adherent.meth.ecstasy <- 0.226
+prep.prop.part.neg.adherent.meth.ecstasy <- 0.196
 
-prep.prop.never.adherent.crack.ecstasy <- 0.211
-prep.prop.always.adherent.crack.ecstasy <- 0.619
-prep.prop.part.plus.adherent.crack.ecstasy <- 0.10
-prep.prop.part.neg.adherent.crack.ecstasy <- 0.07
+prep.prop.never.adherent.crack.ecstasy <- 0.338
+prep.prop.always.adherent.crack.ecstasy <- 0.24
+prep.prop.part.plus.adherent.crack.ecstasy <- 0.226
+prep.prop.part.neg.adherent.crack.ecstasy <- 0.196
 
-prep.prop.never.adherent.meth.crack.ecstasy <- 0.211
-prep.prop.always.adherent.meth.crack.ecstasy <- 0.619
-prep.prop.part.plus.adherent.meth.crack.ecstasy <- 0.10
-prep.prop.part.neg.adherent.meth.crack.ecstasy <- 0.07
+prep.prop.never.adherent.meth.crack.ecstasy <- 0.338
+prep.prop.always.adherent.meth.crack.ecstasy <- 0.24
+prep.prop.part.plus.adherent.meth.crack.ecstasy <- 0.226
+prep.prop.part.neg.adherent.meth.crack.ecstasy <- 0.196
 
 prep.always.adherent.trans.reduction <- 0.95
 prep.never.adherent.trans.reduction <- 0.0
@@ -567,7 +567,7 @@ network.retention.multiplier <- 0.75
 ######################
 # substance use
 meth.prop <- 9.21/100 
-ecstasy.prop <- 4.02/100
+ecstasy.prop <- 4.02/100 
 crack.prop <- 17.42/100
 
 # ART and substance use
@@ -580,13 +580,13 @@ meth.prep.prop.use <- 7.1/100
 ecstasy.prep.prop.use <- 5.4/100
 crack.prep.prop.use <- 4.6/100
 
-default.prep.mean.days.usage.meth <- 365 #updated 23may2018
-default.prep.mean.days.usage.crack <- 365 #updated 23may2018
-default.prep.mean.days.usage.ecstasy <- 365 #updated 23may2018
-default.prep.mean.days.usage.meth.crack <- 365 #updated 23may2018
-default.prep.mean.days.usage.meth.ecstasy <- 365 #updated 23may2018
-default.prep.mean.days.usage.crack.ecstasy <- 365 #updated 23may2018
-default.prep.mean.days.usage.meth.crack.ecstasy <- 365 #updated 23may2018
+default.prep.mean.days.usage.meth <- 270 #updated 23may2018
+default.prep.mean.days.usage.crack <- 270 #updated 23may2018
+default.prep.mean.days.usage.ecstasy <- 270 #updated 23may2018
+default.prep.mean.days.usage.meth.crack <- 270 #updated 23may2018
+default.prep.mean.days.usage.meth.ecstasy <- 270 #updated 23may2018
+default.prep.mean.days.usage.crack.ecstasy <- 270 #updated 23may2018
+default.prep.mean.days.usage.meth.crack.ecstasy <- 270 #updated 23may2018
 
 # Mortality and substance use
 mortality.rate.meth <- 0.000052
