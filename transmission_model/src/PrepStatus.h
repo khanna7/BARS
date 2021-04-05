@@ -11,7 +11,7 @@
 
 namespace TransModel {
 
-enum class PrepStatus { OFF, OFF_INFECTED, ON, ON_INTERVENTION};
+enum class PrepStatus { OFF, OFF_INFECTED, ON, ON_INTERVENTION, ON_TREATMENT };
 
 }
 

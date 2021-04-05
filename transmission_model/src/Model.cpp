@@ -912,7 +912,9 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
                 jail(&net, JailInfRateCalculator(Parameters::instance()->getIntParameter(JAIL_INFECTION_RATE_WINDOW_SIZE), 
                     Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_MULTIPLIER), 
                     Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_DEFAULT))),
-                person_creator { trans_runner, Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator, &jail}, prep_manager(),	
+                person_creator { trans_runner, Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator, &jail}, prep_manager(),
+                cb_intervention(Parameters::instance()->getDoubleParameter(COUNSELING_AND_BEHAVIORAL_TREATMENT_USE_PROP),
+                                Parameters::instance()->getIntParameter(COUNSELING_AND_BEHAVIORAL_TREATMENT_LENGTH)),
                 condom_assigner { create_condom_use_assigner() },
                 asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)},
                 asm_runner_meth { create_ASM_runner_stimulants(SubstanceUseType::METH) },
@@ -1095,7 +1097,12 @@ void Model::step() {
 
 void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
         float size_of_timestep) {
-    double lag = art_lag_calculator.calculateLag(person, size_of_timestep);
+    double lag;
+    if (person->onCounselingAndBehavioralTreatment()) {
+        lag = 0;
+    } else {
+        lag = art_lag_calculator.calculateLag(person, size_of_timestep);
+    }
     Stats::instance()->personDataRecorder()->recordInitialARTLag(person, lag);
     person->setARTLag(lag);
 
@@ -1255,6 +1262,10 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             }
             ++dead_count;
         } else {
+            if (person->onCounselingAndBehavioralTreatment()) {
+                ++stats->currentCounts().num_substance_users_on_treatment;
+            }
+            cb_intervention.processPerson(person);
             // don't count dead uninfected persons
             if (!person->isInfected()) {
                 // accumulate persons who may potentially go on PrEP
@@ -1338,6 +1349,10 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     prep_manager.run(tick, net);
     // Reset the prep uptake for next round
     prep_manager.reset();
+    if (Parameters::instance()->getBooleanParameter(IS_COUNSELING_AND_BEHAVIORAL_TREATMENT_ON)) {
+        cb_intervention.run(tick);
+        cb_intervention.reset();
+    }
 }
 
 unsigned int Model::runExternalInfections(vector<PersonPtr>& uninfected, double t) {

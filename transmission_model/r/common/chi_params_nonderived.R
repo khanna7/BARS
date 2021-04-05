@@ -594,3 +594,5 @@ mortality.rate.crack <- 0.000025
 
 # Talk to John regarding PrEP and retention use
 
+counseling.and.behavioral.treatment.use.prop <- 0.1
+counseling.and.behavioral.treatment.length <- 90

@@ -84,6 +84,12 @@ const std::string CHRONIC_LENGTH_MIN = "chronic.length.min";
 const std::string CHRONIC_LENGTH_MAX = "chronic.length.max";
 const std::string CIRCUM_MULT = "circum.mult";
 const std::string CIRCUM_RATE = "circum.rate";
+const std::string IS_COUNSELING_AND_BEHAVIORAL_TREATMENT_ON =
+        "is.counseling.and.behavioral.treatment.on";
+const std::string COUNSELING_AND_BEHAVIORAL_TREATMENT_USE_PROP =
+        "counseling.and.behavioral.treatment.use.prop";
+const std::string COUNSELING_AND_BEHAVIORAL_TREATMENT_LENGTH =
+        "counseling.and.behavioral.treatment.length";
 const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
 const std::string DETECTION_WINDOW = "detection.window";
 const std::string DUR_INF = "dur.inf";
