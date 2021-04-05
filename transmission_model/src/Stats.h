@@ -19,6 +19,8 @@
 
 namespace TransModel {
 
+class PersonDataRecorderI;
+
 struct ARTEvent {
 
     static const std::string header;
@@ -137,6 +139,7 @@ struct Counts {
     unsigned int on_art, on_prep;
     unsigned int on_art_meth, on_art_crack, on_art_ecstasy;
     unsigned int on_prep_meth, on_prep_crack, on_prep_ecstasy;
+    unsigned int num_substance_users_on_treatment;
     
     //unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
     //	vertex_count_u26, vertex_count_gte26;
@@ -156,6 +159,8 @@ struct Counts {
     unsigned int pop;   
     unsigned int pop_infected_meth, pop_infected_crack, pop_infected_ecstasy;
     unsigned int pop_meth, pop_crack, pop_ecstasy;
+    unsigned int num_substance_users;
+
     unsigned int jail_pop;     
     unsigned int jail_pop_meth, jail_pop_crack, jail_pop_ecstasy;
     unsigned int incarcerated;   //nb of jailed each cycle

@@ -30,6 +30,12 @@ void ARTScheduler::operator()() {
         // and actually going on ART.
         if (!p->isDead()) {
             initialize_art_adherence(p, time_stamp_);
+            if (p->onCounselingAndBehavioralTreatment()) {
+                p->setARTAdherenceBeforeTreatment(p->artAdherence());
+                double prob = Parameters::instance()->getDoubleParameter(
+                            ART_ALWAYS_ADHERENT_PROB);
+                p->setArtAdherence({prob, AdherenceCategory::ALWAYS});
+            }
             p->goOnART(time_stamp_);
             Stats::instance()->personDataRecorder()->recordARTStart(p, time_stamp_);
             Stats::instance()->recordARTEvent(time_stamp_, p->id(), true);
@@ -49,6 +55,12 @@ void ARTPostBurninScheduler::operator()() {
     // and actually going on ART.
     if (!person->isDead()) {
         initialize_art_adherence(person, time_stamp_);
+        if (person->onCounselingAndBehavioralTreatment()) {
+            person->setARTAdherenceBeforeTreatment(person->artAdherence());
+            double prob = Parameters::instance()->getDoubleParameter(
+                        ART_ALWAYS_ADHERENT_PROB);
+            person->setArtAdherence({prob, AdherenceCategory::ALWAYS});
+        }
         person->goOnART(time_stamp_);
         Stats::instance()->personDataRecorder()->recordARTStart(person, time_stamp_);
         Stats::instance()->recordARTEvent(time_stamp_, person->id(), true);

@@ -30,6 +30,7 @@
 #include "PrepInterventionManager.h"
 #include "Jail.h"
 #include "Stats.h"
+#include "CounselingAndBehavioralTreatmentIntervention.h"
 
 namespace TransModel {
 
@@ -59,6 +60,7 @@ private:
     Jail jail;
     PersonCreator person_creator;
     PrepInterventionManager prep_manager;
+    CounselingAndBehavioralTreatmentIntervention cb_intervention;
     CondomUseAssigner condom_assigner;
     RangeWithProbability asm_runner, cd4m_treated_runner;
     RangeWithProbability asm_runner_meth, asm_runner_crack;

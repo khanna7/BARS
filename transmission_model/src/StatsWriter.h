@@ -68,6 +68,7 @@ void StatsWriter<T>::writeData() {
     for (auto& item : data) {
         item.writeTo(out);
     }
+    out.flush();
     data.clear();
 }
 

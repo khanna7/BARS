@@ -14,6 +14,7 @@
 #include "AdherenceCategory.h"
 #include "PrepParameters.h"
 #include "JailParameters.h"
+#include "Stats.h"
 
 namespace TransModel {
 
@@ -30,10 +31,11 @@ private:
     std::set<SubstanceUseType> substance_use_;
     InfectionParameters infection_parameters_;
     float infectivity_;
-    PrepParameters prep_;
+    bool on_treatment_;
+    PrepParameters prep_, prep_before_treatment_;
     bool dead_, diagnosed_, testable_;
     Diagnoser diagnoser_;
-    AdherenceData art_adherence_;
+    AdherenceData art_adherence_, art_adherence_before_treatment_;
 
     double score_;
 
@@ -312,6 +314,18 @@ public:
     void printJailRecord(double current_time)  {
         return jail_parameters_.printJailRecord(current_time);
     } 
+
+    void setDiagnosed(double tick);
+
+    void goOnCounselingAndBehavioralTreatment(double tick, double stop_time);
+
+    void goOffCounselingAndBehavioralTreatment(double tick);
+
+    bool onCounselingAndBehavioralTreatment() { return on_treatment_; }
+
+    void setARTAdherenceBeforeTreatment(AdherenceData ad) {
+        art_adherence_before_treatment_ = ad;
+    }
 
 };
 
