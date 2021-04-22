@@ -48,7 +48,9 @@ CPP_SOURCE = Person.cpp \
     PersonToVAL.cpp \
     JailIntervention.cpp \
     CounselingAndBehavioralTreatmentIntervention.cpp \
-    CounselingAndBehavioralTreatmentCessationEvent.cpp
+    CounselingAndBehavioralTreatmentCessationEvent.cpp \
+    MirtazapineTreatmentIntervention.cpp \
+    MirtazapineTreatmentCessationEvent.cpp
 
 c_source += $(C_SOURCE)
 cpp_source += $(CPP_SOURCE)

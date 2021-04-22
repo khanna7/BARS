@@ -31,6 +31,7 @@
 #include "Jail.h"
 #include "Stats.h"
 #include "CounselingAndBehavioralTreatmentIntervention.h"
+#include "MirtazapineTreatmentIntervention.h"
 
 namespace TransModel {
 
@@ -61,10 +62,12 @@ private:
     PersonCreator person_creator;
     PrepInterventionManager prep_manager;
     CounselingAndBehavioralTreatmentIntervention cb_intervention;
+    MirtazapineIntervention mirtazapine_intervention;
     CondomUseAssigner condom_assigner;
     RangeWithProbability asm_runner, cd4m_treated_runner;
     RangeWithProbability asm_runner_meth, asm_runner_crack;
-
+    bool use_bc_treatment;
+    bool use_mirtazapine_treatment;
     float age_threshold;
     unsigned int total_infected_person_days;
 

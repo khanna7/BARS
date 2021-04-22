@@ -105,6 +105,9 @@ const std::string LATE_STAGE_VIRAL_LOAD = "late.stage.viral.load";
 const std::string MAX_AGE = "max.age";
 const std::string MIN_AGE = "min.age";
 const std::string MIN_CHRONIC_INFECTIVITY_UNADJ = "min.chronic.infectivity.unadj";
+const std::string MIRTAZAPINE_TREATMENT_USE_PROP = "mirtazapine.treatment.use.prop";
+const std::string MIRTAZAPINE_TREATMENT_ADHERENCE_PROP = "mirtazapine.treatment.adherence.prop";
+const std::string MIRTAZAPINE_TREATMENT_LENGTH = "mirtazapine.treatment.length";
 const std::string NON_TESTERS_PROP_LT = "non.testers.prop.lt";
 const std::string NON_TESTERS_PROP_GTE = "non.testers.prop.gte";
 const std::string NUM_SEX_ACTS_PER_TIMESTEP = "num.sex.acts.per.timestep";
@@ -332,6 +335,8 @@ const std::string STIMULANT_USE_MORTALITY_INCREASE = "stimulant.use.mortality.in
 
 const std::string MORTALITY_RATE_METH = "mortality.rate.meth";
 const std::string MORTALITY_RATE_CRACK = "mortality.rate.crack";
+
+const std::string SUBSTANCE_USE_INTERVENTION = "substance.use.intervention";
 
 Parameters* Parameters::instance_ = 0;
 

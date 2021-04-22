@@ -31,7 +31,7 @@ private:
     std::set<SubstanceUseType> substance_use_;
     InfectionParameters infection_parameters_;
     float infectivity_;
-    bool on_treatment_;
+    bool on_cb_treatment_, on_mirtazapine_treatment_, adhering_to_mirtazapine_;
     PrepParameters prep_, prep_before_treatment_;
     bool dead_, diagnosed_, testable_;
     Diagnoser diagnoser_;
@@ -321,7 +321,15 @@ public:
 
     void goOffCounselingAndBehavioralTreatment(double tick);
 
-    bool onCounselingAndBehavioralTreatment() { return on_treatment_; }
+    bool onCounselingAndBehavioralTreatment() { return on_cb_treatment_; }
+
+    void goOnMirtazapineTreatment(double tick, double stop_time);
+
+    void goOffMirtazapineTreatment(double tick);
+
+    bool onMirtazapineTreatment() { return on_mirtazapine_treatment_; }
+
+    bool adheringToMirtazapineTreatment() { return adhering_to_mirtazapine_; }
 
     void setARTAdherenceBeforeTreatment(AdherenceData ad) {
         art_adherence_before_treatment_ = ad;

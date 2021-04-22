@@ -89,6 +89,9 @@ extern const std::string LATE_STAGE_VIRAL_LOAD;
 extern const std::string MAX_AGE;
 extern const std::string MIN_AGE;
 extern const std::string MIN_CHRONIC_INFECTIVITY_UNADJ;
+extern const std::string MIRTAZAPINE_TREATMENT_USE_PROP;
+extern const std::string MIRTAZAPINE_TREATMENT_ADHERENCE_PROP;
+extern const std::string MIRTAZAPINE_TREATMENT_LENGTH;
 extern const std::string NON_TESTERS_PROP_LT;
 extern const std::string NON_TESTERS_PROP_GTE;
 extern const std::string NUM_SEX_ACTS_PER_TIMESTEP;
@@ -315,6 +318,8 @@ extern const std::string ECSTASY_PROP;
 
 extern const std::string MORTALITY_RATE_METH;
 extern const std::string MORTALITY_RATE_CRACK;
+
+extern const std::string SUBSTANCE_USE_INTERVENTION;
 
 /**
  * Parameters singleton that contains the model properties.

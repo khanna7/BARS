@@ -136,10 +136,12 @@ struct Counts {
     unsigned int sd_steady_sex_with_condom, sd_steady_sex_without_condom;
     unsigned int sc_casual_sex_with_condom, sc_casual_sex_without_condom;
     unsigned int sc_steady_sex_with_condom, sc_steady_sex_without_condom;
-    unsigned int on_art, on_prep;
+    unsigned int on_art, on_prep, on_mirtazapine, adhering_to_mirtazapine;
+    unsigned int adhering_to_mirtazapine_uninfected;
+    unsigned int adhering_to_mirtazapine_on_prep;
     unsigned int on_art_meth, on_art_crack, on_art_ecstasy;
     unsigned int on_prep_meth, on_prep_crack, on_prep_ecstasy;
-    unsigned int num_substance_users_on_treatment;
+    unsigned int on_bc_treatment;
     
     //unsigned int uninfected_u26, uninfected_gte26, infected_via_transmission_u26, infected_via_transmission_gte26,
     //	vertex_count_u26, vertex_count_gte26;
@@ -157,8 +159,10 @@ struct Counts {
     unsigned int external_infected_meth, external_infected_crack, external_infected_ecstasy;
     unsigned int infected_jail_pop; 
     unsigned int pop;   
-    unsigned int pop_infected_meth, pop_infected_crack, pop_infected_ecstasy;
-    unsigned int pop_meth, pop_crack, pop_ecstasy;
+    unsigned int pop_infected_meth, pop_infected_crack, pop_infected_ecstasy,
+    pop_infected_meth_crack, pop_infected_meth_ecstasy, pop_infected_crack_ecstasy,
+    pop_infected_meth_crack_ecstasy;
+    unsigned int pop_meth, pop_crack, pop_ecstasy, pop_meth_crack, pop_meth_ecstasy, pop_crack_ecstasy, pop_meth_crack_ecstasy;
     unsigned int num_substance_users;
 
     unsigned int jail_pop;     
