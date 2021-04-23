@@ -25,13 +25,13 @@ check_directory_exists
 # TODO edit the number of processes as required.
 #export PROCS=644
 #export PROCS=32
-export PROCS=3
+export PROCS=242
 #export PROCS=4
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if the MACHINE variable (see below) is not set.
 export QUEUE=broadwl
-export WALLTIME=24:00:00
+export WALLTIME=04:00:00
 #export WALLTIME=0:50:00
 export PPN=14
 export TURBINE_JOBNAME="${EXPID}_job"
@@ -92,7 +92,7 @@ log_script
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/baseline_one.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr_low_one.txt
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr_one.txt 
-UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-baseline-1.txt 
+UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-bc.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-base10yr.txt 
 
 

@@ -2,7 +2,7 @@
 global.random.seed=1
 
 #stop.at = 50
-stop.at = 36500
+stop.at = 3650
 #stop.at = 7300 # 20 years
 #stop.at = 730
 
@@ -35,7 +35,7 @@ partnership.events.file = partnership_events.csv
 biomarker.persons.to.log = random:5
 
 #death.events.file = exit_events.csv
-person.data.file = person_data.csv
+#person.data.file = person_data.csv
 #testing.events.file = testing_events.csv
 art.events.file = art_events.csv
 prep.events.file = prep_events.csv
@@ -53,6 +53,8 @@ count.overlaps = true
 
 output.age.range = 20-30,30-100
 input.age.threshold = 26
+
+is.counseling.and.behavioral.treatment.on = true
 
 
 #----jail related: 
