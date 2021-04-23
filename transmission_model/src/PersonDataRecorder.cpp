@@ -7,6 +7,8 @@
 
 #include "PersonDataRecorder.h"
 
+using namespace std;
+
 namespace TransModel {
 
 const std::string PersonData::header("id,time_of_entry,time_of_death,infection_status,time_of_infection,"
@@ -30,6 +32,7 @@ void PersonData::writeTo(FileOutput& out) {
             << "," << art_init_ts << "," << art_stop_ts << "," << static_cast<int>(prep_status) << "," << prep_init_ts << "," << prep_stop_ts
             << "," << number_of_tests << "," << time_since_last_test << "," << diagnosed << "," << init_art_lag << "," << prep_adherence_category << "," << art_adherence_category << "," <<
             adhered_interval_count << "," << non_adhered_interval_count << "," << infection_source << "," << time_of_diagnosis << "\n";
+    out.flush();
 }
 
 

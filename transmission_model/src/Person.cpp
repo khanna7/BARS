@@ -28,7 +28,9 @@ Person::Person(int id, float age, bool circum_status,
                int casual_role, Diagnoser diagnoser) :
     id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age),
     circum_status_(circum_status), substance_use_(substance_use),
-    infection_parameters_(), infectivity_(0), on_treatment_(false), prep_(PrepStatus::OFF, -1, -1),
+    infection_parameters_(), infectivity_(0), on_cb_treatment_(false),
+    on_mirtazapine_treatment_(false), adhering_to_mirtazapine_(false),
+    prep_(PrepStatus::OFF, -1, -1),
     prep_before_treatment_(prep_), dead_(false), diagnosed_(false),
     testable_(false), diagnoser_(diagnoser),
     art_adherence_{0, AdherenceCategory::NA},
@@ -213,7 +215,7 @@ void Person::setDiagnosed(double tick) {
 }
 
 void Person::goOnCounselingAndBehavioralTreatment(double tick, double stop_time) {
-    on_treatment_ = true;
+    on_cb_treatment_ = true;
     art_adherence_before_treatment_ = art_adherence_;
     prep_before_treatment_ = prep_;
     PersonPtr person = std::make_shared<Person>(*this);
@@ -252,7 +254,7 @@ void Person::goOnCounselingAndBehavioralTreatment(double tick, double stop_time)
 }
 
 void Person::goOffCounselingAndBehavioralTreatment(double tick) {
-    on_treatment_ = false;
+    on_cb_treatment_ = false;
     setArtAdherence(art_adherence_before_treatment_);
     if ((prep_before_treatment_.status() == PrepStatus::OFF &&
             prep_.status() == PrepStatus::ON) ||
@@ -270,6 +272,73 @@ void Person::goOffCounselingAndBehavioralTreatment(double tick) {
     }
     prep_.setAdherenceData({prep_before_treatment_.prepEffectiveness(),
                             prep_before_treatment_.adherenceCagegory()});
+}
+
+void TransModel::Person::goOnMirtazapineTreatment(double tick, double stop_time) {
+    on_mirtazapine_treatment_ = true;
+    if (Random::instance()->nextDouble() <=
+            Parameters::instance()->getDoubleParameter(MIRTAZAPINE_TREATMENT_ADHERENCE_PROP)) {
+        adhering_to_mirtazapine_ = true;
+        art_adherence_before_treatment_ = art_adherence_;
+        prep_before_treatment_ = prep_;
+        PersonPtr person = std::make_shared<Person>(*this);
+        if (isInfected()) {
+            if (!isDiagnosed()) {
+                setDiagnosed(tick);
+                initialize_art_adherence(person, tick, AdherenceCategory::ALWAYS);
+                goOnART(tick);
+                Stats::instance()->personDataRecorder()->recordARTStart(person, tick);
+                Stats::instance()->recordARTEvent(tick, person->id(), true);
+            } else {
+                if (!isOnART(false)) {
+                    goOnART(tick);
+                    Stats::instance()->personDataRecorder()->recordARTStart(person, tick);
+                    Stats::instance()->recordARTEvent(tick, id(), true);
+                }
+                double prob = Parameters::instance()->getDoubleParameter(
+                            ART_ALWAYS_ADHERENT_PROB);
+                setArtAdherence({prob, AdherenceCategory::ALWAYS});
+            }
+        } else {
+            if (!isOnPrep(false)) {
+                goOnPrep(tick, stop_time);
+                Stats* stats = Stats::instance();
+                stats->recordPREPEvent(tick, id(),
+                                       static_cast<int>(PrepStatus::ON_TREATMENT),
+                                       person->isSubstanceUser(SubstanceUseType::METH),
+                                       person->isSubstanceUser(SubstanceUseType::CRACK),
+                                       person->isSubstanceUser(SubstanceUseType::ECSTASY));
+                stats->personDataRecorder()->recordPREPStart(person, tick);
+            }
+            prep_.setAdherenceData({Parameters::instance()->getDoubleParameter(
+                                    PREP_ALWAYS_ADHERENT_TR),
+                                    AdherenceCategory::ALWAYS});
+        }
+    }
+}
+
+void Person::goOffMirtazapineTreatment(double tick) {
+    on_mirtazapine_treatment_ = false;
+    if (adhering_to_mirtazapine_ == true) {
+        adhering_to_mirtazapine_ = false;
+        setArtAdherence(art_adherence_before_treatment_);
+        if ((prep_before_treatment_.status() == PrepStatus::OFF &&
+             prep_.status() == PrepStatus::ON) ||
+                (prep_before_treatment_.status() == PrepStatus::ON &&
+                 prep_before_treatment_.stopTime() < tick)) {
+            goOffPrep(PrepStatus::OFF);
+            Stats::instance()->personDataRecorder()->recordPREPStop(this,
+                                                                    tick,
+                                                                    PrepStatus::OFF);
+            Stats::instance()->recordPREPEvent(tick, id(),
+                                               static_cast<int>(PrepStatus::OFF),
+                                               isSubstanceUser(SubstanceUseType::METH),
+                                               isSubstanceUser(SubstanceUseType::CRACK),
+                                               isSubstanceUser(SubstanceUseType::ECSTASY));
+        }
+        prep_.setAdherenceData({prep_before_treatment_.prepEffectiveness(),
+                                prep_before_treatment_.adherenceCagegory()});
+    }
 }
 
 } /* namespace TransModel */

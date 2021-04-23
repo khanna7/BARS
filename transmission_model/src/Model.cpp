@@ -654,16 +654,18 @@ void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& 
     std::shared_ptr<MethEcstasyPrepFilter> meth_ecstasy_base = std::make_shared<MethEcstasyPrepFilter>();
     std::shared_ptr<CrackEcstasyPrepFilter> crack_ecstasy_base = std::make_shared<CrackEcstasyPrepFilter>();
     std::shared_ptr<MethCrackEcstasyPrepFilter> meth_crack_ecstasy_base = std::make_shared<MethCrackEcstasyPrepFilter>();
+    std::shared_ptr<MirtazapinePrepFilter> mirtazapine_base = std::make_shared<MirtazapinePrepFilter>();
+    std::shared_ptr<BCPrepFilter> bc_base = std::make_shared<BCPrepFilter>();
 
     std::vector<std::shared_ptr<PrepFilter>> lt_filters_base({lt_base, non_sustance_user_base});
     std::vector<std::shared_ptr<PrepFilter>> gte_filters_base({gte_base, non_sustance_user_base});
-    std::vector<std::shared_ptr<PrepFilter>> meth_user_filters_base({meth_base});
-    std::vector<std::shared_ptr<PrepFilter>> crack_user_filters_base({crack_base});
-    std::vector<std::shared_ptr<PrepFilter>> ecstasy_user_filters_base({ecstasy_base});
-    std::vector<std::shared_ptr<PrepFilter>> meth_crack_user_filters_base({meth_crack_base});
-    std::vector<std::shared_ptr<PrepFilter>> meth_ecstasy_user_filters_base({meth_ecstasy_base});
-    std::vector<std::shared_ptr<PrepFilter>> crack_ecstasy_user_filters_base({crack_ecstasy_base});
-    std::vector<std::shared_ptr<PrepFilter>> meth_crack_ecstasy_user_filters_base({meth_crack_ecstasy_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_user_filters_base({meth_base, mirtazapine_base, bc_base});
+    std::vector<std::shared_ptr<PrepFilter>> crack_user_filters_base({crack_base, bc_base});
+    std::vector<std::shared_ptr<PrepFilter>> ecstasy_user_filters_base({ecstasy_base, bc_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_crack_user_filters_base({meth_crack_base, mirtazapine_base, bc_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_ecstasy_user_filters_base({meth_ecstasy_base, mirtazapine_base, bc_base});
+    std::vector<std::shared_ptr<PrepFilter>> crack_ecstasy_user_filters_base({crack_ecstasy_base, bc_base});
+    std::vector<std::shared_ptr<PrepFilter>> meth_crack_ecstasy_user_filters_base({meth_crack_ecstasy_base, mirtazapine_base, bc_base});
 
     vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_filters_base));
     vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_filters_base));
@@ -915,12 +917,14 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
                 person_creator { trans_runner, Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator, &jail}, prep_manager(),
                 cb_intervention(Parameters::instance()->getDoubleParameter(COUNSELING_AND_BEHAVIORAL_TREATMENT_USE_PROP),
                                 Parameters::instance()->getIntParameter(COUNSELING_AND_BEHAVIORAL_TREATMENT_LENGTH)),
+                mirtazapine_intervention(Parameters::instance()->getDoubleParameter(MIRTAZAPINE_TREATMENT_USE_PROP),
+                                         Parameters::instance()->getIntParameter(MIRTAZAPINE_TREATMENT_LENGTH)),
                 condom_assigner { create_condom_use_assigner() },
                 asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)},
                 asm_runner_meth { create_ASM_runner_stimulants(SubstanceUseType::METH) },
                 asm_runner_crack { create_ASM_runner_stimulants(SubstanceUseType::CRACK) },
-                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}
-                 {
+                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)},
+                use_bc_treatment(false), use_mirtazapine_treatment(false) {
 
     std::cout << "treated: " << cd4m_treated_runner << std::endl;
     // get initial stats
@@ -958,7 +962,17 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     stats->resetForNextTimeStep();
 
     init_generators();
-    
+
+    std::string substance_use_intervention = Parameters::instance()->getStringParameter(SUBSTANCE_USE_INTERVENTION);
+    if (substance_use_intervention == "mirtazapine") {
+        use_mirtazapine_treatment = true;
+        cout << "Using Mirtazapine Treatment" << endl;
+    } else if (substance_use_intervention == "bc") {
+        use_bc_treatment = true;
+        cout << "Using BC Intervention" << endl;
+    } else {
+        cout << "Using No Substance Use Intervention" << endl;
+    }
 
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
     runner.scheduleStop(Parameters::instance()->getDoubleParameter("stop.at"));
@@ -1263,9 +1277,10 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             ++dead_count;
         } else {
             if (person->onCounselingAndBehavioralTreatment()) {
-                ++stats->currentCounts().num_substance_users_on_treatment;
+                ++stats->currentCounts().on_bc_treatment;
             }
-            cb_intervention.processPerson(person);
+            if (use_bc_treatment) cb_intervention.processPerson(person);
+            if (use_mirtazapine_treatment) mirtazapine_intervention.processPerson(person);
             // don't count dead uninfected persons
             if (!person->isInfected()) {
                 // accumulate persons who may potentially go on PrEP
@@ -1301,7 +1316,18 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                     }
                 }
             }
-
+            if (person->onMirtazapineTreatment()) {
+                ++stats->currentCounts().on_mirtazapine;
+                if (person->adheringToMirtazapineTreatment()) {
+                    ++stats->currentCounts().adhering_to_mirtazapine;
+                    if (!person->isInfected()) {
+                        ++stats->currentCounts().adhering_to_mirtazapine_uninfected;
+                        if (person->isOnPrep(false)) {
+                            ++stats->currentCounts().adhering_to_mirtazapine_on_prep;
+                        }
+                    }
+                }
+            }
             double prob;
             double prob_with_cji;
             if (person->isSubstanceUser(SubstanceUseType::METH) && person->isSubstanceUser(SubstanceUseType::CRACK) && person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
@@ -1349,7 +1375,11 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     prep_manager.run(tick, net);
     // Reset the prep uptake for next round
     prep_manager.reset();
-    if (Parameters::instance()->getBooleanParameter(IS_COUNSELING_AND_BEHAVIORAL_TREATMENT_ON)) {
+    if (use_mirtazapine_treatment) {
+        mirtazapine_intervention.run(tick);
+        mirtazapine_intervention.reset();
+    }
+    if (use_bc_treatment) {
         cb_intervention.run(tick);
         cb_intervention.reset();
     }

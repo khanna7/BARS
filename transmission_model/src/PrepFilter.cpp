@@ -146,4 +146,28 @@ double MethCrackEcstasyPrepFilter::calcPrepStopAdjustment() {
     return 0;
 }
 
+MirtazapinePrepFilter::MirtazapinePrepFilter() {}
+
+MirtazapinePrepFilter::~MirtazapinePrepFilter() {}
+
+bool MirtazapinePrepFilter::apply(PersonPtr person) {
+    return !person->adheringToMirtazapineTreatment();
+}
+
+double MirtazapinePrepFilter::calcPrepStopAdjustment() {
+    return 0;
+}
+
+BCPrepFilter::BCPrepFilter() {}
+
+BCPrepFilter::~BCPrepFilter() {}
+
+bool BCPrepFilter::apply(PersonPtr person) {
+    return !person->onCounselingAndBehavioralTreatment();
+}
+
+double BCPrepFilter::calcPrepStopAdjustment() {
+    return 0;
+}
+
 }

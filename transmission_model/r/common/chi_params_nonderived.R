@@ -594,9 +594,16 @@ mortality.rate.crack <- 0.000025
 
 # Talk to John regarding PrEP and retention use
 
+# Can be "mirtazapine", "bc", or "none"
+substance.use.intervention <- "mirtazapine"
+
 counseling.and.behavioral.treatment.use.prop <- 0.1
 counseling.and.behavioral.treatment.length <- 90
 
+
+mirtazapine.treatment.use.prop <- 0.5
+mirtazapine.treatment.adherence.prop <- 1.0 # 0.485
+mirtazapine.treatment.length <- 90
+
 meth.increase.incar.rate <- crack.increase.incar.rate <- ecstasy.increase.incar.rate <-0
 jail.serving.time.increase.meth <- jail.serving.time.increase.crack <- jail.serving.time.increase.ecstasy <- 0
-

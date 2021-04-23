@@ -38,6 +38,7 @@ void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep
     double adjustment = calcPrepStopAdjustment();
     if (candidates.size() > 0) {
         prep_p = ((double)total_negatives * prep_data_.use * (prep_data_.stop + adjustment)) / candidates.size();
+        //std::cout << "treatment prob: " << prep_p << " target proportion on " << prep_data_.use << " current_proportion_on " << (total_negatives - candidates.size())/(double)total_negatives << " on / total " << (total_negatives - candidates.size()) << " / " << total_negatives << std::endl;
         for (auto& person : candidates) {
             if (repast::Random::instance()->nextDouble() <= prep_p) {
                 putOnPrep(tick, person, PrepStatus::ON);

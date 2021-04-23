@@ -124,6 +124,28 @@ public:
     bool apply(PersonPtr person) override;
     double calcPrepStopAdjustment() override;
 };
+
+class MirtazapinePrepFilter : public PrepFilter {
+
+public:
+    MirtazapinePrepFilter();
+    virtual ~MirtazapinePrepFilter();
+
+    bool apply(PersonPtr person) override;
+    double calcPrepStopAdjustment() override;
+};
+
+class BCPrepFilter : public PrepFilter {
+
+public:
+    BCPrepFilter();
+    virtual ~BCPrepFilter();
+
+    bool apply(PersonPtr person) override;
+    double calcPrepStopAdjustment() override;
+};
+
 }
+
 
 #endif
