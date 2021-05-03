@@ -54,7 +54,7 @@ count.overlaps = true
 output.age.range = 20-30,30-100
 input.age.threshold = 26
 
-is.counseling.and.behavioral.treatment.on = true
+is.counseling.and.behavioral.treatment.on = false
 
 
 #----jail related: 
