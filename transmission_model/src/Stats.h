@@ -159,10 +159,8 @@ struct Counts {
     unsigned int external_infected_meth, external_infected_crack, external_infected_ecstasy;
     unsigned int infected_jail_pop; 
     unsigned int pop;   
-    unsigned int pop_infected_meth, pop_infected_crack, pop_infected_ecstasy,
-    pop_infected_meth_crack, pop_infected_meth_ecstasy, pop_infected_crack_ecstasy,
-    pop_infected_meth_crack_ecstasy;
-    unsigned int pop_meth, pop_crack, pop_ecstasy, pop_meth_crack, pop_meth_ecstasy, pop_crack_ecstasy, pop_meth_crack_ecstasy;
+    unsigned int pop_infected_meth, pop_infected_crack, pop_infected_ecstasy;
+    unsigned int pop_meth, pop_crack, pop_ecstasy;
     unsigned int num_substance_users;
 
     unsigned int jail_pop;     
