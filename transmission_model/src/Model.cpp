@@ -1318,8 +1318,10 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             }
             if (person->onMirtazapineTreatment()) {
                 ++stats->currentCounts().on_mirtazapine;
+                if (person->isInfected()) ++stats->currentCounts().on_mirtazapine_treatment_infected;
                 if (person->adheringToMirtazapineTreatment()) {
                     ++stats->currentCounts().adhering_to_mirtazapine;
+                    if (person->isInfected()) ++stats->currentCounts().adhering_to_mirtazapine_infected;
                     if (!person->isInfected()) {
                         ++stats->currentCounts().adhering_to_mirtazapine_uninfected;
                         if (person->isOnPrep(false)) {
