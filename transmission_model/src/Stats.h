@@ -139,7 +139,7 @@ struct Counts {
     unsigned int on_art, on_prep, on_mirtazapine, adhering_to_mirtazapine;
     unsigned int adhering_to_mirtazapine_uninfected;
     unsigned int adhering_to_mirtazapine_infected, on_mirtazapine_treatment_infected;
-    unsigned int adhering_to_mirtazapine_on_prep;
+    unsigned int adhering_to_mirtazapine_on_prep; 
     unsigned int on_art_meth, on_art_crack, on_art_ecstasy;
     unsigned int on_prep_meth, on_prep_crack, on_prep_ecstasy;
     unsigned int on_bc_treatment;
@@ -159,8 +159,11 @@ struct Counts {
     unsigned int internal_infected_on_mirtazapine, external_infected_on_mirtazapine;
     unsigned int internal_infected_meth, internal_infected_crack, internal_infected_ecstasy;
     unsigned int external_infected_meth, external_infected_crack, external_infected_ecstasy;
+    unsigned int internal_infected_on_bc_meth, internal_infected_on_bc_crack, internal_infected_on_bc_ecstasy;
+    unsigned int external_infected_on_bc_meth, external_infected_on_bc_crack, external_infected_on_bc_ecstasy;
     unsigned int infected_jail_pop; 
     unsigned int pop;   
+    unsigned int pop_infected_on_bc_meth, pop_infected_on_bc_crack, pop_infected_on_bc_ecstasy;
     unsigned int pop_infected_meth, pop_infected_crack, pop_infected_ecstasy;
     unsigned int pop_meth, pop_crack, pop_ecstasy;
     unsigned int num_substance_users;
