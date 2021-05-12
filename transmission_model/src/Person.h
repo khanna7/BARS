@@ -31,7 +31,7 @@ private:
     std::set<SubstanceUseType> substance_use_;
     InfectionParameters infection_parameters_;
     float infectivity_;
-    bool on_cb_treatment_, on_mirtazapine_treatment_, adhering_to_mirtazapine_;
+    bool on_cb_treatment_, adhering_to_cb_, on_mirtazapine_treatment_, adhering_to_mirtazapine_;
     PrepParameters prep_, prep_before_treatment_;
     bool dead_, diagnosed_, testable_;
     Diagnoser diagnoser_;
@@ -186,10 +186,18 @@ public:
         return substance_use_.find(sut) != substance_use_.end();
     }
 
+    void setPrepParametersAdherenceData(AdherenceData ad) {
+        prep_.setAdherenceData(ad);
+    }
+
     const PrepParameters prepParameters() const {
         return prep_;
     }
 
+    const PrepParameters prepParametersBeforeTreatment() const {
+        return prep_before_treatment_;
+    }
+    
     void setARTLag(double lag) {
         infection_parameters_.art_lag = lag;
     }
@@ -317,22 +325,35 @@ public:
 
     void setDiagnosed(double tick);
 
-    void goOnCounselingAndBehavioralTreatment(double tick, double stop_time);
-
-    void goOffCounselingAndBehavioralTreatment(double tick);
-
     bool onCounselingAndBehavioralTreatment() { return on_cb_treatment_; }
 
-    void goOnMirtazapineTreatment(double tick, double stop_time);
+    void setOnCounselingAndBehavioralTreatment(bool status) { 
+        on_cb_treatment_ = status;
+        if (status == false) {
+            setAdheringToCBTreatment(false);
+        }
+    }
 
-    void goOffMirtazapineTreatment(double tick);
+    void setAdheringToCBTreatment(bool status) { adhering_to_cb_ = status; }
+
+    bool adheringToCBTreatment() { return adhering_to_cb_; }
+
+    void setOnMirtazapineTreatment(bool status) { on_mirtazapine_treatment_ = status; }
 
     bool onMirtazapineTreatment() { return on_mirtazapine_treatment_; }
 
+    void setAdheringToMirtazapineTreatment(bool status) { adhering_to_mirtazapine_ = status; }
+
     bool adheringToMirtazapineTreatment() { return adhering_to_mirtazapine_; }
+
+    AdherenceData artAdherenceBeforeTreatment() { return art_adherence_before_treatment_; }
 
     void setARTAdherenceBeforeTreatment(AdherenceData ad) {
         art_adherence_before_treatment_ = ad;
+    }
+
+    void setPrepBeforeTreatment(PrepParameters p) {
+        prep_before_treatment_ = p;
     }
 
 };

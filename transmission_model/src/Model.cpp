@@ -1112,8 +1112,8 @@ void Model::step() {
 void Model::schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
         float size_of_timestep) {
     double lag;
-    if (person->onCounselingAndBehavioralTreatment()) {
-        lag = 0;
+    if (person->onCounselingAndBehavioralTreatment() || person->onMirtazapineTreatment()) {
+        lag = 1;
     } else {
         lag = art_lag_calculator.calculateLag(person, size_of_timestep);
     }

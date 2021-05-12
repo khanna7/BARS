@@ -12,7 +12,6 @@ class CounselingAndBehavioralTreatmentCessationEvent : public repast::Functor {
 private:
     PersonPtr person_;
     double timestamp_;
-
 public:
     CounselingAndBehavioralTreatmentCessationEvent(std::shared_ptr<Person> person, double timestamp);
      virtual ~CounselingAndBehavioralTreatmentCessationEvent();

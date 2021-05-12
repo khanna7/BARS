@@ -5,6 +5,7 @@
  *      Author: nick
  */
 
+#include <iostream>
 
 #include "repast_hpc/RepastProcess.h"
 
@@ -13,7 +14,7 @@
 #include "AdherenceCheckScheduler.h"
 #include "Parameters.h"
 #include "ProbDist.h"
-
+using namespace std;
 namespace TransModel {
 
 void initialize_art_adherence(std::shared_ptr<Person> person, double tick, AdherenceCategory category) {
@@ -64,6 +65,7 @@ void initialize_art_adherence(std::shared_ptr<Person> person, double first_art_a
 
     AdherenceData data = creator.createProbDist().draw(repast::Random::instance()->nextDouble());
     person->setArtAdherence(data);
+    //cout << "initialize_art_adherence " << person->id() << " " << (int)person->artAdherence().category << endl;
     schedule_art_adherence(person, first_art_at_tick);
 }
 

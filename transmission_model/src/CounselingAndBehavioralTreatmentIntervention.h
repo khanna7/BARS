@@ -20,7 +20,6 @@ private:
     unsigned int length_;
     std::vector<std::shared_ptr<Person>> candidates;
     unsigned int total_substance_users;
-
 public:
     CounselingAndBehavioralTreatmentIntervention(double proortion_on, int length);
     virtual ~CounselingAndBehavioralTreatmentIntervention();

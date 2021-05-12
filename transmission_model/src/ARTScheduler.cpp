@@ -29,16 +29,23 @@ void ARTScheduler::operator()() {
         // person might be die in between ART is scheduled
         // and actually going on ART.
         if (!p->isDead()) {
-            initialize_art_adherence(p, time_stamp_);
-            if (p->onCounselingAndBehavioralTreatment()) {
-                p->setARTAdherenceBeforeTreatment(p->artAdherence());
-                double prob = Parameters::instance()->getDoubleParameter(
-                            ART_ALWAYS_ADHERENT_PROB);
-                p->setArtAdherence({prob, AdherenceCategory::ALWAYS});
+            if (p->artAdherence().category == AdherenceCategory::NA) {
+                initialize_art_adherence(p, time_stamp_);
+                p->goOnART(time_stamp_);
+                Stats::instance()->personDataRecorder()->recordARTStart(p, time_stamp_);
+                Stats::instance()->recordARTEvent(time_stamp_, p->id(), true);
+                if (p->adheringToCBTreatment() || p->adheringToMirtazapineTreatment()) {
+                    p->setARTAdherenceBeforeTreatment(p->artAdherence());
+                    double prob = Parameters::instance()->getDoubleParameter(
+                                ART_ALWAYS_ADHERENT_PROB);
+                    p->setArtAdherence({prob, AdherenceCategory::ALWAYS});
+                } else if (p->onCounselingAndBehavioralTreatment()) {
+                    p->setARTAdherenceBeforeTreatment(p->artAdherence());
+                    double prob = Parameters::instance()->getDoubleParameter(
+                                ART_PARTIAL_POS_ADHERENT_PROB);
+                    p->setArtAdherence({prob, AdherenceCategory::PARTIAL_PLUS});
+                }
             }
-            p->goOnART(time_stamp_);
-            Stats::instance()->personDataRecorder()->recordARTStart(p, time_stamp_);
-            Stats::instance()->recordARTEvent(time_stamp_, p->id(), true);
         }
     }
 }
