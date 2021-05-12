@@ -72,6 +72,7 @@ extern const std::string CHRONIC_LENGTH_MAX;
 extern const std::string CIRCUM_MULT;
 extern const std::string CIRCUM_RATE;
 extern const std::string IS_COUNSELING_AND_BEHAVIORAL_TREATMENT_ON;
+extern const std::string COUNSELING_AND_BEHAVIORAL_TREATMENT_ADHERENCE_PROP;
 extern const std::string COUNSELING_AND_BEHAVIORAL_TREATMENT_USE_PROP;
 extern const std::string COUNSELING_AND_BEHAVIORAL_TREATMENT_LENGTH;
 extern const std::string DAILY_ENTRY_RATE;

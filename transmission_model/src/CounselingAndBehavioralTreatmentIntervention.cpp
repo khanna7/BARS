@@ -10,6 +10,13 @@ namespace TransModel {
 void goOnCounselingAndBehavioralTreatment(PersonPtr person, double tick, double stop_time) {
     //cout << person->id() << " Going on BC" << endl;
     person->setOnCounselingAndBehavioralTreatment(true);
+    bool adhering = false;
+    if (Random::instance()->nextDouble() <=
+            Parameters::instance()->getDoubleParameter(
+                COUNSELING_AND_BEHAVIORAL_TREATMENT_ADHERENCE_PROP)) {
+        adhering = true;
+        person->setAdheringToCBTreatment(true);
+    }
     if (person->isInfected()) {
         if (!person->isDiagnosed()) {
             person->setDiagnosed(tick);
@@ -23,9 +30,15 @@ void goOnCounselingAndBehavioralTreatment(PersonPtr person, double tick, double 
             Stats::instance()->recordARTEvent(tick, person->id(), true);
         }
         person->setARTAdherenceBeforeTreatment(person->artAdherence());
-        double prob = Parameters::instance()->getDoubleParameter(
-                    ART_ALWAYS_ADHERENT_PROB);
-        person->setArtAdherence({prob, AdherenceCategory::ALWAYS});
+        if (adhering) {
+            double prob = Parameters::instance()->getDoubleParameter(
+                        ART_ALWAYS_ADHERENT_PROB);
+            person->setArtAdherence({prob, AdherenceCategory::ALWAYS});
+        } else {
+            double prob = Parameters::instance()->getDoubleParameter(
+                        ART_PARTIAL_POS_ADHERENT_PROB);
+            person->setArtAdherence({prob, AdherenceCategory::PARTIAL_PLUS});
+        }
     } else {
         if (!person->isOnPrep(false)) {
             person->goOnPrep(tick, stop_time);
@@ -38,14 +51,19 @@ void goOnCounselingAndBehavioralTreatment(PersonPtr person, double tick, double 
             stats->personDataRecorder()->recordPREPStart(person, tick);
         }
         person->setPrepBeforeTreatment(person->prepParameters());
-        person->setPrepParametersAdherenceData({Parameters::instance()->getDoubleParameter(
-                                PREP_ALWAYS_ADHERENT_TR),
-                                AdherenceCategory::ALWAYS});
+        if (adhering) {
+            person->setPrepParametersAdherenceData({Parameters::instance()->getDoubleParameter(
+                                                    PREP_ALWAYS_ADHERENT_TR),
+                                                    AdherenceCategory::ALWAYS});
+        } else {
+            person->setPrepParametersAdherenceData({Parameters::instance()->getDoubleParameter(
+                                                     PREP_PARTIAL_POS_ADHERENT_TR),
+                                                     AdherenceCategory::PARTIAL_PLUS});
+        }
     }
 }
 
-CounselingAndBehavioralTreatmentIntervention::
-CounselingAndBehavioralTreatmentIntervention(double proportion_on, int length) :
+CounselingAndBehavioralTreatmentIntervention::CounselingAndBehavioralTreatmentIntervention(double proportion_on, int length) :
     cessation_generator( 1. / length, 1.1), proportion_on_(proportion_on),
     length_(length), candidates(), total_substance_users(0) {
 }

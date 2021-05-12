@@ -31,7 +31,7 @@ private:
     std::set<SubstanceUseType> substance_use_;
     InfectionParameters infection_parameters_;
     float infectivity_;
-    bool on_cb_treatment_, on_mirtazapine_treatment_, adhering_to_mirtazapine_;
+    bool on_cb_treatment_, adhering_to_cb_, on_mirtazapine_treatment_, adhering_to_mirtazapine_;
     PrepParameters prep_, prep_before_treatment_;
     bool dead_, diagnosed_, testable_;
     Diagnoser diagnoser_;
@@ -327,7 +327,16 @@ public:
 
     bool onCounselingAndBehavioralTreatment() { return on_cb_treatment_; }
 
-    void setOnCounselingAndBehavioralTreatment(bool status) { on_cb_treatment_ = status; }
+    void setOnCounselingAndBehavioralTreatment(bool status) { 
+        on_cb_treatment_ = status;
+        if (status == false) {
+            setAdheringToCBTreatment(false);
+        }
+    }
+
+    void setAdheringToCBTreatment(bool status) { adhering_to_cb_ = status; }
+
+    bool adheringToCBTreatment() { return adhering_to_cb_; }
 
     void setOnMirtazapineTreatment(bool status) { on_mirtazapine_treatment_ = status; }
 

@@ -34,11 +34,16 @@ void ARTScheduler::operator()() {
                 p->goOnART(time_stamp_);
                 Stats::instance()->personDataRecorder()->recordARTStart(p, time_stamp_);
                 Stats::instance()->recordARTEvent(time_stamp_, p->id(), true);
-                if (p->onCounselingAndBehavioralTreatment() || p->adheringToMirtazapineTreatment()) {
+                if (p->adheringToCBTreatment() || p->adheringToMirtazapineTreatment()) {
                     p->setARTAdherenceBeforeTreatment(p->artAdherence());
                     double prob = Parameters::instance()->getDoubleParameter(
                                 ART_ALWAYS_ADHERENT_PROB);
                     p->setArtAdherence({prob, AdherenceCategory::ALWAYS});
+                } else if (p->onCounselingAndBehavioralTreatment()) {
+                    p->setARTAdherenceBeforeTreatment(p->artAdherence());
+                    double prob = Parameters::instance()->getDoubleParameter(
+                                ART_PARTIAL_POS_ADHERENT_PROB);
+                    p->setArtAdherence({prob, AdherenceCategory::PARTIAL_PLUS});
                 }
             }
         }

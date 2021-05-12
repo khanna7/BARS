@@ -90,6 +90,8 @@ const std::string COUNSELING_AND_BEHAVIORAL_TREATMENT_USE_PROP =
         "counseling.and.behavioral.treatment.use.prop";
 const std::string COUNSELING_AND_BEHAVIORAL_TREATMENT_LENGTH =
         "counseling.and.behavioral.treatment.length";
+const std::string COUNSELING_AND_BEHAVIORAL_TREATMENT_ADHERENCE_PROP =
+        "counseling.and.behavioral.treatment.adherence.prop";
 const std::string DAILY_ENTRY_RATE = "daily.entry.rate";
 const std::string DETECTION_WINDOW = "detection.window";
 const std::string DUR_INF = "dur.inf";

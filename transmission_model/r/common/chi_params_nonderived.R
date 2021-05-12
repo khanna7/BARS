@@ -599,6 +599,7 @@ substance.use.intervention <- "mirtazapine"
 
 counseling.and.behavioral.treatment.use.prop <- 0.1
 counseling.and.behavioral.treatment.length <- 90
+counseling.and.behavioral.treatment.adherence.prop <- .87
 
 mirtazapine.treatment.use.prop <- 0.5
 mirtazapine.treatment.adherence.prop <- 1.0 # 0.485
