@@ -312,6 +312,7 @@ const std::string NETWORK_RETENTION_MULTIPLIER_UPDATE = "network.retention.multi
 const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN_UPDATE = "post.release.interference.period.mean.update";
 const std::string IS_NETWORK_DISRUPTION_ON_UPDATE = "is.network.disruption.on.update";
 const std::string IS_CARE_DISRUPTION_ON_UPDATE = "is.care.disruption.on.update";
+const std::string IS_POST_RELEASE_ART_ON_UPDATE = "is.post.release.art.on.update";
 const std::string PARTNER_WAS_JAILED_EXPIRATION_TIME = "partner.was.jailed.expiration.time";
 const std::string RELEASED_PARTNER_EXPIRATION_TIME = "released.partner.expiration.time";
 const std::string RELEASED_PARTNER_FORMATION_TIME = "released.partner.formation.time";

@@ -524,5 +524,6 @@ not.recently.jailed.time <- 90
 # post.release.interference.period.mean.update <- "100|32"
 # is.network.disruption.on.update <- "30|TRUE"
 # is.care.disruption.on.update <- "30|TRUE"
+# is.post.release.art.on.update <- "30|TRUE"
 
 

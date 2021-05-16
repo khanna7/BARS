@@ -115,6 +115,12 @@ void schedule_jail_interventions(repast::ScheduleRunner& runner, Model* model, J
         std::cout << "Scheduling care disruption on update update to " << (b ? "true" : "false") << " at " << at << std::endl;
         runner.scheduleEvent(at - 0.00001, funcP(new ParamUpdater<bool>(b, IS_CARE_DISRUPTION_ON)));
     }
+
+    parse_intervention_string(IS_POST_RELEASE_ART_ON_UPDATE, &b, &at);
+    if (at != -1) {
+        std::cout << "Scheduling post release ART on update update to " << (b ? "true" : "false") << " at " << at << std::endl;
+        runner.scheduleEvent(at - 0.00001, funcP(new ParamUpdater<bool>(b, IS_POST_RELEASE_ART_ON)));
+    }
 }
 
 }

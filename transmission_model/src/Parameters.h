@@ -300,6 +300,7 @@ extern const std::string NETWORK_RETENTION_MULTIPLIER_UPDATE;
 extern const std::string POST_RELEASE_INTERFERENCE_PERIOD_MEAN_UPDATE;
 extern const std::string IS_NETWORK_DISRUPTION_ON_UPDATE;
 extern const std::string IS_CARE_DISRUPTION_ON_UPDATE;
+extern const std::string IS_POST_RELEASE_ART_ON_UPDATE;
 extern const std::string PARTNER_WAS_JAILED_EXPIRATION_TIME;
 extern const std::string RELEASED_PARTNER_EXPIRATION_TIME;
 extern const std::string RELEASED_PARTNER_FORMATION_TIME;
