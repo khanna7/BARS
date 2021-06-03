@@ -677,7 +677,7 @@ void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& 
     vec.push_back(std::make_shared<BasePrepIntervention>(crack_ecstasy_base_data, crack_ecstasy_user_filters_base));
     vec.push_back(std::make_shared<BasePrepIntervention>(meth_crack_ecstasy_base_data, meth_crack_ecstasy_user_filters_base));
 
-    /*// Add the intervention
+    // Add the intervention
     PrepUptakeData lt_data, gte_data;
     lt_data.use = lt_base_data.use;
     gte_data.use = gte_base_data.use;
@@ -704,7 +704,7 @@ void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& 
     vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte_filters));
 
     std::cout << "Random Default Selection lt: " << lt_data << "\n";
-    std::cout << "Random Default Selection gte: " << gte_data << "\n";*/
+    std::cout << "Random Default Selection gte: " << gte_data << "\n";
 
 }
 
