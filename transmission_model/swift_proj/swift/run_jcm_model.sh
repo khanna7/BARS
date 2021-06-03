@@ -92,7 +92,7 @@ log_script
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/baseline_one.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/care_disr_low_one.txt
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr_one.txt 
-UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-bm.txt 
+UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-bcplusprepandart3.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-base10yr.txt 
 
 
