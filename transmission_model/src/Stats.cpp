@@ -83,6 +83,7 @@ const std::string Counts::header(
         "infected_via_transmission_26,infected_via_transmission_27,infected_via_transmission_28,infected_via_transmission_29,infected_via_transmission_30,"
         "infected_via_transmission_31,infected_via_transmission_32,infected_via_transmission_33,infected_via_transmission_34,"
 
+        "infected_via_transmission_substance_user,infected_via_transmission_non_substance_user,"
         "infected_via_transmission_on_bc_meth,infected_via_transmission_on_bc_crack,"
         "infected_via_transmission_on_bc_ecstasy,"
         "infected_via_transmission_on_mirtazapine,"
@@ -125,6 +126,7 @@ const std::string Counts::header(
         "vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,cd4m_meth_deaths,cd4m_crack_deaths,"
         "pop,pop_meth,pop_crack,pop_ecstasy,"
         "pop_substance_users,"
+        "pop_infected_substatnce_user,pop_infected_non_substance_user,"
         "on_bc_treatment,on_mirtazapine_treatment,adhering_to_mirtazapine,"
         "on_mirtazapine_treatment_infected,adhering_to_mirtazapine_infected,"
         "adhering_to_mirtazapine_uninfected,"
@@ -151,6 +153,7 @@ void Counts::writeTo(FileOutput& out) {
     out << tick << "," << entries << "," << age_deaths << "," << infection_deaths << "," << asm_deaths << ","
     << asm_meth_deaths <<"," << asm_crack_deaths;
     write_vector_out(internal_infected, out);
+    out << "," << internal_infected_substance_user << "," << internal_infected_non_substance_user;
     out << "," << internal_infected_on_bc_meth << "," << internal_infected_on_bc_crack << ","
     << internal_infected_on_bc_ecstasy;
     out << "," << internal_infected_on_mirtazapine;
@@ -175,7 +178,9 @@ void Counts::writeTo(FileOutput& out) {
     << vl_supp_per_positives << "," << vl_supp_per_diagnosis << "," << cd4m_deaths << ","
     << cd4m_meth_deaths << "," << cd4m_crack_deaths << ","
     << pop << "," << pop_meth << "," << pop_crack << "," << pop_ecstasy << ","
-    << num_substance_users << "," << on_bc_treatment << ","
+    << num_substance_users << ","
+    << pop_infected_substance_user << "," << pop_infected_non_substance_user << ","
+    << on_bc_treatment << ","
     << on_mirtazapine << "," << adhering_to_mirtazapine << ","
     << on_mirtazapine_treatment_infected << "," << adhering_to_mirtazapine_infected << ","
     << adhering_to_mirtazapine_uninfected << ","
@@ -208,7 +213,9 @@ Counts::Counts(int min_age, int max_age) :
                 uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, 
-                total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
+                total_internal_infected{0}, total_internal_infected_new{0},
+                total_infected_inside_jail{0}, infected_inside_jail{0},
+                internal_infected_substance_user{0}, internal_infected_non_substance_user{0},
                 internal_infected_on_mirtazapine{0}, external_infected_on_mirtazapine{0},
                 internal_infected_meth{0}, internal_infected_crack{0}, internal_infected_ecstasy{0},
                 external_infected_meth{0}, external_infected_crack{0}, external_infected_ecstasy{0},
@@ -216,6 +223,7 @@ Counts::Counts(int min_age, int max_age) :
                 internal_infected_on_bc_ecstasy{0}, external_infected_on_bc_meth{0},
                 external_infected_on_bc_crack{0}, external_infected_on_bc_ecstasy{0},
                 infected_jail_pop{0}, pop{0},
+                pop_infected_substance_user{0}, pop_infected_non_substance_user{0},
                 pop_infected_on_bc_meth{0}, pop_infected_on_bc_crack{0}, pop_infected_on_bc_ecstasy{0},
                 pop_infected_meth{0}, pop_infected_crack{0}, pop_infected_ecstasy{0},
                 pop_meth{0}, pop_crack{0}, pop_ecstasy{0},
@@ -254,6 +262,7 @@ void Counts::reset() {
     std::fill(vertex_count.begin(), vertex_count.end(), 0);
     overlaps = 0;
     infected_inside_jail=0;
+    internal_infected_substance_user = internal_infected_non_substance_user = 0;
     internal_infected_on_mirtazapine = external_infected_on_mirtazapine = 0;
     internal_infected_meth = internal_infected_crack = internal_infected_ecstasy = 0;
     external_infected_meth = external_infected_crack = external_infected_ecstasy = 0;
@@ -261,6 +270,7 @@ void Counts::reset() {
     external_infected_on_bc_meth = external_infected_on_bc_crack = external_infected_on_bc_ecstasy = 0;
     infected_jail_pop=0;
     pop=0;
+    pop_infected_substance_user = pop_infected_non_substance_user = 0;
     pop_meth = pop_crack = pop_ecstasy = 0;
     pop_infected_on_bc_meth = pop_infected_on_bc_crack = pop_infected_on_bc_ecstasy = 0;
     pop_infected_meth = pop_infected_crack = pop_infected_ecstasy = 0;
@@ -282,6 +292,10 @@ void Counts::reset() {
 void Counts::incrementInfected(PersonPtr& p) {
     ++internal_infected[(size_t)(std::floor(p->age())) - min_age_];
     ++total_internal_infected; 
+
+    if (p->isSubstanceUser()) ++internal_infected_substance_user;
+    else ++internal_infected_non_substance_user;
+
     if (p->isSubstanceUser(SubstanceUseType::METH)) {
         ++internal_infected_meth;
         if (p->onCounselingAndBehavioralTreatment()) ++internal_infected_on_bc_meth;
@@ -373,7 +387,11 @@ void Counts::incrementVertexCount(PersonPtr p) {
 
     if(p->isSubstanceUser()) {
         ++num_substance_users;
+        if (p->isInfected()) ++pop_infected_substance_user;
+    } else {
+        if (p->isInfected()) ++pop_infected_non_substance_user;
     }
+
     if (p->isJailed()) {
         ++vertex_count_ever_jailed;
         ++jail_pop;
