@@ -903,7 +903,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
         PersonPtr p = *iter;
         stats->personDataRecorder()->initRecord(p, 0);
         if (p->isInfected()) {
-            stats->currentCounts().incrementInfected(p);
+            stats->currentCounts().incrementInfected(p, net);
             stats->personDataRecorder()->recordInfection(p, p->infectionParameters().time_of_infection,
                     InfectionSource::INTERNAL);
         }
@@ -1039,7 +1039,7 @@ void Model::step() {
         PersonPtr person = (*iter);
         stats->currentCounts().incrementVertexCount(person);
         if (!person->isInfected()) {
-            stats->currentCounts().incrementUninfected(person);
+            stats->currentCounts().incrementUninfected(person, net);
         }
     }
 
@@ -1471,7 +1471,7 @@ unsigned int Model::runTransmission(double time_stamp) {
             if (i.first->hasReleasedPartner(i.second->id())) {
                 stats->currentCounts().incrementInfectedByPostReleasePartner();
             }
-            stats->currentCounts().incrementInfected(i.first);
+            stats->currentCounts().incrementInfected(i.first, net);
             stats->personDataRecorder()->recordInfection(i.first, time_stamp, InfectionSource::INTERNAL);
             stats->currentCounts().incrementNewlyInfected();   //infected after burnin     
             ++new_infected_count;
@@ -1488,7 +1488,7 @@ void Model::runJailInfections(double time_stamp) {
     jail.runInternalInfectionTransmission(time_stamp, infected_in_jail, infected_edges);
     for (auto& person : infected_in_jail) {
         infectPerson(person, time_stamp);
-        stats->currentCounts().incrementInfected(person); 
+        stats->currentCounts().incrementInfected(person, net); 
         stats->personDataRecorder()->recordInfection(person, time_stamp, InfectionSource::INJAIL);
         stats->currentCounts().incrementNewlyInfected();
     } 

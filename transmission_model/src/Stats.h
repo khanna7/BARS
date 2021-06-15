@@ -16,6 +16,7 @@
 #include "common.h"
 #include "PersonDataRecorder.h"
 #include "Range.h"
+#include "Network.h"
 
 namespace TransModel {
 
@@ -184,7 +185,8 @@ struct Counts {
     unsigned int infected_at_release;
     unsigned int infected_never_jailed_never_post_release_partner;
     unsigned int uninfected_never_jailed_never_post_release_partner;
-    
+    unsigned int infected_not_pre_incarceration_not_post_release_at_least_one_partner;
+    unsigned int uninfected_not_pre_incarceration_not_post_release_at_least_one_partner;
     unsigned int infected_never_jailed, infected_ever_jailed;
     unsigned int infected_via_transmission_never_jailed, infected_via_transmission_ever_jailed;
     unsigned int uninfected_never_jailed, uninfected_ever_jailed;
@@ -206,13 +208,13 @@ struct Counts {
     Counts(int min_age, int max_age);
     void reset();
     void writeTo(FileOutput& out);
-    void incrementInfected(PersonPtr& p);
+    void incrementInfected(PersonPtr& p, Network<Person> &net);
     void incrementInfectedByPostReleasePartner();
     void incrementInjectedJailPopCount();
     void incrementNewlyInfected();
     void incrementInfectedAtEntry(PersonPtr& p);
     void incrementInfectedExternal(PersonPtr& p);
-    void incrementUninfected(PersonPtr& p);
+    void incrementUninfected(PersonPtr& p, Network<Person>& net);
     void incrementVertexCount(PersonPtr p);
 };
 

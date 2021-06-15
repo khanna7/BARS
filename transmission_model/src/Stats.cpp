@@ -11,6 +11,7 @@
 #include "repast_hpc/RepastProcess.h"
 
 #include "Parameters.h"
+#include "Network.h"
 
 #include "Stats.h"
 #include "file_utils.h"
@@ -131,6 +132,8 @@ const std::string Counts::header(
         "infected_at_incarceration,infected_partners_at_incarceration,infected_at_release,"
 
         "infected_never_jailed_never_post_release_partner,uninfected_never_jailed_never_post_release_partner," 
+        "infected_not_pre_incarceration_not_post_release_at_least_one_partner,"
+        "uninfected_not_pre_incarceration_not_post_release_at_least_one_partner,"
         "infected_never_jailed,infected_ever_jailed,infected_via_transmission_never_jailed,"
         "infected_via_transmission_ever_jailed,uninfected_never_jailed,uninfected_ever_jailed,vertex_count_never_jailed,vertex_count_ever_jailed,"
         "infected_jailed_partner,infected_released_partner,uninfected_jailed_partner,uninfected_released_partner,"
@@ -172,6 +175,8 @@ void Counts::writeTo(FileOutput& out) {
     << infected_jail_pop  << "," << uninfected_in_jail << "," << infected_inside_jail << "," 
     << infected_at_incarceration << "," << infected_partners_at_incarceration << "," << infected_at_release << ","
     << infected_never_jailed_never_post_release_partner << "," << uninfected_never_jailed_never_post_release_partner << ","
+    << infected_not_pre_incarceration_not_post_release_at_least_one_partner << ","
+    << uninfected_not_pre_incarceration_not_post_release_at_least_one_partner << ","
     << infected_never_jailed << "," << infected_ever_jailed << ","
     << infected_via_transmission_never_jailed << "," << infected_via_transmission_ever_jailed << ","
     << uninfected_never_jailed << "," << uninfected_ever_jailed << "," << vertex_count_never_jailed << "," << vertex_count_ever_jailed << ","
@@ -202,6 +207,8 @@ Counts::Counts(int min_age, int max_age) :
                 total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
                 infected_jail_pop{0}, pop{0}, jail_pop{0}, incarcerated{0}, incarcerated_recidivist{0}, infected_at_incarceration{0}, infected_partners_at_incarceration{0}, infected_at_release{0},
                 infected_never_jailed_never_post_release_partner{0}, uninfected_never_jailed_never_post_release_partner{0},
+                infected_not_pre_incarceration_not_post_release_at_least_one_partner{0},
+                uninfected_not_pre_incarceration_not_post_release_at_least_one_partner{0},
                 infected_never_jailed{0}, infected_ever_jailed{0}, infected_via_transmission_never_jailed{0}, infected_via_transmission_ever_jailed{0}, uninfected_never_jailed{0}, uninfected_ever_jailed{0},vertex_count_never_jailed{0}, vertex_count_ever_jailed{0},
                 uninfected_in_jail{0},
                 infected_via_transmission_released_partner_only{0},
@@ -245,7 +252,9 @@ void Counts::reset() {
     infected_at_release=0;
     infected_never_jailed_never_post_release_partner = 0;
     uninfected_never_jailed_never_post_release_partner = 0;
-    
+    infected_not_pre_incarceration_not_post_release_at_least_one_partner = 0;
+    uninfected_not_pre_incarceration_not_post_release_at_least_one_partner = 0;
+
     infected_never_jailed = infected_ever_jailed = infected_via_transmission_never_jailed = infected_via_transmission_ever_jailed = uninfected_never_jailed = uninfected_ever_jailed = 0;
     vertex_count_never_jailed = vertex_count_ever_jailed = 0;
     uninfected_in_jail = 0;
@@ -266,7 +275,7 @@ void Counts::reset() {
 }
 
 
-void Counts::incrementInfected(PersonPtr& p) {
+void Counts::incrementInfected(PersonPtr& p, Network<Person>& net) {
     double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
     double recently_jailed_time = Parameters::instance()->getDoubleParameter(RECENTLY_JAILED_TIME);
     double not_recently_jailed_time = Parameters::instance()->getDoubleParameter(NOT_RECENTLY_JAILED_TIME);
@@ -290,6 +299,9 @@ void Counts::incrementInfected(PersonPtr& p) {
     }
     if (!p->isJailed() && !p->hasPreviousJailHistory() && !p->everPostReleasePartner()) {
         ++infected_never_jailed_never_post_release_partner;
+    }
+    if (!p->hasReleasedPartner() && !p->partnerWasJailed() && (net.inEdgeCount(p) || net.outEdgeCount(p))) {
+        ++infected_not_pre_incarceration_not_post_release_at_least_one_partner;
     }
     if (p->isJailed()) {
         ++infected_ever_jailed;
@@ -339,7 +351,7 @@ void Counts::incrementInfectedExternal(PersonPtr& p) {
     else ++infected_never_jailed;  
 }
 
-void Counts::incrementUninfected(PersonPtr& p) {
+void Counts::incrementUninfected(PersonPtr& p, Network<Person>& net) {
     double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
     double recently_jailed_time = Parameters::instance()->getDoubleParameter(RECENTLY_JAILED_TIME);
     double not_recently_jailed_time = Parameters::instance()->getDoubleParameter(NOT_RECENTLY_JAILED_TIME);
@@ -358,6 +370,9 @@ void Counts::incrementUninfected(PersonPtr& p) {
     }
     if (p->hasReleasedPartner() && p->partnerWasJailed()) {
         ++uninfected_jailed_and_released_partner;
+    }
+    if (!p->hasReleasedPartner() && !p->partnerWasJailed() && (net.inEdgeCount(p) || net.outEdgeCount(p))) {
+        ++uninfected_not_pre_incarceration_not_post_release_at_least_one_partner;
     }
     if (p->isJailed()) {
         ++uninfected_ever_jailed;
