@@ -182,12 +182,18 @@ struct Counts {
     unsigned int infected_at_incarceration;  
     unsigned int infected_partners_at_incarceration;  
     unsigned int infected_at_release;
-
+    unsigned int infected_never_jailed_never_post_release_partner;
+    unsigned int uninfected_never_jailed_never_post_release_partner;
+    
     unsigned int infected_never_jailed, infected_ever_jailed;
     unsigned int infected_via_transmission_never_jailed, infected_via_transmission_ever_jailed;
     unsigned int uninfected_never_jailed, uninfected_ever_jailed;
     unsigned int vertex_count_never_jailed, vertex_count_ever_jailed;
     unsigned int uninfected_in_jail;
+    unsigned int infected_via_transmission_released_partner_only;
+    unsigned int infected_via_transmission_jailed_partner_only;
+    unsigned int uninfected_via_transmission_released_partner_only;
+    unsigned int uninfected_via_transmission_jailed_partner_only;
     unsigned int infected_jailed_partner, uninfected_jailed_partner;
     unsigned int infected_released_partner, uninfected_released_partner;
     unsigned int infected_jailed_and_released_partner, uninfected_jailed_and_released_partner;

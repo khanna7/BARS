@@ -23,8 +23,8 @@ Person::Person(int id, float age, bool circum_status, int steady_role, int casua
         id_(id), steady_role_(steady_role), casual_role_(casual_role), age_(age), circum_status_(circum_status),
         infection_parameters_(), infectivity_(0), prep_(PrepStatus::OFF, -1, -1), dead_(false), diagnosed_(false),
         testable_(false), monitor_viral_load(false), diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, partner_was_jailed_(false),
-        partner_was_jailed_expiration_tick_(0), released_partners_{}, score_(0), jail_parameters_{} {
-        //diagnoser_(diagnoser), art_adherence_{0, AdherenceCategory::NA}, score_(0), vulnerability_expiration_(0) {
+        partner_was_jailed_expiration_tick_(0), released_partners_{}, ever_post_release_partner{false}, score_(0),
+        jail_parameters_{} {
 }
 
 //Person::Person(int id, std::shared_ptr<RNetwork> network, double timeOfBirth) : net(network), id_(id) {
@@ -37,6 +37,7 @@ Person::~Person() {
 }
 
 void Person::addReleasedPartner(int id) {
+    ever_post_release_partner = true;
     released_partners_[id] = 0.;
 }
 

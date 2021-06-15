@@ -129,6 +129,8 @@ const std::string Counts::header(
         "on_art,on_prep,vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
         "pop,jail_pop,incarcerated,incarcerated_recidivist,infected_jail_pop,uninfected_jail_pop,infected_inside_jail,"
         "infected_at_incarceration,infected_partners_at_incarceration,infected_at_release,"
+
+        "infected_never_jailed_never_post_release_partner,uninfected_never_jailed_never_post_release_partner," 
         "infected_never_jailed,infected_ever_jailed,infected_via_transmission_never_jailed,"
         "infected_via_transmission_ever_jailed,uninfected_never_jailed,uninfected_ever_jailed,vertex_count_never_jailed,vertex_count_ever_jailed,"
         "infected_jailed_partner,infected_released_partner,uninfected_jailed_partner,uninfected_released_partner,"
@@ -137,6 +139,8 @@ const std::string Counts::header(
         "infected_not_recently_jailed,uninfected_not_recently_jailed,"
         "infected_jailed_partner_only,uninfected_jailed_partner_only,"
         "infected_released_partner_only,uninfected_released_partner_only,"
+        "infected__via_transmission_jailed_partner_only,uninfected_via_transmission_jailed_partner_only,"
+        "infected_via_transmission_released_partner_only,uninfected_via_transmission_released_partner_only,"
         "infected_by_post_release_partner"
         
         );
@@ -167,6 +171,7 @@ void Counts::writeTo(FileOutput& out) {
     << cd4m_deaths << "," << pop << "," << jail_pop << "," << incarcerated << ","  << incarcerated_recidivist << ","
     << infected_jail_pop  << "," << uninfected_in_jail << "," << infected_inside_jail << "," 
     << infected_at_incarceration << "," << infected_partners_at_incarceration << "," << infected_at_release << ","
+    << infected_never_jailed_never_post_release_partner << "," << uninfected_never_jailed_never_post_release_partner << ","
     << infected_never_jailed << "," << infected_ever_jailed << ","
     << infected_via_transmission_never_jailed << "," << infected_via_transmission_ever_jailed << ","
     << uninfected_never_jailed << "," << uninfected_ever_jailed << "," << vertex_count_never_jailed << "," << vertex_count_ever_jailed << ","
@@ -175,6 +180,10 @@ void Counts::writeTo(FileOutput& out) {
     << infected_recently_jailed << "," << uninfected_recently_jailed << ","
     << infected_not_recently_jailed << "," << uninfected_not_recently_jailed << ","
     << infected_jailed_partner_only << "," << uninfected_jailed_partner_only << ","
+    << infected_released_partner_only << "," << uninfected_released_partner_only << ","
+
+    << infected_via_transmission_jailed_partner_only << "," << uninfected_via_transmission_jailed_partner_only << ","
+    << infected_via_transmission_released_partner_only << "," << uninfected_via_transmission_released_partner_only << ","
     << infected_released_partner_only << "," << uninfected_released_partner_only << ","
     << infected_by_post_release_partner
     <<  "\n";
@@ -192,8 +201,13 @@ Counts::Counts(int min_age, int max_age) :
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, 
                 total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
                 infected_jail_pop{0}, pop{0}, jail_pop{0}, incarcerated{0}, incarcerated_recidivist{0}, infected_at_incarceration{0}, infected_partners_at_incarceration{0}, infected_at_release{0},
+                infected_never_jailed_never_post_release_partner{0}, uninfected_never_jailed_never_post_release_partner{0},
                 infected_never_jailed{0}, infected_ever_jailed{0}, infected_via_transmission_never_jailed{0}, infected_via_transmission_ever_jailed{0}, uninfected_never_jailed{0}, uninfected_ever_jailed{0},vertex_count_never_jailed{0}, vertex_count_ever_jailed{0},
                 uninfected_in_jail{0},
+                infected_via_transmission_released_partner_only{0},
+                infected_via_transmission_jailed_partner_only{0},
+                uninfected_via_transmission_released_partner_only{0},
+                uninfected_via_transmission_jailed_partner_only{0},
                 infected_jailed_partner{0}, uninfected_jailed_partner{0}, infected_released_partner{0}, uninfected_released_partner{0},
                 infected_jailed_and_released_partner{0}, uninfected_jailed_and_released_partner{0},
                 infected_recently_jailed{0}, uninfected_recently_jailed{0},
@@ -229,9 +243,18 @@ void Counts::reset() {
     infected_at_incarceration=0;
     infected_partners_at_incarceration=0;
     infected_at_release=0;
+    infected_never_jailed_never_post_release_partner = 0;
+    uninfected_never_jailed_never_post_release_partner = 0;
+    
     infected_never_jailed = infected_ever_jailed = infected_via_transmission_never_jailed = infected_via_transmission_ever_jailed = uninfected_never_jailed = uninfected_ever_jailed = 0;
     vertex_count_never_jailed = vertex_count_ever_jailed = 0;
     uninfected_in_jail = 0;
+    infected_via_transmission_released_partner_only = 0;
+    infected_via_transmission_jailed_partner_only = 0;
+    uninfected_via_transmission_released_partner_only = 0;
+    uninfected_via_transmission_jailed_partner_only = 0;
+    infected_never_jailed_never_post_release_partner = 0;
+    uninfected_never_jailed_never_post_release_partner = 0;
     infected_jailed_partner = infected_released_partner = uninfected_jailed_partner = uninfected_released_partner = 0;
     infected_jailed_and_released_partner = uninfected_jailed_and_released_partner = 0;
     infected_recently_jailed = uninfected_recently_jailed = 0;
@@ -264,6 +287,9 @@ void Counts::incrementInfected(PersonPtr& p) {
     }
     if (p->hasReleasedPartner() && p->partnerWasJailed()) {
         ++infected_jailed_and_released_partner;
+    }
+    if (!p->isJailed() && !p->hasPreviousJailHistory() && !p->everPostReleasePartner()) {
+        ++infected_never_jailed_never_post_release_partner;
     }
     if (p->isJailed()) {
         ++infected_ever_jailed;
@@ -347,6 +373,9 @@ void Counts::incrementUninfected(PersonPtr& p) {
     } else {
         ++uninfected_never_jailed;
         ++uninfected_not_recently_jailed;
+        if (!p->everPostReleasePartner()) {
+            ++uninfected_never_jailed_never_post_release_partner;
+        }
     }
 }
 

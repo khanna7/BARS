@@ -38,7 +38,8 @@ private:
     bool partner_was_jailed_;
     int partner_was_jailed_expiration_tick_;
     std::map<int, double> released_partners_;
-
+    bool ever_post_release_partner;
+    
     double score_;
 
     JailParameters jail_parameters_;
@@ -134,6 +135,8 @@ public:
 
     bool hasReleasedPartner(int id);
 
+    bool everPostReleasePartner() { return ever_post_release_partner; }
+    
     bool hasReleasedPartner() {
         return released_partners_.size() > 0;
     }
