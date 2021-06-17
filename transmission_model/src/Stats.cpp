@@ -189,7 +189,6 @@ void Counts::writeTo(FileOutput& out) {
 
     << infected_via_transmission_jailed_partner_only << "," << uninfected_via_transmission_jailed_partner_only << ","
     << infected_via_transmission_released_partner_only << "," << uninfected_via_transmission_released_partner_only << ","
-    << infected_released_partner_only << "," << uninfected_released_partner_only << ","
     << infected_by_post_release_partner
     <<  "\n";
 

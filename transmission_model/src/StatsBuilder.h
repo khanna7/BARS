@@ -36,7 +36,7 @@ public:
     StatsBuilder(const std::string& out_dir);
     virtual ~StatsBuilder();
 
-    StatsBuilder* countsWriter(const std::string& fname, unsigned int buffer = 1000);
+    StatsBuilder* countsWriter(const std::string& fname, unsigned int buffer = 1);
     StatsBuilder* partnershipEventWriter(const std::string& fname, unsigned int buffer = 1000);
     StatsBuilder* infectionEventWriter(const std::string& fname, unsigned int buffer = 1000);
     StatsBuilder* biomarkerWriter(const std::string& fname, unsigned int buffer = 1000);
