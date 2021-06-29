@@ -2,7 +2,7 @@
 global.random.seed=1
 
 #stop.at = 50
-stop.at = 5110
+stop.at = 3650
 #stop.at = 7300 # 20 years
 #stop.at = 730
 
