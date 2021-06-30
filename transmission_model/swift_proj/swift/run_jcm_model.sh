@@ -94,6 +94,7 @@ log_script
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/net_disr_one.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-bcplusprepandart4.txt 
 UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/prep20.txt 
+UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drug-bmSensAnalysis.txt 
 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/prepandart2030.txt 
 #UPF_DATA_FILE=$EMEWS_PROJECT_ROOT/data/drugbasefinal1.txt 
