@@ -121,6 +121,7 @@ const std::string Counts::header(
         "vertex_count_26,vertex_count_27,vertex_count_28,vertex_count_29,vertex_count_30,"
         "vertex_count_31,vertex_count_32,vertex_count_33,vertex_count_34,"
 
+        "vertex_count_cd4 <=200,vertex_count_cd4 200-350,vertex_count_cd4 350-500,vertex_count_cd4 500-900,vertex_count cd4 >900,"
         "overlaps,sex_acts,casual_sex_acts,"
         "sd_casual_sex_with_condom,""sd_casual_sex_without_condom,"
         "sc_casual_sex_with_condom,""sc_casual_sex_without_condom,"
@@ -164,6 +165,8 @@ void Counts::writeTo(FileOutput& out) {
     write_vector_out(uninfected, out);
     out << "," << main_edge_count << "," << casual_edge_count;
     write_vector_out(vertex_count, out);
+    out << "," << vertex_count_cd4_le200 << "," << vertex_count_cd4_201_350 << ","
+    << vertex_count_cd4_351_500 << "," << vertex_count_cd4_501_900 << "," << vertex_count_cd4_gt900;
     out << "," << overlaps << "," << sex_acts << "," << casual_sex_acts << ","
     << sd_casual_sex_with_condom << "," << sd_casual_sex_without_condom << ","
     << sc_casual_sex_with_condom << "," << sc_casual_sex_without_condom << ","
@@ -202,6 +205,8 @@ Counts::Counts(int min_age, int max_age) :
                 sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
                 on_art{0}, on_prep{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
+                vertex_count_cd4_le200{0}, vertex_count_cd4_201_350{0},vertex_count_cd4_351_500{0},
+                vertex_count_cd4_501_900{0}, vertex_count_cd4_gt900{0},
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}, 
                 total_internal_infected{0}, total_internal_infected_new{0}, total_infected_inside_jail{0}, infected_inside_jail{0},
                 infected_jail_pop{0}, pop{0}, jail_pop{0}, incarcerated{0}, incarcerated_recidivist{0}, infected_at_incarceration{0}, infected_partners_at_incarceration{0}, infected_at_release{0},
@@ -239,6 +244,8 @@ void Counts::reset() {
     std::fill(external_infected.begin(), external_infected.end(), 0);
     std::fill(infected_at_entry.begin(), infected_at_entry.end(), 0);
     std::fill(vertex_count.begin(), vertex_count.end(), 0);
+    vertex_count_cd4_le200 = vertex_count_cd4_201_350 = vertex_count_cd4_351_500 = 0;
+    vertex_count_cd4_501_900 = vertex_count_cd4_gt900 = 0;
     overlaps = 0;
     infected_inside_jail=0;
     infected_jail_pop=0;
@@ -400,6 +407,13 @@ void Counts::incrementVertexCount(PersonPtr p) {
         ++jail_pop;
     } else if (p->hasPreviousJailHistory()) ++vertex_count_ever_jailed;
     else ++vertex_count_never_jailed;
+
+    double cd4_count = p->infectionParameters().cd4_count;
+    if (cd4_count <= 200) ++vertex_count_cd4_le200;
+    else if (cd4_count <= 350) ++vertex_count_cd4_201_350;
+    else if (cd4_count <= 500) ++vertex_count_cd4_351_500;
+    else if (cd4_count <= 900) ++ vertex_count_cd4_501_900;
+    else ++vertex_count_cd4_gt900;
 }
 
 Stats* Stats::instance_ = nullptr;

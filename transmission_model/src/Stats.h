@@ -168,6 +168,8 @@ struct Counts {
     //unsigned int external_infected_u26, external_infected_gte26, infected_at_entry_u26, infected_at_entry_gte26;
     // internal_infected is infected by transmission
     std::vector<unsigned int> uninfected, internal_infected, external_infected, infected_at_entry, vertex_count;
+    unsigned int vertex_count_cd4_le200, vertex_count_cd4_201_350,
+                 vertex_count_cd4_351_500, vertex_count_cd4_501_900, vertex_count_cd4_gt900;
     int min_age_;
     double vl_supp_per_positives, vl_supp_per_diagnosis, cd4m_deaths;
 
