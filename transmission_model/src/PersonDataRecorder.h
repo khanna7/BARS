@@ -34,6 +34,7 @@ struct PersonData {
     double init_art_lag;
     unsigned int infection_source;
     double time_of_diagnosis;
+    double cd4_at_diagnosis;
 
     PersonData(PersonPtr p, double time_of_birth);
     void writeTo(FileOutput& out);

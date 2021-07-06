@@ -12,7 +12,7 @@ namespace TransModel {
 const std::string PersonData::header("id,time_of_entry,time_of_death,infection_status,time_of_infection,"
         "art_status,time_of_art_initiation,time_of_art_cessation,prep_status,time_of_prep_initiation,"
         "time_of_prep_cessation,number_of_tests,time_since_last_test,diagnosis_status,init_art_lag,prep_adherence_category,art_adherence_category,"
-        "adhered_interval_count,non_adhered_interval_count,infection_source,time_of_diagnosis");
+        "adhered_interval_count,non_adhered_interval_count,infection_source,time_of_diagnosis,cd4_at_diagnosis");
 
 PersonData::PersonData(PersonPtr p, double time_of_birth) :
         id_(p->id()), birth_ts(time_of_birth), death_ts(-1), infection_ts(
@@ -22,14 +22,14 @@ PersonData::PersonData(PersonPtr p, double time_of_birth) :
                 p->isInfected()), art_status(p->isOnART(false)), diagnosed(p->isDiagnosed()), number_of_tests(
                 p->diagnoser().testCount()), time_since_last_test { -1 }, art_adherence_category(static_cast<int>(AdherenceCategory::NA)), prep_adherence_category(static_cast<int>(AdherenceCategory::NA)),
                 adhered_interval_count(0), non_adhered_interval_count(0), init_art_lag(-1), infection_source(static_cast<unsigned int>(InfectionSource::NONE)),
-                time_of_diagnosis(-1.0) {
+                time_of_diagnosis(-1.0), cd4_at_diagnosis(-1.0) {
 }
 
 void PersonData::writeTo(FileOutput& out) {
     out << id_ << "," << birth_ts << "," << death_ts << "," << infection_status << "," << infection_ts << "," << art_status
             << "," << art_init_ts << "," << art_stop_ts << "," << static_cast<int>(prep_status) << "," << prep_init_ts << "," << prep_stop_ts
             << "," << number_of_tests << "," << time_since_last_test << "," << diagnosed << "," << init_art_lag << "," << prep_adherence_category << "," << art_adherence_category << "," <<
-            adhered_interval_count << "," << non_adhered_interval_count << "," << infection_source << "," << time_of_diagnosis << "\n";
+            adhered_interval_count << "," << non_adhered_interval_count << "," << infection_source << "," << time_of_diagnosis << "," << cd4_at_diagnosis << "\n";
 }
 
 
@@ -70,6 +70,7 @@ void PersonDataRecorder::recordPREPStop(const Person* p, double ts, PrepStatus s
 
 void PersonDataRecorder::recordDiagnosis(const Person* p, double ts)  {
     int id = p->id();
+    data.at(id).cd4_at_diagnosis = p->infectionParameters().cd4_count;
     data.at(id).time_of_diagnosis = ts;
 }
 
