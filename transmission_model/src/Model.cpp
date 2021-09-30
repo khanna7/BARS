@@ -1155,6 +1155,7 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
         // update viral load, cd4
         if (person->isInfected()) {
             updateDisease(person);
+            stats->recordBiomarker(tick, person);
         }
 
         if (persons_to_log.find(person->id()) != persons_to_log.end()) {
