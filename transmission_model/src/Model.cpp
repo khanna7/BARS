@@ -1165,8 +1165,8 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             updateDisease(person, tick);
         }
 
-        if (tick >= 3285 && tick <= 3650) {
-            if (person->monitorViralLoad()) persons_to_log.insert(person->id());
+        if (tick >= 10949) {
+            //if (person->monitorViralLoad()) persons_to_log.insert(person->id());
             if (person->isInfected()) persons_to_log.insert(person->id());
             if (persons_to_log.find(person->id()) != persons_to_log.end()) {
                 stats->recordBiomarker(tick, person);
