@@ -10,11 +10,21 @@
      ## 1 main partnership = 41.2% of men
      ## 2 main partnerships = 1.8 % of men
      ## >=3 main partnerships = 0.3 % of men
+<<<<<<< HEAD
      deg_seq <- c(63.71, 34.03, 1.89)*n/100
      mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
 
      duration <- 512
      #duration <- 160
+=======
+     deg_seq <- c(61.02, 34.65, 3.54)*n/100 
+     mean_deg <- ((0*deg_seq[1])+(1*deg_seq[2])+(2*deg_seq[3]))/n
+
+     # Note: This data doesn't exist for Houston YMAP
+     # using estimates from NHBS data
+     # Box Sync/BARS/Data-and-Summaries/Houston_Mean_Duration_of_Partnerships.xlsx
+     duration <- 970 
+>>>>>>> bc55ab05cc2118121d08139158e8642665046060
 
      ## role
      pr_insertive_main <- 15/100
@@ -35,11 +45,17 @@
 
    #####################
    ## DEMOGRAPHIC
+<<<<<<< HEAD
    min.age <- 18
    max.age <- 34
    #daily.entry.rate <- 1.0 #rate for n=5000
    daily.entry.rate <- 2.0 #rate for n=10000
 
+=======
+   min.age <- 18 #COMMON
+   max.age <- 34 #COMMON
+   daily.entry.rate <- 2 #range (1.8-2, as per arthi's data for n=10K, for constant population over 100yr burn-in)
+>>>>>>> bc55ab05cc2118121d08139158e8642665046060
    ## distribution of ages (between min and max)
    ## number of births (n.births: for now take it as 1% per year)
    ## age-specific mortality rates (ASMR), adjusted for HIV/AIDS-related deaths
@@ -396,6 +412,15 @@ prep.partial.neg.adherent.trans.reduction <- 0.31
 	asm.55_60 <- 0.01605 / (365 * 1)
 	asm.60_65 <- 0.022538 / (365 * 1)
 	asm.65_70 <- 0.030628 / (365 * 1)
+
+### CD4 Mortality ###
+### Format is [min_max)
+# for treated persons within the specified range
+# ASM is increased by the specified amount
+cd4m_treated.0_50	<- 51 / 100
+cd4m_treated.50_100 <- 37 / 100
+cd4m_treated.100_200 <- 26 / 100
+cd4m_treated.200_1000 <- 0
 
 ### CD4 Mortality ###
 ### Format is [min_max)

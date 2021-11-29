@@ -21,9 +21,10 @@
 using namespace Rcpp;
 using namespace TransModel;
 
-void init_network(std::shared_ptr<RInside>& R, const std::string& r_file) {
+void init_network(std::shared_ptr<RInside>& R, const std::string& r_file, const std::string& init_data_file) {
     std::string cmd = "source(file=\"" + r_file + "\")";
     R->parseEvalQ(cmd);
+    as<Function>((*R)["trans_model_init"])(init_data_file);
 }
 
 void load_networks(std::shared_ptr<RInside>& R, const std::string& main_file, const std::string& casual_file) {
@@ -77,7 +78,8 @@ void run(std::string propsFile, int argc, char** argv) {
     props.putProperty("global.random.seed", Parameters::instance()->getIntParameter("global.random.seed"));
     repast::initializeRandom(props);
 
-    init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE));
+    init_network(R, TransModel::Parameters::instance()->getStringParameter(R_FILE), 
+        TransModel::Parameters::instance()->getStringParameter(INIT_DATA_FILE));
 
     std::string net_var = Parameters::instance()->getStringParameter(NET_VAR);
     std::string cas_net_var = Parameters::instance()->getStringParameter(CASUAL_NET_VAR);

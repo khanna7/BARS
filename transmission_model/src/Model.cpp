@@ -319,15 +319,11 @@ void init_network_save(Model* model) {
     }
 }
 
-void init_biomarker_logging(Network<Person>& net, std::set<int>& ids_to_log) {
+void init_biomarker_logging(size_t pop_size, std::set<int>& ids_to_log) {
     if (Parameters::instance()->contains(BIOMARKER_LOG_COUNT)) {
         int number_to_log = Parameters::instance()->getIntParameter(BIOMARKER_LOG_COUNT);
-        std::vector<PersonPtr> persons;
-        for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
-            persons.push_back(*iter);
-        }
 
-        IntUniformGenerator gen = Random::instance()->createUniIntGenerator(0, persons.size() - 1);
+        IntUniformGenerator gen = Random::instance()->createUniIntGenerator(0, pop_size - 1);
         for (int i = 0; i < number_to_log; ++i) {
             int id = (int) gen.next();
             while (ids_to_log.find(id) != ids_to_log.end()) {
@@ -834,14 +830,14 @@ RangeWithProbability create_cd4m_runner(const std::string& prefix) {
 // }
 
 Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::string& cas_net_var) :
-        R(ri), net(false), trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
+        R(ri), net(false), population{}, trans_runner(create_transmission_runner()), cd4_calculator(create_CD4Calculator()), viral_load_calculator(
                 create_ViralLoadCalculator()), viral_load_slope_calculator(create_ViralLoadSlopeCalculator()), current_pop_size {
                 0 }, previous_pop_size { 0 }, stage_map { }, persons_to_log { }, trans_params { }, art_lag_calculator {
                 create_art_lag_calc() },  person_creator { trans_runner,
                     Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator}, prep_manager(),	
                 condom_assigner { create_condom_use_assigner() },
                 asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)}, 
-                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)} {
+                age_threshold{Parameters::instance()->getFloatParameter(INPUT_AGE_THRESHOLD)}, jail(&net) {
 
     std::cout << "treated: " << cd4m_treated_runner << std::endl;
     // get initial stats
@@ -855,16 +851,18 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     rnet = as<List>((*R)[cas_net_var]);
     initialize_edges(rnet, net, condom_assigner, CASUAL_NETWORK_TYPE);
 
+    population.insert(population.end(), net.verticesBegin(), net.verticesEnd());
+
     init_stage_map(stage_map);
     init_network_save(this);
 
-    current_pop_size = net.vertexCount();
+    current_pop_size = population.size();
 
-    init_biomarker_logging(net, persons_to_log);
+    init_biomarker_logging(current_pop_size, persons_to_log);
     Stats* stats = TransModel::Stats::instance();
     stats->currentCounts().main_edge_count = net.edgeCount(STEADY_NETWORK_TYPE);
     stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
-    for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+    for (auto iter = population.begin(); iter != population.end(); ++iter) {
         PersonPtr p = *iter;
         stats->personDataRecorder()->initRecord(p, 0);
         if (p->isInfected()) {
@@ -889,7 +887,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
 
 void Model::initPrepCessation() {
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
-    for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+    for (auto iter = population.begin(); iter != population.end(); ++iter) {
         PersonPtr person = *iter;
         if (person->isOnPrep()) {
             double stop_time = person->prepParameters().stopTime();
@@ -904,7 +902,7 @@ void Model::initPrepCessation() {
 void Model::atEnd() {
     double ts = RepastProcess::instance()->getScheduleRunner().currentTick();
     std::shared_ptr<PersonDataRecorderI> pdr = Stats::instance()->personDataRecorder();
-    for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+    for (auto iter = population.begin(); iter != population.end(); ++iter) {
         pdr->finalize(*iter, ts);
     }
 
@@ -984,7 +982,7 @@ void Model::step() {
     // select members of the population for infection from external sources
     runExternalInfections(uninfected, t);
     previous_pop_size = current_pop_size;
-    current_pop_size = net.vertexCount();
+    current_pop_size = population.size();
 
     // the R statnet network update code needs these updated every iteration
     updateThetaForm("theta.form");
@@ -992,7 +990,7 @@ void Model::step() {
 
     stats->currentCounts().main_edge_count = net.edgeCount(STEADY_NETWORK_TYPE);
     stats->currentCounts().casual_edge_count = net.edgeCount(CASUAL_NETWORK_TYPE);
-    for (auto iter = net.verticesBegin(); iter != net.verticesEnd(); ++iter) {
+    for (auto iter = population.begin(); iter != population.end(); ++iter) {
         stats->currentCounts().incrementVertexCount((*iter));
     }
 
@@ -1042,13 +1040,15 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
     Stats* stats = Stats::instance();
     map<double, ARTScheduler*> art_map;
 
-    uninfected.reserve(net.vertexCount());
+    uninfected.reserve(population.size());
 
     float time_to_full_supp = Parameters::instance()->getFloatParameter(TIME_TO_FULL_SUPP);
     int vs_count = 0, inf_count = 0, diagnosed_count = 0, vs_pos_count = 0;
 
+    double incarceration_prob = Parameters::instance()->getDoubleParameter(INCARCERATION_PROB_FOR_ENTRIES);
+
     // iterate through all the network vertices (i.e. the persons)
-    for (auto iter = net.verticesBegin(); iter != net.verticesEnd();) {
+    for (auto iter = population.begin(); iter != population.end(); ) {
         PersonPtr person = (*iter);
         // update viral load, cd4
         if (person->isInfected()) {
@@ -1079,7 +1079,11 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                 Stats::instance()->recordPartnershipEvent(tick, edge->id(), edge->v1()->id(), edge->v2()->id(),
                         pevent_type, edge->type());
             }
-            iter = net.removeVertex(iter);
+            net.removeVertex(person);
+            iter = population.erase(iter);
+            if (person->isJailed()) {
+	            jail.removeDeadPerson(tick, person);
+            }
             ++dead_count;
         } else {
             // don't count dead uninfected persons
@@ -1109,6 +1113,11 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
                     }
                 }
             }
+
+            if (!person->isJailed() && Random::instance()->nextDouble() <=  incarceration_prob) {
+	            jail.addPerson(tick, person);
+	        }
+
             if (person->isOnART()) {
                 ++stats->currentCounts().on_art;
             }
@@ -1174,7 +1183,7 @@ void Model::infectPerson(PersonPtr& person, double time_stamp) {
 
 void Model::entries(double tick, float size_of_timestep) {
     float min_age = Parameters::instance()->getFloatParameter(MIN_AGE);
-    size_t pop_size = net.vertexCount();
+    size_t pop_size = population.size();
     if (pop_size > 0) {
         double births_prob = Parameters::instance()->getDoubleParameter(DAILY_ENTRY_RATE);
         PoissonGen birth_gen(Random::instance()->engine(), boost::random::poisson_distribution<>(births_prob));
@@ -1200,6 +1209,7 @@ void Model::entries(double tick, float size_of_timestep) {
                 stats->currentCounts().incrementInfectedAtEntry(p);
                 stats->recordInfectionEvent(infected_at, p);
             }
+            population.push_back(p);
             net.addVertex(p);
             Stats::instance()->personDataRecorder()->initRecord(p, tick);
         }
@@ -1277,7 +1287,6 @@ CauseOfDeath Model::dead(double tick, PersonPtr person, int max_age) {
             } else {
                 ++Stats::instance()->currentCounts().asm_deaths;
                 Stats::instance()->recordDeathEvent(tick, person, DeathEvent::ASM);
-                Stats::instance()->personDataRecorder()->recordDeath(person, tick);
                 cod = CauseOfDeath::ASM;
             }
         } 

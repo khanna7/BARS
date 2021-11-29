@@ -24,14 +24,17 @@ source('%s/R/summarize_functions.R')
 f <- '%s'
 a <- ''
 if (file.exists(f)) {
-  ranges <- c(20,29,30,34)
-  prev <- summarize_prev(f, ranges)
-  inc <- summarize_inc(f, ranges)
-  pop_size <- summarize_pop_size(f, ranges)
-  vl_supp <- summarize_vl_supp(f)
-  prp <- summarize_prep(f)
-  a <- paste(paste(prev, collapse=','), paste(inc, collapse=','),
-    paste(pop_size, collapse=','), paste(vl_supp, collapse=','), paste(prp, collapse=','), sep = ',')
+  df <- read.csv(f)
+  if (tail(df, 1)$tick == %f) {
+    ranges <- c(20,29,30,34)
+    prev <- summarize_prev(f, ranges)
+    inc <- summarize_inc(f, ranges)
+    pop_size <- summarize_pop_size(f, ranges)
+    vl_supp <- summarize_vl_supp(f)
+    prp <- summarize_prep(f)
+    a <- paste(paste(prev, collapse=','), paste(inc, collapse=','),
+      paste(pop_size, collapse=','), paste(vl_supp, collapse=','), paste(prp, collapse=','), sep = ',')
+  }
 }
 """;
 
@@ -44,7 +47,13 @@ if param_line.find('run.number') != -1:
     run_number = int(v.split('=')[1])
 """;
 
-
+string stop_at_template = """
+f = "%s/output/parameters.txt"
+with open(f) as f_in:
+    for line in f_in.readlines():
+        if line.startswith('stop.at'):
+            stop_at = line.split(':')[1].strip()
+""";
 
 app (file out, file err) run_model (file shfile, string param_line, string instance)
 {
@@ -78,7 +87,8 @@ run_prerequisites() => {
       file err <instance+"err.txt">;
       string params = s; //param_args + "," + s;
       (out,err) = run_model(model_sh, params, instance) => {
-        string summarize_code = summarize_template % (emews_root, instance + "output/counts.csv");
+        string stop_at = python(stop_at_template % instance, "str(stop_at)");
+        string summarize_code = summarize_template % (emews_root, instance + "output/counts.csv", stop_at);
         string result = R(summarize_code, "a");
         if (length(result) > 0) {
           results[i] = "%i,%s" % (run_num, result);

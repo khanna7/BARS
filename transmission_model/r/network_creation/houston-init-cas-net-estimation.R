@@ -10,12 +10,9 @@
    library(network)
    library(networkDynamic)
    library(tergm)
-   #library(parallel)
 
-   #load(file="initialized-model.RData")
-   load(file="houston_initialized-model_n5000.RData")
-   #source("../common/chicago_parameters.R")
-   #np <- detectCores()
+   source("../common/houston_params_nonderived.R")
+   load(file=paste0("houston_initialized-model_n",n,".RData"))
 
    #####################
    ## MODEL SETUP
@@ -81,5 +78,4 @@
 
    #####################
    ## SAVE BINARY
-   #save.image(file="cas_net.RData")
-   save.image(file="houston_cas_net_n5000.RData")
+   save.image(file=paste0("houston_cas_net_n",n,".RData"))

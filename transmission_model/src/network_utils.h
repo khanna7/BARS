@@ -106,20 +106,31 @@ void simulate(std::shared_ptr<RInside> R, Network<V>& net, const F& attributes_s
     //Rf_PrintValue(rnet);
     //as<Function>((*R)["nw_save"])(rnet, "network_for_profiling.rds", 1);
 
+<<<<<<< HEAD
 
     SEXP changes = as<Function>((*R)["nw_simulate"])(rnet);
 
    
     reset_network_edges(changes, net, idx_map, time, assigner, STEADY_NETWORK_TYPE);
     
+=======
+    SEXP changes = as<Function>((*R)["nw_simulate"])(rnet);
+    reset_network_edges(changes, net, idx_map, time, assigner, STEADY_NETWORK_TYPE);
+
+>>>>>>> bc55ab05cc2118121d08139158e8642665046060
     List cas_net;
     idx_map.clear();
 
     create_r_network(time, cas_net, net, idx_map, attributes_setter, CASUAL_NETWORK_TYPE);
+<<<<<<< HEAD
     
     
     changes = as<Function>((*R)["n_cas_simulate"])(cas_net);
     
+=======
+    changes = as<Function>((*R)["n_cas_simulate"])(cas_net);
+   
+>>>>>>> bc55ab05cc2118121d08139158e8642665046060
     reset_network_edges(changes, net, idx_map, time, assigner, CASUAL_NETWORK_TYPE);
 }
 
@@ -144,6 +155,7 @@ void reset_network_edges(SEXP& changes, Network<V>& net, const std::map<unsigned
         } else {
             EdgePtr<V> res = net.removeEdge(out, in, edge_type);
             if (!res) {
+                std::cout << "Bad Edge: (" << out << ", " << in << ", " << edge_type << ")" << std::endl;
                 if (net.hasEdge(in, out, edge_type) || net.hasEdge(out, in, edge_type)) {
                     std::cout << "has edge" << std::endl;
                 }

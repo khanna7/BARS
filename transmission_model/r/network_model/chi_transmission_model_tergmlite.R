@@ -6,11 +6,19 @@ suppressMessages(library(tergmLite))
 suppressMessages(library(network))
 suppressMessages(library(networkDynamic))
 
+<<<<<<< HEAD:transmission_model/r/network_model/chi_transmission_model_tergmlite.R
 load(file="../r/network_model/chi_net_n5000.RData")
+=======
+trans_model_init <- function(init_net) {
+  load(file=init_net, envir=.GlobalEnv)
+>>>>>>> bc55ab05cc2118121d08139158e8642665046060:transmission_model/r/network_model/transmission_model_tergmlite.R
 
-nw <- fit$network
-formation <- fit$formula
-dissolution <- dissolution
+  nw <<- fit$network
+  formation <<- fit$formula
+  dissolution <<- dissolution
+
+  n_cas <<- cas_fit$network
+}
 
 nw_simulate <- function(net_for_sim) {
   class(net_for_sim) <- "network"
@@ -21,8 +29,6 @@ nw_simulate <- function(net_for_sim) {
   z <- simulate_network(p, el, coef.form=theta.form, coef.diss=theta.diss, save.changes=T)
   return(attr(z, 'changes'))
 }
-
-n_cas <- cas_fit$network
 
 n_cas_simulate <- function(cas_net) {
   class(cas_net) <- "network"

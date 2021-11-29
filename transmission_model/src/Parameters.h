@@ -19,6 +19,7 @@ extern const std::string STOP_AT;
 extern const std::string R_PARAMETERS_DERIVED;
 extern const std::string R_PARAMETERS_NON_DERIVED;
 extern const std::string R_FILE;
+extern const std::string INIT_DATA_FILE;
 extern const std::string MAIN_NETWORK_FILE;
 extern const std::string CASUAL_NETWORK_FILE;
 extern const std::string OUTPUT_DIR;
@@ -249,6 +250,10 @@ extern const std::string SC_CASUAL_ALWAYS_USE_CONDOMS_PROB;
 extern const std::string EXTERNAL_INFECTION_RATE_MIN;
 extern const std::string EXTERNAL_INFECTION_RATE_MAX;
 extern const std::string EXTERNAL_INFECTION_AGE_FACTOR;
+
+extern const std::string INPUT_LOWER_JAIL_TERM_PROB;
+extern const std::string INPUT_UPPER_JAIL_TERM_PROB;
+extern const std::string INCARCERATION_PROB_FOR_ENTRIES;
 
 /**
  * Parameters singleton that contains the model properties.
