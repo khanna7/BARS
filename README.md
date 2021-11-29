@@ -17,7 +17,7 @@ Code for published _AIDS_ [paper](https://pubmed.ncbi.nlm.nih.gov/31490212/)
 
 ## References
  - Reproducing the AIDS paper: [Quick Start Guide](https://docs.google.com/document/d/1XHhmn8uwgCQpVK7l9bDTPfvhAGCgga9TL3oxlQopxsM/edit?usp=sharing)
- - A longer version is [here](https://docs.google.com/document/d/1jfhwJFwRDJGKJOr-iyLYz-Ah5snKnHtYzuAwNPflTqA/edit#bookmark=id.5kxqzyl3xk6c). 
+ - A longer version is [here](https://docs.google.com/document/d/1jfhwJFwRDJGKJOr-iyLYz-Ah5snKnHtYzuAwNPflTqA/edit#bookmark=id.5kxqzyl3xk6c). (The quick start guide links to specific sections in this longer version.)
 
 
 
