@@ -7,6 +7,10 @@ Code for published _AIDS_ [paper](https://pubmed.ncbi.nlm.nih.gov/31490212/)
  - This branch is off of commit for v0.57.
 
 ## Unrolled Parameter Files (UPFs) for Data Generation
+ - R files to generate the UPFs for the calibration and each of the interventions are [here](https://github.com/khanna7/BARS/tree/AIDS-GTZ-paper/transmission_model/swift_proj/data).
+ - The code produces output in txt format that is read by swift, and in csv format for easy readability. 
+
+
 
 
  
