@@ -10,6 +10,9 @@
  ## Data Production (ABNM)
   - Executable version v0.57.
   - UPF ([here](https://github.com/khanna7/BARS/blob/MBE-paper/transmission_model/swift_proj/data/ART_PrEP_both_40.R))
+
+## Data Analysis (ABNM)
+  - [Here](https://github.com/khanna7/BARS/blob/MBE-paper/transmission_model/swift_proj/data/abnm-data-analysis.R)
  
  ## References
   - Please refer to the references under the _AIDS_ paper [README](https://github.com/khanna7/BARS/blob/AIDS-GTZ-paper/README.md) for context on ABNM running and data production. 
