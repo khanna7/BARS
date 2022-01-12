@@ -14,6 +14,8 @@
 #include "AdherenceCategory.h"
 #include "PrepParameters.h"
 #include "JailParameters.h"
+#include "PREPAdherenceConfigurator.h"
+#include "adherence_functions.h"
 
 namespace TransModel {
 
@@ -184,6 +186,16 @@ public:
         return substance_use_.find(sut) != substance_use_.end();
     }
 
+    void goOnMeth() {
+        substance_use_.insert(SubstanceUseType::METH);
+        //goOnOffSubstance();
+    }
+
+    void goOffMeth() {
+        substance_use_.erase(SubstanceUseType::METH);
+        //goOnOffSubstance();
+    }
+    
     const PrepParameters prepParameters() const {
         return prep_;
     }

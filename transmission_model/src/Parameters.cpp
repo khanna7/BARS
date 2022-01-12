@@ -322,6 +322,8 @@ const std::string METH_PROP = "meth.prop";
 const std::string CRACK_PROP = "crack.prop";
 const std::string ECSTASY_PROP = "ecstasy.prop";
 
+const std::string METH_USE_LENGTH = "meth.use.length";
+
 const std::string STIMULANT_USE_MORTALITY_INCREASE = "stimulant.use.mortality.increase";
 
 const std::string MORTALITY_RATE_METH = "mortality.rate.meth";

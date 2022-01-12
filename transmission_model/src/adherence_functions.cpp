@@ -64,7 +64,8 @@ void initialize_art_adherence(std::shared_ptr<Person> person, double first_art_a
 
     AdherenceData data = creator.createProbDist().draw(repast::Random::instance()->nextDouble());
     person->setArtAdherence(data);
-    schedule_art_adherence(person, first_art_at_tick);
+    if (first_art_at_tick >= 0)
+        schedule_art_adherence(person, first_art_at_tick);
 }
 
 void schedule_art_adherence(std::shared_ptr<Person> person, double first_art_at_tick) {

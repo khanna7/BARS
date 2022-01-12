@@ -310,6 +310,7 @@ extern const std::string METH_PROP;
 extern const std::string CRACK_PROP;
 extern const std::string ECSTASY_PROP;
 
+extern const std::string METH_USE_LENGTH;
 extern const std::string MORTALITY_RATE_METH;
 extern const std::string MORTALITY_RATE_CRACK;
 

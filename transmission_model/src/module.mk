@@ -46,7 +46,9 @@ CPP_SOURCE = Person.cpp \
     JailInfectionRateCalc.cpp \
     Serializer.cpp \
     PersonToVAL.cpp \
-    JailIntervention.cpp
+    JailIntervention.cpp \
+    MethUse.cpp \
+    MethUseCessationEvent.cpp
     
 
 c_source += $(C_SOURCE)

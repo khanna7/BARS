@@ -24,7 +24,7 @@ namespace TransModel {
 
 PersonCreator::PersonCreator(std::shared_ptr<TransmissionRunner>& trans_runner, double detection_window, ARTLagCalculator art_lag_calc, Jail* jail) :
         id(0), trans_runner_(trans_runner), testing_configurator(create_testing_configurator()),
-        prep_adherence_configurator(create_prep_adherence_configurator()), detection_window_(detection_window),
+        prep_adherence_configurator(PREPAdherenceConfigurator::instance()), detection_window_(detection_window),
         art_lag_calculator(art_lag_calc), jail_(jail) {
 }
 
@@ -71,7 +71,7 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
 
     PrepParameters prep(PrepStatus::OFF, 0, 0);
     person->prep_ = prep;
-    prep_adherence_configurator.configurePerson(person);
+    prep_adherence_configurator->configurePerson(person);
 
     return person;
 }
@@ -208,11 +208,11 @@ void PersonCreator::initUninfectedPerson(PersonPtr person, Rcpp::List& val, doub
         AdherenceCategory cat = static_cast<AdherenceCategory>(as<int>(val["prep.adherence.category"]));
         PrepParameters prep(status, time_of_init, time_of_cess);
         person->prep_ = prep;
-        prep_adherence_configurator.configurePerson(person, cat);
+        prep_adherence_configurator->configurePerson(person, cat);
     } else {
         PrepParameters prep(status, time_of_init, time_of_cess);
         person->prep_ = prep;
-        prep_adherence_configurator.configurePerson(person);
+        prep_adherence_configurator->configurePerson(person);
     }
 }
 
@@ -303,7 +303,7 @@ void PersonCreator::updateTesting(std::shared_ptr<Person> p, double size_of_time
 }
 
 void PersonCreator::updatePREPAdherence(std::shared_ptr<Person> p) {
-    prep_adherence_configurator.configurePerson(p);
+    prep_adherence_configurator->configurePerson(p);
 }
 
 } /* namespace TransModel */

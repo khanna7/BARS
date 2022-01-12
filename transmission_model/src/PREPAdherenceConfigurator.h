@@ -24,23 +24,20 @@ private:
     meth_crack_dist_, crack_ecstasy_dist_, meth_crack_ecstasy_dist_;
     float age_threshold_;
     std::map<AdherenceCategory, double> cat_map_;
+    
+    static PREPAdherenceConfigurator* instance_;
+
+    PREPAdherenceConfigurator();
+
 public:
-    PREPAdherenceConfigurator(ProbDist<AdherenceData> lt_dist, ProbDist<AdherenceData> gte_dist,
-                              float age_threshold, ProbDist<AdherenceData> meth_dist,
-                              ProbDist<AdherenceData> crack_dist, ProbDist<AdherenceData> ecstasy_dist,
-                              ProbDist<AdherenceData> meth_crack_dist,
-                              ProbDist<AdherenceData> crack_ecstasy_dist,
-                              ProbDist<AdherenceData> meth_crack_ecstasy_dist,
-                              std::map<AdherenceCategory, double> cat_map);
     virtual ~PREPAdherenceConfigurator();
+
+    static PREPAdherenceConfigurator* instance();
 
     void configurePerson(std::shared_ptr<Person> person);
     void configurePerson(std::shared_ptr<Person> person, double draw);
     void configurePerson(std::shared_ptr<Person> person, AdherenceCategory category);
 };
-
-PREPAdherenceConfigurator create_prep_adherence_configurator();
-
 
 } /* namespace TransModel */
 

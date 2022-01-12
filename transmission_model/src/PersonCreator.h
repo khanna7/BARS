@@ -30,7 +30,7 @@ private:
     int id;
     std::shared_ptr<TransmissionRunner> trans_runner_;
     TestingConfigurator testing_configurator;
-    PREPAdherenceConfigurator prep_adherence_configurator;
+    PREPAdherenceConfigurator *prep_adherence_configurator;
     double detection_window_;
     ARTLagCalculator art_lag_calculator;
     Jail* jail_;

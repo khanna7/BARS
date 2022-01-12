@@ -30,6 +30,8 @@
 #include "PrepInterventionManager.h"
 #include "Jail.h"
 #include "Stats.h"
+#include "GeometricDistribution.h"
+#include "MethUse.h"
 
 namespace TransModel {
 
@@ -59,6 +61,7 @@ private:
     Jail jail;
     PersonCreator person_creator;
     PrepInterventionManager prep_manager;
+    MethUse meth_use_manager;
     CondomUseAssigner condom_assigner;
     RangeWithProbability asm_runner, cd4m_treated_runner;
     RangeWithProbability asm_runner_meth, asm_runner_crack;
@@ -86,6 +89,8 @@ private:
     bool hasSex(int type);
     void schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
             float size_of_timestep);
+
+    void initMethCessation();
 
     /**
      * Initializes PrEP cessation events for the initial set of persons.
