@@ -186,14 +186,12 @@ public:
         return substance_use_.find(sut) != substance_use_.end();
     }
 
-    void goOnMeth() {
-        substance_use_.insert(SubstanceUseType::METH);
-        //goOnOffSubstance();
-    }
+    void goOnMeth();
 
     void goOffMeth() {
         substance_use_.erase(SubstanceUseType::METH);
         //goOnOffSubstance();
+       
     }
     
     const PrepParameters prepParameters() const {

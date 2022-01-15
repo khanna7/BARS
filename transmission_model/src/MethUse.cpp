@@ -7,17 +7,9 @@ using namespace repast;
 
 namespace TransModel {
 
-void goOnOffSubstance(PersonPtr person) {
+void MethUse::goOnOffSubstance(PersonPtr& person) {
     initialize_art_adherence(person, -1);
     PREPAdherenceConfigurator::instance()->configurePerson(person);
-}
-
-void goOnMeth(PersonPtr person) {
-    cout << person->id() << " Going on METH" << endl;
-    person->goOnMeth();
-    goOnOffSubstance(person);
-
-
 }
 
 MethUse::MethUse(double proportion_on, int length) :
@@ -54,10 +46,11 @@ void MethUse::run(double tick) {
 }
 
 void MethUse::putOnMeth(double tick, std::shared_ptr<Person> &person) {
+    person->goOnMeth();
+    goOnOffSubstance(person);
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
     double delay = cessation_generator.next();
     double stop_time = tick + delay;
-    goOnMeth(person);
     std::cout << "Use length " << delay << std::endl;
     runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new MethUseCessationEvent(person, stop_time)));
 }

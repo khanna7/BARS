@@ -16,7 +16,7 @@
 #include "Stats.h"
 #include "ARTScheduler.h"
 #include "file_utils.h"
-
+#include "MethUseCessationEvent.h"
 
 using namespace Rcpp;
 
@@ -59,7 +59,6 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
     double ecstasy_prop = Parameters::instance()->getDoubleParameter(ECSTASY_PROP);
     
     repast::Random::instance()->nextDouble();
-    if (repast::Random::instance()->nextDouble() < meth_prop) su.insert(SubstanceUseType::METH);
     if (repast::Random::instance()->nextDouble() < crack_prop) su.insert(SubstanceUseType::CRACK);
     if (repast::Random::instance()->nextDouble() < ecstasy_prop) su.insert(SubstanceUseType::ECSTASY);
 
@@ -68,6 +67,15 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
     PersonPtr person = std::make_shared<Person>(id++, age, status == 1, su, calculate_role(STEADY_NETWORK_TYPE),
             calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
     testing_configurator.configurePerson(person, size_of_timestep);
+    if (repast::Random::instance()->nextDouble() < meth_prop) {
+        person->goOnMeth();
+        repast::ScheduleRunner& runner = repast::RepastProcess::instance()->getScheduleRunner();
+        GeometricDistribution cessation_generator(1/Parameters::instance()->getDoubleParameter(METH_USE_LENGTH), 1.1);
+        double delay = cessation_generator.next();
+        double stop_time = tick + delay;
+        std::cout << "Use length " << delay << std::endl;
+        runner.scheduleEvent(stop_time, repast::Schedule::FunctorPtr(new MethUseCessationEvent(person, stop_time)));
+    }
 
     PrepParameters prep(PrepStatus::OFF, 0, 0);
     person->prep_ = prep;

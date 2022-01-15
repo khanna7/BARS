@@ -5,6 +5,7 @@
 
 #include "repast_hpc/Schedule.h"
 #include "Person.h"
+#include "MethUse.h"
 
 namespace TransModel {
 
@@ -14,9 +15,8 @@ private:
     double timestamp_;
 public:
     MethUseCessationEvent(std::shared_ptr<Person> person, double timestamp);
-     virtual ~MethUseCessationEvent();
-
-     void operator()();
+    virtual ~MethUseCessationEvent();
+    void operator()();
 };
 
 }

@@ -979,7 +979,7 @@ void Model::initMethCessation() {
     for (auto iter = population.begin(); iter != population.end(); ++iter) {
         PersonPtr person = *iter;
         if (person->isSubstanceUser(SubstanceUseType::METH)) {
-            double stop_time = 2.;//cessation_generator.next();
+            double stop_time = cessation_generator.next();
             runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new MethUseCessationEvent(person, stop_time)));
         }
     }

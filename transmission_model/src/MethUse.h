@@ -30,6 +30,7 @@ public:
 
     void putOnMeth(double tick, std::shared_ptr<Person>& person);
 
+    static void goOnOffSubstance(PersonPtr& person);
 
 };
 

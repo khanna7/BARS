@@ -114,6 +114,10 @@ bool Person::deadOfInfection() {
             infection_parameters_.time_since_infection >= infection_parameters_.dur_inf;
 }
 
+void Person::goOnMeth() {
+    substance_use_.insert(SubstanceUseType::METH);
+}
+
 bool Person::diagnose(double tick) {
     Result result = diagnoser_.test(tick, infection_parameters_);
     diagnosed_ = result == Result::POSITIVE;

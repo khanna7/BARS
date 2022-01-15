@@ -13,9 +13,8 @@ MethUseCessationEvent::MethUseCessationEvent(std::shared_ptr<Person> person, dou
 
 void MethUseCessationEvent::operator()() {
     if (!person_->isDead()) {
-        std::cout << person_->id() << " GOING OFF METH" << std::endl;
         person_->goOffMeth();
-        cout << "OFF? " << person_->isSubstanceUser(SubstanceUseType::METH);
+        MethUse::goOnOffSubstance(person_);
     }
 }
 
