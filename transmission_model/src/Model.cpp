@@ -36,7 +36,7 @@
 #include "NetStatPrepIntervention.h"
 #include "RandomSelectionPrepIntervention.h"
 #include "Logger.h"
-#include "MethUseCessationEvent.h"
+#include "DrugUseCessationEvent.h"
 
 #include "debug_utils.h"
 #include "PrintHelper.h"
@@ -914,8 +914,6 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
                     Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_MULTIPLIER), 
                     Parameters::instance()->getDoubleParameter(JAIL_INFECTION_RATE_DEFAULT))),
                 person_creator { trans_runner, Parameters::instance()->getDoubleParameter(DETECTION_WINDOW), art_lag_calculator, &jail}, prep_manager(),	
-                meth_use_manager(Parameters::instance()->getDoubleParameter(METH_PROP),
-                                 Parameters::instance()->getDoubleParameter(METH_USE_LENGTH)),
                 condom_assigner { create_condom_use_assigner() },
                 asm_runner { create_ASM_runner() },  cd4m_treated_runner{ create_cd4m_runner(CD4M_TREATED_PREFIX)},
                 asm_runner_meth { create_ASM_runner_stimulants(SubstanceUseType::METH) },
@@ -968,19 +966,35 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     runner.scheduleEvent(364.9, 365, Schedule::FunctorPtr(new MethodFunctor<PrepInterventionManager>(&prep_manager, &PrepInterventionManager::onYearEnded)));
 
     initPrepCessation();
-    initMethCessation();
+    initDrugs();
     schedule_jail_interventions(runner, this, &jail);
     //write_edges(net, "./edges_at_1.csv");
 }
 
-void Model::initMethCessation() {
-    GeometricDistribution cessation_generator(1/Parameters::instance()->getDoubleParameter(METH_USE_LENGTH), 1.1);
+void Model::initDrugs() {
+    initDrug(SubstanceUseType::METH,
+              Parameters::instance()->getDoubleParameter(METH_PROP),
+              Parameters::instance()->getDoubleParameter(METH_USE_LENGTH));
+
+    initDrug(SubstanceUseType::ECSTASY,
+              Parameters::instance()->getDoubleParameter(ECSTASY_PROP),
+              Parameters::instance()->getDoubleParameter(ECSTASY_USE_LENGTH));
+
+    initDrug(SubstanceUseType::CRACK,
+              Parameters::instance()->getDoubleParameter(CRACK_PROP),
+              Parameters::instance()->getDoubleParameter(CRACK_USE_LENGTH));
+}
+
+void Model::initDrug(SubstanceUseType drug, double prop, double length) {
+    drug_managers[drug] = std::make_shared<DrugUse>(drug, prop, length);
+    
+    GeometricDistribution cessation_generator(1/length, 1.1);
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
     for (auto iter = population.begin(); iter != population.end(); ++iter) {
         PersonPtr person = *iter;
-        if (person->isSubstanceUser(SubstanceUseType::METH)) {
+        if (person->isSubstanceUser(drug)) {
             double stop_time = cessation_generator.next();
-            runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new MethUseCessationEvent(person, stop_time)));
+            runner.scheduleEvent(stop_time, Schedule::FunctorPtr(new DrugUseCessationEvent(person, drug, stop_time)));
         }
     }
 }
@@ -1271,7 +1285,9 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
             }
             ++dead_count;
         } else {
-            meth_use_manager.processPerson(person);
+            for (auto& item : this->drug_managers) {
+                item.second->processPerson(person);
+            }
             // don't count dead uninfected persons
             if (!person->isInfected()) {
                 // accumulate persons who may potentially go on PrEP
@@ -1351,9 +1367,10 @@ void Model::updateVitals(double tick, float size_of_timestep, int max_age, vecto
 
     stats->currentCounts().vl_supp_per_positives = inf_count == 0 ? 0 : ((double)vs_count) / inf_count;
     stats->currentCounts().vl_supp_per_diagnosis = diagnosed_count == 0 ? 0 : ((double)vs_pos_count) / diagnosed_count;
-    meth_use_manager.run(tick);
-    meth_use_manager.reset();
-    
+    for (auto &item : drug_managers) {
+         item.second->run(tick);
+         item.second->reset();
+    }
     // Select from accumulated potential persons those to put on PrEP.
     prep_manager.run(tick, net);
     // Reset the prep uptake for next round

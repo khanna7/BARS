@@ -114,8 +114,8 @@ bool Person::deadOfInfection() {
             infection_parameters_.time_since_infection >= infection_parameters_.dur_inf;
 }
 
-void Person::goOnMeth() {
-    substance_use_.insert(SubstanceUseType::METH);
+void Person::goOnDrug(SubstanceUseType sut) {
+    substance_use_.insert(sut);
 }
 
 bool Person::diagnose(double tick) {

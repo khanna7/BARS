@@ -31,7 +31,7 @@
 #include "Jail.h"
 #include "Stats.h"
 #include "GeometricDistribution.h"
-#include "MethUse.h"
+#include "DrugUse.h"
 
 namespace TransModel {
 
@@ -61,7 +61,7 @@ private:
     Jail jail;
     PersonCreator person_creator;
     PrepInterventionManager prep_manager;
-    MethUse meth_use_manager;
+    std::map<SubstanceUseType, std::shared_ptr<DrugUse>> drug_managers;
     CondomUseAssigner condom_assigner;
     RangeWithProbability asm_runner, cd4m_treated_runner;
     RangeWithProbability asm_runner_meth, asm_runner_crack;
@@ -90,7 +90,8 @@ private:
     void schedulePostDiagnosisART(PersonPtr person, std::map<double, ARTScheduler*>& art_map, double tick,
             float size_of_timestep);
 
-    void initMethCessation();
+    void initDrugs();
+    void initDrug(SubstanceUseType drug, double prop, double length);
 
     /**
      * Initializes PrEP cessation events for the initial set of persons.

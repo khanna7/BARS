@@ -46,7 +46,7 @@ void MethUse::run(double tick) {
 }
 
 void MethUse::putOnMeth(double tick, std::shared_ptr<Person> &person) {
-    person->goOnMeth();
+    person->goOnDrug(SubstanceUseType::METH);
     goOnOffSubstance(person);
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
     double delay = cessation_generator.next();

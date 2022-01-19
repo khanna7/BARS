@@ -186,12 +186,10 @@ public:
         return substance_use_.find(sut) != substance_use_.end();
     }
 
-    void goOnMeth();
+    void goOnDrug(SubstanceUseType sut);
 
-    void goOffMeth() {
-        substance_use_.erase(SubstanceUseType::METH);
-        //goOnOffSubstance();
-       
+    void goOffDrug(SubstanceUseType sut) {
+        substance_use_.erase(sut);
     }
     
     const PrepParameters prepParameters() const {

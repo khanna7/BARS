@@ -570,7 +570,9 @@ meth.prop <- 9.21/100
 ecstasy.prop <- 4.02/100
 crack.prop <- 17.42/100
 
-meth.use.length <- 365
+meth.use.length <- 60
+ecstasy.use.length <- 90
+crack.use.length <- 120
 
 # ART and substance use
 meth.decline.art.always.adherent <- 50/100
