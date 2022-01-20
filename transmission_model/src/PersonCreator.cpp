@@ -61,7 +61,7 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
     double ecstasy_length = Parameters::instance()->getDoubleParameter(ECSTASY_USE_LENGTH);
     double crack_length = Parameters::instance()->getDoubleParameter(CRACK_USE_LENGTH);
             
-    repast::Random::instance()->nextDouble();
+    if (repast::Random::instance()->nextDouble() < meth_prop) su.insert(SubstanceUseType::METH);
     if (repast::Random::instance()->nextDouble() < crack_prop) su.insert(SubstanceUseType::CRACK);
     if (repast::Random::instance()->nextDouble() < ecstasy_prop) su.insert(SubstanceUseType::ECSTASY);
 
@@ -70,7 +70,7 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
     PersonPtr person = std::make_shared<Person>(id++, age, status == 1, su, calculate_role(STEADY_NETWORK_TYPE),
             calculate_role(CASUAL_NETWORK_TYPE), diagnoser);
     testing_configurator.configurePerson(person, size_of_timestep);
-    if (repast::Random::instance()->nextDouble() < meth_prop) {
+    if (person->isSubstanceUser(SubstanceUseType::METH)) {
         repast::ScheduleRunner& runner = repast::RepastProcess::instance()->getScheduleRunner();
         GeometricDistribution cessation_generator(1/meth_length, 1.1);
         double delay = cessation_generator.next();
@@ -79,7 +79,7 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
         runner.scheduleEvent(stop_time, repast::Schedule::FunctorPtr(
                                  new DrugUseCessationEvent(person, SubstanceUseType::METH, stop_time)));
     }
-    if (repast::Random::instance()->nextDouble() < crack_prop) {
+    if (person->isSubstanceUser(SubstanceUseType::CRACK)) {
         repast::ScheduleRunner& runner = repast::RepastProcess::instance()->getScheduleRunner();
         GeometricDistribution cessation_generator(1/crack_length, 1.1);
         double delay = cessation_generator.next();
@@ -88,7 +88,7 @@ PersonPtr PersonCreator::operator()(double tick, float age) {
         runner.scheduleEvent(stop_time, repast::Schedule::FunctorPtr(
                                  new DrugUseCessationEvent(person, SubstanceUseType::CRACK, stop_time)));
     }
-    if (repast::Random::instance()->nextDouble() < ecstasy_prop) {
+    if (person->isSubstanceUser(SubstanceUseType::ECSTASY)) {
         repast::ScheduleRunner& runner = repast::RepastProcess::instance()->getScheduleRunner();
         GeometricDistribution cessation_generator(1/ecstasy_length, 1.1);
         double delay = cessation_generator.next();
