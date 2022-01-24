@@ -11,7 +11,7 @@
 namespace TransModel {
 
 StatsBuilder::StatsBuilder(const std::string& out_dir) :
-        counts_writer { nullptr }, pevent_writer { nullptr }, ievent_writer(nullptr), biomarker_writer { nullptr }, pd_fname { }, tevent_writer {
+        counts_writer { nullptr }, su_event_writer{ nullptr }, pevent_writer { nullptr }, ievent_writer(nullptr), biomarker_writer { nullptr }, pd_fname { }, tevent_writer {
                 nullptr }, art_event_writer { nullptr }, prep_event_writer { nullptr }, out_dir_ { out_dir } {
 }
 
@@ -51,6 +51,16 @@ StatsBuilder* StatsBuilder::partnershipEventWriter(const std::string& fname, uns
     } else {
         pevent_writer = std::make_shared<StatsWriter<PartnershipEvent>>(out_dir_ + "/" + fname,
                 PartnershipEvent::header, buffer);
+    }
+    return this;
+}
+
+StatsBuilder* StatsBuilder::substanceUseEventWriter(const std::string& fname, unsigned int buffer) {
+    if (fname == "") {
+        su_event_writer = std::make_shared<NullStatsWriter<SubstanceUseEvent>>();
+    } else {
+        su_event_writer = std::make_shared<StatsWriter<SubstanceUseEvent>>(out_dir_ + "/" + fname,
+                SubstanceUseEvent::header, buffer);
     }
     return this;
 }
@@ -108,7 +118,7 @@ void StatsBuilder::createStatsSingleton(int min_age, int max_age) {
         if (Stats::instance_ != nullptr) {
             delete Stats::instance_;
         }
-        Stats::instance_ = new Stats(counts_writer, pevent_writer, ievent_writer, biomarker_writer, death_writer,
+        Stats::instance_ = new Stats(counts_writer, su_event_writer, pevent_writer, ievent_writer, biomarker_writer, death_writer,
                 pd_fname, tevent_writer, art_event_writer, prep_event_writer, min_age, max_age);
     } else {
         throw std::domain_error("Stats must be fully initialized from StatsBuilder before being used.");

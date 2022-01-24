@@ -42,6 +42,7 @@ const std::string EVENT_FILE = "event.file";
 const std::string EVENT_FILE_BUFFER_SIZE = "event.file.buffer.size";
 const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE= "per.tick.counts.output.file";
 const std::string OUTPUT_DIR = "output.directory";
+const std::string SUBSTANCE_USE_EVENTS_FILE = "substance.use.events.file";
 const std::string PARTNERSHIP_EVENTS_FILE = "partnership.events.file";
 const std::string INFECTION_EVENTS_FILE =  "infection.events.file";
 const std::string BIOMARKER_FILE = "biomarker.log.file";

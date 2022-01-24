@@ -2,6 +2,7 @@
 
 #include "DrugUseCessationEvent.h"
 #include "adherence_functions.h"
+#include "Stats.h"
 
 using namespace std;
 
@@ -14,6 +15,7 @@ DrugUseCessationEvent::DrugUseCessationEvent(std::shared_ptr<Person> person, Sub
 void DrugUseCessationEvent::operator()() {
     if (!person_->isDead()) {
         person_->goOffDrug(drug_);
+        Stats::instance()->recordSubstanceUseEvent(timestamp_, person_->id(), drug_, SubstanceUseEvent::STOPPED);
         DrugUse::goOnOffDrug(person_);
     }
 }

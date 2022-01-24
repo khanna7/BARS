@@ -29,6 +29,8 @@ extern const std::string CASUAL_NETWORK_FILE;
 extern const std::string OUTPUT_DIR;
 extern const std::string COUNTS_PER_TIMESTEP_OUTPUT_FILE;
 extern const std::string PARTNERSHIP_EVENTS_FILE;
+extern const std::string SUBSTANCE_USE_EVENTS_FILE;
+
 extern const std::string INFECTION_EVENTS_FILE;
 extern const std::string BIOMARKER_FILE;
 extern const std::string BIOMARKER_LOG_COUNT;

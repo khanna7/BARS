@@ -191,6 +191,7 @@ void init_stats() {
     // 19-30,30-100
     StatsBuilder builder(output_directory(Parameters::instance()));
     builder.countsWriter(get_stats_filename(COUNTS_PER_TIMESTEP_OUTPUT_FILE));
+    builder.substanceUseEventWriter(get_stats_filename(SUBSTANCE_USE_EVENTS_FILE));
     builder.partnershipEventWriter(get_stats_filename(PARTNERSHIP_EVENTS_FILE));
     builder.infectionEventWriter(get_stats_filename(INFECTION_EVENTS_FILE));
     builder.biomarkerWriter(get_stats_filename(BIOMARKER_FILE));

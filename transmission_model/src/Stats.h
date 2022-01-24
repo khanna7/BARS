@@ -119,6 +119,19 @@ struct PartnershipEvent {
 
 };
 
+struct SubstanceUseEvent {
+    static const std::string header;
+    
+    enum SUEventType {STOPPED, STARTED};
+    
+    double tick;
+    int id;
+    SubstanceUseType drug;
+    SUEventType type;
+
+    void writeTo(FileOutput& out);
+};
+
 struct Counts {
 
     static const std::string header;
@@ -187,6 +200,7 @@ class Stats {
 private:
     std::shared_ptr<StatsWriterI<Counts>> counts_writer;
     Counts current_counts;
+    std::shared_ptr<StatsWriterI<SubstanceUseEvent>> su_event_writer;
     std::shared_ptr<StatsWriterI<PartnershipEvent>> pevent_writer;
     std::shared_ptr<StatsWriterI<InfectionEvent>> ievent_writer;
     std::shared_ptr<StatsWriterI<Biomarker>> biomarker_writer;
@@ -200,11 +214,13 @@ private:
     friend class StatsBuilder;
     static Stats* instance_;
 
-    Stats(std::shared_ptr<StatsWriterI<Counts>> counts, std::shared_ptr<StatsWriterI<PartnershipEvent>> pevents,
-            std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
-            std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
-            std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer,
-            std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, int min_age, int max_age);
+    Stats(std::shared_ptr<StatsWriterI<Counts>> counts,
+          std::shared_ptr<StatsWriterI<SubstanceUseEvent>> su_event_writer,
+          std::shared_ptr<StatsWriterI<PartnershipEvent>> pevents,
+          std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
+          std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
+          std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_event_writer,
+          std::shared_ptr<StatsWriterI<PREPEvent>> prep_event_writer, int min_age, int max_age);
 
 public:
     virtual ~Stats();
@@ -227,7 +243,7 @@ public:
                                 bool p1_crack, bool p2_crack, bool p1_ecstasy, bool p2_ecstasy,
                                 PartnershipEvent::PEventType event_type, int net_type);
     void recordInfectionEvent(double time, const PersonPtr& p1, const PersonPtr& p2, bool condom, int net_type);
-
+    void recordSubstanceUseEvent(double time, int p_id, SubstanceUseType drug, SubstanceUseEvent::SUEventType type);
     /**
      * Records an infection event for persons entering the model as infected.
      */

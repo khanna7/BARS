@@ -75,6 +75,12 @@ void PartnershipEvent::writeTo(FileOutput& out) {
     out << tick_ << "," << edge_id_ << "," << p1_id << "," << p2_id << "," << p1_meth << "," << p2_meth << ","  << p1_crack << "," << p2_crack << "," << p1_ecstasy << "," << p2_ecstasy << "," << static_cast<int>(type_) << "," << network_type << "\n";
 }
 
+const std::string SubstanceUseEvent::header("\"tick\",\"p_id\",\"drug\",\"event\"");
+
+void SubstanceUseEvent::writeTo(FileOutput &out) {
+    out << tick << "," << id << "," <<  static_cast<int>(drug) << "," <<  static_cast<int>(type) << "\n";
+}
+
 const std::string Counts::header(
         "tick,entries,max_age_exits,infection_deaths,asm_deaths,asm_deaths_meth,asm_deaths_crack,"
 
@@ -127,6 +133,7 @@ const std::string Counts::header(
         "infected_at_incarceration,infected_partners_at_incarceration,infected_at_release,"
         "infected_never_jailed,infected_ever_jailed,uninfected_never_jailed,uninfected_ever_jailed,vertex_count_never_jailed,vertex_count_ever_jailed"
         );
+
 
 
 void write_vector_out(std::vector<unsigned int>& vec, FileOutput& out) {
@@ -308,12 +315,14 @@ void Counts::incrementVertexCount(PersonPtr p) {
 
 Stats* Stats::instance_ = nullptr;
 
-Stats::Stats(std::shared_ptr<StatsWriterI<Counts>> counts, std::shared_ptr<StatsWriterI<PartnershipEvent>> pevents,
-        std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
-        std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
-        std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_writer,
-        std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, int min_age, int max_age) :
-        counts_writer { counts }, current_counts {min_age, max_age}, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
+Stats::Stats(std::shared_ptr<StatsWriterI<Counts>> counts,
+             std::shared_ptr<StatsWriterI<SubstanceUseEvent>> su_event_writer,
+             std::shared_ptr<StatsWriterI<PartnershipEvent>> pevents,
+             std::shared_ptr<StatsWriterI<InfectionEvent>> infection_event_writer, std::shared_ptr<StatsWriterI<Biomarker>> bio_writer,
+             std::shared_ptr<StatsWriterI<DeathEvent>> death_event_writer, const std::string& person_data_fname,
+             std::shared_ptr<StatsWriterI<TestingEvent>> testing_event_writer, std::shared_ptr<StatsWriterI<ARTEvent>> art_writer,
+             std::shared_ptr<StatsWriterI<PREPEvent>> prep_writer, int min_age, int max_age) :
+    counts_writer { counts }, current_counts {min_age, max_age}, su_event_writer { su_event_writer }, pevent_writer { pevents }, ievent_writer { infection_event_writer }, biomarker_writer {
                 bio_writer }, death_writer { death_event_writer }, tevent_writer{testing_event_writer}, art_event_writer {art_writer}, prep_event_writer{prep_writer},
                 pd_recorder{nullptr} {
 
@@ -343,6 +352,10 @@ void Stats::recordPREPEvent(double time, int p_id, int type, bool meth, bool cra
 void Stats::recordPartnershipEvent(double t, unsigned int edge_id, int p1, int p2, bool p1_meth, bool p2_meth, bool p1_crack, bool p2_crack,
                                    bool p1_ecstasy, bool p2_ecstasy, PartnershipEvent::PEventType event_type, int net_type) {
     pevent_writer->addOutput(PartnershipEvent { t, edge_id, p1, p2, p1_meth, p2_meth, p1_crack, p2_crack, p1_ecstasy, p2_ecstasy, event_type, net_type });
+}
+
+void Stats::recordSubstanceUseEvent(double time, int p_id, SubstanceUseType drug, SubstanceUseEvent::SUEventType type) {
+    su_event_writer->addOutput(SubstanceUseEvent { time, p_id, drug, type });
 }
 
 void Stats::recordTestingEvent(double time, int p_id, bool result) {

@@ -24,6 +24,7 @@ initial.data.file = ../r/network_model/cas_net_n10000.RData
 output.directory = ./output
 per.tick.counts.output.file = counts.csv
 #partnership.events.file = partnership_events.csv
+substance.use.events.file = substance_use_events.csv
 #infection.events.file = infection_events.csv
 
 #biomarker.log.file = biomarker_log.csv

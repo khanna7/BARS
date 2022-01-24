@@ -2,6 +2,7 @@
 #include "DrugUseCessationEvent.h"
 #include "adherence_functions.h"
 #include "Parameters.h"
+#include "Stats.h"
 
 using namespace repast;
 
@@ -47,6 +48,7 @@ void DrugUse::run(double tick) {
 
 void DrugUse::putOnDrug(double tick, std::shared_ptr<Person> &person) {
     person->goOnDrug(drug_);
+    Stats::instance()->recordSubstanceUseEvent(tick, person->id(), drug_, SubstanceUseEvent::STARTED);
     goOnOffDrug(person);
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
     double delay = cessation_generator.next();

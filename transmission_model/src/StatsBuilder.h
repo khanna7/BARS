@@ -20,6 +20,7 @@ class StatsBuilder {
 
 private:
     std::shared_ptr<StatsWriterI<Counts>> counts_writer;
+    std::shared_ptr<StatsWriterI<SubstanceUseEvent>> su_event_writer;
     std::shared_ptr<StatsWriterI<PartnershipEvent>> pevent_writer;
     std::shared_ptr<StatsWriterI<InfectionEvent>> ievent_writer;
     std::shared_ptr<StatsWriterI<Biomarker>> biomarker_writer;
@@ -35,6 +36,7 @@ public:
     virtual ~StatsBuilder();
 
     StatsBuilder* countsWriter(const std::string& fname, unsigned int buffer = 1000);
+    StatsBuilder* substanceUseEventWriter(const std::string& fname, unsigned int buffer = 1);
     StatsBuilder* partnershipEventWriter(const std::string& fname, unsigned int buffer = 1000);
     StatsBuilder* infectionEventWriter(const std::string& fname, unsigned int buffer = 1000);
     StatsBuilder* biomarkerWriter(const std::string& fname, unsigned int buffer = 1000);
