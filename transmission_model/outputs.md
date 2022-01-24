@@ -120,7 +120,14 @@ Partnership events are recorded in the file defined by *partnership.events.file*
 * network_type: the type of network in which the event occurred
   * 0: the main network
   * 1: the casual network
-  
+
+### Substance Use Events
+Substance use events are recorded in the file defined by *substance.use.events.file* in the model properties file.
+*tick: time of event
+*p_id: id of person involved
+*drug: 0 == meth, 1 == crack, 2 == ecstasy
+*event: 0 == stopped, 1 == started
+
 ### Infection Events
 Infection events are recorded in the file defined by *infection.events.file* in the model properties file. The format is csv with each row recording an infection event. An infection event is recorded when one person infects another. An infection event is also recorded when an infected persons enters the model. In that case, only the person 1 attributes are recorded. The columns are:
 * tick: the time step at which the event occurred.
