@@ -7,6 +7,7 @@
 
 #include "Person.h"
 #include "Stats.h"
+#include "Rcpp.h"
 
 using namespace Rcpp;
 
@@ -77,8 +78,8 @@ void Person::goOffPrep(PrepStatus off_status) {
         throw std::invalid_argument("goOffPrep -- status must be an off status");
     prep_.off(off_status);
 }
-void Person::goOnPrep(double start_time, double stop_time) {
-    prep_.on(start_time, stop_time);
+void Person::goOnPrep(double start_time, double stop_time, PrepStatus status) {
+    prep_.on(start_time, stop_time, status);
 }
 
 bool Person::step(float size_of_timestep, float threshold) {

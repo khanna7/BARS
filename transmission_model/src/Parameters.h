@@ -92,10 +92,16 @@ extern const std::string PREG_SUSC_MULT;
 
 extern const std::string PREP_SCHEME;
 
+extern const std::string LAI_PREP_USE_PROB;
+extern const std::string LAI_PREP_LAI_PROP;
+extern const std::string LAI_PREP_LAI_LENGTH_DAYS;
+extern const std::string LAI_PREP_LAI_REINJECT_PROB;
+
 extern const std::string DEFAULT_PREP_USE_PROP_LT;
 extern const std::string DEFAULT_PREP_USE_PROP_GTE;
 extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_LT;
 extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_GTE;
+extern const std::string DEFAULT_PREP_DAILY_STOP_PROB;
 extern const std::string DEFAULT_PREP_YEARLY_INCREMENT_LT;
 extern const std::string DEFAULT_PREP_YEARLY_INCREMENT_GTE;
 extern const std::string DEFAULT_PREP_YEARS_TO_INCREMENT;

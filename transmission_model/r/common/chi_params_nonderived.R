@@ -185,7 +185,7 @@
 ## PrEP Uptake Scheme ##
 
 # one of default, young_old_ratio, serodiscordant, eigen, or degree
-prep.uptake <- 'default'
+prep.uptake <- 'lai'
 
 ## Default PrEP  parameters ###
 
@@ -209,6 +209,13 @@ default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for t
 default.prep.balanced.unbalanced <- 'balanced'
 
 ## End Default Parameters ##
+
+## LAI ##
+
+lai.prep.use.prob <- 1. / 5000
+lai.prep.lai.prop <- 0.5
+lai.prep.lai.length.days <- 60
+lai.prep.lai.reinjection.prob <- 0.85
 
 ## Young Old Ratio PrEP Uptake Parameters ##
 

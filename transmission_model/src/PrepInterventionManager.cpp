@@ -9,6 +9,7 @@
 
 #include "Stats.h"
 #include "PrepCessationEvent.h"
+#include "Parameters.h"
 
 using namespace repast;
 
@@ -39,9 +40,15 @@ PrepIntervention::~PrepIntervention() {}
 
 void PrepIntervention::putOnPrep(double tick, std::shared_ptr<Person>& person, PrepStatus cause) {
     ScheduleRunner& runner = RepastProcess::instance()->getScheduleRunner();
-    double delay = cessation_generator.next();
-    double stop_time = tick + delay;
-    person->goOnPrep(tick, stop_time);
+    double stop_time;
+    if (cause == PrepStatus::ON) {
+        double delay = cessation_generator.next();
+        stop_time = tick + delay;
+    } else if (cause == PrepStatus::ON_LAI) {
+        stop_time = tick + Parameters::instance()->getDoubleParameter(LAI_PREP_LAI_LENGTH_DAYS);
+    }
+    std::cout << stop_time << endl;
+    person->goOnPrep(tick, stop_time, cause);
     Stats* stats = Stats::instance();
     stats->recordPREPEvent(tick, person->id(), static_cast<int>(cause));
     stats->personDataRecorder()->recordPREPStart(person, tick);

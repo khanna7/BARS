@@ -10,6 +10,7 @@
 
 #include "AdherenceCategory.h"
 #include "PrepStatus.h"
+#include "Parameters.h"
 
 namespace TransModel {
 
@@ -18,7 +19,7 @@ class PrepParameters {
 private:
     PrepStatus status_;
     double start_time_, stop_time_;
-    AdherenceData adherence;
+    AdherenceData oral_adherence;
 public:
     PrepParameters(PrepStatus status, double start_time, double stop_time);
     PrepParameters(PrepStatus status, double start_time, double stop_time, AdherenceData& cat);
@@ -37,15 +38,16 @@ public:
     }
 
     const AdherenceCategory adherenceCagegory() const {
-        return adherence.category;
+        return oral_adherence.category;
     }
 
     const double prepEffectiveness() const {
         // not actually the probability but prep effectiveness value
-        return adherence.probability;
+        if (status_ == PrepStatus::ON_LAI) return Parameters::instance()->getDoubleParameter(PREP_ALWAYS_ADHERENT_TR);
+        else return oral_adherence.probability;
     }
 
-    void on(double start_time, double stop_time);
+    void on(double start_time, double stop_time, PrepStatus status);
 
     void off(PrepStatus status) {
         status_ = status;
@@ -58,7 +60,7 @@ public:
     }
 
     void setAdherenceData(AdherenceData data) {
-        adherence = data;
+        oral_adherence = data;
     }
 };
 

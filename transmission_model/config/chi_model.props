@@ -24,13 +24,13 @@ per.tick.counts.output.file = counts.csv
 #infection.events.file = infection_events.csv
 
 #biomarker.log.file = biomarker_log.csv
-biomarker.number.of.persons.to.log = 100
+#biomarker.number.of.persons.to.log = 100
 
 #death.events.file = exit_events.csv
 #person.data.file = person_data.csv
 #testing.events.file = testing_events.csv
 #art.events.file = art_events.csv
-#prep.events.file = prep_events.csv
+prep.events.file = prep_events.csv
 
 #serodiscordant.prep.log.file = serodiscordant_log.csv
 #default.prep.log.file = base_prep_log.csv

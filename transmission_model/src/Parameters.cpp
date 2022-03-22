@@ -105,10 +105,16 @@ const std::string PREG_SUSC_MULT = "preg.susc.mult";
 
 const std::string PREP_SCHEME = "prep.uptake";
 
+const std::string LAI_PREP_USE_PROB = "lai.prep.use.prob";
+const std::string LAI_PREP_LAI_PROP = "lai.prep.lai.prop";
+const std::string LAI_PREP_LAI_LENGTH_DAYS = "lai.prep.lai.length.days";
+const std::string LAI_PREP_LAI_REINJECT_PROB = "lai.prep.lai.reinjection.prob";
+
 const std::string DEFAULT_PREP_USE_PROP_LT = "default.prep.bl.use.prop.lt";
 const std::string DEFAULT_PREP_USE_PROP_GTE = "default.prep.bl.use.prop.gte";
 const std::string DEFAULT_PREP_DAILY_STOP_PROB_LT = "default.prep.daily.stop.prob.lt";
 const std::string DEFAULT_PREP_DAILY_STOP_PROB_GTE = "default.prep.daily.stop.prob.gte";
+const std::string DEFAULT_PREP_DAILY_STOP_PROB = "default.prep.daily.stop.prob";
 const std::string DEFAULT_PREP_YEARLY_INCREMENT_LT = "default.prep.yearly.increment.lt";
 const std::string DEFAULT_PREP_YEARLY_INCREMENT_GTE = "default.prep.yearly.increment.gte";
 const std::string DEFAULT_PREP_YEARS_TO_INCREMENT = "default.prep.years.to.increment";

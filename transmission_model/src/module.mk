@@ -35,6 +35,7 @@ CPP_SOURCE = Person.cpp \
     Range.cpp \
     PrepInterventionManager.cpp \
     BasePrepIntervention.cpp \
+    LAIPrepIntervention.cpp \
     SerodiscordantPrepIntervention.cpp \
     NetStatPrepIntervention.cpp \
     RandomSelectionPrepIntervention.cpp \

@@ -8,7 +8,6 @@
 #ifndef SRC_PERSON_H_
 #define SRC_PERSON_H_
 
-#include "Rcpp.h"
 #include "DiseaseParameters.h"
 #include "Diagnoser.h"
 #include "GeometricDistribution.h"
@@ -69,7 +68,7 @@ public:
     }
 
     bool isOnPrep() const {
-        return prep_.status() == PrepStatus::ON;
+        return (prep_.status() == PrepStatus::ON || prep_.status() == PrepStatus::ON_LAI);
     }
 
     const PrepStatus prepStatus() const {
@@ -128,7 +127,7 @@ public:
 
     void setAge(float age);
 
-    void goOnPrep(double start_time, double stop_time);
+    void goOnPrep(double start_time, double stop_time, PrepStatus status);
 
     void goOffPrep(PrepStatus off_status);
 

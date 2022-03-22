@@ -8,7 +8,7 @@ namespace TransModel {
 
 BasePrepIntervention::BasePrepIntervention(PrepUptakeData& prep_data, std::shared_ptr<PrepAgeFilter> filter) : PrepIntervention(prep_data),
     candidates(), filter_(filter), prep_data_(prep_data), total_negatives(0)  {
-        onYearEnded();
+    onYearEnded();
 }
     
 BasePrepIntervention::~BasePrepIntervention() {

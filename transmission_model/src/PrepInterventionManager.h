@@ -40,7 +40,7 @@ public:
 };
 
 
-class PrepIntervention : public IPrepIntervention {
+class PrepIntervention : public IPrepIntervention, std::enable_shared_from_this<PrepIntervention>{
 
 private:
     GeometricDistribution cessation_generator;

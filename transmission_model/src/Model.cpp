@@ -32,6 +32,7 @@
 #include "PrepCessationEvent.h"
 #include "adherence_functions.h"
 #include "BasePrepIntervention.h"
+#include "LAIPrepIntervention.h"
 #include "SerodiscordantPrepIntervention.h"
 #include "NetStatPrepIntervention.h"
 #include "RandomSelectionPrepIntervention.h"
@@ -592,6 +593,15 @@ void init_degree_prep_manager(PrepInterventionManager& prep_manager, float age_t
     std::cout << "DEGREE Intrv gte: " << gte_data << "\n";
 }
 
+void init_lai_prep_manager(PrepInterventionManager& prep_manager) {
+    PrepUptakeData prep_data;
+    prep_data.years_to_increment = 0;
+    prep_data.increment = 0;
+    prep_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB);
+    prep_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB);
+    prep_manager.addIntervention(std::make_shared<LAIPrepIntervention>(prep_data));
+}
+
 void init_default_prep_manager(PrepInterventionManager& prep_manager, float age_threshold, float max_age) {
     // Add the base
     PrepUptakeData lt_base_data, gte_base_data;
@@ -704,6 +714,8 @@ void initialize_prep_interventions(PrepInterventionManager& prep_manager) {
         init_eigen_prep_manager(prep_manager, age_threshold, max_age);
     } else if (prep_scheme == "degree") {
         init_degree_prep_manager(prep_manager, age_threshold, max_age);
+    } else if (prep_scheme == "lai") {
+        init_lai_prep_manager(prep_manager);
     } else {
         throw invalid_argument("Invalid PrEP Uptake scheme: '" + prep_scheme + "'");
     }

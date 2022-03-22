@@ -12,6 +12,7 @@
 
 #include "repast_hpc/Schedule.h"
 #include "Person.h"
+#include "PrepInterventionManager.h"
 
 namespace TransModel {
 
