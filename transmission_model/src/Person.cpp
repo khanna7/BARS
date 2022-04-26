@@ -77,9 +77,13 @@ void Person::goOffPrep(PrepStatus off_status) {
     if (off_status == PrepStatus::ON)
         throw std::invalid_argument("goOffPrep -- status must be an off status");
     prep_.off(off_status);
+    Stats* stats = Stats::instance();
+    stats->currentCounts().went_off_prep++;
 }
 void Person::goOnPrep(double start_time, double stop_time, PrepStatus status) {
     prep_.on(start_time, stop_time, status);
+    Stats* stats = Stats::instance();
+    stats->currentCounts().went_on_prep++;
 }
 
 bool Person::step(float size_of_timestep, float threshold) {

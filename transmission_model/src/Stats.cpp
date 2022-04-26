@@ -103,7 +103,8 @@ const std::string Counts::header(
         "steady_sex_acts,"
         "sd_steady_sex_with_condom,sd_steady_sex_without_condom,"
         "sc_steady_sex_with_condom,sc_steady_sex_without_condom,"
-        "on_art,on_prep,vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths");
+        "on_art,on_prep,vl_supp_per_positives,vl_supp_per_diagnosed,cd4m_deaths,"
+		"went_on_prep,went_off_prep");
 
 void write_vector_out(std::vector<unsigned int>& vec, FileOutput& out) {
     out << "," << std::accumulate(vec.begin(), vec.end(), 0);
@@ -126,7 +127,8 @@ void Counts::writeTo(FileOutput& out) {
     << steady_sex_acts << ","
     << sd_steady_sex_with_condom << "," << sd_steady_sex_without_condom << ","
     << sc_steady_sex_with_condom << "," << sc_steady_sex_without_condom << ","
-    << on_art << "," << on_prep << "," << vl_supp_per_positives << "," << vl_supp_per_diagnosis << "," << cd4m_deaths << "\n";
+    << on_art << "," << on_prep << "," << vl_supp_per_positives << "," << vl_supp_per_diagnosis << ","
+	<< cd4m_deaths << "," << went_on_prep << "," << went_off_prep <<"\n";
 }
 
 Counts::Counts(int min_age, int max_age) :
@@ -135,7 +137,8 @@ Counts::Counts(int min_age, int max_age) :
                 sd_steady_sex_with_condom{0}, sd_steady_sex_without_condom {0},
                 sc_casual_sex_with_condom{0}, sc_casual_sex_without_condom{0},
                 sc_steady_sex_with_condom{0}, sc_steady_sex_without_condom {0},
-                on_art{0}, on_prep{0}, uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
+                on_art{0}, on_prep{0}, went_on_prep{0}, went_off_prep{0},
+				uninfected(1 + max_age - min_age, 0), internal_infected(1 + max_age - min_age, 0), external_infected(1 + max_age - min_age, 0),
                 infected_at_entry(1 + max_age - min_age, 0), vertex_count(1 + max_age - min_age, 0), min_age_(min_age),
                 vl_supp_per_positives{0}, vl_supp_per_diagnosis{0}, cd4m_deaths{0}
 
@@ -151,6 +154,7 @@ void Counts::reset() {
     sc_casual_sex_with_condom = sc_casual_sex_without_condom = 0;
     sc_steady_sex_with_condom = sc_steady_sex_without_condom = 0;
     on_art = on_prep = 0;
+    went_on_prep = went_off_prep = 0;
     vl_supp_per_positives = vl_supp_per_diagnosis = 0;
     std::fill(uninfected.begin(), uninfected.end(), 0);
     std::fill(internal_infected.begin(), internal_infected.end(), 0);
