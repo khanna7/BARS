@@ -1,1 +1,0 @@
-global.random.seed=1,incarceration.prob=0,incarceration.with.cji.prob=0
