@@ -1,6 +1,6 @@
 # BARS
 code for collaboration on CJI project
-## Stimulant Use Interventions may increase for YBMSM
+## Jail Circulation Model
 Code for unpublished _JCM_ [paper](https://uchicago.box.com/s/2jqy4gv3khohqxgrjqllrd9c4eyg5pso)
 
 ## Data Generation
@@ -11,7 +11,7 @@ Code for unpublished _JCM_ [paper](https://uchicago.box.com/s/2jqy4gv3khohqxgrjq
  - The code produces output in txt format that is read by swift, and in csv format for easy readability. 
 
 ## Data Analysis 
- - Code to produce annualized HIV incidence and prevalence for the calibration and intervention runs as well as the final incidence and prevalence boxplots is [here](https://github.com/khanna7/BARS/tree/jcm-paper/transmission_model/swift_proj/R/12sc). 
+ - Code to produce annualized HIV incidence and prevalence for the calibration and intervention runs as well as the final incidence and prevalence boxplots is [here](https://github.com/khanna7/BARS/tree/jcm-paper/transmission_model/swift_proj/R). 
 
 ## References
  - Reproducing the Jail Circulation Model paper: [here](https://docs.google.com/document/d/1EPRCsISDPPzzIEecDm73_X3vh0W88izykLYFrzLQobQ/).
