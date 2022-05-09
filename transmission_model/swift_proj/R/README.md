@@ -1,5 +1,5 @@
 ## General
- - R files to analyze the data are provided in DataAnalysis.R or inc_rel_jail_parts_sp_bma-copy.R which calls summarize_functions_ext6.R
+ - R files to analyze the data are provided in DataAnalysis.R which calls summarize_functions_ext6.R
  - The key workhorse functions are summarize_yearly_inc (general), summarize_yearly_inc_jailed_partners (pre-incarceration), and summarize_yearly_inc_released_partners (post-incarceration).
  - Code to make the bar and boxplots are available in the respectively labeled files. The key thing is to re-run the DataAnalysis.R folder multiple times
 
