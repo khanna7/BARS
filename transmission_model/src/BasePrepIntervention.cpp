@@ -33,6 +33,7 @@ void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep
     std::shared_ptr<Log> log = Logger::instance()->getLog(BASE_LOG);
     (*log) << tick << ",";
     (*log) << (unsigned int)candidates.size();
+    double prop_lai = Parameters::instance()->getDoubleParameter(LAI_PREP_LAI_PROP );
     double prep_p = 0;
     unsigned int count = 0;
     double adjustment = filter_->calcPrepStopAdjustment();
@@ -40,7 +41,11 @@ void BasePrepIntervention::run(double tick,  std::vector<PersonPtr>& put_on_prep
         prep_p = ((double)total_negatives * prep_data_.use * (prep_data_.stop + adjustment)) / candidates.size();
         for (auto& person : candidates) {
             if (repast::Random::instance()->nextDouble() <= prep_p) {
-                putOnPrep(tick, person, PrepStatus::ON);
+                PrepStatus status = PrepStatus::ON;
+                if (repast::Random::instance()->nextDouble() <= prop_lai) {
+                    status = PrepStatus::ON_LAI;
+                }
+                putOnPrep(tick, person, status);
                 put_on_prep.push_back(person);
                 ++count;
             }
