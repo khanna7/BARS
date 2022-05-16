@@ -7,7 +7,7 @@ Code for unpublished _JCM_ [paper](https://uchicago.box.com/s/2jqy4gv3khohqxgrjq
  - Can be done using executable v0.72
 
 ## Unrolled Parameter Files (UPFs) for Data Generation
- - R files to generate the UPFs for the calibration and each of the interventions are [here](https://github.com/khanna7/BARS/tree/jcm-paper/transmission_model/swift_proj/data).
+ - R file to generate all the needed UPFs for the calibration and the interventions are [here](https://github.com/khanna7/BARS/tree/jcm-paper/transmission_model/swift_proj/data).
  - The code produces output in txt format that is read by swift, and in csv format for easy readability. 
 
 ## Data Analysis 
