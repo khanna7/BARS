@@ -26,9 +26,7 @@ partnership.events.file = partnership_events.csv
 #infection.events.file = infection_events.csv
 
 biomarker.log.file = biomarker_log.csv
-#biomarker.number.of.persons.to.log = 100
-viral.load.events.file = viral_load_events.csv
-
+biomarker.number.of.persons.to.log = 100
 
 death.events.file = exit_events.csv
 person.data.file = person_data.csv

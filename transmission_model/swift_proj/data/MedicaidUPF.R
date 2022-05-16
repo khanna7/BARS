@@ -1,5 +1,52 @@
 remove(list=ls())
 
+Calib<-expand.grid( #Baseline scenario
+  global.random.seed=1:30,
+  prop.steady.sex.acts=0.189357142857143,
+  prop.casual.sex.acts=0.0979285714285714,
+  circum.mult=1,
+  acute.mult=5,
+  late.mult=1,
+  default.prep.bl.use.prop.lt=0.2,
+  default.prep.bl.use.prop.gte=0.2,
+  min.chronic.infectivity.unadj=0.00092,
+  art.prop.never.adherent=0.03,
+  art.prop.part.neg.adherent=0.116,
+  art.prop.part.plus.adherent=0.25,
+  art.prop.always.adherent=0.604,
+  prep.uptake="default",
+  art.init.lag.lt.1="0.038|0-7",
+  art.init.lag.lt.3="0.211|30-90",
+  art.init.lag.lt.4="0.2287|90-180",
+  art.init.lag.lt.5="0.2453|180-365",
+  art.init.lag.lt.6="0.1456|365-730",
+  art.init.lag.gte.1="0.038|0-7",
+  art.init.lag.gte.3="0.211|30-90",
+  art.init.lag.gte.4="0.2287|90-180",
+  art.init.lag.gte.5="0.2453|180-365",
+  art.init.lag.gte.6="0.1456|365-730",
+  testing.prob.lt.1="1-2|0.50420168",
+  testing.prob.lt.2="3-4|0.22689076",
+  testing.prob.lt.3="5-6|0.15966387",
+  testing.prob.lt.4="7-8|0.06722689",
+  testing.prob.lt.5="9-10|0.00840336",
+  testing.prob.lt.6="11-12|0.00840336",
+  testing.prob.lt.7="13-16|0.02521008",
+  testing.prob.lt.8="17-20|0",
+  testing.prob.lt.9="21-30|0",
+  testing.prob.gte.1="1-2|0.35714286",
+  testing.prob.gte.2="3-4|0.35714286",
+  testing.prob.gte.3="5-6|0.11428571",
+  testing.prob.gte.4="7-8|0.1",
+  testing.prob.gte.5="9-10|0.01428571",
+  testing.prob.gte.6="11-12|0.02857143",
+  testing.prob.gte.7="13-16|0.02857143",
+  testing.prob.gte.8="17-20|0",
+  testing.prob.gte.9="21-30|0",
+  default.prep.yearly.increment.lt=0,
+  default.prep.yearly.increment.gte=0,
+  default.prep.years.to.increment=10)
+
 df1<-expand.grid( #Baseline scenario
   global.random.seed=1:30,
   prop.steady.sex.acts=0.189357142857143,
@@ -192,6 +239,15 @@ df4 <-
     default.prep.yearly.increment.gte=0.03,
     default.prep.years.to.increment=10
   )
+
+
+
+ndf <- names(Calib)
+
+l1 <- lapply(1:length(Calib),function(x) paste0(ndf[x],"=",Calib[[ndf[x]]]))
+res.Calib <- do.call(paste,c(l1,c(sep = ",")))
+write(res.Calib,file = "Calibration.txt")
+
 
 df<-rbind(df1,df2,df3,df4)
 ndf <- names(df)
