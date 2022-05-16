@@ -10,6 +10,10 @@ Code for unpublished _Medicaid Expansion Paper_ [paper](https://uchicago.app.box
  - R files to generate the UPFs for the calibration and each of the interventions are [here](https://github.com/khanna7/BARS/blob/houston-paper/transmission_model/swift_proj/data/MedicaidUPF.R).
  - The code produces output in txt format that is read by swift, and in csv format for easy readability. Source it in order to produce the appropriate upf.
 
+## Running the model
+- In the config file, use the file [here](https://github.com/khanna7/BARS/blob/houston-paper/transmission_model/config/houston_continious_model_francis.props), varying the years by either 100 or 10 depending on whether you are running the Calibration.txt upf or the Medicaid.txt upf respectively.
+- From here, change directory to ../swift_proj/swift and source settings.sh, modifying computational settings, and setting the appropriate upf in the run_houston_model.sh file
+
 ## Data Analysis 
  - When the calibration is run, use the code from [here](https://github.com/khanna7/BARS/blob/houston-paper/transmission_model/swift_proj/R/MakeCalibrationPlots.R) to reproduce the calibration plot.
  - When the experiments are run, use the code from [here](https://github.com/khanna7/BARS/blob/houston-paper/transmission_model/swift_proj/R/inc_sp_bma-Medicaid.R) to reproduce all the plots.
