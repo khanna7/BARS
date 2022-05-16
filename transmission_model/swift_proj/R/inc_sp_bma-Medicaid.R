@@ -242,3 +242,5 @@ save(Prev,file="Prev.Rdata")
 save(Case,file="Case.Rdata")
 save(PrepPrev,file="PrepPrev.Rdata")
 save(ARTPrev,file="ARTPrev.Rdata")
+
+names(PrepPrev)[c(4,5)]<-c("Two","NinetySeven")
