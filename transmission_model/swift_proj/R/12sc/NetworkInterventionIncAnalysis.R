@@ -80,22 +80,6 @@ inc_means_sd_melt.df <- melt(inc_means_sd.df ,  id.vars = 'time', variable.name 
 inc_means_melt.df<-cbind(inc_means_melt.df,do.call(rbind,quantilelist))
 names(t13)[c(4,5)]<-c("Two","NinetySeven")
 
-#ribbon1<-apply(matrix(unlist(quantiles2.597.5),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE)
-
-
-t13$series<-c(rep("90",40),rep("720",40),rep("No Disruption",40),rep("Targeted Care",40))
-t14<-t13[c(30:40,70:80,110:120,150:160),]
-ggplot(t13, aes(x = time,  color = series, fill = series)) + 
-  xlab("Year") +
-  ylab("Average HIV Incidence Rate") +
-  labs(title=paste("Care Disruption Scenarios: Post Release Partners")) +
-  ylim(2.5, 17) +
-  geom_ribbon(aes(ymin = Two, ymax = NinetySeven), colour = NA, alpha = 0.1) +
-  geom_line(aes(y= value))+
-  guides(color=guide_legend("Scenarios"))  +
-  guides(fill=FALSE)
-
-
 
 t13$series<-c(rep("0.1",40),rep("0.25",40),rep("0.5",40),rep("0.75",40),rep("1",40))
 t14<-t13[c(30:40,70:80,110:120,150:160,190:200),]
@@ -109,71 +93,3 @@ ggplot(t14, aes(x = time,  color = series, fill = series)) +
   guides(color=guide_legend("Scenarios"))  +
   guides(fill=FALSE)
 
-
-
-
-# 
-# 
-# ggplot(t13, aes(x = time,  color = series, fill = series)) + 
-#         xlab("Year") +
-#         ylab("Average Incidence Rate") +
-#         ylim(0, 12) +
-#         geom_ribbon(aes(ymin = value-t13_sd$value, ymax = value+t13_sd$value), colour = NA, alpha = 0.1) +
-#         geom_line(aes(y= value))+
-#         guides(color=guide_legend("Interventions"))  +
-#         guides(fill=FALSE)
-
-
-# 
-# 
-# inc_means_melt.df <- melt(res2_means.df ,  id.vars = 'time', variable.name = 'series')
-# inc_means_sd_melt.df <- melt(res2_means_sd.df ,  id.vars = 'time', variable.name = 'series')
-# 
-# t1 <- inc_means_melt.df[-c(1:30),]
-# t2   <- t1[-c(11:40),]
-# t3   <- t2[-c(21:50),]
-# t4   <- t3[-c(31:60),]
-# t5   <- t4[-c(41:70),]
-# t6   <- t5[-c(51:80),]
-# t7   <- t6[-c(61:90),]
-# t8   <- t7[-c(71:100),]
-# t9   <- t8[-c(81:110),]
-# t10   <- t9[-c(91:120),]
-# t11   <- t10[-c(101:130),]
-# t12   <- t11[-c(111:140),]
-# t13   <- t12[-c(121:150),]
-# 
-# 
-# t1_sd <- inc_means_sd_melt.df[-c(1:30),]
-# t2_sd   <- t1_sd[-c(11:40),]
-# t3_sd   <- t2_sd[-c(21:50),]
-# t4_sd   <- t3_sd[-c(31:60),]
-# t5_sd   <- t4_sd[-c(41:70),]
-# t6_sd   <- t5_sd[-c(51:80),]
-# t7_sd   <- t6_sd[-c(61:90),]
-# t8_sd   <- t7_sd[-c(71:100),]
-# t9_sd   <- t8_sd[-c(81:110),]
-# t10_sd   <- t9_sd[-c(91:120),]
-# t11_sd   <- t10_sd[-c(101:130),]
-# t12_sd   <- t11_sd[-c(111:140),]
-# t13_sd   <- t12_sd[-c(121:150),]
-# 
-# ggplot(t13, aes(x = time,  color = series, fill = series)) + 
-#   xlab("Year") +
-#   ylab("Average Incidence Rate") +
-#   labs(title="Jailed partners") +
-#   ylim(0, 12) +
-#   geom_ribbon(aes(ymin = value-t13_sd$value, ymax = value+t13_sd$value), colour = NA, alpha = 0.1) +
-#   geom_line(aes(y= value))+
-#   guides(color=guide_legend("Interventions"))  +
-#   guides(fill=FALSE)
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 

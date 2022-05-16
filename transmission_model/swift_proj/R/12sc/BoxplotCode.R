@@ -1,3 +1,4 @@
+load("JailedBoxPlot.Rdata")
 jailed<-data.table(t(do.call(rbind,lapply(1:5,function(x){list_inc[[x]][40,]}))))
 jailed$run<-1:30
 jailed1<-melt(jailed,  id.vars = 'run', variable.name = 'series')
@@ -9,15 +10,17 @@ p<-ggplot(jailed1,aes(y=value,group=series,color=series))
 p<-p+geom_boxplot()+ylab("HIV Incidence")+  guides(color=guide_legend("Scenarios")) +guides(fill=FALSE)+labs(title=paste("Pre-Incarceration Partners"))+
 ylim(0,NA)  
 
+load("RelBoxPlot.Rdata")
 
-released<-data.table(t(do.call(rbind,lapply(1:5,function(x){list_inc[[x]][40,]}))))
+
+released<-data.table(t(do.call(rbind,lapply(1:5,function(x){list_inc2[[x]][40,]}))))
 released$run<-1:30
 released1<-melt(released,  id.vars = 'run', variable.name = 'series')
 
 released1$series<-rep(c(.1,25,.5,.7,1),each=30)
 released1$series<-rep(c(".1",".25",".5",".75","1"),each=30)
 p1<-ggplot(released1,aes(y=value,group=series,color=series))
-p1<-p1+geom_boxplot()+ylab("HIV Incidence")+  guides(color=guide_legend("Scenarios")) +guides(fill=FALSE)+labs(title=paste("Post Release Partners")) 
+p1<-p1+geom_boxplot()+ylab("HIV Incidence")+  guides(color=guide_legend("Scenarios")) +guides(fill=FALSE)+labs(title=paste("Post-Incarceration Partners")) 
 
 inc1<-data.table(t(do.call(rbind,lapply(1:5,function(x){list_inc[[x]][40,]}))))
 inc1$run<-1:30
@@ -27,7 +30,6 @@ inc1$series<-rep(c(.1,25,.5,.7,1),each=30)
 inc1$series<-rep(c(".1",".25",".5",".75","1"),each=30)
 p2<-ggplot(inc1,aes(y=value,group=series,color=series))
 p2<-p2+geom_boxplot()+ylab("HIV Incidence")+  guides(color=guide_legend("Scenarios")) +guides(fill=FALSE)+labs(title=paste("General")) 
-
 
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
@@ -71,7 +73,7 @@ multiplot(p,p1,p2,cols=3)
 
 
 gen<-rbind(jailed1,released1,inc1)
-gen$variable<-rep(c("Pre-Incarceration Partners","Post Release Partners","Overall"),each=150)
+gen$variable<-rep(c("Pre-Incarceration Partners","Post-Incarceration Partners","Overall"),each=150)
 
 ggplot(gen,aes(y=value,group=series,color=series))+geom_boxplot()+ylab("HIV Incidence")+  guides(color=guide_legend("Scenarios")) +guides(fill=FALSE)+labs(title=paste("Network Disruption Scenarios")) +facet_wrap(~variable)+theme(axis.ticks.x = element_blank(),axis.text.x = element_blank())
 
