@@ -2,7 +2,7 @@
 
 source("summarize_functions_ext6.R")
 range <- c(18, 25, 26, 34)
-dir_name ="../NetMultipleFinal3"  
+dir_name ="../../experiments/NetworkInterventionFinal" #Replace this with the network intervention experiment directory  
 sim_instance_dir <- paste0(dir_name, "/instance_")
 sc_nb= 5
 rseed_nb=30
@@ -22,17 +22,12 @@ summarize_yearly_inc_released_partners <- function(filename="counts.csv", ranges
   setnames(full_inc,c("V1"),c("full_inc_mean"))
 }
 
-summarize_yearly_inc_released_partners_1 <- function(filename="counts.csv", ranges, interv_start_at=0){
+summarize_yearly_inc_jailed_partners <- function(filename="counts.csv", ranges, interv_start_at=0){
   dt_counts <- create_dt_counts(filename,ranges, interv_start_at)
-  full_inc <- dt_counts[,lapply(c(mean), function(x) x((infected_released_partner[2:.N]))),by = ycat]
+  full_inc <- dt_counts[,lapply(c(mean), function(x) x(365*100*(infected_jailed_partner[2:.N])/(uninfected_jailed_partner[1:(.N-1)]))),by = ycat]
   setnames(full_inc,c("V1"),c("full_inc_mean"))
 }
 
-summarize_yearly_inc_released_partners_2 <- function(filename="counts.csv", ranges, interv_start_at=0){
-  dt_counts <- create_dt_counts(filename,ranges, interv_start_at)
-  full_inc <- dt_counts[,lapply(c(mean), function(x) x((uninfected_released_partner[1:(.N-1)]))),by = ycat]
-  setnames(full_inc,c("V1"),c("full_inc_mean"))
-}
 
 for (j in 1: (sc_nb)) {
         next_sc <- (j-1)*rseed_nb
@@ -44,42 +39,38 @@ for (j in 1: (sc_nb)) {
 #				res.dt   <- summarize_yearly_inc_released_partners(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
 				#res.dt   <- summarize_yearly_prev_ever_jailed1(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
 				res.dt   <- summarize_yearly_inc_jailed_partners(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
-				res2.dt <- summarize_yearly_inc_jailed_partners(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)	
+				res2.dt <- summarize_yearly_inc(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)	
                 res[[res_ind]] <- res.dt$full_inc_mean
                 res2[[res_ind]] <- res2.dt$full_inc_mean
                 res_ind <- res_ind+1
                 
         }
-        if(j==1){res[[1]]<-c(res[[1]],NA);res[[11]]<-c(res[[11]],NA)}
-        if(j==5){res[[2]]<-c(res[[2]],NA);res[[11]]<-c(res[[11]],NA);res[[13]]<-c(res[[13]],NA);res[[16]]<-c(res[[16]],NA);res[[22]]<-c(res[[22]],NA);res[[28]]<-c(res[[28]],NA);res[[29]]<-c(res[[29]],NA)}
-        
         res.df  <- as.data.frame(res)
         quantilelist[[j]]<-t(apply(matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
         means<-rowMeans(res.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE))
+        quantilelist1[[j]]<-t(apply(matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
+        means<-rowMeans(res2.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE))
         names(res.df) <- seq(1:(rseed_nb))
-        #res2.df  <- as.data.frame(res2)
-        #names(res2.df) <- seq(1:(rseed_nb))
+        res2.df  <- as.data.frame(res2)
+        names(res2.df) <- seq(1:(rseed_nb))
         list_inc_means[[j]] <-rowMeans(res.df,na.rm=TRUE)
-        #list_res2_means[[j]] <-rowMeans(res2.df)
-        #list_inc_means_sd[[j]] <- apply(res.df, 1, sd, na.rm = TRUE) 
-        #list_res2_means_sd[[j]] <- apply(res2.df, 1, sd, na.rm = TRUE) 
+        list_res2_means[[j]] <-rowMeans(res2.df)
         list_inc[[j]] <-res.df
-        #list_inc2[[j]] <-res2.df
+        list_inc2[[j]] <-res2.df
 }
 
 inc_means.df  <- as.data.frame(list_inc_means)
 names(inc_means.df) <- seq(1:(sc_nb))
-inc_means_sd.df  <- as.data.frame(list_inc_means_sd)
-names(inc_means_sd.df) <- seq(1:(sc_nb))
 res2_means.df  <- as.data.frame(list_res2_means)
 names(res2_means.df) <- seq(1:(sc_nb))
-res2_means_sd.df  <- as.data.frame(list_res2_means_sd)
-names(res2_means_sd.df) <- seq(1:(sc_nb))
+
 
 inc_means.df["time"]<- seq(1:sim_years)
-inc_means_sd.df["time"]<- seq(1:sim_years)
 res2_means.df["time"]<- seq(1:sim_years)
-res2_means_sd.df["time"]<- seq(1:sim_years)
+
+
+save(list_inc,file="JailedBoxPlot.Rdata")
+
 
 require(ggplot2)
 require(reshape2)
@@ -87,59 +78,10 @@ require(reshape2)
 inc_means_melt.df <- melt(inc_means.df ,  id.vars = 'time', variable.name = 'series')
 inc_means_sd_melt.df <- melt(inc_means_sd.df ,  id.vars = 'time', variable.name = 'series')
 inc_means_melt.df<-cbind(inc_means_melt.df,do.call(rbind,quantilelist))
-t1 <- inc_means_melt.df[-c(1:30),]
-t2   <- t1[-c(11:40),]
-t3   <- t2[-c(21:50),]
-t4   <- t3[-c(31:60),]
-t5   <- t4[-c(41:70),]
-t6   <- t5[-c(51:80),]
-t7   <- t6[-c(61:90),]
-t8   <- t7[-c(71:100),]
-t9   <- t8[-c(81:110),]
-t10   <- t9[-c(91:120),]
-t11   <- t10[-c(101:130),]
-t12   <- t11[-c(111:140),]
-t13   <- t12[-c(121:150),]
-
-t1_sd <- inc_means_sd_melt.df[-c(1:30),]
-t2_sd   <- t1_sd[-c(11:40),]
-t3_sd   <- t2_sd[-c(21:50),]
-t4_sd   <- t3_sd[-c(31:60),]
-t5_sd   <- t4_sd[-c(41:70),]
-t6_sd   <- t5_sd[-c(51:80),]
-t7_sd   <- t6_sd[-c(61:90),]
-t8_sd   <- t7_sd[-c(71:100),]
-t9_sd   <- t8_sd[-c(81:110),]
-t10_sd   <- t9_sd[-c(91:120),]
-t11_sd   <- t10_sd[-c(101:130),]
-t12_sd   <- t11_sd[-c(111:140),]
-t13_sd   <- t12_sd[-c(121:150),]
-
-#t13$series<-c(rep("22.5, 90",10),rep("45, 90",10),rep("67.5, 90",10),rep("90, 90",10),rep("22.5, 180",10),rep("45, 180",10),rep("67.5, 180",10),rep("90, 180",10),rep("22.5, 360",10),rep("45, 360",10),rep("67.5, 360",10),rep("90, 360",10))
-t13$series<-c(rep("22.5",10),rep("45",10),rep("67.5",10),rep("90",10))
 names(t13)[c(4,5)]<-c("Two","NinetySeven")
 
 #ribbon1<-apply(matrix(unlist(quantiles2.597.5),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE)
 
-ggplot(subset(t13, series %in% c(paste("22.5,",i), paste("45,",i), paste("67.5,",i), paste("90,",i) )), aes(x = time,  color = series, fill = series)) + 
-  xlab("Year") +
-  ylab("Average Incidence Rate") +
-  labs(title=paste("Post Release partners, T4=",i)) +
-  ylim(5, 15) +
-  geom_ribbon(aes(ymin = Two, ymax = NinetySeven), colour = NA, alpha = 0.1) +
-  geom_line(aes(y= value))+
-  guides(color=guide_legend("T1, T4"))  +
-  guides(fill=FALSE)
-
-t13<-inc_means_melt.df
-names(t13)[c(4,5)]<-c("Two","NinetySeven")
-t13<-t13[c(30:40,70:80,110:120,150:160),]
-t13$time<-rep(1:10,4)
-t13$series<-c(rep("1.Mean Disrupted Care: \n 90 days",40),rep("2. Mean Disrupted Care: \n 720 days",40),rep("3.No Care Disruption",40),rep("4.Immediate \n and Sustained Care",40))
-
-THE SCHEDULED INTERVENTION BRANCH 
-CARE.DISRUPTION=ON
-WHEN AUTOMATIC HIGHEST ADHERENCE IS ON, CARE.DISRUPTION IS AUTOAMTICALLY OFF
 
 t13$series<-c(rep("90",40),rep("720",40),rep("No Disruption",40),rep("Targeted Care",40))
 t14<-t13[c(30:40,70:80,110:120,150:160),]

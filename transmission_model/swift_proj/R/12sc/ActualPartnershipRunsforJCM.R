@@ -1,16 +1,14 @@
+#This file generates the simulated partnership length distribution for main and casual networks in the jail circulation model. Keep in mind you need to turn on the partnership_events.csv
+#Pre-allocate
 casual_result.grand<-main_result.grand<-matrix(NA,nrow=3650,ncol=30)
 
 
 for(z in 1:30){
-  if(z!=1){
-  load("/home/francislee/casual_partnership_result.RData")
-  load("/home/francislee/main_partnership_result.RData")
-  }
   print(paste0("Currently on Run",z))
   library(tidyr)
   library(network)
   library(sna)
-  setwd(paste0("/project2/ahotton/francis/sch_inter/BARS/transmission_model/swift_proj/experiments/PartnershipJCMAppendix/instance_",z,"/output/"))
+  setwd(paste0("../../experiments/PartnershipPLACEHOLDER/instance_",z,"/output/")) #Replace PartnershipPLACEHOLDER with the actual experiment directory
   dt<-read.csv("partnership_events.csv")
   dt$tick<-dt$tick-10950
   dt<-dt[dt$tick>0,]
@@ -116,19 +114,19 @@ for(z in 1:30){
   main_result1<-relationship_registry(time1,main_registry1,0)
   write.csv(main_result1[[2]], file="main_result1.csv", row.names=FALSE)
   main_result.grand[,z]<-main_result1[[2]]
-  save(main_result.grand,file="/home/francislee/main_partnership_result.RData")
+  save(main_result.grand,file="/home/francislee/main_partnership_result.RData") #Or whereever your directory is
   
   casual_registry1<-initial_casual_registry
   write.csv(casual_registry1, file="casual_registry1.csv", row.names=FALSE)
   casual_result1<-relationship_registry(time1,casual_registry1,1)
   casual_result.grand[,z]<-casual_result1[[2]]
-  save(casual_result.grand,file="/home/francislee/casual_partnership_result.RData")
+  save(casual_result.grand,file="/home/francislee/casual_partnership_result.RData") #Ditto here
   
   
   write.csv(casual_result1[[2]], file="casual_result1.csv", row.names=FALSE)
   rm(list = ls())
 }
-
+#This is the empirical, for the bootsrap CI and not the actual CI computed here, go to BARSEmpiricalSurvivorshipCurve.R
 #Confidence Bounds
 x1<-c(20,
   36,

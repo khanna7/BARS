@@ -1,4 +1,4 @@
-
+#This describes the empirical bootstrap from the BARS survey, run this in concordance with the ActualPartnershipRunJCM.R file to reproduce the average partnership duration curves.
 vec<-c(562,562,372,369,369,343,277,267,172,172,NA,160,160,160,147,147,147,135,102,102,100,100,98,80,NA,NA)
 
 set.seed(1000)
