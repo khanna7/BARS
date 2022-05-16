@@ -12,8 +12,7 @@ Code for unpublished _JCM_ [paper](https://uchicago.box.com/s/2jqy4gv3khohqxgrjq
 
 ## Data Analysis 
  - Code to produce annualized HIV incidence and prevalence for the calibration and intervention runs as well as the final incidence and prevalence boxplots is [here](https://github.com/khanna7/BARS/tree/jcm-paper/transmission_model/swift_proj/R). 
- - Follow the instructions in the readme to reproduce the various plots.
- - Instructions on how to generate the plots are [here](https://github.com/khanna7/BARS/blob/jcm-paper/transmission_model/swift_proj/R/README.md).
-
+ - Follow the instructions in the [README](https://github.com/khanna7/BARS/blob/jcm-paper/transmission_model/swift_proj/R/README.md) to reproduce the various plots.
+ 
 ## References
  - Reproducing the Jail Circulation Model paper: [here](https://docs.google.com/document/d/1EPRCsISDPPzzIEecDm73_X3vh0W88izykLYFrzLQobQ/).
