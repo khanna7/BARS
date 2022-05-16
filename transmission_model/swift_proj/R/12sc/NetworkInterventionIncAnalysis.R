@@ -70,7 +70,7 @@ res2_means.df["time"]<- seq(1:sim_years)
 
 
 save(list_inc,file="JailedBoxPlot.Rdata")
-
+save(list_inc2,file="JailedBoxPlotGen.Rdata")
 
 require(ggplot2)
 require(reshape2)
@@ -80,6 +80,10 @@ inc_means_sd_melt.df <- melt(inc_means_sd.df ,  id.vars = 'time', variable.name 
 inc_means_melt.df<-cbind(inc_means_melt.df,do.call(rbind,quantilelist))
 names(t13)[c(4,5)]<-c("Two","NinetySeven")
 
+jail.95<-quantilelist
+save(jail.95,file="Jailed95Simulation.Rdata")
+inc.95<-quantilelist1
+save(inc.95,file="Jailed95SimulationGen.Rdata")
 
 t13$series<-c(rep("0.1",40),rep("0.25",40),rep("0.5",40),rep("0.75",40),rep("1",40))
 t14<-t13[c(30:40,70:80,110:120,150:160,190:200),]

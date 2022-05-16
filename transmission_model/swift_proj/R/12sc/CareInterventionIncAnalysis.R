@@ -70,8 +70,10 @@ res2_means.df["time"]<- seq(1:sim_years)
 
 
 save(list_inc,file="RelBoxPlot.Rdata")
+save(list_inc2,file="RelBoxPlotGen.Rdata")
 
-
+rel.95<-quantilelist
+save(rel.95,file="Released95Simulation.Rdata")
 require(ggplot2)
 require(reshape2)
 
