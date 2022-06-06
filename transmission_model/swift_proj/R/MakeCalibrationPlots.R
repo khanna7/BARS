@@ -1,9 +1,11 @@
 rm(list=ls())
 #Incidence for the Calibration
-#In order to run this, you need to change the houston config file to run for 100 years
+#In order to run this, you need to change the Drug config file to run for 100 years
+#The git commit Id on the substance use branch is 0fb345dcaba1ef42bcb0b22cc361f8d0cb33062f
+#Note that this must also be used in order to get the baseline incidence
 source("summarize_functions_ext6.R")
 range <- c(18, 25, 26, 34)
-dir_name ="../experiments/PLACEHOLDER" #Replace PLACEHOLDER with whatever experiment name is used for the calibration
+dir_name ="../../experiments/PLACEHOLDER" #Replace PLACEHOLDER with whatever experiment name is used for the calibration
 sim_instance_dir <- paste0(dir_name, "/instance_")
 sc_nb= 1
 rseed_nb=30
