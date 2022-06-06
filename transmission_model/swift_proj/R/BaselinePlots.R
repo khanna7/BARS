@@ -211,7 +211,7 @@ NewBaseline<-rbind(NewBaseline,inc_means_melt.df,res_means_melt.df)
 names(NewBaseline)[c(4,5)]<-c("Two","NinetySeven")
 
 save(NewBaseline,file="BaselinePart1.Rdata")
-
+#Generating the never jailed and ever jailed populations as well as the general incidence
 
 
 
@@ -294,6 +294,9 @@ a<-a[c(30:40,70:80,110:120),]
 names(a)[c(4,5)]<-c("Two","NinetySeven")
 save(a,file="BaselinePlotPart2.Rdata")
 
+#This will produce Figure 1A
+
+
 t14<-NewBaseline[c(30:40,70:80,110:120,150:160,190:200,230:240),]
 names(t14)[c(4,5)]<-c("Two","NinetySeven")
 plot1<-ggplot(t14, aes(x = time,  color = series1, fill = series1)) + 
@@ -306,6 +309,7 @@ plot1<-ggplot(t14, aes(x = time,  color = series1, fill = series1)) +
   guides(color=guide_legend("Population"))  +
   guides(fill=FALSE)
 
+#This will produce Figure 1B
 plot2<-ggplot(a, aes(x = time,  color = series, fill = series)) + 
   xlab("Year") +
   ylab("HIV Incidence Rate (per 100 person-years)") +

@@ -2,7 +2,7 @@
 
 source("summarize_functions_ext6.R")
 range <- c(18, 25, 26, 34)
-dir_name ="../../experiments/CareInterventionFinal" #Replace this with the network intervention experiment directory  
+dir_name ="../../experiments/CareInterventionFinal" #Replace this with the care intervention experiment directory  
 sim_instance_dir <- paste0(dir_name, "/instance_")
 sc_nb= 4
 rseed_nb=30
@@ -87,7 +87,7 @@ names(t13)[c(4,5)]<-c("Two","NinetySeven")
 
 t13$series<-c(rep("90",40),rep("720",40),rep("No Disruption",40),rep("Targeted Care",40))
 t14<-t13[c(30:40,70:80,110:120,150:160),]
-ggplot(t13, aes(x = time,  color = series, fill = series)) + 
+ggplot(t14, aes(x = time,  color = series, fill = series)) + 
   xlab("Year") +
   ylab("Average HIV Incidence Rate") +
   labs(title=paste("Care Disruption Scenarios: Post Incarceration Partners")) +
