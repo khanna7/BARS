@@ -182,7 +182,7 @@ public:
     /**
      * Takes this person off ART, setting the art status to false.
      */
-    void goOffART();
+    void goOffART(float time_stamp);
 
     /**
      * Infects this Person and sets the duration of the infection,

@@ -6,6 +6,7 @@
  */
 
 #include "ViralLoadCalculator.h"
+#include <cmath>
 
 namespace TransModel {
 
@@ -35,6 +36,17 @@ float ViralLoadCalculator::calculateViralLoad(const InfectionParameters& infecti
 }
 
 float ViralLoadCalculator::calculateViralLoadNoART(const InfectionParameters& infection_params) {
+    if (!std::isnan(infection_params.time_since_art_cessation)) {
+        if (infection_params.time_since_art_cessation < vl_params.time_to_full_supp) {
+            float target = getViralLoadByDiseaseProgression(infection_params);
+            float time_to_target = vl_params.time_to_full_supp - infection_params.time_since_art_cessation;
+            return infection_params.viral_load + (target - infection_params.viral_load) / time_to_target;
+        }
+    }
+    return getViralLoadByDiseaseProgression(infection_params);
+};
+
+float ViralLoadCalculator::getViralLoadByDiseaseProgression(const InfectionParameters& infection_params) {
     if (vl_params.lessEqTimeToPeak(infection_params.time_since_infection)) {
         return vl_params.peak_viral_load / 2.0;
     }

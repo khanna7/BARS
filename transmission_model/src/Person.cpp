@@ -86,8 +86,10 @@ void Person::setInfectivity(float infectivity) {
     infectivity_ = infectivity;
 }
 
-void Person::goOffART() {
+void Person::goOffART(float time_stamp) {
     infection_parameters_.art_status = false;
+    infection_parameters_.time_of_art_cessation = time_stamp;
+    infection_parameters_.time_since_art_cessation = 0;
 }
 
 void Person::goOnART(float time_stamp) {
@@ -96,6 +98,8 @@ void Person::goOnART(float time_stamp) {
     infection_parameters_.time_of_art_init = time_stamp;
     infection_parameters_.cd4_at_art_init = infection_parameters_.cd4_count;
     infection_parameters_.vl_at_art_init = infection_parameters_.viral_load;
+    infection_parameters_.time_of_art_cessation = NAN;
+    infection_parameters_.time_since_art_cessation = NAN;
 }
 
 void Person::setArtForcedOff(bool forced) {
@@ -128,6 +132,8 @@ bool Person::step(float size_of_timestep, float threshold) {
 
     if (infection_parameters_.art_status) {
         ++infection_parameters_.time_since_art_init;
+    } else if (!isnan(infection_parameters_.time_since_art_cessation)) {
+        ++infection_parameters_.time_since_art_cessation;
     }
 
     return prev_age < threshold && age_ >= threshold;

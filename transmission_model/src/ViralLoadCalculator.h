@@ -18,6 +18,7 @@ private:
     SharedViralLoadParameters vl_params;
     float calculateViralLoadNoART(const InfectionParameters& infection_params);
     float calculateViralLoadART(const InfectionParameters& infection_params);
+    float getViralLoadByDiseaseProgression(const InfectionParameters& infection_params);
 
 public:
     ViralLoadCalculator(SharedViralLoadParameters& params);

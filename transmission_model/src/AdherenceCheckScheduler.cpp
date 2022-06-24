@@ -28,7 +28,7 @@ void ARTAdherenceCheckScheduler::operator()() {
         bool go_on_art = repast::Random::instance()->nextDouble() <= (person_->artAdherence().probability);
         if (person_->isOnART(false) && !go_on_art) {
             // go off art when already on
-            person_->goOffART();
+            person_->goOffART(timestamp_);
             Stats::instance()->personDataRecorder()->recordARTStop(person_, timestamp_);
             Stats::instance()->personDataRecorder()->incrementNonAdheredIntervals(person_);
             Stats::instance()->recordARTEvent(timestamp_, person_->id(), false);
