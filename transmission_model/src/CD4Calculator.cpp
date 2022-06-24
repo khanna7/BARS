@@ -6,6 +6,7 @@
  */
 
 #include <cmath>
+#include <iostream>
 #include "CD4Calculator.h"
 
 namespace TransModel {
@@ -41,10 +42,18 @@ float CD4Calculator::calculateCD4(float age, const InfectionParameters& infectio
     } else {
         // no anti-retroviral treatment
         float b6_val = getB6AgeValue(age);
-        cd4 = std::pow((b_values_.b1_ref + b_values_.b2_african) + (infection_params.time_since_infection / 365.0 * size_of_timestep_) *
-                ((b_values_.b4_cd4_ref + b_values_.b5_african) + b6_val), 2);
+        float target_cd4 = std::pow((b_values_.b1_ref + b_values_.b2_african) + (infection_params.time_since_infection / 365.0 * size_of_timestep_) *
+                       ((b_values_.b4_cd4_ref + b_values_.b5_african) + b6_val), 2);
+        cd4 = target_cd4;
+        if (!std::isnan(infection_params.time_of_art_cessation)) {
+            if (infection_params.cd4_count > target_cd4) {
+                float cd4_diff = infection_params.cd4_count - target_cd4;
+                cd4 = infection_params.cd4_count - (cd4_diff >= per_day_cd4_recovery_ ? per_day_cd4_recovery_ : cd4_diff);
+                std::cout << "days_since_art_cessation: " << infection_params.time_since_art_cessation << " ";
+            }
+        }
+        std::cout << "current_cd4: " << infection_params.cd4_count << " target_cd4: " << target_cd4 << " new_cd4: " << cd4 << std::endl;
     }
-
     return cd4;
 }
 
