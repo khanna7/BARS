@@ -49,10 +49,8 @@ float CD4Calculator::calculateCD4(float age, const InfectionParameters& infectio
             if (infection_params.cd4_count > target_cd4) {
                 float cd4_diff = infection_params.cd4_count - target_cd4;
                 cd4 = infection_params.cd4_count - (cd4_diff >= per_day_cd4_recovery_ ? per_day_cd4_recovery_ : cd4_diff);
-                std::cout << "days_since_art_cessation: " << infection_params.time_since_art_cessation << " ";
             }
         }
-        std::cout << "current_cd4: " << infection_params.cd4_count << " target_cd4: " << target_cd4 << " new_cd4: " << cd4 << std::endl;
     }
     return cd4;
 }
