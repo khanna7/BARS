@@ -2,7 +2,7 @@
 
 source("summarize_functions_ext6.R")
 range <- c(18, 25, 26, 34)
-dir_name ="../../experiments/NetworkInterventionFinal" #Replace this with the network intervention experiment directory  
+dir_name ="../experiments/NetInterventions1" #Replace this with the network intervention experiment directory  
 sim_instance_dir <- paste0(dir_name, "/instance_")
 sc_nb= 5
 rseed_nb=30
@@ -14,7 +14,7 @@ list_inc_means_sd = list()
 list_res2_means_sd = list()
 list_inc = list()
 list_inc2 = list()
-quantilelist<-vector(mode="list",length=sc_nb)
+quantilelist<-quantilelist1<-vector(mode="list",length=sc_nb)
 
 summarize_yearly_inc_released_partners <- function(filename="counts.csv", ranges, interv_start_at=0){
   dt_counts <- create_dt_counts(filename,ranges, interv_start_at)
@@ -29,7 +29,7 @@ summarize_yearly_inc_jailed_partners <- function(filename="counts.csv", ranges, 
 }
 
 
-for (j in 1: (sc_nb)) {
+for (j in 1:(sc_nb)) {
         next_sc <- (j-1)*rseed_nb
         res = list()  
         res2 = list() 
@@ -46,13 +46,20 @@ for (j in 1: (sc_nb)) {
                 
         }
         res.df  <- as.data.frame(res)
-        quantilelist[[j]]<-t(apply(matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
-        means<-rowMeans(res.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE))
-        quantilelist1[[j]]<-t(apply(matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
-        means<-rowMeans(res2.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE))
+        #quantilelist[[j]]<-t(apply(matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
+        #means<-rowMeans(res.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE))
+        #quantilelist1[[j]]<-t(apply(matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
+        #means<-rowMeans(res2.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE))
+        
+
         names(res.df) <- seq(1:(rseed_nb))
         res2.df  <- as.data.frame(res2)
+  
         names(res2.df) <- seq(1:(rseed_nb))
+        quantilelist[[j]]<-matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
+        means<-rowMeans(res.df[,res.df.sample.index]);return(means)})),ncol=1000)
+        quantilelist1[[j]]<-matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
+        means<-rowMeans(res2.df[,res.df.sample.index]);return(means)})),ncol=1000)
         list_inc_means[[j]] <-rowMeans(res.df,na.rm=TRUE)
         list_res2_means[[j]] <-rowMeans(res2.df)
         list_inc[[j]] <-res.df
@@ -80,10 +87,26 @@ inc_means_sd_melt.df <- melt(inc_means_sd.df ,  id.vars = 'time', variable.name 
 inc_means_melt.df<-cbind(inc_means_melt.df,do.call(rbind,quantilelist))
 names(t13)[c(4,5)]<-c("Two","NinetySeven")
 
-jail.95<-quantilelist
+
+
+rel.95<-quantilelist
+rel.95<-do.call(rbind,rel.95)[1:5*40,]
+rel.95<-cbind(t(apply(rel.95,1,quantile,c(.025,.975))),apply(rel.95,1,mean))
+names(rel.95)<-c("Two","NinetySeven","value")
+rel.95gen<-quantilelist1
+rel.95gen<-do.call(rbind,rel.95gen)[1:5*40,]
+rel.95gen<-cbind(t(apply(rel.95gen,1,quantile,c(.025,.975))),apply(rel.95gen,1,mean))
+names(rel.95gen)<-c("Two","NinetySeven","value")
+
+jail.95<-rel.95
+jail.95gen<-rel.95gen
 save(jail.95,file="Jailed95Simulation.Rdata")
-inc.95<-quantilelist1
-save(inc.95,file="Jailed95SimulationGen.Rdata")
+save(jail.95gen,file="Jailed95SimulationGen.Rdata")
+require(ggplot2)
+require(reshape2)
+
+
+
 
 t13$series<-c(rep("0.1",40),rep("0.25",40),rep("0.5",40),rep("0.75",40),rep("1",40))
 t14<-t13[c(30:40,70:80,110:120,150:160,190:200),]

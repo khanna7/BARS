@@ -1,14 +1,16 @@
 #This file generates the simulated partnership length distribution for main and casual networks in the jail circulation model. Keep in mind you need to turn on the partnership_events.csv
 #Pre-allocate
 casual_result.grand<-main_result.grand<-matrix(NA,nrow=3650,ncol=30)
+setwd("/project2/ahotton/francis/jcm-paper1/BARS/transmission_model/swift_proj/experiments/PartnershipRuns/instance_1/output/")
 
-
-for(z in 1:30){
+for(z in 7:30){
+  load("/home/francislee/main_partnership_result.RData")
+  load("/home/francislee/casual_partnership_result.RData")
   print(paste0("Currently on Run",z))
   library(tidyr)
   library(network)
   library(sna)
-  setwd(paste0("../../experiments/PartnershipPLACEHOLDER/instance_",z,"/output/")) #Replace PartnershipPLACEHOLDER with the actual experiment directory
+  setwd(paste0("../../instance_",z,"/output/")) #Replace PartnershipPLACEHOLDER with the actual experiment directory
   dt<-read.csv("partnership_events.csv")
   dt$tick<-dt$tick-10950
   dt<-dt[dt$tick>0,]
@@ -202,6 +204,8 @@ ub<-c(
   0.244906285,
   0
 )
+load("/home/francislee/main_partnership_result.RData")
+load("/home/francislee/casual_partnership_result.RData")
 
 meanmrg<-apply(main_result.grand,1,mean)
 meancrg<-apply(casual_result.grand,1,mean)

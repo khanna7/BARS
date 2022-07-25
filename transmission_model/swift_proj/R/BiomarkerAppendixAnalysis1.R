@@ -2,7 +2,7 @@ library(data.table)
 #We want to ask the question, on day x after getting released, what is the average viral load (y)?
 #Run the Biomarker analysis, replacing BiomarkerPLACEHOLDER with the actual experiment directory
 BMA<-function(i){
-  a<-fread(paste0("../../experiments/BiomarkerPLACEHOLDER/instance_",i,"/output/biomarker_log.csv"))
+  a<-fread(paste0("../experiments/BiomarkerRuns1/instance_",i,"/output/biomarker_log.csv"))
   a1<-a[in_jail==0][(tick-days_since_release)>10950][,.(acute=days_since_infection<90,viral_load,days_since_release)]
   a1$r<-(a1$acute*4+1)*0.00092*2.89^(a1$viral_load-4.2)
   #a2<-tapply(a1$viral_load,a1$art_status,mean)
@@ -18,7 +18,7 @@ for(i in 1:60){
 }
 #Choose the 90 day disruption, this will be your baseline
 vecb<-unlist(lapply(1:30,function(i){
-  a<-fread(paste0("../../experiments/BioMarkerPLACEHOLDER/instance_",i,"/output/biomarker_log.csv"))
+  a<-fread(paste0("../experiments/BioMarkerRuns/instance_",i,"/output/biomarker_log.csv"))
   b<-a[never_jailed==1][,.(mean(viral_load))]
   return(b)
 }))

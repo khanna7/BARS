@@ -2,7 +2,7 @@
 
 source("summarize_functions_ext6.R")
 range <- c(18, 25, 26, 34)
-dir_name ="../../experiments/CareInterventionPlaceholder" #Running the Care intervention placeholder experiment directory because the first scenario is the baseline scenario 90 day disruption  
+dir_name ="../experiments/CareInterventions1" #Running the Care intervention placeholder experiment directory because the first scenario is the baseline scenario 90 day disruption  
 sim_instance_dir <- paste0(dir_name, "/instance_")
 sc_nb= 1
 rseed_nb=30
@@ -56,17 +56,17 @@ for (j in 1: (sc_nb)) {
   next_sc <- (j-1)*rseed_nb
   res = list()  
   res2 = list() 
-  res3=list
+  res3=list()
   res_ind=1
   for(i in next_sc:(next_sc+rseed_nb-1)){              
     dir_loc <- paste0(sim_instance_dir,toString(i+1))
     print(dir_loc)
     #				res.dt   <- summarize_yearly_inc_released_partners(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
     #res.dt   <- summarize_yearly_prev_ever_jailed1(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
-    res2.dt   <- summarize_yearly_inc_jailed_partners(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
-    res.dt   <- summarize_yearly_inc_released_partners(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
+    res2.dt   <- summarize_yearly_inc_jailed_partners(paste0(dir_loc,"/output/counts_2.csv"), range, interv_start_at=year_interv_start)
+    res.dt   <- summarize_yearly_inc_released_partners(paste0(dir_loc,"/output/counts_2.csv"), range, interv_start_at=year_interv_start)
     
-    res3.dt <- summarize_yearly_inc_onemomentary(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)	
+    res3.dt <- summarize_yearly_inc_onemomentary(paste0(dir_loc,"/output/counts_2.csv"), range, interv_start_at=year_interv_start)	
     res[[res_ind]] <- res.dt$full_inc_mean
     res2[[res_ind]] <- res2.dt$full_inc_mean
     res3[[res_ind]] <- res3.dt$full_inc_mean
@@ -120,10 +120,10 @@ inc_means_melt.df<-cbind(inc_means_melt.df,do.call(rbind,quantilelist))
 
 
 res_means_melt.df <- melt(res2_means.df ,  id.vars = 'time', variable.name = 'series')
-res_means_melt.df<-cbind(res_means_melt.df,do.call(rbind,quantilelist))
+res_means_melt.df<-cbind(res_means_melt.df,do.call(rbind,quantilelist1))
 
 res2_means_melt.df <- melt(res3_means.df ,  id.vars = 'time', variable.name = 'series')
-res2_means_melt.df<-cbind(res2_means_melt.df,do.call(rbind,quantilelist))
+res2_means_melt.df<-cbind(res2_means_melt.df,do.call(rbind,quantilelist2))
 
 NewBaseline<-rbind(inc_means_melt.df,res_means_melt.df,res2_means_melt.df)
 save(NewBaseline,file="BaselinePart1.1.Rdata")
@@ -140,15 +140,15 @@ for (j in 1: (sc_nb)) {
   next_sc <- (j-1)*rseed_nb
   res = list()  
   res2 = list() 
-  res3=list
+  res3=list()
   res_ind=1
   for(i in next_sc:(next_sc+rseed_nb-1)){              
     dir_loc <- paste0(sim_instance_dir,toString(i+1))
     print(dir_loc)
     #				res.dt   <- summarize_yearly_inc_released_partners(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
     #res.dt   <- summarize_yearly_prev_ever_jailed1(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
-    res2.dt   <- summarize_yearly_inc_jail_only(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
-    res.dt   <- summarize_yearly_inc_rel_only(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
+    res2.dt   <- summarize_yearly_inc_jail_only(paste0(dir_loc,"/output/counts_2.csv"), range, interv_start_at=year_interv_start)
+    res.dt   <- summarize_yearly_inc_rel_only(paste0(dir_loc,"/output/counts_2.csv"), range, interv_start_at=year_interv_start)
         res[[res_ind]] <- res.dt$full_inc_mean
     res2[[res_ind]] <- res2.dt$full_inc_mean
     res3[[res_ind]] <- res3.dt$full_inc_mean
@@ -202,14 +202,14 @@ inc_means_melt.df<-cbind(inc_means_melt.df,do.call(rbind,quantilelist))
 
 
 res_means_melt.df <- melt(res2_means.df ,  id.vars = 'time', variable.name = 'series')
-res_means_melt.df<-cbind(res_means_melt.df,do.call(rbind,quantilelist))
+res_means_melt.df<-cbind(res_means_melt.df,do.call(rbind,quantilelist1))
 
 res2_means_melt.df <- melt(res3_means.df ,  id.vars = 'time', variable.name = 'series')
-res2_means_melt.df<-cbind(res2_means_melt.df,do.call(rbind,quantilelist))
+res2_means_melt.df<-cbind(res2_means_melt.df,do.call(rbind,quantilelist2))
 load("BaselinePart1.1.Rdata")
 NewBaseline<-rbind(NewBaseline,inc_means_melt.df,res_means_melt.df)
 names(NewBaseline)[c(4,5)]<-c("Two","NinetySeven")
-
+NewBaseline$series<-c(rep(c("All Released Partners","All Pre-Incarceration Partners","At Least 1 Momentary Partner, Not CJI","Released Partners Only","Pre-Incarceration Partners Only"),each=40))
 save(NewBaseline,file="BaselinePart1.Rdata")
 #Generating the never jailed and ever jailed populations as well as the general incidence
 
@@ -220,17 +220,17 @@ for (j in 1: (sc_nb)) {
   next_sc <- (j-1)*rseed_nb
   res = list()  
   res2 = list() 
-  res3=list
+  res3=list()
   res_ind=1
   for(i in next_sc:(next_sc+rseed_nb-1)){              
     dir_loc <- paste0(sim_instance_dir,toString(i+1))
     print(dir_loc)
     #				res.dt   <- summarize_yearly_inc_released_partners(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
     #res.dt   <- summarize_yearly_prev_ever_jailed1(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
-    res2.dt   <- summarize_yearly_inc_never_jailed(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
-    res.dt   <- summarize_yearly_inc_ever_jailed(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)
+    res2.dt   <- summarize_yearly_inc_never_jailed(paste0(dir_loc,"/output/counts_2.csv"), range, interv_start_at=year_interv_start)
+    res.dt   <- summarize_yearly_inc_ever_jailed(paste0(dir_loc,"/output/counts_2.csv"), range, interv_start_at=year_interv_start)
     
-    res3.dt <- summarize_yearly_inc(paste0(dir_loc,"/output/counts.csv"), range, interv_start_at=year_interv_start)	
+    res3.dt <- summarize_yearly_inc(paste0(dir_loc,"/output/counts_2.csv"), range, interv_start_at=year_interv_start)	
     res[[res_ind]] <- res.dt$full_inc_mean
     res2[[res_ind]] <- res2.dt$full_inc_mean
     res3[[res_ind]] <- res3.dt$full_inc_mean
@@ -280,26 +280,27 @@ require(reshape2)
 
 inc_means_melt.df <- melt(inc_means.df ,  id.vars = 'time', variable.name = 'series')
 inc_means_sd_melt.df <- melt(inc_means_sd.df ,  id.vars = 'time', variable.name = 'series')
-inc_means_melt.df<-cbind(inc_means_melt.df,do.call(rbind,quantilelist))
+inc_means_melt.df<-cbind(inc_means_melt.df,do.call(rbind,quantilelist1))
 
 
 res_means_melt.df <- melt(res2_means.df ,  id.vars = 'time', variable.name = 'series')
 res_means_melt.df<-cbind(res_means_melt.df,do.call(rbind,quantilelist))
 
 res2_means_melt.df <- melt(res3_means.df ,  id.vars = 'time', variable.name = 'series')
-res2_means_melt.df<-cbind(res2_means_melt.df,do.call(rbind,quantilelist))
+res2_means_melt.df<-cbind(res2_means_melt.df,do.call(rbind,quantilelist2))
 
-a<-rbind(inc_means_melt.df,res_means_melt.df,res2_means_melt.df)
+a<-rbind(inc_means_melt.df,res_means_melt.df,res2_means_melt.df) #Ever,never,general
 a<-a[c(30:40,70:80,110:120),]
+a$series<-c(rep(c("Ever incarcerated","Never incarcerated","Overall"),each=11))
 names(a)[c(4,5)]<-c("Two","NinetySeven")
 save(a,file="BaselinePlotPart2.Rdata")
 
 #This will produce Figure 1A
 
 
-t14<-NewBaseline[c(30:40,70:80,110:120,150:160,190:200,230:240),]
+t14<-NewBaseline[c(30:40,70:80,110:120,150:160,190:200),]
 names(t14)[c(4,5)]<-c("Two","NinetySeven")
-plot1<-ggplot(t14, aes(x = time,  color = series1, fill = series1)) + 
+plot1<-ggplot(t14, aes(x = time,  color = series, fill = series)) + 
   xlab("Year") +
   ylab("HIV Incidence Rate (per 100 person-years)") +
 

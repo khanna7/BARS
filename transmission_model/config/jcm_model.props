@@ -18,8 +18,8 @@ initial.data.file = ../r/network_model/cas_net_n10000.RData
 
 # if these properties are not commented out
 # then these networks will replace existing ones (NEED to comment these out for calibration)
-main.network.file = ../r/network_model/v57-calib-inst-248-only-main_network_36500.RDS
-casual.network.file = ../r/network_model/v57-calib-inst-248-only-casual_network_36500.RDS
+#main.network.file = ../r/network_model/v57-calib-inst-248-only-main_network_36500.RDS
+#casual.network.file = ../r/network_model/v57-calib-inst-248-only-casual_network_36500.RDS
 #----
 
 output.directory = ./output
@@ -44,7 +44,7 @@ per.tick.counts.output.file = counts.csv
 net.save.file = main_network.RDS
 casual.net.save.file = casual_network.RDS
 
-save.network.at = 10950, end
+save.network.at =  end
 count.overlaps = true
 
 output.age.range = 20-30,30-100

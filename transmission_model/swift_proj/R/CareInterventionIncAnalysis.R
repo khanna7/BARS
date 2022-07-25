@@ -2,7 +2,7 @@
 
 source("summarize_functions_ext6.R")
 range <- c(18, 25, 26, 34)
-dir_name ="../../experiments/CareInterventionFinal" #Replace this with the care intervention experiment directory  
+dir_name ="../experiments/CareInterventions" #Replace this with the care intervention experiment directory  
 sim_instance_dir <- paste0(dir_name, "/instance_")
 sc_nb= 4
 rseed_nb=30
@@ -14,7 +14,7 @@ list_inc_means_sd = list()
 list_res2_means_sd = list()
 list_inc = list()
 list_inc2 = list()
-quantilelist<-vector(mode="list",length=sc_nb)
+quantilelist<-quantilelist1<-vector(mode="list",length=sc_nb)
 
 summarize_yearly_inc_released_partners <- function(filename="counts.csv", ranges, interv_start_at=0){
   dt_counts <- create_dt_counts(filename,ranges, interv_start_at)
@@ -47,10 +47,15 @@ for (j in 1: (sc_nb)) {
         }
         res.df  <- as.data.frame(res)
         res2.df  <- as.data.frame(res2)
+        quantilelist[[j]]<-matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
+        means<-rowMeans(res.df[,res.df.sample.index]);return(means)})),ncol=1000)
+        quantilelist1[[j]]<-matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
+        means<-rowMeans(res2.df[,res.df.sample.index]);return(means)})),ncol=1000)
+        
         quantilelist[[j]]<-t(apply(matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
-        means<-rowMeans(res.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE))
+        means<-rowMeans(res.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.5,.975),na.rm=TRUE))
         quantilelist1[[j]]<-t(apply(matrix(unlist(lapply(1:1000,function(i){res.df.sample.index<-sample(1:rseed_nb ,rseed_nb,replace=TRUE);
-        means<-rowMeans(res2.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE))
+        means<-rowMeans(res2.df[,res.df.sample.index]);return(means)})),ncol=1000),1,quantile,c(.025,.5,.975),na.rm=TRUE))
         names(res.df) <- seq(1:(rseed_nb))
         names(res2.df) <- seq(1:(rseed_nb))
         list_inc_means[[j]] <-rowMeans(res.df,na.rm=TRUE)
@@ -73,13 +78,25 @@ save(list_inc,file="RelBoxPlot.Rdata")
 save(list_inc2,file="RelBoxPlotGen.Rdata")
 
 rel.95<-quantilelist
+rel.95<-do.call(rbind,rel.95)[1:4*40,]
+rel.95<-cbind(t(apply(rel.95,1,quantile,c(.025,.975))),apply(rel.95,1,mean))
+names(rel.95)<-c("Two","NinetySeven","value")
+rel.95gen<-quantilelist1
+rel.95gen<-do.call(rbind,rel.95gen)[1:4*40,]
+rel.95gen<-cbind(t(apply(rel.95gen,1,quantile,c(.025,.975))),apply(rel.95gen,1,mean))
+names(rel.95gen)<-c("Two","NinetySeven","value")
+
+
+
 save(rel.95,file="Released95Simulation.Rdata")
+save(rel.95gen,file="Released95SimulationGen.Rdata")
 require(ggplot2)
 require(reshape2)
 
 inc_means_melt.df <- melt(inc_means.df ,  id.vars = 'time', variable.name = 'series')
 inc_means_sd_melt.df <- melt(inc_means_sd.df ,  id.vars = 'time', variable.name = 'series')
 inc_means_melt.df<-cbind(inc_means_melt.df,do.call(rbind,quantilelist))
+t13<-inc_means_melt.df
 names(t13)[c(4,5)]<-c("Two","NinetySeven")
 
 #ribbon1<-apply(matrix(unlist(quantiles2.597.5),ncol=1000),1,quantile,c(.025,.975),na.rm=TRUE)
