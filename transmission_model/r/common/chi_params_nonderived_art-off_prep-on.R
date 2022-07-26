@@ -109,10 +109,10 @@
 
    art.prop.always.adherent <- 1 - (art.prop.never.adherent+art.prop.part.plus.adherent+art.prop.part.neg.adherent)
 
- 	art.always.adherent.probability <- 0.95
-	art.never.adherent.probability <- 0.05
-	art.partial.pos.adherent.probability <- 0.66
-	art.partial.neg.adherent.probability <- 0.33
+ 	art.always.adherent.probability <- 0.0
+	art.never.adherent.probability <- 0.0
+	art.partial.pos.adherent.probability <- 0.0
+	art.partial.neg.adherent.probability <- 0.0
 
    #####################
    ## Transmission Parameters
@@ -305,10 +305,10 @@ prep.prop.always.adherent.gte <- 0.619
 prep.prop.part.plus.adherent.gte <- 0.10
 prep.prop.part.neg.adherent.gte <- 0.07
 
-prep.always.adherent.trans.reduction <- 0.0
+prep.always.adherent.trans.reduction <- 0.95
 prep.never.adherent.trans.reduction <- 0.0
-prep.partial.pos.adherent.trans.reduction <- 0.0
-prep.partial.neg.adherent.trans.reduction <- 0.0
+prep.partial.pos.adherent.trans.reduction <- 0.81
+prep.partial.neg.adherent.trans.reduction <- 0.31
 
 
 #####################
