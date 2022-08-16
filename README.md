@@ -1,7 +1,12 @@
 # Getting to Zero: PrEP scale-up interventions for YBMSM
 Code for published _AIDS_ [paper](https://pubmed.ncbi.nlm.nih.gov/31490212/)
 
-## Data Generation
+## Generating Networks
+- First run the [main network](https://github.com/khanna7/BARS/blob/master/transmission_model/r/network_creation/chicago-init-net-estimation-with-prep.R) generation code
+- Then run the [casual network](https://github.com/khanna7/BARS/blob/master/transmission_model/r/network_creation/chicago-init-cas-net-estimation.R) code
+- The casual network RData object is then used to simulate the burnin networks and interventions (see [here](https://docs.google.com/document/d/1jfhwJFwRDJGKJOr-iyLYz-Ah5snKnHtYzuAwNPflTqA/edit#bookmark=id.fw580und7f68) for details).
+
+##  Simulating Population Data 
  - Can be done either using executable v0.54 or v0.57.
  - [Changelog](https://github.com/khanna7/BARS/blob/scheduled_intervention/transmission_model/changelog.txt) says "No version 0.57 due to versioning confusion" but Bryan, Francis used it to reproduce the results. 
  - This branch is off of commit for v0.57.
