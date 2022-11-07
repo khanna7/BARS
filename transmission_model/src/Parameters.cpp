@@ -107,6 +107,7 @@ const std::string PREP_SCHEME = "prep.uptake";
 
 const std::string LAI_PREP_USE_PROB = "lai.prep.use.prob";
 const std::string LAI_PREP_LAI_PROP = "lai.prep.lai.prop";
+const std::string LAI_PREP_LAI_PROP_UPDATE = "lai.prep.lai.prop.update";
 const std::string LAI_PREP_LAI_LENGTH_DAYS = "lai.prep.lai.length.days";
 const std::string LAI_PREP_LAI_REINJECT_PROB = "lai.prep.lai.reinjection.prob";
 

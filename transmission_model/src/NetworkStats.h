@@ -64,8 +64,8 @@ NetworkStats<T>::NetworkStats(Network<T> &network) : graph(), g_to_p() {
         ++i;
     }
 
-    igraph_vector_t edges;
-    igraph_vector_init(&edges, network.edgeCount() * 2);
+    igraph_vector_int_t edges;
+    igraph_vector_int_init(&edges, network.edgeCount() * 2);
 
     i = 0;
     for (auto iter = network.edgesBegin(); iter != network.edgesEnd(); ++iter) {
@@ -76,21 +76,21 @@ NetworkStats<T>::NetworkStats(Network<T> &network) : graph(), g_to_p() {
         ++i;
     }
     igraph_create(&graph, &edges, network.vertexCount(), 0);
-    igraph_vector_destroy(&edges);
+    igraph_vector_int_destroy(&edges);
     //timer.stop();
     //std::cout << "Format Time: " << timer.format(6, "%t") << std::endl;
 }
 
 template <typename T>
 void NetworkStats<T>::degree(std::vector<std::pair<std::shared_ptr<T>, long>> &results) {
-    igraph_vector_t degs;
-    igraph_vector_init(&degs, igraph_vcount(&graph));
+    igraph_vector_int_t degs;
+    igraph_vector_int_init(&degs, igraph_vcount(&graph));
     igraph_degree(&graph, &degs, igraph_vss_all(), IGRAPH_ALL, 0);
 
-    for (long i = 0, n = igraph_vector_size(&degs); i < n;  ++i) {
+    for (long i = 0, n = igraph_vector_int_size(&degs); i < n;  ++i) {
         results.push_back({g_to_p[i], (long int) VECTOR(degs)[i]});
     }
-    igraph_vector_destroy(&degs);
+    igraph_vector_int_destroy(&degs);
 }
 
 template<typename T, typename U>
@@ -106,16 +106,16 @@ bool person_comp(const std::shared_ptr<T>& p1, const std::shared_ptr<T>& p2) {
 
 template <typename T>
 void NetworkStats<T>::degree(std::vector<std::shared_ptr<T>>& results) {
-    igraph_vector_t degs;
-    igraph_vector_init(&degs, igraph_vcount(&graph));
+    igraph_vector_int_t degs;
+    igraph_vector_int_init(&degs, igraph_vcount(&graph));
     igraph_degree(&graph, &degs, igraph_vss_all(), IGRAPH_ALL, 0);
 
-    for (long i = 0, n = igraph_vector_size(&degs); i < n;  ++i) {
+    for (long i = 0, n = igraph_vector_int_size(&degs); i < n;  ++i) {
         std::shared_ptr<T>& p = g_to_p[i];
         results.push_back(p);
         p->setScore((double) VECTOR(degs)[i]);
     }
-    igraph_vector_destroy(&degs);
+    igraph_vector_int_destroy(&degs);
     // shuffle in case of ties
     std::random_shuffle(results.begin(), results.end(), &repast::uni_random);
     std::sort(results.begin(), results.end(), person_comp<T>);

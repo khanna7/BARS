@@ -94,6 +94,7 @@ extern const std::string PREP_SCHEME;
 
 extern const std::string LAI_PREP_USE_PROB;
 extern const std::string LAI_PREP_LAI_PROP;
+extern const std::string LAI_PREP_LAI_PROP_UPDATE;
 extern const std::string LAI_PREP_LAI_LENGTH_DAYS;
 extern const std::string LAI_PREP_LAI_REINJECT_PROB;
 

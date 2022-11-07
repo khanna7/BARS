@@ -17,6 +17,7 @@
 
 #include "Range.h"
 #include "Parameters.h"
+#include "ParamUpdater.h"
 #include "Model.h"
 #include "network_utils.h"
 #include "common.h"
@@ -894,6 +895,7 @@ Model::Model(shared_ptr<RInside>& ri, const std::string& net_var, const std::str
     runner.scheduleEvent(364.9, 365, Schedule::FunctorPtr(new MethodFunctor<PrepInterventionManager>(&prep_manager, &PrepInterventionManager::onYearEnded)));
 
     initPrepCessation();
+    schedule_parameter_interventions(runner);
     //write_edges(net, "./edges_at_1.csv");
 }
 
