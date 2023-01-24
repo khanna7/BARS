@@ -97,7 +97,8 @@ extern const std::string LAI_PREP_LAI_PROP;
 extern const std::string LAI_PREP_LAI_PROP_UPDATE;
 extern const std::string LAI_PREP_LAI_LENGTH_DAYS;
 extern const std::string LAI_PREP_LAI_REINJECT_PROB;
-
+extern const std::string PREP_INTERVENTION_AT;
+extern const std::string PREP_INTERVENTION_SCHEME;
 extern const std::string DEFAULT_PREP_USE_PROP_LT;
 extern const std::string DEFAULT_PREP_USE_PROP_GTE;
 extern const std::string DEFAULT_PREP_DAILY_STOP_PROB_LT;
@@ -109,6 +110,17 @@ extern const std::string DEFAULT_PREP_YEARS_TO_INCREMENT;
 extern const std::string DEFAULT_PREP_BALANCED_UNBALANCED;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT;
 extern const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE;
+
+extern const std::string RANDOM_BASE_PREP_USE_PROP_LT;
+extern const std::string RANDOM_BASE_PREP_USE_PROP_GTE;
+extern const std::string RANDOM_BASE_PREP_DAILY_STOP_PROB_LT;
+extern const std::string RANDOM_BASE_PREP_DAILY_STOP_PROB_GTE;
+
+extern const std::string RANDOM_INTRV_PREP_DAILY_STOP_PROB_LT;
+extern const std::string RANDOM_INTRV_PREP_DAILY_STOP_PROB_GTE;
+extern const std::string RANDOM_PREP_YEARLY_INCREMENT_LT;
+extern const std::string RANDOM_PREP_YEARLY_INCREMENT_GTE;
+extern const std::string RANDOM_PREP_YEARS_TO_INCREMENT;
 
 extern const std::string YOR_ADDITIONAL_PREP_LT;
 extern const std::string YOR_ADDITIONAL_PREP_GTE;

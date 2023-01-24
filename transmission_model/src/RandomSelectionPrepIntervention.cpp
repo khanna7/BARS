@@ -39,15 +39,21 @@ void RandomSelectionPrepIntervention::run(double tick,  std::vector<PersonPtr>& 
     std::shared_ptr<Log> log = Logger::instance()->getLog(RANDOM_SELECTION_LOG);
     (*log) << tick << ",";
     (*log) << (unsigned int)candidates.size();
+    double prop_lai = Parameters::instance()->getDoubleParameter(LAI_PREP_LAI_PROP );    
     double prep_p = 0;
     unsigned int count = 0;
     double adjustment = filter_->calcPrepStopAdjustment();
     if (candidates.size() > 0 && k > 0) {
         prep_p = ((double)total_negatives * k * (prep_data_.stop + adjustment)) / candidates.size();
         for (auto& kv : candidates) {
+            auto& person = kv.second;
             if (repast::Random::instance()->nextDouble() <= prep_p) {
-                putOnPrep(tick, kv.second, PrepStatus::ON_INTERVENTION);
-                put_on_prep.push_back(kv.second);
+                PrepStatus status = PrepStatus::ON;
+                if (repast::Random::instance()->nextDouble() <= prop_lai) {
+                    status = PrepStatus::ON_LAI;
+                }
+                putOnPrep(tick, person, status);
+                put_on_prep.push_back(person);
                 ++count;
             }
         }

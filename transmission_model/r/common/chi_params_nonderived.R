@@ -185,7 +185,7 @@
 ## PrEP Uptake Scheme ##
 
 # one of default, young_old_ratio, serodiscordant, eigen, or degree
-prep.uptake <- 'lai'
+prep.uptake <- 'default'
 
 ## Default PrEP  parameters ###
 
@@ -209,6 +209,25 @@ default.prep.unbalanced.starting.prob.gte <- 1/365 #stopping probabilities for t
 default.prep.balanced.unbalanced <- 'balanced'
 
 ## End Default Parameters ##
+
+## Random Scheduled Intervention ##
+prep.intervention.at <- 20
+prep.intervention.scheme <- "random"
+
+random.base.prep.bl.use.prop.lt <- 12.7
+random.base.prep.bl.use.prop.gte <- 14.7
+
+random.base.prep.mean.days.usage.lt <- 365
+random.base.prep.mean.days.usage.gte <- 365
+
+random.intrv.prep.mean.days.usage.lt <- 365
+random.intrv.prep.mean.days.usage.gte <- 365
+
+random.intrv.prep.yearly.increment.lt <- 10
+random.intrv.prep.yearly.increment.gte <- 10
+
+random.intrv.prep.years.to.increment <- 2
+
 
 ## LAI ##
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Model.cpp
  *
  *  Created on: Oct 8, 2015
@@ -657,48 +657,117 @@ void init_default_prep_manager(PrepInterventionManager& prep_manager, float age_
     std::cout << "Random Selection lt: " << lt_data << "\n";
     std::cout << "Random Selection gte: " << gte_data << "\n";
     
-    // PrepUseData data;
-    // data.base_use_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
-    // data.base_use_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
-    // data.daily_stop_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-    // data.daily_stop_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
-    
-    // data.increment_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_LT);
-    // data.increment_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_GTE);
-    // data.years_to_increase = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARS_TO_INCREMENT);
-
-    // bool balanced = Parameters::instance()->getStringParameter(DEFAULT_PREP_BALANCED_UNBALANCED) == BALANCED;
-    // if (balanced) {
-    //     data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
-    //     data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
-    // } else {
-    //     data.daily_p_prob_lt = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
-    //     data.daily_p_prob_gte = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE);
-    // }
-
-    // std::cout << data << std::endl;
-
-    // return std::make_shared<IncrementingPrepUptakeManager>(data, age_threshold);
 }
 
-// std::shared_ptr<ProportionalPrepUptakeManager> create_yor_prep_manager(float age_threshold) {
-//     PrepUseData data;
+void init_random_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
+    PrepUptakeData lt_base_data, gte_base_data;
+    lt_base_data.years_to_increment = 0;
+    gte_base_data.years_to_increment = 0;
+    lt_base_data.increment = 0;
+    gte_base_data.increment = 0;
+    
+    // used in base prob calc
+    lt_base_data.use = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_USE_PROP_LT);
+    gte_base_data.use = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_USE_PROP_GTE);
 
-//     data.base_use_yor = Parameters::instance()->getDoubleParameter(YOR_PREP_USE_PROP);
-//     // the cessation rnd generator uses lte and gte but that's not applicable for yor, so we
-//     // just make them the same.
-//     data.daily_stop_prob_lt =  Parameters::instance()->getDoubleParameter(YOR_PREP_DAILY_STOP_PROB);
-//     data.daily_stop_prob_gte =  Parameters::instance()->getDoubleParameter(YOR_PREP_DAILY_STOP_PROB);
-//     data.alpha = Parameters::instance()->getDoubleParameter(YOR_PREP_ALPHA);
-//     data.increment_yor = Parameters::instance()->getDoubleParameter(YOR_PREP_YEARLY_INCREMENT);
-//     data.years_to_increase = Parameters::instance()->getDoubleParameter(YOR_PREP_YEARS_TO_INCREMENT);
-//     data.yor_old_extra = Parameters::instance()->getDoubleParameter(YOR_ADDITIONAL_PREP_GTE);
-//     data.yor_young_extra = Parameters::instance()->getDoubleParameter(YOR_ADDITIONAL_PREP_LT);
+    // used in cessation generators
+    lt_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_DAILY_STOP_PROB_LT);
+    gte_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_DAILY_STOP_PROB_GTE);
 
-//     std::cout << data << std::endl;
+    // used to calculate base probabilities
+    lt_base_data.stop = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_DAILY_STOP_PROB_LT);
+    gte_base_data.stop = Parameters::instance()->getDoubleParameter(RANDOM_BASE_PREP_DAILY_STOP_PROB_GTE);
 
-//     return std::make_shared<ProportionalPrepUptakeManager>(data, age_threshold);
-// }
+    // these are immutable so we could reuse them, but they may not remain so in the future
+    std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
+    std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+
+    // add the base prep intervention
+    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+
+    PrepUptakeData lt_data, gte_data;
+    lt_data.use = lt_base_data.use;
+    gte_data.use = gte_base_data.use;
+
+    lt_data.stop = Parameters::instance()->getDoubleParameter(RANDOM_INTRV_PREP_DAILY_STOP_PROB_LT);
+    gte_data.stop = Parameters::instance()->getDoubleParameter(RANDOM_INTRV_PREP_DAILY_STOP_PROB_GTE);
+    lt_data.cessation_stop = Parameters::instance()->getDoubleParameter(RANDOM_INTRV_PREP_DAILY_STOP_PROB_LT);
+    gte_data.cessation_stop = Parameters::instance()->getDoubleParameter(RANDOM_INTRV_PREP_DAILY_STOP_PROB_GTE);
+
+    lt_data.increment = Parameters::instance()->getDoubleParameter(RANDOM_PREP_YEARLY_INCREMENT_LT);
+    gte_data.increment = Parameters::instance()->getDoubleParameter(RANDOM_PREP_YEARLY_INCREMENT_GTE);
+    lt_data.years_to_increment = Parameters::instance()->getDoubleParameter(RANDOM_PREP_YEARS_TO_INCREMENT);
+    gte_data.years_to_increment = Parameters::instance()->getDoubleParameter(RANDOM_PREP_YEARS_TO_INCREMENT);
+
+    // these are immutable so we could reuse them, but they may not remain so in the future
+    std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
+    std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt));
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte));
+
+    std::cout << "Random Intervention lt: " << lt_data << "\n";
+    std::cout << "Random Intervention gte: " << gte_data << "\n";
+    
+}
+
+void init_default_intervention(std::vector<std::shared_ptr<IPrepIntervention>>& vec, float age_threshold, float max_age) {
+    // Add the base
+    PrepUptakeData lt_base_data, gte_base_data;
+    lt_base_data.years_to_increment = 0;
+    gte_base_data.years_to_increment = 0;
+    lt_base_data.increment = 0;
+    gte_base_data.increment =0;    
+
+    lt_base_data.use = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_LT);
+    gte_base_data.use =  Parameters::instance()->getDoubleParameter(DEFAULT_PREP_USE_PROP_GTE);
+    lt_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
+    gte_base_data.cessation_stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
+
+    bool balanced = Parameters::instance()->getStringParameter(DEFAULT_PREP_BALANCED_UNBALANCED) == BALANCED;
+    if (balanced) {
+        lt_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_LT);
+        gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_DAILY_STOP_PROB_GTE);
+    } else {
+        lt_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT);
+        gte_base_data.stop = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE);
+    }
+
+    // these are immutable so we could reuse them, but they may not remain so in the future
+    std::shared_ptr<LTPrepAgeFilter> lt_base = std::make_shared<LTPrepAgeFilter>(age_threshold);
+    std::shared_ptr<GTEPrepAgeFilter> gte_base = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+
+    vec.push_back(std::make_shared<BasePrepIntervention>(lt_base_data, lt_base));
+    vec.push_back(std::make_shared<BasePrepIntervention>(gte_base_data, gte_base));
+
+    // Add the intervention
+    PrepUptakeData lt_data, gte_data;
+    lt_data.use = lt_base_data.use;
+    gte_data.use = gte_base_data.use;
+
+    lt_data.stop = lt_base_data.stop;
+    gte_data.stop = gte_base_data.stop;
+    lt_data.cessation_stop = lt_base_data.cessation_stop;
+    gte_data.cessation_stop = gte_base_data.cessation_stop;
+
+    lt_data.increment = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_LT);
+    gte_data.increment = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARLY_INCREMENT_GTE);
+    lt_data.years_to_increment = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARS_TO_INCREMENT);
+    gte_data.years_to_increment = Parameters::instance()->getDoubleParameter(DEFAULT_PREP_YEARS_TO_INCREMENT);
+
+    // these are immutable so we could reuse them, but they may not remain so in the future
+    std::shared_ptr<LTPrepAgeFilter> lt = std::make_shared<LTPrepAgeFilter>(age_threshold);
+    std::shared_ptr<GTEPrepAgeFilter> gte = std::make_shared<GTEPrepAgeFilter>(age_threshold, max_age);
+
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(lt_data, lt));
+    vec.push_back(std::make_shared<RandomSelectionPrepIntervention>(gte_data, gte));
+
+    std::cout << "Random Default Selection lt: " << lt_data << "\n";
+    std::cout << "Random Default Selection gte: " << gte_data << "\n";
+    
+    
+}
 
 void initialize_prep_interventions(PrepInterventionManager& prep_manager) {
 
@@ -707,20 +776,38 @@ void initialize_prep_interventions(PrepInterventionManager& prep_manager) {
     
     string prep_scheme = Parameters::instance()->getStringParameter(PREP_SCHEME);
 
+    std::vector<std::shared_ptr<IPrepIntervention>> interventions;
     if (prep_scheme == "default") {
-        init_default_prep_manager(prep_manager, age_threshold, max_age);
-    } else if (prep_scheme == "serodiscordant") {
-        init_sero_prep_manager(prep_manager, age_threshold, max_age);
-    } else if (prep_scheme == "eigen") {
-        init_eigen_prep_manager(prep_manager, age_threshold, max_age);
-    } else if (prep_scheme == "degree") {
-        init_degree_prep_manager(prep_manager, age_threshold, max_age);
-    } else if (prep_scheme == "lai") {
-        init_lai_prep_manager(prep_manager);
+        init_default_intervention(interventions, age_threshold, max_age);
     } else {
         throw invalid_argument("Invalid PrEP Uptake scheme: '" + prep_scheme + "'");
     }
+
+    for (auto& intervention : interventions) {
+        prep_manager.addIntervention(intervention);
+    }
+
+    double intervention_at  = Parameters::instance()->getDoubleParameter(PREP_INTERVENTION_AT);
+    if (intervention_at  > 0) {
+        interventions.clear();
+        string intervention_scheme = Parameters::instance()->getStringParameter(PREP_INTERVENTION_SCHEME);
+        if (intervention_scheme == "random") {
+            init_random_intervention(interventions, age_threshold, max_age);
+        } else {
+            throw invalid_argument("Invalid PrEP intervention scheme: '" + prep_scheme + "'");
+        }
+
+        std::cout << "Scheduling " << intervention_scheme << " intervention for day " << intervention_at << std::endl;
+        boost::shared_ptr<ScheduleIntervention> scheduled_intervention = 
+            boost::make_shared<ScheduleIntervention>(&prep_manager);
+        for (auto& intervention : interventions) {
+            scheduled_intervention->addIntervention(intervention);
+        }
+        RepastProcess::instance()->getScheduleRunner().scheduleEvent(intervention_at - 0.001, 
+            scheduled_intervention);
+    }
 }
+
 
 ARTLagCalculator create_art_lag_calc() {
     DayRangeCalculatorCreator creator;

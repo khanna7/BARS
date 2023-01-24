@@ -105,6 +105,9 @@ const std::string PREG_SUSC_MULT = "preg.susc.mult";
 
 const std::string PREP_SCHEME = "prep.uptake";
 
+const std::string PREP_INTERVENTION_AT = "prep.intervention.at";
+const std::string PREP_INTERVENTION_SCHEME = "prep.intervention.scheme";
+
 const std::string LAI_PREP_USE_PROB = "lai.prep.use.prob";
 const std::string LAI_PREP_LAI_PROP = "lai.prep.lai.prop";
 const std::string LAI_PREP_LAI_PROP_UPDATE = "lai.prep.lai.prop.update";
@@ -122,6 +125,17 @@ const std::string DEFAULT_PREP_YEARS_TO_INCREMENT = "default.prep.years.to.incre
 const std::string DEFAULT_PREP_BALANCED_UNBALANCED = "default.prep.balanced.unbalanced";
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_LT = "default.prep.unbalanced.starting.prob.lt";
 const std::string DEFAULT_PREP_UNBALANCED_STARTING_PROB_GTE = "default.prep.unbalanced.starting.prob.gte";
+
+const std::string RANDOM_BASE_PREP_USE_PROP_LT = "random.base.prep.bl.use.prop.lt";
+const std::string RANDOM_BASE_PREP_USE_PROP_GTE = "random.base.prep.bl.use.prop.gte";
+const std::string RANDOM_BASE_PREP_DAILY_STOP_PROB_LT = "random.base.prep.daily.stop.prob.lt";
+const std::string RANDOM_BASE_PREP_DAILY_STOP_PROB_GTE = "random.base.prep.daily.stop.prob.gte";
+
+const std::string RANDOM_INTRV_PREP_DAILY_STOP_PROB_LT = "random.intrv.prep.daily.stop.prob.lt";
+const std::string RANDOM_INTRV_PREP_DAILY_STOP_PROB_GTE = "random.intrv.prep.daily.stop.prob.gte";
+const std::string RANDOM_PREP_YEARLY_INCREMENT_LT = "random.intrv.prep.yearly.increment.lt";
+const std::string RANDOM_PREP_YEARLY_INCREMENT_GTE = "random.intrv.prep.yearly.increment.gte";
+const std::string RANDOM_PREP_YEARS_TO_INCREMENT = "random.intrv.prep.years.to.increment";
 
 const std::string YOR_PREP_ALPHA = "yor.prep.alpha";
 const std::string YOR_PREP_USE_PROP = "yor.prep.bl.use.prop";
