@@ -36,16 +36,17 @@ The population is initialized in the R code in the `r/` directory, and dynamical
 
    
 
-### Lead Authors        
+### Authors        
 
-   [Aditya Khanna](https://github.com/khanna7), University of Chicago    
+   [Aditya Khanna](https://github.com/khanna7), Brown University   
    [Nicholson Collier](https://github.com/ncollier), Argonne National Laboratory    
+   [Daniel Sheeler](https://github.com/dsheeler), The University of Chicago
    [Jonathan Ozik](https://github.com/jozik), Argonne National Laboratory   
     
    for the BARS Study Team     
    
    You can contact the authors via
-e-mail at <akhanna@medicine.bsd.uchicago.edu>. 
+e-mail at <aditya_khanna@brown.edu>. 
   
 
 ### Funding
