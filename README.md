@@ -40,7 +40,7 @@ The population is initialized in the R code in the `r/` directory, and dynamical
 
    [Aditya Khanna](https://github.com/khanna7), Brown University   
    [Nicholson Collier](https://github.com/ncollier), Argonne National Laboratory    
-   [Daniel Sheeler](https://github.com/dsheeler), The University of Chicago
+   [Daniel Sheeler](https://github.com/dsheeler), The University of Chicago  
    [Jonathan Ozik](https://github.com/jozik), Argonne National Laboratory   
     
    for the BARS Study Team     
