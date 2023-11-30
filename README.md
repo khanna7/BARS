@@ -1,7 +1,7 @@
 # BARS
 code for collaboration on CJI project
 ## Jail Circulation Model
-Code for _JCM_ [manuscript](https://www.ncbi.nlm.nih.gov/pubmed/38026647)
+Code for _JCM_ [manuscript](https://www.ncbi.nlm.nih.gov/pubmed/38026447)
 
 ## Data Generation
  - Can be done using executable v0.72
